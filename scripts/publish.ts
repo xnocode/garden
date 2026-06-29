@@ -73,6 +73,8 @@ interface ParsedFile {
   draft: boolean;
   content: string;
   raw: string;
+  prevSlug?: string | null;
+  nextSlug?: string | null;
 }
 
 // ----------------------------------------------------------------------------
@@ -142,6 +144,8 @@ async function parsePass(files: string[]): Promise<ParsedFile[]> {
       draft,
       content,
       raw,
+      prevSlug: typeof data.prev === "string" ? slugify(data.prev) : null,
+      nextSlug: typeof data.next === "string" ? slugify(data.next) : null,
     });
   }
   return parsed;
@@ -421,6 +425,8 @@ async function exportJsonData(rendered: RenderedNote[]) {
       updatedAt: now,
       path: r.path,
       folder: dirname(r.path) === "." ? null : dirname(r.path),
+      prevSlug: r.prevSlug ?? null,
+      nextSlug: r.nextSlug ?? null,
     };
   });
 

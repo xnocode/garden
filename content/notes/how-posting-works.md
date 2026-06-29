@@ -10,19 +10,37 @@ This note explains **exactly** how posting works in this garden. No jargon — j
 
 ## The big picture
 
+There are **two stages**: LOCAL (preview on your computer) and LIVE (deploy to the internet).
+
 ```
-┌─────────────┐     ┌──────────────┐     ┌────────────┐     ┌──────────┐
-│  You write  │ ──> │   content/   │ ──> │  Database  │ ──> │  Website │
-│  in editor  │     │  (markdown)  │     │  (SQLite)  │     │ (browser) │
-└─────────────┘     └──────────────┘     └────────────┘     └──────────┘
+LOCAL (your computer):
+┌─────────────┐     ┌──────────────┐     ┌────────────┐
+│  You write  │ ──> │   content/   │ ──> │  JSON file │
+│  in Obsidian│     │  (markdown)  │     │ + Database │
+└─────────────┘     └──────────────┘     └────────────┘
                       ↑                      ↑
                       │                      │
-                 You save files        `bun run publish`
-                 here (Obsidian)       reads content/ and
-                                      writes to database
+                 You save files        bun run publish
+                                        ↓
+                     ┌──────────────┐
+                     │  localhost:  │  ← bun run dev
+                     │  3000        │
+                     └──────────────┘
+
+LIVE (the internet):
+┌─────────────┐     ┌──────────────┐     ┌──────────────┐
+│  git push   │ ──> │   GitHub     │ ──> │   Vercel     │
+│             │     │  (your repo) │     │  (auto-build │
+│             │     │              │     │   + deploy)  │
+└─────────────┘     └──────────────┘     └──────────────┘
+                                                ↓
+                                          ┌──────────┐
+                                          │ Live site│
+                                          │ (HTTPS)  │
+                                          └──────────┘
 ```
 
-That's it. Four boxes. The website reads from the database. The database is filled by the publish command. The publish command reads your markdown files.
+**Local** is for you — write, preview, iterate. **Live** is for readers — push to GitHub, Vercel builds and deploys automatically.
 
 ## Step 1: You write a note
 
@@ -145,11 +163,63 @@ The website reads from this database — it never reads your markdown files dire
 ## The full cycle (cheat sheet)
 
 ```
-EDIT          → Write/edit .md file in content/ (with draft: false)
-PUBLISH       → bun run publish
-PREVIEW       → bun run dev (open localhost:3000)
-DEPLOY        → git push (auto-deploys if CI/CD is set up)
+LOCAL (while writing):
+  1. Write/edit .md file in content/ (with draft: false)
+  2. bun run publish        ← renders notes to JSON
+  3. bun run dev            ← preview at localhost:3000
+
+LIVE (when ready to publish):
+  4. git add .
+  5. git commit -m "new notes"
+  6. git push               ← Vercel auto-deploys!
 ```
+
+## How prev/next navigation works
+
+At the bottom of every note, there's a **Previous** and **Next** button. There are two ways to control which notes they point to:
+
+### Option A: Automatic (by date) — default
+
+If you don't set `prev` or `next` in frontmatter, the buttons follow **publish date order**. Notes with earlier dates are "previous", later dates are "next".
+
+### Option B: Manual (in Obsidian frontmatter)
+
+You can explicitly set which note comes before/after by adding `prev` and `next` to the frontmatter:
+
+```yaml
+---
+title: "My Essay"
+description: "Part 2 of my series."
+draft: false
+date: 2024-09-05
+tags: [essay, series]
+prev: "My First Essay"     ← the note that comes before this one
+next: "My Third Essay"     ← the note that comes after this one
+---
+```
+
+The values are **note titles** (not filenames). When you set `prev` or `next`, those override the date-based order for this note.
+
+> [!tip] When to use manual prev/next
+> Use it for **series** — e.g., a multi-part essay where you want readers to go in a specific order regardless of publish dates.
+
+## How related notes work
+
+The **"Related notes"** section at the bottom of each note is computed automatically. You don't need to do anything — it analyzes:
+
+1. **Shared tags** — notes with the same tags as this note (weight: 2 per shared tag)
+2. **2-hop links** — notes that your outgoing links also link to (weight: 3)
+3. **Shared links** — notes that link to the same third notes (weight: 1)
+
+The top 6 related notes are shown with a badge explaining why they're related ("shared tags", "connected via", "links to same").
+
+## How backlinks work
+
+The **"Linked from this note"** panel shows every note that links TO the current note. This is automatic — whenever you write `[[This Note Title]]` in another note, that note appears in this note's backlinks.
+
+For example, if note A contains `[[Digital Gardens]]`, then "Digital Gardens" shows note A in its backlinks panel.
+
+The backlink panel also shows the **sentence context** — the actual sentence where the link appears — so you can see how the referencing note uses this one.
 
 ## Common mistakes
 

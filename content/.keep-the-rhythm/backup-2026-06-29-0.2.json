@@ -10665,6 +10665,21 @@
             "timeKey": "20:30",
             "w": 94,
             "c": 648
+          },
+          {
+            "timeKey": "20:45",
+            "w": -22,
+            "c": -95
+          },
+          {
+            "timeKey": "20:50",
+            "w": -16,
+            "c": -155
+          },
+          {
+            "timeKey": "20:55",
+            "w": 0,
+            "c": 9
           }
         ],
         "id": 581
@@ -10757,9 +10772,25 @@
         "charCountStart": 2311,
         "changes": [],
         "id": 590
+      },
+      {
+        "date": "2026-06-29",
+        "filePath": "notes/the-vault-and-the-garden.md",
+        "wordCountStart": 353,
+        "charCountStart": 2211,
+        "changes": [],
+        "id": 591
+      },
+      {
+        "date": "2026-06-29",
+        "filePath": "index.md",
+        "wordCountStart": 280,
+        "charCountStart": 1656,
+        "changes": [],
+        "id": 592
       }
     ],
-    "wholeVaultWordCount": 18973,
-    "wholeVaultCharCount": 134351
+    "wholeVaultWordCount": 18935,
+    "wholeVaultCharCount": 134110
   }
 }

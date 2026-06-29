@@ -29,6 +29,10 @@ interface NoteRecord {
   updatedAt: string;
   path: string;
   folder: string | null;
+  /** Optional frontmatter: slug of the previous note (overrides date-based). */
+  prevSlug?: string | null;
+  /** Optional frontmatter: slug of the next note (overrides date-based). */
+  nextSlug?: string | null;
 }
 
 export interface NoteSummary {
@@ -199,13 +203,31 @@ export async function getNote(slug: string): Promise<NoteDetail | null> {
     })
     .sort((a, b) => b.updatedAt.localeCompare(a.updatedAt));
 
-  // Prev/next by publish date
-  const sorted = [...NOTES].sort((a, b) =>
-    (a.publishDate ?? a.createdAt).localeCompare(b.publishDate ?? b.createdAt)
-  );
-  const idx = sorted.findIndex((x) => x.slug === slug);
-  const prev = idx > 0 ? toSummary(sorted[idx - 1]) : null;
-  const next = idx >= 0 && idx < sorted.length - 1 ? toSummary(sorted[idx + 1]) : null;
+  // Prev/next: use frontmatter prev/next if set, otherwise by publish date
+  let prev: NoteSummary | null = null;
+  let next: NoteSummary | null = null;
+  if (n.prevSlug) {
+    const prevNote = NOTES.find((x) => x.slug === n.prevSlug);
+    if (prevNote) prev = toSummary(prevNote);
+  }
+  if (n.nextSlug) {
+    const nextNote = NOTES.find((x) => x.slug === n.nextSlug);
+    if (nextNote) next = toSummary(nextNote);
+  }
+  // Fallback: if no frontmatter prev/next, use date-based
+  if (!prev && !next) {
+    const sorted = [...NOTES].sort((a, b) =>
+      (a.publishDate ?? a.createdAt).localeCompare(
+        b.publishDate ?? b.createdAt
+      )
+    );
+    const idx = sorted.findIndex((x) => x.slug === slug);
+    prev = idx > 0 ? toSummary(sorted[idx - 1]) : null;
+    next =
+      idx >= 0 && idx < sorted.length - 1
+        ? toSummary(sorted[idx + 1])
+        : null;
+  }
 
   // Related notes
   const currentTags = new Set(summary.tags);

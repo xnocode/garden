@@ -1,11 +1,13 @@
 ---
 title: Let's Try
-description: You cannot see anything until you want to see from the shadwow
-draft: false
+description: "{{description}}"
+draft: true
 date: 2026-06-29
 tags:
   - shadow
   - die
+prev: "[[notes/contribution-graph|contribution-graph]]"
+next: "[[notes/mermaid-diagrams|Diagrams]]"
 ---
 Let's test it fully 
 
@@ -18,18 +20,3 @@ int main(){
 ```
 
 
-```handwritten-ink
-{
-	"versionAtEmbed": "0.3.4",
-	"filepath": "Attachments/Ink/Writing/2026.6.29 - 20.48pm.writing"
-}
-```
-
-```handdrawn-ink
-{
-	"versionAtEmbed": "0.3.4",
-	"filepath": "Attachments/Ink/Drawing/2026.6.29 - 20.49pm.drawing",
-	"width": 500,
-	"aspectRatio": 1
-}
-```
