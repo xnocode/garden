@@ -82,7 +82,10 @@ This re-publishes automatically every time you save a note in Obsidian. Keep thi
 
 ## Part 2: Deploy Live (Free)
 
-### Option A: Vercel (Recommended — Easiest)
+> [!warning] GitHub Pages won't work
+> This garden uses **API routes** (code execution, search, RSS) and a **database** (Prisma/SQLite). GitHub Pages only serves static files — it can't run server-side code. You **must** use a host that supports Next.js server-side rendering.
+
+### Vercel (Recommended — Free, Easiest)
 
 1. **Push your project to GitHub:**
    ```bash
@@ -91,58 +94,92 @@ This re-publishes automatically every time you save a note in Obsidian. Keep thi
    git push origin main
    ```
 
-2. **Go to [vercel.com](https://vercel.com)** and sign in with GitHub.
+2. **Go to [vercel.com](https://vercel.com)** and sign in with GitHub (free).
 
-3. **Import your repository** — Vercel auto-detects Next.js.
+3. **Click "Add New" → "Project"** → import your repository.
 
-4. **Set the build command** to:
-   ```bash
-   bun run publish && bun run build
+4. **Vercel auto-detects Next.js.** The `vercel.json` file in the project tells it to run `bun run publish` before building. You don't need to change anything.
+
+5. **Set environment variables** in Vercel (Settings → Environment Variables):
+   - `DATABASE_URL` = `file:./db/garden.db`
+
+6. **Click Deploy.** Wait ~2 minutes. Your garden is live at:
+   ```
+   https://your-garden.vercel.app
    ```
 
-5. **Set environment variables** in Vercel:
-   - `DATABASE_URL` = `file:./db/garden.db` (or use Vercel Postgres for free)
+7. **Every time you push to GitHub**, Vercel auto-rebuilds and redeploys. No extra commands needed.
 
-6. **Deploy.** Your garden is live at `https://your-garden.vercel.app`.
+### Adding a Custom Domain (Free)
 
-### Option B: GitHub Pages (Completely Free)
+You can use any domain you own — including free domains from [domain.digitalplat.org](https://domain.digitalplat.org). Here's how:
 
-1. **Create a GitHub Actions workflow** at `.github/workflows/deploy.yml`:
+1. **Get your domain** (e.g., `mygarden.digitalplat.org`) — note the domain name.
 
-   ```yaml
-   name: Deploy Garden
+2. **Go to your Vercel project** → Settings → Domains.
+
+3. **Enter your domain** (e.g., `mygarden.digitalplat.org`) and click **Add**.
+
+4. **Vercel shows you DNS records to add.** It will look something like:
+   ```
+   Type:  A
+   Name:  @  (or leave blank)
+   Value: 76.76.21.21
    
-   on:
-     push:
-       branches: [main]
-   
-   jobs:
-     deploy:
-       runs-on: ubuntu-latest
-       steps:
-         - uses: actions/checkout@v4
-         - uses: oven-sh/setup-bun@v1
-         - run: bun install
-         - run: bun run db:push
-         - run: bun run publish
-         - run: bun run build
-         - uses: peaceiris/actions-gh-pages@v3
-           with:
-             github_token: ${{ secrets.GITHUB_TOKEN }}
-             publish_dir: ./.next/standalone
+   Type:  CNAME
+   Name:  www
+   Value: cname.vercel-dns.com
    ```
 
-2. **Enable GitHub Pages** in your repo settings → Pages → Source: GitHub Actions.
+5. **Go to your domain provider's DNS settings** (for digitalplat.org, log in at [dash.domain.digitalplat.org](https://dash.domain.digitalplat.org/domains)).
 
-3. **Push to main** — your garden deploys automatically to `https://YOUR_USERNAME.github.io/your-garden/`.
+6. **Add the DNS records** exactly as Vercel showed you. For a subdomain like `mygarden.digitalplat.org`:
+   - Type: `CNAME`
+   - Name/Host: `mygarden` (just the subdomain part)
+   - Value/Target: `cname.vercel-dns.com`
 
-### Option C: Netlify (Free)
+7. **Wait 5–30 minutes** for DNS to propagate. Vercel automatically detects the DNS change and issues a free SSL certificate.
 
-1. Push to GitHub.
-2. Go to [netlify.com](https://netlify.com) → New site from Git.
-3. Build command: `bun run publish && bun run build`
-4. Publish directory: `.next`
-5. Deploy.
+8. **Your garden is now live at your custom domain** with HTTPS:
+   ```
+   https://mygarden.digitalplat.org
+   ```
+
+> [!tip] DNS propagation
+> DNS changes can take up to 48 hours to propagate worldwide, but usually work within 5–30 minutes. You can check propagation at [dnschecker.org](https://dnschecker.org).
+
+> [!info] What if my domain provider doesn't support CNAME?
+> If your provider only supports A records, use:
+> - Type: `A`
+> - Name: `mygarden` (or `@` for root)
+> - Value: `76.76.21.21`
+
+> [!tip] Why Vercel?
+> Vercel is made by the Next.js team. The free tier includes:
+> - Server-side rendering (API routes work)
+> - 100GB bandwidth/month
+> - Automatic HTTPS
+> - Custom domain support (free SSL!)
+> - Preview deployments for every branch
+
+### Alternative: Railway (Free tier)
+
+If Vercel doesn't work for you:
+
+1. Go to [railway.app](https://railway.app)
+2. Connect your GitHub repo
+3. Add a PostgreSQL database (Railway provides one for free)
+4. Set `DATABASE_URL` to the Railway database URL
+5. Deploy
+
+### Why NOT GitHub Pages?
+
+GitHub Pages only serves **static HTML/CSS/JS files**. This garden needs:
+- **API routes** — `/api/run` (code execution), `/api/search`, `/api/rss`, etc.
+- **Server-side database** — Prisma reads from SQLite at request time
+- **Server components** — Next.js renders pages on the server
+
+GitHub Pages can't do any of these. You need a host that runs Node.js.
 
 ## Part 3: Daily Workflow
 
