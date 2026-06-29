@@ -1,9 +1,10 @@
 ---
 title: "{{title}}"
-description: "{{description}}"
+description:
 draft: true
 date: "{{date:YYYY-MM-DD}}"
-tags: [ ] 
-prev: "" 
+tags: []
+prev: ""
 next: ""
+aliases:
 ---
