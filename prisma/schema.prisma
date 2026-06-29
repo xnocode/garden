@@ -1,0 +1,48 @@
+// Prisma schema for the digital garden / Obsidian-publishing site.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+/// A published (draft: false) note imported from the Obsidian vault.
+model Note {
+  /// URL-safe slug derived from the file path / title (lowercased, kebab-case).
+  slug        String   @id
+  /// Display title (from frontmatter `title` or first H1 / filename).
+  title       String
+  /// Optional short description (frontmatter `description` or first paragraph).
+  description String?
+  /// Markdown source with frontmatter stripped.
+  content     String
+  /// Pre-rendered HTML (server-side render at publish time).
+  html        String
+  /// Raw file contents including YAML frontmatter.
+  raw         String
+  /// JSON array of tag strings, e.g. ["essay","ai/alignment"].
+  tags        String   @default("[]")
+  /// JSON array of alias strings.
+  aliases     String   @default("[]")
+  /// JSON array of outgoing link targets: [{slug, original, alias, exists}].
+  links       String   @default("[]")
+  /// Word count of the note body.
+  wordCount   Int      @default(0)
+  /// Whether the source note had draft:true (always false here, since only
+  /// draft:false notes are imported — kept for clarity).
+  draft       Boolean  @default(false)
+  /// Publish date (frontmatter `date` or `publish` field).
+  publishDate DateTime?
+  createdAt   DateTime
+  updatedAt   DateTime
+  /// Original file path relative to the vault root, e.g. "notes/ai.md".
+  path        String
+  /// Parent folder, e.g. "notes" (used for breadcrumbs/explorer).
+  folder      String?
+
+  @@index([folder])
+  @@index([publishDate])
+}
