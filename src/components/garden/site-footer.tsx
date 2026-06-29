@@ -37,6 +37,8 @@ export function SiteFooter({ noteCount }: { noteCount: number }) {
           </Link>
           <a
             href="/api/rss"
+            target="_blank"
+            rel="noopener noreferrer"
             className="inline-flex items-center gap-1 hover:text-foreground transition-colors"
             title="RSS feed"
           >
@@ -44,13 +46,13 @@ export function SiteFooter({ noteCount }: { noteCount: number }) {
             <span className="hidden sm:inline">rss</span>
           </a>
           <a
-            href="https://github.com/xnocode"
+            href="https://obsidian.md"
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-1 hover:text-foreground transition-colors"
           >
             <Github className="h-3.5 w-3.5" />
-            <span className="hidden sm:inline">xnocode</span>
+            <span className="hidden sm:inline">obsidian</span>
           </a>
         </div>
         <div className="text-xs text-muted-foreground/70 font-mono">

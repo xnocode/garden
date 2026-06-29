@@ -26,7 +26,6 @@ import {
 } from "node:fs/promises";
 import { join, relative, dirname, basename, extname } from "node:path";
 import { existsSync } from "node:fs";
-import { db } from "../src/lib/db";
 import {
   renderMarkdown,
   parseFrontmatter,
@@ -36,6 +35,19 @@ import {
   type RenderContext,
   type WikiLinkTarget,
 } from "../src/lib/markdown";
+
+// Database is optional — only used for local dev with watch mode.
+// On Vercel/build servers we skip DB entirely and use JSON files.
+const isVercel = !!process.env.VERCEL || !!process.env.CI;
+let db: any = null;
+if (!isVercel && process.env.DATABASE_URL) {
+  try {
+    const { db: dbClient } = await import("../src/lib/db");
+    db = dbClient;
+  } catch {
+    /* DB not available — JSON-only mode */
+  }
+}
 
 const ROOT = process.cwd();
 const CONTENT_DIR = join(ROOT, "content");
@@ -300,9 +312,8 @@ async function publish() {
   await exportJsonData(rendered);
   console.log(`  exported JSON data files`);
 
-  // Sync DB (only if DATABASE_URL is available — local dev)
-  const hasDb = !!process.env.DATABASE_URL;
-  if (hasDb) {
+  // Sync DB (only if database is available — local dev only)
+  if (db) {
     try {
       const newSlugs = new Set(rendered.map((r) => r.slug));
       const existing = await db.note.findMany({ select: { slug: true } });
@@ -461,11 +472,11 @@ publish()
     if (watchFlag) {
       await watchMode();
     } else {
-      await db.$disconnect();
+      if (db) await db.$disconnect();
     }
   })
   .catch(async (e) => {
     console.error("\n  ✗ publish failed:", e);
-    await db.$disconnect();
+    if (db) await db.$disconnect();
     process.exit(1);
   });

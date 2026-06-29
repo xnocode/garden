@@ -1,8 +1,6 @@
 import { listNotes } from "@/lib/notes";
 
-export const dynamic = "force-dynamic";
-
-const SITE_URL = "http://localhost:3000";
+export const dynamic = "force-static";
 
 function escapeXml(s: string): string {
   return s
@@ -16,9 +14,15 @@ function escapeXml(s: string): string {
 export async function GET() {
   const notes = await listNotes({ sort: "newest", limit: 20 });
 
+  // Use the request origin or fallback to env var
+  const siteUrl =
+    process.env.NEXT_PUBLIC_SITE_URL ||
+    process.env.VERCEL_URL ||
+    "http://localhost:3000";
+
   const items = notes
     .map((n) => {
-      const url = `${SITE_URL}/?p=${encodeURIComponent(n.slug)}`;
+      const url = `${siteUrl}/?p=${encodeURIComponent(n.slug)}`;
       const pubDate = n.publishDate
         ? new Date(n.publishDate).toUTCString()
         : new Date(n.createdAt).toUTCString();
@@ -43,11 +47,11 @@ ${n.tags
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>garden — a digital garden</title>
-    <link>${SITE_URL}</link>
+    <link>${siteUrl}</link>
     <description>Notes grown in Obsidian, published with a single command.</description>
     <language>en-us</language>
     <lastBuildDate>${lastBuild}</lastBuildDate>
-    <atom:link href="${SITE_URL}/api/rss" rel="self" type="application/rss+xml" />
+    <atom:link href="${siteUrl}/api/rss" rel="self" type="application/rss+xml" />
 ${items}
   </channel>
 </rss>`;
