@@ -3,18 +3,68 @@ name: Deploy Garden
 on:
   push:
     branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
 
 jobs:
-  deploy:
+  build:
     runs-on: ubuntu-latest
+    env:
+      DATABASE_URL: "file:/home/runner/work/${{ github.event.repository.name }}/${{ github.event.repository.name }}/db/garden.db"
     steps:
-      - uses: actions/checkout@v4
-      - uses: oven-sh/setup-bun@v1
-      - run: bun install
-      - run: bun run db:push
-      - run: bun run publish
-      - run: bun run build
-      - uses: peaceiris/actions-gh-pages@v3
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v1
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./.next/standalone
+          bun-version: latest
+
+      - name: Install dependencies
+        run: bun install
+
+      - name: Create database directory
+        run: mkdir -p db
+
+      - name: Push database schema
+        run: bun run db:push
+
+      - name: Publish notes
+        run: bun run publish
+
+      - name: Lint (non-blocking)
+        run: bun run lint || true
+
+      - name: Build Next.js (static export)
+        run: bun run next build
+        env:
+          NEXT_PUBLIC_SITE_URL: "https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}"
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+        with:
+          enablement: true
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./out
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
