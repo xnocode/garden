@@ -1,7 +1,7 @@
 ---
 title: Let's Try
 description: "{{description}}"
-draft: true
+draft: false
 date: 2026-06-29
 tags:
   - shadow
