@@ -22,6 +22,7 @@ import {
   mkdir,
   unlink,
   watch,
+  writeFile,
 } from "node:fs/promises";
 import { join, relative, dirname, basename, extname } from "node:path";
 import { existsSync } from "node:fs";
@@ -295,64 +296,76 @@ async function publish() {
   const assetResult = await copyAssets();
   console.log(`  copied ${assetResult.copied} asset(s)`);
 
-  // Sync DB — delete stale, upsert new/updated
-  const newSlugs = new Set(rendered.map((r) => r.slug));
-  const existing = await db.note.findMany({ select: { slug: true } });
-  const toDelete = existing
-    .filter((e) => !newSlugs.has(e.slug))
-    .map((e) => e.slug);
-  if (toDelete.length) {
-    await db.note.deleteMany({ where: { slug: { in: toDelete } } });
-    console.log(`  removed ${toDelete.length} stale note(s)`);
-  }
+  // --- Export JSON data files (for serverless deployment without DB) ---
+  await exportJsonData(rendered);
+  console.log(`  exported JSON data files`);
 
-  let upserted = 0;
-  for (const r of rendered) {
-    const tags = Array.from(new Set([...r.tags, ...r.inlineTags])).sort();
-    const now = new Date();
-    const created = r.date ?? now;
-    await db.note.upsert({
-      where: { slug: r.slug },
-      create: {
-        slug: r.slug,
-        title: r.title,
-        description: r.description,
-        content: r.content,
-        html: r.html,
-        raw: r.raw,
-        tags: JSON.stringify(tags),
-        aliases: JSON.stringify(r.aliases),
-        links: JSON.stringify(r.links),
-        wordCount: r.wordCount,
-        draft: false,
-        publishDate: r.date ?? null,
-        createdAt: created,
-        updatedAt: now,
-        path: r.path,
-        folder: dirname(r.path) === "." ? null : dirname(r.path),
-      },
-      update: {
-        title: r.title,
-        description: r.description,
-        content: r.content,
-        html: r.html,
-        raw: r.raw,
-        tags: JSON.stringify(tags),
-        aliases: JSON.stringify(r.aliases),
-        links: JSON.stringify(r.links),
-        wordCount: r.wordCount,
-        draft: false,
-        publishDate: r.date ?? null,
-        updatedAt: now,
-        path: r.path,
-        folder: dirname(r.path) === "." ? null : dirname(r.path),
-      },
-    });
-    upserted++;
+  // Sync DB (only if DATABASE_URL is available — local dev)
+  const hasDb = !!process.env.DATABASE_URL;
+  if (hasDb) {
+    try {
+      const newSlugs = new Set(rendered.map((r) => r.slug));
+      const existing = await db.note.findMany({ select: { slug: true } });
+      const toDelete = existing
+        .filter((e) => !newSlugs.has(e.slug))
+        .map((e) => e.slug);
+      if (toDelete.length) {
+        await db.note.deleteMany({ where: { slug: { in: toDelete } } });
+        console.log(`  removed ${toDelete.length} stale note(s)`);
+      }
+
+      let upserted = 0;
+      for (const r of rendered) {
+        const tags = Array.from(new Set([...r.tags, ...r.inlineTags])).sort();
+        const now = new Date();
+        const created = r.date ?? now;
+        await db.note.upsert({
+          where: { slug: r.slug },
+          create: {
+            slug: r.slug,
+            title: r.title,
+            description: r.description,
+            content: r.content,
+            html: r.html,
+            raw: r.raw,
+            tags: JSON.stringify(tags),
+            aliases: JSON.stringify(r.aliases),
+            links: JSON.stringify(r.links),
+            wordCount: r.wordCount,
+            draft: false,
+            publishDate: r.date ?? null,
+            createdAt: created,
+            updatedAt: now,
+            path: r.path,
+            folder: dirname(r.path) === "." ? null : dirname(r.path),
+          },
+          update: {
+            title: r.title,
+            description: r.description,
+            content: r.content,
+            html: r.html,
+            raw: r.raw,
+            tags: JSON.stringify(tags),
+            aliases: JSON.stringify(r.aliases),
+            links: JSON.stringify(r.links),
+            wordCount: r.wordCount,
+            draft: false,
+            publishDate: r.date ?? null,
+            updatedAt: now,
+            path: r.path,
+            folder: dirname(r.path) === "." ? null : dirname(r.path),
+          },
+        });
+        upserted++;
+      }
+      console.log(`  synced ${upserted} note(s) to database`);
+    } catch (e) {
+      console.log(`  (db sync skipped: ${(e as Error).message})`);
+    }
   }
 
   const elapsed = ((Date.now() - startedAt) / 1000).toFixed(2);
-  console.log(`\n  ✓ published ${upserted} note(s) in ${elapsed}s\n`);
+  console.log(`\n  ✓ published ${rendered.length} note(s) in ${elapsed}s`);
 
   for (const r of rendered) {
     const tagStr = r.tags.length ? `  #${r.tags.slice(0, 3).join(" #")}` : "";
@@ -365,6 +378,46 @@ async function publish() {
     for (const s of skipped) console.log(`    ${s.slug}`);
   }
   console.log("");
+}
+
+/**
+ * Export all note data as JSON files to src/data/.
+ * This allows the site to run on serverless platforms (Vercel) without
+ * a database — the data layer reads from these JSON files instead.
+ */
+async function exportJsonData(rendered: RenderedNote[]) {
+  const dataDir = join(ROOT, "src", "data");
+  await mkdir(dataDir, { recursive: true });
+
+  // Build the full notes array with all fields
+  const notesData = rendered.map((r) => {
+    const tags = Array.from(new Set([...r.tags, ...r.inlineTags])).sort();
+    const now = new Date().toISOString();
+    return {
+      slug: r.slug,
+      title: r.title,
+      description: r.description,
+      content: r.content,
+      html: r.html,
+      raw: r.raw,
+      tags,
+      aliases: r.aliases,
+      links: r.links,
+      wordCount: r.wordCount,
+      draft: false,
+      publishDate: r.date ? r.date.toISOString() : null,
+      createdAt: (r.date ?? new Date()).toISOString(),
+      updatedAt: now,
+      path: r.path,
+      folder: dirname(r.path) === "." ? null : dirname(r.path),
+    };
+  });
+
+  await writeFile(
+    join(dataDir, "notes.json"),
+    JSON.stringify(notesData, null, 2),
+    "utf8"
+  );
 }
 
 // ----------------------------------------------------------------------------
