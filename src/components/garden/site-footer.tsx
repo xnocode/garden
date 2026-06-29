@@ -44,13 +44,13 @@ export function SiteFooter({ noteCount }: { noteCount: number }) {
             <span className="hidden sm:inline">rss</span>
           </a>
           <a
-            href="https://obsidian.md"
+            href="https://github.com/xnocode"
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-1 hover:text-foreground transition-colors"
           >
             <Github className="h-3.5 w-3.5" />
-            <span className="hidden sm:inline">obsidian</span>
+            <span className="hidden sm:inline">xnocode</span>
           </a>
         </div>
         <div className="text-xs text-muted-foreground/70 font-mono">
