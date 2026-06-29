@@ -1,0 +1,6 @@
+{
+  "buildCommand": "mkdir -p db && bun run db:push && bun run publish && bun run build",
+  "installCommand": "bun install",
+  "framework": "nextjs",
+  "regions": ["iad1"]
+}
