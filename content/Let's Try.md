@@ -6,8 +6,8 @@ date: 2026-06-29
 tags:
   - shadow
   - die
-prev: "[[notes/contribution-graph|contribution-graph]]"
-next: "[[notes/mermaid-diagrams|Diagrams]]"
+prev: "contribution-graph"
+next: "mermaid-diagrams"
 ---
 Let's test it fully 
 
