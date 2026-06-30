@@ -78,3 +78,23 @@ If the drawing file doesn't exist or has no preview, a placeholder is shown:
 > - **Ink**: ` ```handdrawn-ink ` and ` ```handwritten-ink ` code blocks (Obsidian Ink plugin)
 
 See [[Embeds and Transclusions]], [[Code Execution Playground]], [[Callouts Reference]].
+
+## External Media Embed Tests
+
+Here we test embedding of external URLs for video, audio, and PDF files.
+
+### External Video Embed
+![External Video](https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4)
+
+### External Audio Embed
+![External Audio](https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3)
+
+### External PDF Embed
+![External PDF](https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf)
+
+### Bare URL to Video
+https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4
+
+### Autolink to Audio
+<https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3>
+

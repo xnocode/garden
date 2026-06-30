@@ -1,0 +1,82 @@
+[
+  [
+    "http://localhost:3000`",
+    {
+      "url": "http://localhost:3000`",
+      "title": null,
+      "description": null,
+      "image": null,
+      "siteName": null
+    }
+  ],
+  [
+    "https://github.com/YOUR_USERNAME/your-garden.git",
+    {
+      "url": "https://github.com/YOUR_USERNAME/your-garden.git",
+      "title": null,
+      "description": null,
+      "image": null,
+      "siteName": null
+    }
+  ],
+  [
+    "https://your-garden.vercel.app",
+    {
+      "url": "https://your-garden.vercel.app",
+      "title": "Your Garden",
+      "description": null,
+      "image": null,
+      "siteName": "your-garden.vercel.app"
+    }
+  ],
+  [
+    "https://mygarden.digitalplat.org",
+    {
+      "url": "https://mygarden.digitalplat.org",
+      "title": null,
+      "description": null,
+      "image": null,
+      "siteName": null
+    }
+  ],
+  [
+    "https://codeforces.com/problemset/problem/71/A",
+    {
+      "url": "https://codeforces.com/problemset/problem/71/A",
+      "title": "Problem - 71A - Codeforces",
+      "description": "",
+      "image": "https://codeforces.com/codeforces.org/s/95846/images/codeforces-sponsored-by-ton.png",
+      "siteName": "Codeforces"
+    }
+  ],
+  [
+    "https://codeforces.com/codeforces.org/s/53626/images/codeforces-sponsored-by-ton.png",
+    {
+      "url": "https://codeforces.com/codeforces.org/s/53626/images/codeforces-sponsored-by-ton.png",
+      "title": "codeforces.com",
+      "description": null,
+      "image": null,
+      "siteName": "codeforces.com"
+    }
+  ],
+  [
+    "https://youtu.be/lLFoLJIXayk?si=6zd7y8pVFZzWmml1",
+    {
+      "url": "https://youtu.be/lLFoLJIXayk?si=6zd7y8pVFZzWmml1",
+      "title": "NF - FEAR",
+      "description": "Official music video for “FEAR” by NF from the FEAR EP out nowStream/Download FEAR: https://nf.lnk.to/FEARVDSubscribe to NFrealmusic on YouTube: https://nf.l...",
+      "image": "https://i.ytimg.com/vi/lLFoLJIXayk/maxresdefault.jpg",
+      "siteName": "YouTube"
+    }
+  ],
+  [
+    "https://drive.google.com/file/d/1f6S-H9BbAHbOECFsSFien2z3T3dMbkdr/view?usp=drive_link",
+    {
+      "url": "https://drive.google.com/file/d/1f6S-H9BbAHbOECFsSFien2z3T3dMbkdr/view?usp=drive_link",
+      "title": "[55-4B] [DSAI] Software Engineering (CSE0613225) Course outline_2025.pdf",
+      "description": null,
+      "image": null,
+      "siteName": "Google Docs"
+    }
+  ]
+]

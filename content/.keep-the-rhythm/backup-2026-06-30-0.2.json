@@ -10856,7 +10856,13 @@
         "filePath": "essays/on-wandering.md",
         "wordCountStart": 373,
         "charCountStart": 2092,
-        "changes": [],
+        "changes": [
+          {
+            "timeKey": "07:00",
+            "w": 0,
+            "c": 1
+          }
+        ],
         "id": 598
       },
       {
@@ -11058,9 +11064,119 @@
           }
         ],
         "id": 617
+      },
+      {
+        "date": "2026-06-30",
+        "filePath": "notes/Last.md",
+        "wordCountStart": 0,
+        "charCountStart": 0,
+        "changes": [
+          {
+            "timeKey": "06:50",
+            "w": 42,
+            "c": 402
+          },
+          {
+            "timeKey": "06:55",
+            "w": 51,
+            "c": 431
+          },
+          {
+            "timeKey": "07:00",
+            "w": -70,
+            "c": -661
+          },
+          {
+            "timeKey": "07:05",
+            "w": 12,
+            "c": 103
+          },
+          {
+            "timeKey": "07:10",
+            "w": 12,
+            "c": 94
+          },
+          {
+            "timeKey": "07:25",
+            "w": 9,
+            "c": 60
+          },
+          {
+            "timeKey": "07:30",
+            "w": 21,
+            "c": 199
+          },
+          {
+            "timeKey": "07:35",
+            "w": -25,
+            "c": -226
+          },
+          {
+            "timeKey": "07:40",
+            "w": 0,
+            "c": -4
+          },
+          {
+            "timeKey": "08:00",
+            "w": 2,
+            "c": 17
+          },
+          {
+            "timeKey": "08:05",
+            "w": 0,
+            "c": 1
+          },
+          {
+            "timeKey": "08:15",
+            "w": 1,
+            "c": 1
+          },
+          {
+            "timeKey": "08:25",
+            "w": 0,
+            "c": 1
+          },
+          {
+            "timeKey": "08:30",
+            "w": 7,
+            "c": 48
+          },
+          {
+            "timeKey": "08:40",
+            "w": -7,
+            "c": -45
+          },
+          {
+            "timeKey": "09:25",
+            "w": -3,
+            "c": -24
+          },
+          {
+            "timeKey": "09:35",
+            "w": 1,
+            "c": 9
+          }
+        ],
+        "id": 618
+      },
+      {
+        "date": "2026-06-30",
+        "filePath": "essays/on-thinking.md",
+        "wordCountStart": 425,
+        "charCountStart": 2483,
+        "changes": [],
+        "id": 619
+      },
+      {
+        "date": "2026-06-30",
+        "filePath": "notes/media-embeds-reference.md",
+        "wordCountStart": 328,
+        "charCountStart": 2245,
+        "changes": [],
+        "id": 620
       }
     ],
-    "wholeVaultWordCount": 19014,
-    "wholeVaultCharCount": 134745
+    "wholeVaultWordCount": 19160,
+    "wholeVaultCharCount": 135985
   }
 }

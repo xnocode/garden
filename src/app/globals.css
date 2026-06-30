@@ -515,6 +515,7 @@
   margin: 1.2em 0;
   border-radius: 8px;
 }
+/* PDF embed — dark themed container */
 .garden-prose iframe.media-embed,
 .garden-prose iframe.pdf-embed {
   width: 100%;
@@ -525,6 +526,118 @@
   box-shadow: var(--shadow-md);
   background: var(--surface);
 }
+/* Wrapper — keeps header + iframe together */
+.garden-prose .pdf-embed-wrapper {
+  position: relative;
+  margin: 1.2em 0;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-md);
+  background: var(--surface);
+}
+/* PDF header bar — icon, filename, open link */
+.garden-prose .pdf-embed-header {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.6rem 1rem;
+  background: linear-gradient(135deg, var(--surface-2), color-mix(in srgb, var(--garden) 5%, var(--surface-2)));
+  border-bottom: 1px solid var(--border);
+  font-size: 0.8rem;
+  font-family: var(--font-mono);
+  color: var(--muted-foreground);
+}
+.garden-prose .pdf-embed-icon {
+  display: inline-flex;
+  align-items: center;
+  color: var(--garden);
+  flex-shrink: 0;
+}
+.garden-prose .pdf-embed-icon svg {
+  display: block;
+}
+.garden-prose .pdf-embed-filename {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--foreground);
+  font-weight: 500;
+}
+/* "Open" pill button in the header bar */
+.garden-prose .pdf-embed-open {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.72rem;
+  color: var(--garden) !important;
+  border-bottom: none !important;
+  text-decoration: none !important;
+  padding: 0.2rem 0.6rem;
+  border-radius: 5px;
+  background: color-mix(in srgb, var(--garden) 14%, transparent);
+  border: 1px solid color-mix(in srgb, var(--garden) 28%, transparent);
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+  flex-shrink: 0;
+  font-family: var(--font-mono);
+  font-weight: 500;
+  letter-spacing: 0.02em;
+}
+.garden-prose .pdf-embed-open:hover {
+  background: color-mix(in srgb, var(--garden) 24%, transparent);
+  border-color: color-mix(in srgb, var(--garden) 50%, transparent);
+  color: var(--garden-hover) !important;
+  box-shadow: 0 0 10px -2px color-mix(in srgb, var(--garden) 30%, transparent);
+}
+/* The iframe itself */
+.garden-prose .pdf-embed-wrapper iframe {
+  width: 100%;
+  height: 600px;
+  border: none;
+  filter: invert(0.88) hue-rotate(180deg);
+  display: block;
+}
+/* Custom overlay button — covers the browser's native "open" icon in the iframe corner */
+.garden-prose .pdf-embed-wrapper .pdf-float-open {
+  position: absolute;
+  bottom: 12px;
+  right: 12px;
+  z-index: 10;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.3rem;
+  padding: 0.4rem 0.75rem;
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--garden) 18%, var(--surface));
+  border: 1px solid color-mix(in srgb, var(--garden) 40%, transparent);
+  color: var(--garden) !important;
+  font-size: 0.72rem;
+  font-family: var(--font-mono);
+  font-weight: 600;
+  text-decoration: none !important;
+  border-bottom: none !important;
+  letter-spacing: 0.03em;
+  box-shadow: 0 2px 12px -2px rgba(0,0,0,0.5), 0 0 0 0 color-mix(in srgb, var(--garden) 0%, transparent);
+  backdrop-filter: blur(8px);
+  transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease,
+              box-shadow 0.2s ease, transform 0.15s ease;
+  pointer-events: auto;
+}
+.garden-prose .pdf-embed-wrapper .pdf-float-open:hover {
+  background: color-mix(in srgb, var(--garden) 28%, var(--surface));
+  border-color: color-mix(in srgb, var(--garden) 65%, transparent);
+  color: var(--garden-hover) !important;
+  box-shadow: 0 4px 20px -4px rgba(0,0,0,0.6), 0 0 14px -4px color-mix(in srgb, var(--garden) 40%, transparent);
+  transform: translateY(-1px);
+}
+.garden-prose .pdf-embed-wrapper .pdf-float-open svg {
+  display: block;
+  flex-shrink: 0;
+}
+
 
 /* Highlights ==text== */
 .garden-prose mark,
@@ -814,6 +927,93 @@
 }
 .heading-copy-link:hover {
   color: var(--garden) !important;
+}
+
+/* Platform embeds (YouTube, Vimeo, SoundCloud, Spotify) */
+.garden-prose .media-embed-wrapper {
+  margin: 1.2em 0;
+}
+.garden-prose .url-preview-with-embed {
+  margin: 1.2em 0;
+}
+.garden-prose .url-preview-fallback-link {
+  display: inline-block;
+  font-size: 0.85rem;
+  font-family: var(--font-mono);
+  color: var(--garden);
+  text-decoration: none;
+  border-bottom: 1px solid color-mix(in srgb, var(--garden) 35%, transparent);
+}
+.garden-prose .url-preview-fallback-link:hover {
+  color: var(--garden-hover);
+}
+
+/* URL preview cards — dark theme */
+.garden-prose a.url-preview-card {
+  display: flex;
+  align-items: stretch;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  margin: 1em 0;
+  text-decoration: none !important;
+  border-bottom: 1px solid var(--border) !important;
+  background: linear-gradient(135deg, var(--surface), var(--surface-2));
+  transition: border-color 0.25s ease, box-shadow 0.25s ease, transform 0.25s ease;
+  max-width: 100%;
+  box-shadow: var(--shadow-sm);
+}
+.garden-prose a.url-preview-card:hover {
+  border-color: color-mix(in srgb, var(--garden) 40%, transparent) !important;
+  box-shadow: var(--shadow-md), 0 0 20px -8px color-mix(in srgb, var(--garden) 30%, transparent);
+  transform: translateY(-2px);
+  background: linear-gradient(135deg, var(--surface), color-mix(in srgb, var(--garden) 4%, var(--surface)));
+}
+.garden-prose .url-preview-img {
+  width: 130px;
+  min-width: 130px;
+  max-height: 110px;
+  object-fit: cover;
+  border-radius: 0;
+  margin: 0;
+  border: none;
+  box-shadow: none;
+  filter: brightness(0.9);
+}
+.garden-prose .url-preview-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  padding: 0.85rem 1.1rem;
+  min-width: 0;
+  flex: 1;
+}
+.garden-prose .url-preview-title {
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: var(--heading);
+  line-height: 1.3;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+.garden-prose .url-preview-desc {
+  font-size: 0.78rem;
+  color: var(--muted-foreground);
+  line-height: 1.45;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+.garden-prose .url-preview-url {
+  font-size: 0.72rem;
+  font-family: var(--font-mono);
+  color: var(--garden);
+  margin-top: auto;
 }
 
 /* Embed card styling */

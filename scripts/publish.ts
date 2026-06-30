@@ -35,6 +35,7 @@ import {
   type RenderContext,
   type WikiLinkTarget,
 } from "../src/lib/markdown";
+import { fetchUrlPreviews, findUrlsInMarkdown } from "../src/lib/url-preview";
 
 // Database is optional — only used for local dev with watch mode.
 // On Vercel/build servers we skip DB entirely and use JSON files.
@@ -242,7 +243,34 @@ async function publish() {
     createdAt: (p.date ?? new Date()).toISOString(),
   }));
 
-  const ctx: RenderContext = { slugs, aliasToSlug, noteMeta, assetBase: "", vaultPath: CONTENT_DIR, notesForGraph };
+  // Copy assets FIRST so we can build the assetNames map and pass it to pass 1
+  const assetResult = await copyAssets();
+  console.log(`  copied ${assetResult.copied} asset(s)`);
+
+  // Build assetNames map: original filename → copied name
+  const assetNames = new Map<string, string>();
+  for (const copiedName of assetResult.list) {
+    assetNames.set(copiedName.toLowerCase(), copiedName);
+    const parts = copiedName.split("-");
+    if (parts.length > 1) {
+      const withoutFirstFolder = parts.slice(1).join("-");
+      assetNames.set(withoutFirstFolder.toLowerCase(), copiedName);
+    }
+  }
+
+  const ctx: RenderContext = { slugs, aliasToSlug, noteMeta, assetBase: "", vaultPath: CONTENT_DIR, notesForGraph, assetNames };
+
+  // --- Fetch URL previews for all bare URLs in all notes ---
+  const allUrls = new Set<string>();
+  for (const p of publishable) {
+    const urls = findUrlsInMarkdown(p.content);
+    urls.forEach((u) => allUrls.add(u));
+  }
+  let urlPreviews: Map<string, any> = new Map();
+  if (allUrls.size > 0) {
+    urlPreviews = await fetchUrlPreviews(Array.from(allUrls));
+  }
+  ctx.urlPreviews = urlPreviews;
 
   interface RenderedNote extends ParsedFile {
     html: string;
@@ -292,8 +320,24 @@ async function publish() {
   let j = 0;
   for (const r of pass1) {
     j++;
-    // Only re-render if this note's raw content contains a note-embed (![[...]])
-    const hasNoteEmbed = /!\[\[[^\]]+\]\]/.test(r.content);
+    // Only re-render if this note has actual NOTE embeds (![[NoteName]]).
+    // Check raw content for ![[...]] where the target is NOT a media file
+    // and IS a known note slug.
+    const slugSet = new Set(publishable.map((p) => p.slug));
+    let hasNoteEmbed = false;
+    const embedRegex = /!\[\[([^\]|#]+)(?:[|#][^\]]*)?\]\]/g;
+    let em: RegExpExecArray | null;
+    while ((em = embedRegex.exec(r.content)) !== null) {
+      const target = em[1].trim();
+      // Skip media files
+      if (/\.(png|jpe?g|gif|svg|webp|avif|bmp|ico|mp4|webm|ogv|mov|m4v|avi|mkv|mp3|wav|ogg|oga|flac|m4a|aac|opus|pdf)$/i.test(target)) continue;
+      // Check if target resolves to a known note
+      const targetSlug = slugify(target);
+      if (slugSet.has(targetSlug)) {
+        hasNoteEmbed = true;
+        break;
+      }
+    }
     if (!hasNoteEmbed) {
       rendered.push(r);
       continue;
@@ -315,10 +359,6 @@ async function publish() {
     }
   }
   process.stdout.write("\n");
-
-  // Copy assets
-  const assetResult = await copyAssets();
-  console.log(`  copied ${assetResult.copied} asset(s)`);
 
   // --- Export JSON data files (for serverless deployment without DB) ---
   await exportJsonData(rendered);

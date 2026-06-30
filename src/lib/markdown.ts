@@ -91,6 +91,14 @@ export interface RenderContext {
     publishDate: string | null;
     createdAt: string;
   }>;
+  /**
+   * Map of filename → copied asset name. When a note embeds `![[sample-audio.wav]]`,
+   * we look up the actual copied filename (e.g. "assets-sample-audio.wav")
+   * in this map. Keyed by the original filename (case-insensitive).
+   */
+  assetNames?: Map<string, string>;
+  /** URL previews — map of URL → {title, description, image, siteName}. */
+  urlPreviews?: Map<string, { title: string | null; description: string | null; image: string | null; siteName: string | null }>;
 }
 
 // ----------------------------------------------------------------------------
@@ -180,6 +188,66 @@ const IMAGE_EXT = /\.(png|jpe?g|gif|svg|webp|avif|bmp|ico)$/i;
 const VIDEO_EXT = /\.(mp4|webm|ogv|mov|m4v|avi|mkv)$/i;
 const AUDIO_EXT = /\.(mp3|wav|ogg|oga|flac|m4a|aac|opus)$/i;
 const PDF_EXT = /\.pdf$/i;
+
+/**
+ * Detect known embeddable platforms (YouTube, Vimeo, SoundCloud, etc.)
+ * and return the embed URL. Returns null if not a recognized platform.
+ */
+function getEmbedUrl(url: string): string | null {
+  // YouTube: youtube.com/watch?v=ID, youtu.be/ID, youtube.com/embed/ID
+  const ytMatch = url.match(
+    /(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([\w-]{11})/
+  );
+  if (ytMatch) return `https://www.youtube.com/embed/${ytMatch[1]}`;
+
+  // Vimeo: vimeo.com/ID
+  const vimeoMatch = url.match(/vimeo\.com\/(\d+)/);
+  if (vimeoMatch) return `https://player.vimeo.com/video/${vimeoMatch[1]}`;
+
+  // SoundCloud: soundcloud.com/artist/track
+  if (url.includes("soundcloud.com/")) {
+    return `https://w.soundcloud.com/player/?url=${encodeURIComponent(
+      url
+    )}&color=%2384a59d&auto_play=false`;
+  }
+
+  // Spotify: open.spotify.com/track/ID, /album/ID, /episode/ID, /show/ID
+  const spotifyMatch = url.match(
+    /open\.spotify\.com\/(track|album|episode|show|playlist)\/([\w]+)/
+  );
+  if (spotifyMatch) {
+    return `https://open.spotify.com/embed/${spotifyMatch[1]}/${spotifyMatch[2]}`;
+  }
+
+  // GitHub Gist: gist.github.com/user/ID
+  const gistMatch = url.match(/gist\.github\.com\/([\w-]+)\/([\w]+)/);
+  if (gistMatch)
+    return `https://gist.github.com/${gistMatch[1]}/${gistMatch[2]}.js`;
+
+  // Google Drive: drive.google.com/file/d/ID/view
+  const gdriveMatch = url.match(/drive\.google\.com\/file\/d\/([\w-]+)/);
+  if (gdriveMatch)
+    return `https://drive.google.com/file/d/${gdriveMatch[1]}/preview`;
+
+  // Google Docs: docs.google.com/document/d/ID
+  const gdocMatch = url.match(/docs\.google\.com\/document\/d\/([\w-]+)/);
+  if (gdocMatch)
+    return `https://docs.google.com/document/d/${gdocMatch[1]}/preview`;
+
+  // Google Slides: docs.google.com/presentation/d/ID
+  const gslidesMatch = url.match(
+    /docs\.google\.com\/presentation\/d\/([\w-]+)/
+  );
+  if (gslidesMatch)
+    return `https://docs.google.com/presentation/d/${gslidesMatch[1]}/embed`;
+
+  // CodePen: codepen.io/user/pen/ID
+  const codepenMatch = url.match(/codepen\.io\/([\w-]+)\/pen\/([\w-]+)/);
+  if (codepenMatch)
+    return `https://codepen.io/${codepenMatch[1]}/embed/${codepenMatch[2]}`;
+
+  return null;
+}
 
 /**
  * Remark plugin: parse [[wikilinks]] and ![[embeds]] from text nodes.
@@ -355,6 +423,188 @@ export function remarkInlineTags(tags: string[]) {
   };
 }
 
+/** Remark plugin: convert bare URLs into link preview nodes or media embeds. */
+export function remarkUrlPreviews() {
+  return (tree: Root) => {
+    // Track URLs we've already converted to avoid duplicates
+    const seenUrls = new Set<string>();
+
+    // First, remove any autolink <a> nodes created by GFM that point to
+    // external URLs — we'll replace them with our own linkPreview nodes.
+    visit(tree, "link", (node: any, index, parent) => {
+      if (!parent || index === null) return;
+      const url = node.url as string;
+      if (!url || !/^https?:\/\//i.test(url)) return;
+      // Check if this is an autolink (no text children, or text == url)
+      const text = (node.children || [])
+        .map((c: any) => (c.type === "text" ? c.value : ""))
+        .join("");
+      if (!text || text === url) {
+        // Skip if already seen (deduplicate)
+        if (seenUrls.has(url)) {
+          parent.children.splice(index, 1);
+          return;
+        }
+        seenUrls.add(url);
+
+        const embedUrl = getEmbedUrl(url);
+        if (embedUrl) {
+          parent.children[index] = {
+            type: "linkPreview",
+            url,
+            embedUrl,
+          } as any;
+        } else if (AUDIO_EXT.test(url)) {
+          parent.children[index] = {
+            type: "embed",
+            target: { original: url, slug: url, exists: true },
+            raw: url,
+            isImage: false,
+            isVideo: false,
+            isAudio: true,
+            isPdf: false,
+            alt: undefined,
+          } as any;
+        } else if (VIDEO_EXT.test(url)) {
+          parent.children[index] = {
+            type: "embed",
+            target: { original: url, slug: url, exists: true },
+            raw: url,
+            isImage: false,
+            isVideo: true,
+            isAudio: false,
+            isPdf: false,
+            alt: undefined,
+          } as any;
+        } else if (PDF_EXT.test(url)) {
+          parent.children[index] = {
+            type: "embed",
+            target: { original: url, slug: url, exists: true },
+            raw: url,
+            isImage: false,
+            isVideo: false,
+            isAudio: false,
+            isPdf: true,
+            alt: undefined,
+          } as any;
+        } else if (IMAGE_EXT.test(url)) {
+          parent.children[index] = {
+            type: "embed",
+            target: { original: url, slug: url, exists: true },
+            raw: url,
+            isImage: true,
+            isVideo: false,
+            isAudio: false,
+            isPdf: false,
+            alt: undefined,
+          } as any;
+        } else {
+          parent.children[index] = {
+            type: "linkPreview",
+            url,
+          } as any;
+        }
+      }
+    });
+    // Then, process text nodes for bare URLs — but skip text that's already
+    // inside a link node, and skip URLs we've already converted
+    visit(tree, "text", (node, index, parent) => {
+      if (parent && (parent as any).type === "link") return;
+      const value = (node as Text).value;
+      // Match bare URLs not preceded by [ or (
+      const regex = /(?<![\[(])https?:\/\/[^\s<>\])"',)]+/gi;
+      const segments: RootContent[] = [];
+      let last = 0;
+      let m: RegExpExecArray | null;
+      while ((m = regex.exec(value)) !== null) {
+        if (m.index > last) {
+          segments.push({ type: "text", value: value.slice(last, m.index) });
+        }
+        let url = m[0].replace(/[.,;!?)]+$/, "");
+        // Check if this URL is inside a markdown link [text](url) — if so, skip
+        const beforeText = value.slice(Math.max(0, m.index - 5), m.index);
+        if (/\]\($/.test(beforeText)) {
+          segments.push({ type: "text", value: m[0] });
+          last = m.index + m[0].length;
+          continue;
+        }
+        // Check if the URL is a known embeddable platform (YouTube, Vimeo, etc.)
+        const embedUrl = getEmbedUrl(url);
+        // Skip if already converted (deduplicate)
+        if (seenUrls.has(url)) {
+          last = m.index + m[0].length;
+          continue;
+        }
+        seenUrls.add(url);
+        if (embedUrl) {
+          segments.push({
+            type: "linkPreview",
+            url,
+            embedUrl,
+          } as any);
+        } else if (AUDIO_EXT.test(url)) {
+          segments.push({
+            type: "embed",
+            target: { original: url, slug: url, exists: true },
+            raw: url,
+            isImage: false,
+            isVideo: false,
+            isAudio: true,
+            isPdf: false,
+            alt: undefined,
+          } as any);
+        } else if (VIDEO_EXT.test(url)) {
+          segments.push({
+            type: "embed",
+            target: { original: url, slug: url, exists: true },
+            raw: url,
+            isImage: false,
+            isVideo: true,
+            isAudio: false,
+            isPdf: false,
+            alt: undefined,
+          } as any);
+        } else if (PDF_EXT.test(url)) {
+          segments.push({
+            type: "embed",
+            target: { original: url, slug: url, exists: true },
+            raw: url,
+            isImage: false,
+            isVideo: false,
+            isAudio: false,
+            isPdf: true,
+            alt: undefined,
+          } as any);
+        } else if (IMAGE_EXT.test(url)) {
+          segments.push({
+            type: "embed",
+            target: { original: url, slug: url, exists: true },
+            raw: url,
+            isImage: true,
+            isVideo: false,
+            isAudio: false,
+            isPdf: false,
+            alt: undefined,
+          } as any);
+        } else {
+          segments.push({
+            type: "linkPreview",
+            url,
+          } as any);
+        }
+        last = m.index + m[0].length;
+      }
+      if (segments.length === 0) return;
+      if (last < value.length) {
+        segments.push({ type: "text", value: value.slice(last) });
+      }
+      if (parent && index !== null) {
+        parent.children.splice(index, 1, ...segments);
+      }
+    });
+  };
+}
+
 // ----------------------------------------------------------------------------
 // remark-rehype custom handlers (for our custom mdast node types)
 // ----------------------------------------------------------------------------
@@ -383,8 +633,7 @@ export const handlers = {
     };
   },
   embed(_h: any, node: EmbedNode) {
-    const assetName = node.raw.replace(/[\\/]/g, "-");
-    const src = `${ctx_assetBase(node)}/content-assets/${assetName}`;
+    const src = resolveAssetUrl(node.raw);
     if (node.isImage) {
       const properties: Record<string, unknown> = {
         src,
@@ -422,15 +671,33 @@ export const handlers = {
       };
     }
     if (node.isPdf) {
+      const filename = (node.alt || node.target.original || src).split("/").pop() || "document.pdf";
+      const pdfIconSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="15" y2="17"/></svg>`;
+      const extIconSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>`;
       return {
         type: "element",
-        tagName: "iframe",
-        properties: {
-          src,
-          className: ["media-embed", "pdf-embed"],
-          title: node.alt || node.target.original,
-        },
-        children: [],
+        tagName: "div",
+        properties: { className: ["pdf-embed-wrapper"] },
+        children: [
+          {
+            type: "raw",
+            value: `<div class="pdf-embed-header"><span class="pdf-embed-icon">${pdfIconSvg}</span><span class="pdf-embed-filename">${filename}</span><a class="pdf-embed-open" href="${src}" target="_blank" rel="noopener noreferrer">Open ${extIconSvg}</a></div>`,
+          } as any,
+          {
+            type: "element",
+            tagName: "iframe",
+            properties: {
+              src,
+              className: ["pdf-embed"],
+              title: node.alt || node.target.original,
+            },
+            children: [],
+          },
+          {
+            type: "raw",
+            value: `<a class="pdf-float-open" href="${src}" target="_blank" rel="noopener noreferrer">${extIconSvg} Open PDF</a>`,
+          } as any,
+        ],
       };
     }
     // True transclusion: if we have the target's pre-rendered body, inline it.
@@ -530,6 +797,41 @@ export const handlers = {
       children: [{ type: "text", value: `#${node.tag}` }],
     };
   },
+  linkPreview(_h: any, node: { url: string; embedUrl?: string }) {
+    const url = node.url;
+    // If this is an embeddable platform (YouTube, Vimeo, etc.), render iframe
+    if (node.embedUrl) {
+      const isSoundCloud = node.embedUrl.includes("w.soundcloud.com");
+      const isSpotify = node.embedUrl.includes("open.spotify.com");
+      const height = isSoundCloud ? "166px" : isSpotify ? "152px" : "400px";
+      return {
+        type: "raw",
+        value: `<div class="media-embed-wrapper"><iframe src="${escapeHtmlEntities(node.embedUrl)}" class="media-embed platform-embed" style="width:100%;height:${height};border:none;border-radius:12px;margin:0;" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy" title="${escapeHtmlEntities(url)}"></iframe></div>`,
+      } as any;
+    }
+    const preview = _ctx?.urlPreviews?.get(url);
+    if (preview && preview.title) {
+      // Build the card as an HTML string (raw node) to avoid rehype-raw
+      // duplicating hast elements.
+      let imgHtml = "";
+      if (preview.image) {
+        imgHtml = `<img src="${escapeHtmlEntities(preview.image)}" alt="" class="url-preview-img" loading="lazy">`;
+      }
+      let descHtml = "";
+      if (preview.description) {
+        const desc = preview.description.slice(0, 150) + (preview.description.length > 150 ? "…" : "");
+        descHtml = `<span class="url-preview-desc">${escapeHtmlEntities(desc)}</span>`;
+      }
+      const siteName = preview.siteName || url.replace(/^https?:\/\//, "").split("/")[0];
+      const html = `<a class="url-preview-card" href="${escapeHtmlEntities(url)}" target="_blank" rel="noopener noreferrer">${imgHtml}<span class="url-preview-text"><span class="url-preview-title">${escapeHtmlEntities(preview.title)}</span>${descHtml}<span class="url-preview-url">${escapeHtmlEntities(siteName)}</span></span></a>`;
+      return { type: "raw", value: html } as any;
+    }
+    // No preview available — just a plain link
+    return {
+      type: "raw",
+      value: `<a href="${escapeHtmlEntities(url)}" target="_blank" rel="noopener noreferrer" class="external-link">${escapeHtmlEntities(url)}</a>`,
+    } as any;
+  },
 };
 
 // Tiny helpers so handlers can read the context via closure created in render().
@@ -540,6 +842,17 @@ function ctx_assetBase(_node: EmbedNode) {
 function ctx_noteMeta(_node: EmbedNode) {
   return _ctx?.noteMeta.get(_node.target.slug);
 }
+function resolveAssetUrl(rawUrl: string): string {
+  const isExternalUrl = /^https?:\/\//i.test(rawUrl);
+  if (isExternalUrl) return rawUrl;
+  const rawName = rawUrl.replace(/[\\/]/g, "-");
+  const assetName = _ctx?.assetNames?.get(rawUrl.toLowerCase())
+    ?? _ctx?.assetNames?.get(rawName.toLowerCase())
+    ?? rawName;
+  const assetBase = _ctx?.assetBase ?? "";
+  return `${assetBase}/content-assets/${assetName}`;
+}
+
 function escapeHtmlEntities(s: string): string {
   return s
     .replace(/&/g, "&amp;")
@@ -1062,6 +1375,188 @@ export function rehypeObsidianInk() {
  * Renders a GitHub-style heatmap grid of colored squares.
  */
 
+/**
+ * Rehype plugin: Fix broken images.
+ * When markdown `![alt](url)` is used with a non-image URL (like a YouTube
+ * link or a webpage), the result is a broken <img> tag. This plugin:
+ * 1. Checks if the <img> src is actually an image (by extension)
+ * 2. If NOT an image, checks if it's an embeddable platform → iframe
+ * 3. If NOT embeddable, converts to a link preview card with the alt text
+ */
+export function rehypeFixBrokenImages() {
+  return (tree: HastRoot) => {
+    const replacements: Array<{
+      index: number;
+      parent: Element;
+      node: Element;
+      grandParent: Element | HastRoot | null;
+      parentIndex: number | null;
+    }> = [];
+    visit(tree, "element", (node: Element, index, parent) => {
+      if (node.tagName !== "img" || !parent || index === null) return;
+      const src = node.properties?.src as string | undefined;
+      if (!src || typeof src !== "string") return;
+      // Skip if it's a data URI (ink drawings, etc.)
+      if (src.startsWith("data:")) return;
+      // Skip if it's a local path (starts with /)
+      if (src.startsWith("/")) return;
+      // Check if it's actually an image URL
+      if (IMAGE_EXT.test(src)) return;
+      // It's a broken image — check for embed or link preview
+      // We need to also find the grandparent to be able to hoist a block element out of <p>
+      replacements.push({ index, parent: parent as Element, node, grandParent: null, parentIndex: null });
+    });
+    // Second pass: find grandparents for any parent <p> nodes
+    visit(tree, "element", (node: Element, index, parent) => {
+      for (const r of replacements) {
+        if (r.parent === node && node.tagName === "p" && index !== null && parent) {
+          r.grandParent = parent as Element;
+          r.parentIndex = index;
+        }
+      }
+    });
+    for (const r of replacements) {
+      const src = r.node.properties?.src as string;
+      const alt = (r.node.properties?.alt as string) || src;
+      const embedUrl = getEmbedUrl(src);
+      if (embedUrl) {
+        // Render as iframe embed
+        const isSoundCloud = embedUrl.includes("w.soundcloud.com");
+        const isSpotify = embedUrl.includes("open.spotify.com");
+        const isGoogle = embedUrl.includes("google.com");
+        const height = isSoundCloud
+          ? "166px"
+          : isSpotify
+            ? "152px"
+            : isGoogle
+              ? "480px"
+              : "400px";
+        r.parent.children[r.index] = {
+          type: "element",
+          tagName: "div",
+          properties: { className: ["media-embed-wrapper"] },
+          children: [
+            {
+              type: "element",
+              tagName: "iframe",
+              properties: {
+                src: embedUrl,
+                className: ["media-embed", "platform-embed"],
+                style: `width:100%;height:${height};border:none;border-radius:12px;margin:0;`,
+                allow:
+                  "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture",
+                allowFullScreen: true,
+                loading: "lazy",
+                title: alt,
+              },
+              children: [],
+            },
+          ],
+        };
+      } else if (AUDIO_EXT.test(src)) {
+        const resolvedSrc = resolveAssetUrl(src);
+        r.parent.children[r.index] = {
+          type: "element",
+          tagName: "audio",
+          properties: {
+            src: resolvedSrc,
+            controls: true,
+            className: ["media-embed", "audio-embed"],
+            preload: "metadata",
+          },
+          children: [],
+        };
+      } else if (VIDEO_EXT.test(src)) {
+        const resolvedSrc = resolveAssetUrl(src);
+        r.parent.children[r.index] = {
+          type: "element",
+          tagName: "video",
+          properties: {
+            src: resolvedSrc,
+            controls: true,
+            className: ["media-embed", "video-embed"],
+            preload: "metadata",
+          },
+          children: [],
+        };
+      } else if (PDF_EXT.test(src)) {
+        const resolvedSrc = resolveAssetUrl(src);
+        const pdfFilename = alt || src.split("/").pop() || "document.pdf";
+        const pdfIconSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="15" y2="17"/></svg>`;
+        const extIconSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>`;
+        r.parent.children[r.index] = {
+          type: "element",
+          tagName: "div",
+          properties: { className: ["pdf-embed-wrapper"] },
+          children: [
+            {
+              type: "raw",
+              value: `<div class="pdf-embed-header"><span class="pdf-embed-icon">${pdfIconSvg}</span><span class="pdf-embed-filename">${pdfFilename}</span><a class="pdf-embed-open" href="${resolvedSrc}" target="_blank" rel="noopener noreferrer">Open ${extIconSvg}</a></div>`,
+            } as any,
+            {
+              type: "element",
+              tagName: "iframe",
+              properties: {
+                src: resolvedSrc,
+                className: ["pdf-embed"],
+                title: alt,
+              },
+              children: [],
+            },
+            {
+              type: "raw",
+              value: `<a class="pdf-float-open" href="${resolvedSrc}" target="_blank" rel="noopener noreferrer">${extIconSvg} Open PDF</a>`,
+            } as any,
+          ],
+        };
+      } else {
+        // Render as a preview card (no iframe — websites block embedding)
+        const preview = _ctx?.urlPreviews?.get(src);
+        const title = preview?.title || alt;
+        const desc = preview?.description || null;
+        const img = preview?.image || null;
+        const siteName = preview?.siteName || src.replace(/^https?:\/\//, "").split("/")[0];
+        const cardChildren: ElementContent[] = [];
+        if (img) {
+          cardChildren.push({
+            type: "element",
+            tagName: "img",
+            properties: { src: img, alt: "", className: ["url-preview-img"], loading: "lazy" },
+            children: [],
+          });
+        }
+        const textChildren: ElementContent[] = [
+          { type: "element", tagName: "span", properties: { className: ["url-preview-title"] }, children: [{ type: "text", value: title }] },
+        ];
+        if (desc) {
+          textChildren.push({ type: "element", tagName: "span", properties: { className: ["url-preview-desc"] }, children: [{ type: "text", value: desc.slice(0, 150) + (desc.length > 150 ? "…" : "") }] });
+        }
+        textChildren.push({ type: "element", tagName: "span", properties: { className: ["url-preview-url"] }, children: [{ type: "text", value: siteName }] });
+        cardChildren.push({ type: "element", tagName: "span", properties: { className: ["url-preview-text"] }, children: textChildren });
+        const cardNode: Element = {
+          type: "element",
+          tagName: "a",
+          properties: { className: ["url-preview-card"], href: src, target: "_blank", rel: "noopener noreferrer" },
+          children: cardChildren,
+        };
+        // If the parent is a <p> that only contains this image (sole non-whitespace child),
+        // replace the <p> itself with the card so the flex block isn't inside a paragraph.
+        // A <div>/<a display:flex> inside <p> is invalid HTML and browsers split it visually.
+        if (
+          r.parent.tagName === "p" &&
+          r.parent.children.filter((c) => !(c.type === "text" && /^\s*$/.test((c as { value: string }).value))).length === 1 &&
+          r.grandParent !== null &&
+          r.parentIndex !== null
+        ) {
+          (r.grandParent as Element).children[r.parentIndex] = cardNode;
+        } else {
+          r.parent.children[r.index] = cardNode;
+        }
+      }
+    }
+  };
+}
+
 export function rehypeContributionGraph() {
   return (tree: HastRoot) => {
     const replacements: Array<{ index: number; parent: Element; node: Element; }> = [];
@@ -1260,10 +1755,10 @@ export async function renderMarkdown(
     .use(remarkObsidianLinks, ctx, links)
     .use(remarkHighlightsAndComments)
     .use(remarkInlineTags, tags)
+    .use(remarkUrlPreviews)
     .use(remarkRehype, {
       allowDangerousHtml: true,
       handlers,
-      // Pass through unknown node types safely
     })
     .use(rehypeRaw)
     .use(rehypeKatex)
@@ -1277,6 +1772,7 @@ export async function renderMarkdown(
     .use(rehypeCallouts)
     .use(rehypeObsidianInk)
     .use(rehypeContributionGraph)
+    .use(rehypeFixBrokenImages)
     .use(rehypeStringify, { allowDangerousHtml: true });
 
   const file = await processor.process(body);
