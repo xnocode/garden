@@ -6,15 +6,54 @@ date: 2024-09-03
 tags: [reference, graph, visualization]
 ---
 
-This note tests the **Obsidian Contribution Graph** plugin integration. In Obsidian, you use a `contributionGraph` code block with YAML config. On the website, it renders as a GitHub-style heatmap.
+This note tests the **Obsidian Contribution Graph** plugin integration. The code blocks below use the exact same format as the plugin.
 
-## Default graph (140 days, sage theme)
+> [!info] Real data
+> The graph uses **real data** from your notes — it counts notes by their `date` field, filtered by the tag in `dataSource.value`. Make sure the date range covers when your notes were published.
+
+## About tag (August 2024)
+
+This graph shows notes tagged `#about`. There's 1 note with this tag, published Aug 15, 2024.
 
 ```contributionGraph
-title: 'Garden Activity — Last 140 Days'
-days: 140
-query: '#garden'
-graphType: 'default'
+title: Contributions
+graphType: default
+dateRangeType: FIXED_DATE_RANGE
+startOfWeek: 0
+showCellRuleIndicators: true
+titleStyle:
+  textAlign: left
+  fontSize: 15px
+  fontWeight: normal
+dataSource:
+  type: PAGE
+  value: "#about"
+  dateField: {}
+fromDate: 2024-08-01
+toDate: 2024-09-30
+cellStyleRules: []
+```
+
+## Garden tag (full year 2024)
+
+This graph shows notes tagged `#garden` — there are 7 notes with this tag.
+
+```contributionGraph
+title: Garden Activity 2024
+graphType: default
+dateRangeType: FIXED_DATE_RANGE
+startOfWeek: 0
+showCellRuleIndicators: true
+fromDate: 2024-07-01
+toDate: 2024-12-31
+titleStyle:
+  textAlign: center
+  fontSize: 18px
+  fontWeight: bold
+dataSource:
+  type: PAGE
+  value: "#garden"
+  dateField: {}
 cellStyleRules:
   - color: '#1a3a2a', min: 1, max: 2
   - color: '#2d5f3f', min: 2, max: 3
@@ -22,27 +61,26 @@ cellStyleRules:
   - color: '#84a59d', min: 4, max: 999
 ```
 
-## Full year (365 days)
+## Essay tag (amber theme, August 2024)
+
+This graph shows notes tagged `#essay` — there are 14 notes with this tag.
 
 ```contributionGraph
-title: 'Garden Activity — Full Year'
-days: 365
-query: '#garden'
-graphType: 'default'
-cellStyleRules:
-  - color: '#1a3a2a', min: 1, max: 2
-  - color: '#2d5f3f', min: 2, max: 3
-  - color: '#4a8c5f', min: 3, max: 4
-  - color: '#84a59d', min: 4, max: 999
-```
-
-## Amber theme
-
-```contributionGraph
-title: 'Writing Streak'
-days: 90
-query: '#essay'
-graphType: 'default'
+title: Writing Streak
+graphType: default
+dateRangeType: FIXED_DATE_RANGE
+startOfWeek: 1
+showCellRuleIndicators: true
+titleStyle:
+  textAlign: left
+  fontSize: 14px
+  fontWeight: normal
+dataSource:
+  type: PAGE
+  value: "#essay"
+  dateField: {}
+fromDate: 2024-07-01
+toDate: 2024-09-30
 cellStyleRules:
   - color: '#3d2e1a', min: 1, max: 2
   - color: '#7a5c2e', min: 2, max: 3
@@ -50,13 +88,9 @@ cellStyleRules:
   - color: '#e8b86d', min: 4, max: 999
 ```
 
-> [!info] How it works
-> In Obsidian, the plugin runs a Dataview query to count notes per day. On the website, since Dataview isn't available, the graph shows sample data distributed across the date range. To show real data, add a `data` array to the YAML:
+> [!tip] How it works
+> The graph counts notes by their `date` frontmatter field, filtered by the tag in `dataSource.value`. Make sure your graph's date range (`fromDate`/`toDate` or `dateRangeValue`) covers the dates your notes were published.
 >
-> ```yaml
-> data:
->   - date: '2024-08-15', value: 3
->   - date: '2024-08-16', value: 1
-> ```
+> **Example:** If your notes are dated August 2024, set `fromDate: 2024-08-01` and `toDate: 2024-08-31` — or use `dateRangeValue: 700` for the last 700 days (which would cover back to August 2024).
 
 See [[Code Execution Playground]], [[Media Embeds Reference]], [[Setup Guide]].

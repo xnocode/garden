@@ -84,6 +84,13 @@ export interface RenderContext {
   noteBodies?: Map<string, string>;
   /** Root path of the Obsidian vault (for reading .drawing/.writing files). */
   vaultPath?: string;
+  /** All notes with tags + dates — used by contribution graph for real data. */
+  notesForGraph?: Array<{
+    slug: string;
+    tags: string[];
+    publishDate: string | null;
+    createdAt: string;
+  }>;
 }
 
 // ----------------------------------------------------------------------------
@@ -1054,228 +1061,185 @@ export function rehypeObsidianInk() {
  *
  * Renders a GitHub-style heatmap grid of colored squares.
  */
+
 export function rehypeContributionGraph() {
   return (tree: HastRoot) => {
-    const replacements: Array<{
-      index: number;
-      parent: Element;
-      node: Element;
-    }> = [];
+    const replacements: Array<{ index: number; parent: Element; node: Element; }> = [];
     visit(tree, "element", (node: Element, index, parent) => {
       if (node.tagName !== "pre" || !parent || index === null) return;
-      const codeEl = node.children?.find(
-        (c): c is Element => c.type === "element" && c.tagName === "code"
-      );
+      const codeEl = node.children?.find((c): c is Element => c.type === "element" && c.tagName === "code");
       if (!codeEl) return;
       const cls = (codeEl.properties?.className as string[] | undefined) ?? [];
       if (!cls.includes("language-contributionGraph")) return;
       replacements.push({ index, parent, node });
     });
     for (const r of replacements) {
-      const codeEl = r.node.children?.find(
-        (c): c is Element => c.type === "element" && c.tagName === "code"
-      );
+      const codeEl = r.node.children?.find((c): c is Element => c.type === "element" && c.tagName === "code");
       if (!codeEl) continue;
-      const yamlText = (codeEl.children || [])
-        .map((c) => (c.type === "text" ? c.value : ""))
-        .join("");
+      const yamlText = (codeEl.children || []).map((c) => (c.type === "text" ? c.value : "")).join("");
       const graphHtml = renderContributionGraphYaml(yamlText);
-      // Use a raw node and mark the parent to allow dangerous HTML.
-      // rehype-stringify with allowDangerousHtml will output it as-is.
-      r.parent.children[r.index] = {
-        type: "raw",
-        value: graphHtml,
-      } as any;
+      r.parent.children[r.index] = { type: "raw", value: graphHtml } as any;
     }
   };
 }
 
-/** Parse YAML config and render a contribution graph as HTML. */
 function renderContributionGraphYaml(yamlText: string): string {
-  // Simple YAML parsing (avoid adding a yaml dependency)
-  const config = parseSimpleYaml(yamlText);
+  const config = parseYamlNested(yamlText);
   const title = config.title || "Contributions";
-  const days = parseInt(config.days || "140", 10);
-  const graphType = config.graphType || "default";
-  const cellStyleRules: Array<{
-    color?: string;
-    text?: string;
-    min: number;
-    max: number;
-  }> = config.cellStyleRules || [
-    { color: "#1a3a2a", min: 1, max: 2 },
-    { color: "#2d5f3f", min: 2, max: 3 },
-    { color: "#4a8c5f", min: 3, max: 4 },
-    { color: "#84a59d", min: 4, max: 999 },
-  ];
-  // Explicit data or generate from publishDate of notes
-  let data: Array<{ date: string; value: number; summary?: string }> =
-    config.data || [];
-  if (data.length === 0 && _ctx?.noteMeta) {
-    // Generate sample data: distribute notes across the date range
-    data = generateSampleData(days, cellStyleRules);
+  const startOfWeek = config.startOfWeek ?? 0;
+  let days = 140;
+  let fromDate: Date;
+  let toDate: Date;
+  if (config.dateRangeValue) days = parseInt(String(config.dateRangeValue), 10);
+  else if (config.days) days = parseInt(String(config.days), 10);
+  if (config.fromDate && config.toDate) {
+    fromDate = new Date(String(config.fromDate));
+    toDate = new Date(String(config.toDate));
+  } else {
+    toDate = new Date();
+    fromDate = new Date();
+    fromDate.setDate(fromDate.getDate() - days);
   }
-
-  // Build the heatmap grid (GitHub-style: columns=weeks, rows=days)
-  const today = new Date();
-  const startDate = new Date(today);
-  startDate.setDate(startDate.getDate() - days);
-  // Align to start of week (Sunday)
-  startDate.setDate(startDate.getDate() - startDate.getDay());
-
+  const cellStyleRules = (Array.isArray(config.cellStyleRules) && config.cellStyleRules.length > 0)
+    ? config.cellStyleRules
+    : [{ color: "#1a3a2a", min: 1, max: 2 }, { color: "#2d5f3f", min: 2, max: 3 }, { color: "#4a8c5f", min: 3, max: 4 }, { color: "#84a59d", min: 4, max: 999 }];
+  // Extract the tag filter from dataSource.value (e.g. "#about" → "about")
+  const dataSource = config.dataSource || {};
+  const tagFilter = dataSource.value || null;
+  // Generate REAL data from actual notes (filtered by tag)
+  const data = generateContributionData(fromDate, toDate, tagFilter);
   const weeks: Array<Array<{ date: string; value: number } | null>> = [];
-  const current = new Date(startDate);
-  while (current <= today) {
+  const current = new Date(fromDate);
+  const dayOffset = current.getDay() - (startOfWeek as number);
+  current.setDate(current.getDate() - ((dayOffset + 7) % 7));
+  while (current <= toDate) {
     const week: Array<{ date: string; value: number } | null> = [];
     for (let d = 0; d < 7; d++) {
       const dateStr = current.toISOString().slice(0, 10);
-      const entry = data.find((e) => e.date === dateStr);
-      if (current > today) {
-        week.push(null);
-      } else {
-        week.push({ date: dateStr, value: entry?.value || 0 });
-      }
+      if (current < fromDate || current > toDate) week.push(null);
+      else { const entry = data.find((e) => e.date === dateStr); week.push({ date: dateStr, value: entry?.value || 0 }); }
       current.setDate(current.getDate() + 1);
     }
     weeks.push(week);
   }
-
-  // Render cells
   const cellColors = (value: number): string => {
     if (value === 0) return "var(--surface-2)";
-    for (const rule of cellStyleRules) {
-      if (value >= rule.min && value < rule.max) {
-        return rule.color || "var(--garden)";
-      }
-    }
+    for (const rule of cellStyleRules) { if (value >= rule.min && value < rule.max) return rule.color || "var(--garden)"; }
     return "var(--surface-2)";
   };
-
-  const dayLabels = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+  const ts = config.titleStyle || {};
+  const showLegend = config.showCellRuleIndicators !== false;
   const monthLabels: string[] = [];
   let lastMonth = -1;
   for (const week of weeks) {
     const firstDay = week.find((d) => d);
-    if (firstDay) {
-      const month = new Date(firstDay.date).getMonth();
-      monthLabels.push(month !== lastMonth ? dayLabels[0] ? new Date(firstDay.date).toLocaleDateString("en", { month: "short" }) : "" : "");
-      lastMonth = month;
-    } else {
-      monthLabels.push("");
-    }
+    if (firstDay) { const month = new Date(firstDay.date).getMonth(); if (month !== lastMonth) { monthLabels.push(new Date(firstDay.date).toLocaleDateString("en", { month: "short" })); lastMonth = month; } else monthLabels.push(""); } else monthLabels.push("");
   }
-
   let html = `<div class="contribution-graph">`;
-  html += `<div class="contribution-graph-title" style="font-family:var(--font-serif);font-size:1.1rem;font-weight:600;color:var(--heading);margin-bottom:0.75rem;">${escapeHtmlEntities(title)}</div>`;
-  html += `<div class="contribution-graph-scroll" style="overflow-x:auto;padding-bottom:0.5rem;">`;
-  html += `<div style="display:inline-flex;flex-direction:column;gap:0.25rem;min-width:max-content;">`;
-  // Month labels
+  html += `<div class="contribution-graph-title" style="font-family:var(--font-serif);font-size:${ts.fontSize || "1.1rem"};font-weight:${ts.fontWeight || "600"};color:${ts.color || "var(--heading)"};text-align:${ts.textAlign || "left"};margin-bottom:0.75rem;">${escapeHtmlEntities(title)}</div>`;
+  html += `<div class="contribution-graph-scroll" style="overflow-x:auto;padding-bottom:0.5rem;"><div style="display:inline-flex;flex-direction:column;gap:0.25rem;min-width:max-content;">`;
   html += `<div style="display:flex;gap:3px;margin-left:28px;margin-bottom:4px;">`;
-  for (const ml of monthLabels) {
-    html += `<span style="width:14px;font-size:9px;color:var(--muted-foreground);font-family:var(--font-mono);">${ml}</span>`;
-  }
+  for (const ml of monthLabels) html += `<span style="width:14px;font-size:9px;color:var(--muted-foreground);font-family:var(--font-mono);">${ml}</span>`;
+  html += `</div><div style="display:flex;gap:3px;"><div style="display:flex;flex-direction:column;gap:3px;margin-right:4px;">`;
+  for (const dl of ["", "Mon", "", "Wed", "", "Fri", ""]) html += `<span style="height:14px;font-size:9px;color:var(--muted-foreground);font-family:var(--font-mono);line-height:14px;text-align:right;width:24px;">${dl}</span>`;
   html += `</div>`;
-  // Grid: day labels + cells
-  html += `<div style="display:flex;gap:3px;">`;
-  // Day labels column
-  html += `<div style="display:flex;flex-direction:column;gap:3px;margin-right:4px;">`;
-  for (const dl of ["", "Mon", "", "Wed", "", "Fri", ""]) {
-    html += `<span style="height:14px;font-size:9px;color:var(--muted-foreground);font-family:var(--font-mono);line-height:14px;text-align:right;width:24px;">${dl}</span>`;
-  }
-  html += `</div>`;
-  // Week columns
   for (const week of weeks) {
     html += `<div style="display:flex;flex-direction:column;gap:3px;">`;
     for (const cell of week) {
-      if (!cell) {
-        html += `<span style="width:14px;height:14px;border-radius:3px;background:transparent;"></span>`;
-      } else {
-        const color = cellColors(cell.value);
-        const title = `${cell.value} contribution${cell.value !== 1 ? "s" : ""} on ${cell.date}`;
-        html += `<span style="width:14px;height:14px;border-radius:3px;background:${color};border:1px solid rgba(255,255,255,0.05);cursor:default;" title="${escapeHtmlEntities(title)}"></span>`;
-      }
+      if (!cell) html += `<span style="width:14px;height:14px;border-radius:3px;background:transparent;"></span>`;
+      else { const color = cellColors(cell.value); const titleAttr = `${cell.value} contribution${cell.value !== 1 ? "s" : ""} on ${cell.date}`; html += `<span style="width:14px;height:14px;border-radius:3px;background:${color};border:1px solid rgba(255,255,255,0.05);cursor:default;" title="${escapeHtmlEntities(titleAttr)}"></span>`; }
     }
     html += `</div>`;
   }
-  html += `</div>`; // close grid
-  html += `</div>`; // close inline-flex
-  html += `</div>`; // close scroll
-  // Legend
-  html += `<div style="display:flex;align-items:center;gap:0.5rem;margin-top:0.5rem;font-size:10px;color:var(--muted-foreground);font-family:var(--font-mono);">`;
-  html += `<span>Less</span>`;
-  html += `<span style="width:12px;height:12px;border-radius:3px;background:var(--surface-2);border:1px solid rgba(255,255,255,0.05);"></span>`;
-  for (const rule of cellStyleRules) {
-    if (rule.color) {
-      html += `<span style="width:12px;height:12px;border-radius:3px;background:${rule.color};border:1px solid rgba(255,255,255,0.05);"></span>`;
-    }
+  html += `</div></div></div>`;
+  if (showLegend) {
+    html += `<div style="display:flex;align-items:center;gap:0.5rem;margin-top:0.5rem;font-size:10px;color:var(--muted-foreground);font-family:var(--font-mono);"><span>Less</span><span style="width:12px;height:12px;border-radius:3px;background:var(--surface-2);border:1px solid rgba(255,255,255,0.05);"></span>`;
+    for (const rule of cellStyleRules) { if (rule.color) html += `<span style="width:12px;height:12px;border-radius:3px;background:${rule.color};border:1px solid rgba(255,255,255,0.05);"></span>`; }
+    html += `<span>More</span></div>`;
   }
-  html += `<span>More</span>`;
-  html += `</div>`;
   html += `</div>`;
   return html;
 }
 
-/** Very simple YAML parser for the contribution graph config. */
-function parseSimpleYaml(yaml: string): Record<string, any> {
+function parseYamlNested(yaml: string): Record<string, any> {
   const result: Record<string, any> = {};
   const lines = yaml.split("\n");
   let currentKey: string | null = null;
-  let currentArray: any[] | null = null;
+  let currentObj: Record<string, any> | null = null;
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i];
     if (!line.trim() || line.trim().startsWith("#")) continue;
-    // Array item under currentKey
-    if (line.trim().startsWith("- ") && currentKey) {
-      if (!result[currentKey]) result[currentKey] = [];
-      if (!Array.isArray(result[currentKey])) result[currentKey] = [];
-      const itemText = line.trim().slice(2);
-      // Parse inline object: color: '#xxx', min: 1, max: 2
-      const item: Record<string, any> = {};
-      const parts = itemText.split(/,\s*/);
-      for (const part of parts) {
-        const m = part.match(/^(\w+):\s*['"]?([^'"]*)['"]?$/);
-        if (m) {
-          item[m[1]] = isNaN(Number(m[2])) ? m[2] : Number(m[2]);
+    const indent = line.length - line.trimStart().length;
+    const trimmed = line.trim();
+    if (indent === 0) {
+      const m = trimmed.match(/^(\w+):\s*(.*)$/);
+      if (m) {
+        currentKey = m[1]; currentObj = null;
+        const val = m[2].trim();
+        if (val === "" || val === "{}" || val === "[]") {
+          if (val === "{}") result[m[1]] = {}; else if (val === "[]") result[m[1]] = [];
+          else { result[m[1]] = {}; currentObj = result[m[1]] as Record<string, any>; }
+        } else {
+          const cleanVal = val.replace(/^['"]|['"]$/g, "");
+          if (cleanVal === "true") result[m[1]] = true; else if (cleanVal === "false") result[m[1]] = false;
+          else if (!isNaN(Number(cleanVal))) result[m[1]] = Number(cleanVal); else result[m[1]] = cleanVal;
         }
       }
-      (result[currentKey] as any[]).push(item);
-      continue;
-    }
-    // Key: value
-    const m = line.match(/^(\w+):\s*(.*)$/);
-    if (m) {
-      currentKey = m[1];
-      const val = m[2].trim().replace(/^['"]|['"]$/g, "");
-      if (val) {
-        result[m[1]] = isNaN(Number(val)) ? val : Number(val);
+    } else if (indent > 0 && currentKey) {
+      if (trimmed.startsWith("- ")) {
+        if (!Array.isArray(result[currentKey])) result[currentKey] = [];
+        const itemText = trimmed.slice(2).trim();
+        if (itemText.includes(":")) {
+          const item: Record<string, any> = {};
+          const parts = itemText.split(/,\s*/);
+          if (parts.length > 1) { for (const part of parts) { const pm = part.match(/^(\w+):\s*['"]?([^'"]*)['"]?$/); if (pm) item[pm[1]] = isNaN(Number(pm[2])) ? pm[2] : Number(pm[2]); } }
+          else { const pm = itemText.match(/^(\w+):\s*['"]?([^'"]*)['"]?$/); if (pm) item[pm[1]] = isNaN(Number(pm[2])) ? pm[2] : Number(pm[2]); }
+          (result[currentKey] as any[]).push(item);
+        }
+      } else if (currentObj !== null) {
+        const m = trimmed.match(/^(\w+):\s*(.*)$/);
+        if (m) { const val = m[2].trim().replace(/^['"]|['"]$/g, ""); if (val === "true") currentObj[m[1]] = true; else if (val === "false") currentObj[m[1]] = false; else if (val === "{}") currentObj[m[1]] = {}; else if (!isNaN(Number(val))) currentObj[m[1]] = Number(val); else currentObj[m[1]] = val; }
       }
-      // If value is empty, it might be an array (next lines with -)
     }
   }
   return result;
 }
 
-/** Generate sample contribution data distributed across the date range. */
-function generateSampleData(
-  days: number,
-  rules: Array<{ min: number; max: number }>
+/**
+ * Generate REAL contribution data from actual notes.
+ * Filters notes by the tag specified in dataSource.value (e.g. "#about"),
+ * groups by publish date, and counts notes per day.
+ * If no tag match or no notes data available, returns empty (graph shows
+ * only empty cells — which is correct when there are no contributions).
+ */
+function generateContributionData(
+  fromDate: Date,
+  toDate: Date,
+  tagFilter: string | null
 ): Array<{ date: string; value: number }> {
-  const data: Array<{ date: string; value: number }> = [];
-  const today = new Date();
-  const maxVal = rules.length > 0 ? rules[rules.length - 1].max : 5;
-  for (let i = 0; i < days; i++) {
-    const date = new Date(today);
-    date.setDate(date.getDate() - i);
-    // ~40% of days have activity, random value 1-maxVal
-    if (Math.random() < 0.4) {
-      data.push({
-        date: date.toISOString().slice(0, 10),
-        value: Math.floor(Math.random() * maxVal) + 1,
-      });
-    }
+  const notes = _ctx?.notesForGraph;
+  if (!notes || notes.length === 0) return [];
+
+  // Parse the tag filter: "#about" → "about"
+  const tag = tagFilter ? tagFilter.replace(/^#/, "").trim() : null;
+
+  // Filter notes by tag (if specified)
+  const filtered = tag
+    ? notes.filter((n) => n.tags.includes(tag))
+    : notes;
+
+  // Group by date and count
+  const counts = new Map<string, number>();
+  for (const note of filtered) {
+    const dateStr = note.publishDate
+      ? new Date(note.publishDate).toISOString().slice(0, 10)
+      : new Date(note.createdAt).toISOString().slice(0, 10);
+    counts.set(dateStr, (counts.get(dateStr) ?? 0) + 1);
   }
-  return data;
+
+  return Array.from(counts.entries()).map(([date, value]) => ({ date, value }));
 }
+
 // ----------------------------------------------------------------------------
 
 /**

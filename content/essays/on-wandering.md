@@ -6,7 +6,7 @@ date: 2024-08-28
 tags: [essay, thinking, garden]
 aliases: ["Wandering"]
 ---
-
+ 
 There's a difference between searching and wandering. Searching has a target — you know what you're looking for, and you stop when you find it. Wandering has no target. You move, you notice, you follow a thread, and you stop when something catches you.
 
 The internet is very good at searching. It is almost hostile to wandering. Feeds, recommendations, and search results all push you toward the thing you already wanted — or the thing the algorithm already knows about. The surprise, the detour, the strange connection between two ideas you'd never have put together — that's been designed out of most interfaces.

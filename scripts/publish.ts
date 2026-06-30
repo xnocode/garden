@@ -234,7 +234,15 @@ async function publish() {
     noteMeta.set(p.slug, { title: p.title, description: p.description });
   }
 
-  const ctx: RenderContext = { slugs, aliasToSlug, noteMeta, assetBase: "", vaultPath: CONTENT_DIR };
+  // Build notes data for contribution graph (real data, not random)
+  const notesForGraph = publishable.map((p) => ({
+    slug: p.slug,
+    tags: p.tags,
+    publishDate: p.date ? p.date.toISOString() : null,
+    createdAt: (p.date ?? new Date()).toISOString(),
+  }));
+
+  const ctx: RenderContext = { slugs, aliasToSlug, noteMeta, assetBase: "", vaultPath: CONTENT_DIR, notesForGraph };
 
   interface RenderedNote extends ParsedFile {
     html: string;

@@ -6,7 +6,6 @@ date: 2024-08-15
 tags: [meta, about]
 aliases: ["About the Garden", "Colophon"]
 ---
-
 This garden is tended by a quiet generalist who has spent too many years reading about how other people think and not enough years thinking for themselves. I'm a software person by trade, a lapsed philosopher by training, and a gardener in the metaphorical sense only — every real plant I've kept has died of kindness. The digital ones, mercifully, thrive on neglect.
 
 I built this place because I wanted a corner of the internet that didn't reward recency. Most of what I read online is shaped by the feed: written fast, optimized for now, gone tomorrow. I wanted somewhere I could think slowly, in public, and let ideas accumulate instead of scroll past. A note here might be six years old and still getting revised; that's the texture I'm after.
