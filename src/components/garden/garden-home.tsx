@@ -130,7 +130,7 @@ export function GardenHome({ data }: { data: HomeData }) {
             <Stat value={stats.totalTags} label="tags" />
             <Stat
               value={stats.totalVisitors.toLocaleString()}
-              label="visitors"
+              label="views"
             />
           </div>
           {lastUpdated && (
