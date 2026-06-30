@@ -94,9 +94,7 @@ export function GardenHome({ data }: { data: HomeData }) {
             garden
           </h1>
           <p className="mx-auto mt-6 max-w-2xl text-lg text-muted-foreground leading-relaxed sm:text-xl">
-            A collection of notes, essays, and ideas — grown in Obsidian,
-            tended slowly, and published with a single command. Wander the
-            paths between thoughts.
+            Not a blog. Not a wiki. Just a garden where ideas are planted, revisited, and connected over time. Wander the paths between thoughts.
           </p>
           <div className="mt-9 flex flex-wrap items-center justify-center gap-3">
             <Link
