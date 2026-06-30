@@ -19,6 +19,7 @@ interface HomeData {
     totalLinks: number;
     totalTags: number;
     lastUpdated: string | null;
+    totalVisitors: number;
   };
 }
 
@@ -119,7 +120,7 @@ export function GardenHome({ data }: { data: HomeData }) {
           </div>
 
           {/* Stats */}
-          <div className="mx-auto mt-14 grid max-w-2xl grid-cols-2 gap-6 sm:grid-cols-4">
+          <div className="mx-auto mt-14 grid max-w-3xl grid-cols-2 gap-6 sm:grid-cols-5">
             <Stat value={stats.totalNotes} label="notes" />
             <Stat
               value={stats.totalWords.toLocaleString()}
@@ -127,6 +128,10 @@ export function GardenHome({ data }: { data: HomeData }) {
             />
             <Stat value={stats.totalLinks} label="links" />
             <Stat value={stats.totalTags} label="tags" />
+            <Stat
+              value={stats.totalVisitors.toLocaleString()}
+              label="visitors"
+            />
           </div>
           {lastUpdated && (
             <p className="mt-6 text-xs font-mono text-muted-foreground/60">

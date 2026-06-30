@@ -10679,6 +10679,11 @@
             "timeKey": "14:55",
             "w": 146,
             "c": 1024
+          },
+          {
+            "timeKey": "15:00",
+            "w": -207,
+            "c": -1532
           }
         ],
         "id": 630
@@ -10718,6 +10723,230 @@
         "charCountStart": 3823,
         "changes": [],
         "id": 633
+      },
+      {
+        "date": "2026-06-30",
+        "filePath": "index.md",
+        "wordCountStart": 280,
+        "charCountStart": 1656,
+        "changes": [],
+        "id": 634
+      },
+      {
+        "date": "2026-06-30",
+        "filePath": "about.md",
+        "wordCountStart": 293,
+        "charCountStart": 1666,
+        "changes": [],
+        "id": 635
+      },
+      {
+        "date": "2026-06-30",
+        "filePath": "notes/zettelkasten-method.md",
+        "wordCountStart": 468,
+        "charCountStart": 2718,
+        "changes": [],
+        "id": 636
+      },
+      {
+        "date": "2026-06-30",
+        "filePath": "notes/wikilinks-and-backlinks.md",
+        "wordCountStart": 391,
+        "charCountStart": 2333,
+        "changes": [],
+        "id": 637
+      },
+      {
+        "date": "2026-06-30",
+        "filePath": "notes/welcome-to-the-garden.md",
+        "wordCountStart": 309,
+        "charCountStart": 1849,
+        "changes": [],
+        "id": 638
+      },
+      {
+        "date": "2026-06-30",
+        "filePath": "notes/the-vault-and-the-garden.md",
+        "wordCountStart": 353,
+        "charCountStart": 2211,
+        "changes": [],
+        "id": 639
+      },
+      {
+        "date": "2026-06-30",
+        "filePath": "notes/the-map-is-not-the-territory.md",
+        "wordCountStart": 397,
+        "charCountStart": 2304,
+        "changes": [],
+        "id": 640
+      },
+      {
+        "date": "2026-06-30",
+        "filePath": "notes/the-art-of-note-taking.md",
+        "wordCountStart": 480,
+        "charCountStart": 2799,
+        "changes": [],
+        "id": 641
+      },
+      {
+        "date": "2026-06-30",
+        "filePath": "notes/tags-and-organization.md",
+        "wordCountStart": 405,
+        "charCountStart": 2472,
+        "changes": [],
+        "id": 642
+      },
+      {
+        "date": "2026-06-30",
+        "filePath": "notes/setup-guide.md",
+        "wordCountStart": 1174,
+        "charCountStart": 7817,
+        "changes": [],
+        "id": 643
+      },
+      {
+        "date": "2026-06-30",
+        "filePath": "notes/private-draft.md",
+        "wordCountStart": 143,
+        "charCountStart": 817,
+        "changes": [],
+        "id": 644
+      },
+      {
+        "date": "2026-06-30",
+        "filePath": "notes/media-embeds-reference.md",
+        "wordCountStart": 412,
+        "charCountStart": 2892,
+        "changes": [],
+        "id": 645
+      },
+      {
+        "date": "2026-06-30",
+        "filePath": "notes/math-and-latex.md",
+        "wordCountStart": 313,
+        "charCountStart": 1838,
+        "changes": [],
+        "id": 646
+      },
+      {
+        "date": "2026-06-30",
+        "filePath": "notes/links-are-thoughts.md",
+        "wordCountStart": 365,
+        "charCountStart": 2102,
+        "changes": [],
+        "id": 647
+      },
+      {
+        "date": "2026-06-30",
+        "filePath": "notes/how-posting-works.md",
+        "wordCountStart": 1329,
+        "charCountStart": 9358,
+        "changes": [],
+        "id": 648
+      },
+      {
+        "date": "2026-06-30",
+        "filePath": "notes/embeds-and-transclusions.md",
+        "wordCountStart": 342,
+        "charCountStart": 2093,
+        "changes": [],
+        "id": 649
+      },
+      {
+        "date": "2026-06-30",
+        "filePath": "notes/digital-gardens.md",
+        "wordCountStart": 427,
+        "charCountStart": 2568,
+        "changes": [],
+        "id": 650
+      },
+      {
+        "date": "2026-06-30",
+        "filePath": "notes/contribution-graph.md",
+        "wordCountStart": 397,
+        "charCountStart": 2752,
+        "changes": [],
+        "id": 651
+      },
+      {
+        "date": "2026-06-30",
+        "filePath": "notes/compounding-knowledge.md",
+        "wordCountStart": 388,
+        "charCountStart": 2311,
+        "changes": [],
+        "id": 652
+      },
+      {
+        "date": "2026-06-30",
+        "filePath": "notes/composing-with-transclusions.md",
+        "wordCountStart": 354,
+        "charCountStart": 2286,
+        "changes": [],
+        "id": 653
+      },
+      {
+        "date": "2026-06-30",
+        "filePath": "notes/callouts-reference.md",
+        "wordCountStart": 399,
+        "charCountStart": 2396,
+        "changes": [],
+        "id": 654
+      },
+      {
+        "date": "2026-06-30",
+        "filePath": "notes/building-a-second-brain.md",
+        "wordCountStart": 459,
+        "charCountStart": 2887,
+        "changes": [],
+        "id": 655
+      },
+      {
+        "date": "2026-06-30",
+        "filePath": "notes/bikeshedding-and-the-garden.md",
+        "wordCountStart": 383,
+        "charCountStart": 2158,
+        "changes": [],
+        "id": 656
+      },
+      {
+        "date": "2026-06-30",
+        "filePath": "essays/on-writing.md",
+        "wordCountStart": 475,
+        "charCountStart": 2565,
+        "changes": [],
+        "id": 657
+      },
+      {
+        "date": "2026-06-30",
+        "filePath": "essays/on-wandering.md",
+        "wordCountStart": 373,
+        "charCountStart": 2093,
+        "changes": [],
+        "id": 658
+      },
+      {
+        "date": "2026-06-30",
+        "filePath": "essays/on-thinking.md",
+        "wordCountStart": 425,
+        "charCountStart": 2483,
+        "changes": [],
+        "id": 659
+      },
+      {
+        "date": "2026-06-30",
+        "filePath": "essays/on-reading-slowly.md",
+        "wordCountStart": 350,
+        "charCountStart": 1994,
+        "changes": [],
+        "id": 660
+      },
+      {
+        "date": "2026-06-30",
+        "filePath": "Attachments/Templates/Template.md",
+        "wordCountStart": 13,
+        "charCountStart": 116,
+        "changes": [],
+        "id": 661
       }
     ],
     "wholeVaultWordCount": 19257,

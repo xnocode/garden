@@ -19,6 +19,7 @@ import { ReadingProgress } from "@/components/garden/reading-progress";
 import { ShortcutsHelp } from "@/components/garden/shortcuts-help";
 import { NoteView } from "@/components/garden/note-view";
 import { GardenHome } from "@/components/garden/garden-home";
+import { getTotalVisitors } from "@/lib/analytics";
 import {
   IndexView,
   TagsView,
@@ -88,12 +89,13 @@ export default async function Page({ searchParams }: PageProps) {
     mainWidthClass = "max-w-3xl";
   } else {
     // Home
-    const [recentRaw, tags, graph, stats, onThisDay] = await Promise.all([
+    const [recentRaw, tags, graph, stats, onThisDay, totalVisitors] = await Promise.all([
       listNotes({ sort: "updated", limit: 6 }),
       getTags(),
       getGraph(),
       getStats(),
       getOnThisDay(),
+      getTotalVisitors(),
     ]);
     // Featured: a curated mix — most recent by publish date + a couple reference
     const featured = await listNotes({ sort: "newest", limit: 6 });
@@ -105,7 +107,10 @@ export default async function Page({ searchParams }: PageProps) {
           tags,
           graph,
           onThisDay,
-          stats,
+          stats: {
+            ...stats,
+            totalVisitors,
+          },
         }}
       />
     );

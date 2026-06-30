@@ -3,6 +3,7 @@ import { Schibsted_Grotesk, Source_Sans_3, IBM_Plex_Mono } from "next/font/googl
 import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
 import { ThemeProvider } from "@/components/theme-provider";
+import { GoogleAnalytics } from "@next/third-parties/google";
 
 const headingFont = Schibsted_Grotesk({
   variable: "--font-serif",
@@ -74,6 +75,9 @@ export default function RootLayout({
       >
         <ThemeProvider>{children}</ThemeProvider>
         <Toaster />
+        {process.env.NEXT_PUBLIC_GA_ID && (
+          <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID} />
+        )}
       </body>
     </html>
   );
