@@ -53,268 +53,8 @@
     "draft": false,
     "publishDate": "2024-08-15T00:00:00.000Z",
     "createdAt": "2024-08-15T00:00:00.000Z",
-    "updatedAt": "2026-06-30T18:40:05.928Z",
+    "updatedAt": "2026-06-30T20:43:17.348Z",
     "path": "about.md",
-    "folder": null,
-    "prevSlug": null,
-    "nextSlug": null
-  },
-  {
-    "slug": "on-forgetting",
-    "title": "On Forgetting",
-    "description": "Forgetting is not the enemy of learning — it's part of it. A garden that remembers everything is a hoard. The right kind of forgetting is what lets the structure show through.",
-    "content": "\nWe treat forgetting as a failure. If you read a book and can't remember it a year later, you say you've forgotten it — as if the reading was wasted. But that's not how memory works, and it's not how a garden works either.\n\n> [!quote]\n> \"Memory is not a recording. It's a reconstruction. What you keep is not what happened — it's what was useful enough to rebuild.\"\n\nThe notes you don't remember writing are not lost. They're compost. They broke down into the structure of your thinking — into the way you frame problems, the examples you reach for, the connections you make. ==You don't need to remember a note for it to have changed you.==\n\nThis is why a digital garden is better than a notebook for long-term thinking. A notebook demands you remember where you wrote something. A garden lets the links remember for you. The [[Backlinks|backlinks]] panel is a prosthetic memory — it shows you who else thought this note mattered, even if you've forgotten.\n\n> [!abstract] Three kinds of forgetting\n> 1. **Composting** — the note breaks down into your general thinking. Good.\n> 2. **Archiving** — the note is dormant but findable. Fine.\n> 3. **Losing** — the note is gone and unfindable. The only bad kind.\n\nThe garden is designed to prevent the third kind. As long as a note is in the vault with `draft: false`, it's findable — by search, by tag, by graph, by backlink. You don't have to remember it. You just have to be able to encounter it again.\n\nThe [[On Reading Slowly|slow reading]] philosophy applies here too. You read a note, you forget the details, but the next time you encounter the idea, you recognize it. That recognition is the residue. That's what the garden is growing.\n\nSee [[On Thinking]], [[Compounding Knowledge]], [[The Vault and the Garden]].\n",
-    "html": "<p>We treat forgetting as a failure. If you read a book and can't remember it a year later, you say you've forgotten it — as if the reading was wasted. But that's not how memory works, and it's not how a garden works either.</p>\n<div class=\"callout\" data-callout=\"quote\"><div class=\"callout-title\"><span class=\"callout-title-icon\">“</span><span class=\"callout-title-text\">\"Memory is not a recording. It's a reconstruction. What you keep is not what happened — it's what was useful enough to rebuild.\"</span></div><div class=\"callout-content\">\n\n</div></div>\n<p>The notes you don't remember writing are not lost. They're compost. They broke down into the structure of your thinking — into the way you frame problems, the examples you reach for, the connections you make. <mark class=\"text-highlight\">You don't need to remember a note for it to have changed you.</mark></p>\n<p>This is why a digital garden is better than a notebook for long-term thinking. A notebook demands you remember where you wrote something. A garden lets the links remember for you. The <a class=\"internal-link\" href=\"/?p=wikilinks-and-backlinks\" title=\"backlinks\" data-slug=\"wikilinks-and-backlinks\">backlinks</a> panel is a prosthetic memory — it shows you who else thought this note mattered, even if you've forgotten.</p>\n<div class=\"callout\" data-callout=\"abstract\"><div class=\"callout-title\"><span class=\"callout-title-icon\">📋</span><span class=\"callout-title-text\">Three kinds of forgetting</span></div><div class=\"callout-content\">\n\n<ol>\n<li><strong>Composting</strong> — the note breaks down into your general thinking. Good.</li>\n<li><strong>Archiving</strong> — the note is dormant but findable. Fine.</li>\n<li><strong>Losing</strong> — the note is gone and unfindable. The only bad kind.</li>\n</ol>\n</div></div>\n<p>The garden is designed to prevent the third kind. As long as a note is in the vault with <code>draft: false</code>, it's findable — by search, by tag, by graph, by backlink. You don't have to remember it. You just have to be able to encounter it again.</p>\n<p>The <a class=\"internal-link\" href=\"/?p=on-reading-slowly\" title=\"slow reading\" data-slug=\"on-reading-slowly\">slow reading</a> philosophy applies here too. You read a note, you forget the details, but the next time you encounter the idea, you recognize it. That recognition is the residue. That's what the garden is growing.</p>\n<p>See <a class=\"internal-link\" href=\"/?p=on-thinking\" data-slug=\"on-thinking\">On Thinking</a>, <a class=\"internal-link\" href=\"/?p=compounding-knowledge\" data-slug=\"compounding-knowledge\">Compounding Knowledge</a>, <a class=\"internal-link\" href=\"/?p=the-vault-and-the-garden\" data-slug=\"the-vault-and-the-garden\">The Vault and the Garden</a>.</p>",
-    "raw": "---\ntitle: \"On Forgetting\"\ndescription: \"Forgetting is not the enemy of learning — it's part of it. A garden that remembers everything is a hoard. The right kind of forgetting is what lets the structure show through.\"\ndraft: false\ndate: 2024-07-30\ntags: [essay, thinking, memory, garden]\naliases: [\"Forgetting\"]\n---\n\nWe treat forgetting as a failure. If you read a book and can't remember it a year later, you say you've forgotten it — as if the reading was wasted. But that's not how memory works, and it's not how a garden works either.\n\n> [!quote]\n> \"Memory is not a recording. It's a reconstruction. What you keep is not what happened — it's what was useful enough to rebuild.\"\n\nThe notes you don't remember writing are not lost. They're compost. They broke down into the structure of your thinking — into the way you frame problems, the examples you reach for, the connections you make. ==You don't need to remember a note for it to have changed you.==\n\nThis is why a digital garden is better than a notebook for long-term thinking. A notebook demands you remember where you wrote something. A garden lets the links remember for you. The [[Backlinks|backlinks]] panel is a prosthetic memory — it shows you who else thought this note mattered, even if you've forgotten.\n\n> [!abstract] Three kinds of forgetting\n> 1. **Composting** — the note breaks down into your general thinking. Good.\n> 2. **Archiving** — the note is dormant but findable. Fine.\n> 3. **Losing** — the note is gone and unfindable. The only bad kind.\n\nThe garden is designed to prevent the third kind. As long as a note is in the vault with `draft: false`, it's findable — by search, by tag, by graph, by backlink. You don't have to remember it. You just have to be able to encounter it again.\n\nThe [[On Reading Slowly|slow reading]] philosophy applies here too. You read a note, you forget the details, but the next time you encounter the idea, you recognize it. That recognition is the residue. That's what the garden is growing.\n\nSee [[On Thinking]], [[Compounding Knowledge]], [[The Vault and the Garden]].\n",
-    "tags": [
-      "essay",
-      "garden",
-      "memory",
-      "thinking"
-    ],
-    "aliases": [
-      "Forgetting"
-    ],
-    "links": [
-      {
-        "original": "Backlinks",
-        "slug": "wikilinks-and-backlinks",
-        "alias": "backlinks",
-        "exists": true
-      },
-      {
-        "original": "On Reading Slowly",
-        "slug": "on-reading-slowly",
-        "alias": "slow reading",
-        "exists": true
-      },
-      {
-        "original": "On Thinking",
-        "slug": "on-thinking",
-        "exists": true
-      },
-      {
-        "original": "Compounding Knowledge",
-        "slug": "compounding-knowledge",
-        "exists": true
-      },
-      {
-        "original": "The Vault and the Garden",
-        "slug": "the-vault-and-the-garden",
-        "exists": true
-      }
-    ],
-    "wordCount": 313,
-    "draft": false,
-    "publishDate": "2024-07-30T00:00:00.000Z",
-    "createdAt": "2024-07-30T00:00:00.000Z",
-    "updatedAt": "2026-06-30T18:40:05.932Z",
-    "path": "essays/on-forgetting.md",
-    "folder": "essays",
-    "prevSlug": null,
-    "nextSlug": null
-  },
-  {
-    "slug": "on-reading-slowly",
-    "title": "On Reading Slowly",
-    "description": "Slow reading is not a deficiency — it's a discipline. The point of reading a garden note isn't to finish it, it's to be changed by it.",
-    "content": "\nThere's a difference between reading and finishing. Most of what we call reading is actually finishing — moving our eyes across pages until we reach the end, so we can say we did it. The information enters short-term memory, gets summarized into a sentence, and evaporates.\n\nSlow reading is the opposite. You read a paragraph, and then you stop. You think about it. You write down what it made you feel. You follow a link to something it reminds you of. You come back the next day and read the same paragraph again, and it means something different because you're different.\n\n> [!quote]\n> \"The reader should be the writer's co-conspirator. The text is just the meeting place.\" — adapted from Italo Calvino\n\nA digital garden is built for slow reading. ==There is no finish line.== No progress bar (well, there is one, but it's not the point). No \"you've read 73% of this note.\" You read until you're done — which might be halfway through, or might be three paragraphs in, or might be the whole thing twice.\n\n> [!tip] Three habits of slow reading\n> 1. **Stop when something catches you.** Don't push through to the end. If a sentence makes you think, stop and think.\n> 2. **Write while you read.** A note in the margin, a link to another note, a question. Reading and writing are not separate activities.\n> 3. **Come back.** A good note rewards re-reading. You'll be a different person next time.\n\nThis is why the [[The Map Is Not the Territory|map-is-not-territory]] principle matters. If you're only scanning titles and snippets — only reading the map — you're not slow reading. You're finishing. The territory is slower and more valuable.\n\nSee [[On Thinking]], [[On Wandering]], [[The Art of Note Taking]].\n",
-    "html": "<p>There's a difference between reading and finishing. Most of what we call reading is actually finishing — moving our eyes across pages until we reach the end, so we can say we did it. The information enters short-term memory, gets summarized into a sentence, and evaporates.</p>\n<p>Slow reading is the opposite. You read a paragraph, and then you stop. You think about it. You write down what it made you feel. You follow a link to something it reminds you of. You come back the next day and read the same paragraph again, and it means something different because you're different.</p>\n<div class=\"callout\" data-callout=\"quote\"><div class=\"callout-title\"><span class=\"callout-title-icon\">“</span><span class=\"callout-title-text\">\"The reader should be the writer's co-conspirator. The text is just the meeting place.\" — adapted from Italo Calvino</span></div><div class=\"callout-content\">\n\n</div></div>\n<p>A digital garden is built for slow reading. <mark class=\"text-highlight\">There is no finish line.</mark> No progress bar (well, there is one, but it's not the point). No \"you've read 73% of this note.\" You read until you're done — which might be halfway through, or might be three paragraphs in, or might be the whole thing twice.</p>\n<div class=\"callout\" data-callout=\"tip\"><div class=\"callout-title\"><span class=\"callout-title-icon\">💡</span><span class=\"callout-title-text\">Three habits of slow reading</span></div><div class=\"callout-content\">\n\n<ol>\n<li><strong>Stop when something catches you.</strong> Don't push through to the end. If a sentence makes you think, stop and think.</li>\n<li><strong>Write while you read.</strong> A note in the margin, a link to another note, a question. Reading and writing are not separate activities.</li>\n<li><strong>Come back.</strong> A good note rewards re-reading. You'll be a different person next time.</li>\n</ol>\n</div></div>\n<p>This is why the <a class=\"internal-link\" href=\"/?p=the-map-is-not-the-territory\" title=\"map-is-not-territory\" data-slug=\"the-map-is-not-the-territory\">map-is-not-territory</a> principle matters. If you're only scanning titles and snippets — only reading the map — you're not slow reading. You're finishing. The territory is slower and more valuable.</p>\n<p>See <a class=\"internal-link\" href=\"/?p=on-thinking\" data-slug=\"on-thinking\">On Thinking</a>, <a class=\"internal-link\" href=\"/?p=on-wandering\" data-slug=\"on-wandering\">On Wandering</a>, <a class=\"internal-link\" href=\"/?p=the-art-of-note-taking\" data-slug=\"the-art-of-note-taking\">The Art of Note Taking</a>.</p>",
-    "raw": "---\ntitle: \"On Reading Slowly\"\ndescription: \"Slow reading is not a deficiency — it's a discipline. The point of reading a garden note isn't to finish it, it's to be changed by it.\"\ndraft: false\ndate: 2024-08-10\ntags: [essay, reading, thinking]\naliases: [\"Slow Reading\", \"Reading\"]\n---\n\nThere's a difference between reading and finishing. Most of what we call reading is actually finishing — moving our eyes across pages until we reach the end, so we can say we did it. The information enters short-term memory, gets summarized into a sentence, and evaporates.\n\nSlow reading is the opposite. You read a paragraph, and then you stop. You think about it. You write down what it made you feel. You follow a link to something it reminds you of. You come back the next day and read the same paragraph again, and it means something different because you're different.\n\n> [!quote]\n> \"The reader should be the writer's co-conspirator. The text is just the meeting place.\" — adapted from Italo Calvino\n\nA digital garden is built for slow reading. ==There is no finish line.== No progress bar (well, there is one, but it's not the point). No \"you've read 73% of this note.\" You read until you're done — which might be halfway through, or might be three paragraphs in, or might be the whole thing twice.\n\n> [!tip] Three habits of slow reading\n> 1. **Stop when something catches you.** Don't push through to the end. If a sentence makes you think, stop and think.\n> 2. **Write while you read.** A note in the margin, a link to another note, a question. Reading and writing are not separate activities.\n> 3. **Come back.** A good note rewards re-reading. You'll be a different person next time.\n\nThis is why the [[The Map Is Not the Territory|map-is-not-territory]] principle matters. If you're only scanning titles and snippets — only reading the map — you're not slow reading. You're finishing. The territory is slower and more valuable.\n\nSee [[On Thinking]], [[On Wandering]], [[The Art of Note Taking]].\n",
-    "tags": [
-      "essay",
-      "reading",
-      "thinking"
-    ],
-    "aliases": [
-      "Slow Reading",
-      "Reading"
-    ],
-    "links": [
-      {
-        "original": "The Map Is Not the Territory",
-        "slug": "the-map-is-not-the-territory",
-        "alias": "map-is-not-territory",
-        "exists": true
-      },
-      {
-        "original": "On Thinking",
-        "slug": "on-thinking",
-        "exists": true
-      },
-      {
-        "original": "On Wandering",
-        "slug": "on-wandering",
-        "exists": true
-      },
-      {
-        "original": "The Art of Note Taking",
-        "slug": "the-art-of-note-taking",
-        "exists": true
-      }
-    ],
-    "wordCount": 301,
-    "draft": false,
-    "publishDate": "2024-08-10T00:00:00.000Z",
-    "createdAt": "2024-08-10T00:00:00.000Z",
-    "updatedAt": "2026-06-30T18:40:05.932Z",
-    "path": "essays/on-reading-slowly.md",
-    "folder": "essays",
-    "prevSlug": null,
-    "nextSlug": null
-  },
-  {
-    "slug": "on-thinking",
-    "title": "On Thinking",
-    "description": "A personal essay on what thinking actually feels like — slow, recursive, and inseparable from the act of writing.",
-    "content": "\nI used to believe thinking happened in the head and writing was just the cleanup — a transcription of ideas that had already arrived. ==I no longer believe this.== For me, and I suspect for most people who write regularly, thinking and writing are the same act performed at different speeds. The thought doesn't exist fully formed before the sentence; the sentence *is* the thought, working itself out on the page.\n\n> Writing is thinking. To write well is to think clearly, that's why it's so hard.\n\nThis is the real case for keeping notes. Not to remember — I remember the important things — but to *think*. A note is a place where a half-formed idea can sit long enough to be examined, turned over, contradicted, and either grown or composted. Memory is a poor substrate for this because memory compresses and edits; a written note holds still long enough to be wrong in a useful way.\n\n## Thinking is recursive\n\nThe thoughts I'm proudest of never arrived in a single sitting. They came back, revised, across months — sometimes years. This is why a chronological blog undersells the process: it can only show the *output* of the recursion, the final draft, and has to hide the loops that actually produced it. A garden shows the loops. A note from January gets a backlink in March, a revision in June, a contradiction in September. The thinking is visible in the *history of the note*, not just its current state.\n\n## The cost of skipping the page\n\nWhen I \"think\" without writing — in the shower, on a walk — I almost always feel smarter than I am. The thought feels complete because there's nothing to push back against it. Writing it down is the moment the thought meets friction: missing steps surface, metaphors break, contradictions appear. ==The page is the only honest mirror a thought has.==\n\nThis is also why I find [[The Art of Note Taking]] worth taking seriously as a practice and not just a productivity trick. The discipline of writing things down — clearly, with positions, for a forgetful reader — is the discipline of thinking at all. The garden is just where that discipline leaves its residue.\n\nThere's a companion piece on the other half of the loop — what it costs to actually put thoughts into sentences — at [[On Writing]].\n",
-    "html": "<p>I used to believe thinking happened in the head and writing was just the cleanup — a transcription of ideas that had already arrived. <mark class=\"text-highlight\">I no longer believe this.</mark> For me, and I suspect for most people who write regularly, thinking and writing are the same act performed at different speeds. The thought doesn't exist fully formed before the sentence; the sentence <em>is</em> the thought, working itself out on the page.</p>\n<blockquote>\n<p>Writing is thinking. To write well is to think clearly, that's why it's so hard.</p>\n</blockquote>\n<p>This is the real case for keeping notes. Not to remember — I remember the important things — but to <em>think</em>. A note is a place where a half-formed idea can sit long enough to be examined, turned over, contradicted, and either grown or composted. Memory is a poor substrate for this because memory compresses and edits; a written note holds still long enough to be wrong in a useful way.</p>\n<h2 id=\"thinking-is-recursive\">Thinking is recursive<a class=\"heading-anchor\" aria-hidden=\"true\" href=\"#thinking-is-recursive\">#</a></h2>\n<p>The thoughts I'm proudest of never arrived in a single sitting. They came back, revised, across months — sometimes years. This is why a chronological blog undersells the process: it can only show the <em>output</em> of the recursion, the final draft, and has to hide the loops that actually produced it. A garden shows the loops. A note from January gets a backlink in March, a revision in June, a contradiction in September. The thinking is visible in the <em>history of the note</em>, not just its current state.</p>\n<h2 id=\"the-cost-of-skipping-the-page\">The cost of skipping the page<a class=\"heading-anchor\" aria-hidden=\"true\" href=\"#the-cost-of-skipping-the-page\">#</a></h2>\n<p>When I \"think\" without writing — in the shower, on a walk — I almost always feel smarter than I am. The thought feels complete because there's nothing to push back against it. Writing it down is the moment the thought meets friction: missing steps surface, metaphors break, contradictions appear. <mark class=\"text-highlight\">The page is the only honest mirror a thought has.</mark></p>\n<p>This is also why I find <a class=\"internal-link\" href=\"/?p=the-art-of-note-taking\" data-slug=\"the-art-of-note-taking\">The Art of Note Taking</a> worth taking seriously as a practice and not just a productivity trick. The discipline of writing things down — clearly, with positions, for a forgetful reader — is the discipline of thinking at all. The garden is just where that discipline leaves its residue.</p>\n<p>There's a companion piece on the other half of the loop — what it costs to actually put thoughts into sentences — at <a class=\"internal-link\" href=\"/?p=on-writing\" data-slug=\"on-writing\">On Writing</a>.</p>",
-    "raw": "---\ntitle: \"On Thinking\"\ndescription: \"A personal essay on what thinking actually feels like — slow, recursive, and inseparable from the act of writing.\"\ndraft: false\ndate: 2024-08-26\ntags: [essay, thinking]\naliases: [\"Thinking\"]\n---\n\nI used to believe thinking happened in the head and writing was just the cleanup — a transcription of ideas that had already arrived. ==I no longer believe this.== For me, and I suspect for most people who write regularly, thinking and writing are the same act performed at different speeds. The thought doesn't exist fully formed before the sentence; the sentence *is* the thought, working itself out on the page.\n\n> Writing is thinking. To write well is to think clearly, that's why it's so hard.\n\nThis is the real case for keeping notes. Not to remember — I remember the important things — but to *think*. A note is a place where a half-formed idea can sit long enough to be examined, turned over, contradicted, and either grown or composted. Memory is a poor substrate for this because memory compresses and edits; a written note holds still long enough to be wrong in a useful way.\n\n## Thinking is recursive\n\nThe thoughts I'm proudest of never arrived in a single sitting. They came back, revised, across months — sometimes years. This is why a chronological blog undersells the process: it can only show the *output* of the recursion, the final draft, and has to hide the loops that actually produced it. A garden shows the loops. A note from January gets a backlink in March, a revision in June, a contradiction in September. The thinking is visible in the *history of the note*, not just its current state.\n\n## The cost of skipping the page\n\nWhen I \"think\" without writing — in the shower, on a walk — I almost always feel smarter than I am. The thought feels complete because there's nothing to push back against it. Writing it down is the moment the thought meets friction: missing steps surface, metaphors break, contradictions appear. ==The page is the only honest mirror a thought has.==\n\nThis is also why I find [[The Art of Note Taking]] worth taking seriously as a practice and not just a productivity trick. The discipline of writing things down — clearly, with positions, for a forgetful reader — is the discipline of thinking at all. The garden is just where that discipline leaves its residue.\n\nThere's a companion piece on the other half of the loop — what it costs to actually put thoughts into sentences — at [[On Writing]].\n",
-    "tags": [
-      "essay",
-      "thinking"
-    ],
-    "aliases": [
-      "Thinking"
-    ],
-    "links": [
-      {
-        "original": "The Art of Note Taking",
-        "slug": "the-art-of-note-taking",
-        "exists": true
-      },
-      {
-        "original": "On Writing",
-        "slug": "on-writing",
-        "exists": true
-      }
-    ],
-    "wordCount": 398,
-    "draft": false,
-    "publishDate": "2024-08-26T00:00:00.000Z",
-    "createdAt": "2024-08-26T00:00:00.000Z",
-    "updatedAt": "2026-06-30T18:40:05.932Z",
-    "path": "essays/on-thinking.md",
-    "folder": "essays",
-    "prevSlug": null,
-    "nextSlug": null
-  },
-  {
-    "slug": "on-wandering",
-    "title": "On Wandering",
-    "description": "Wandering is not aimless — it's how knowledge actually grows. A defense of the non-linear path through a garden of ideas.",
-    "content": " \nThere's a difference between searching and wandering. Searching has a target — you know what you're looking for, and you stop when you find it. Wandering has no target. You move, you notice, you follow a thread, and you stop when something catches you.\n\nThe internet is very good at searching. It is almost hostile to wandering. Feeds, recommendations, and search results all push you toward the thing you already wanted — or the thing the algorithm already knows about. The surprise, the detour, the strange connection between two ideas you'd never have put together — that's been designed out of most interfaces.\n\n> [!quote]\n> The garden is not a filing cabinet. It's a place you walk through.\n\nA digital garden, at its best, is built for wandering. The wikilinks are invitations, not directions. The backlinks show you who else has been here. The graph is a map of paths you might take — not a list of tasks to complete. You don't read a garden cover to cover. You wander until you find the thing you didn't know you were looking for.\n\nThis is why ==the note is the unit, not the post==. A post is a destination. A note is a place. You can return to a place. You can pass through it on the way to somewhere else. You can find it again years later and notice something you missed.\n\nThe cost of wandering is inefficiency. You'll read notes that don't help you. You'll follow links to dead ends. You'll spend twenty minutes on a tangent. But the payoff — the unexpected connection, the idea that reorganizes everything — is worth the waste. ==Efficiency is for factories. Gardens are for growing.==\n\nSo: don't read this note and leave. Click a link. Follow a backlink. Open the graph and pick a node at random. Get lost for a few minutes. That's the whole point.\n\nSee also [[Digital Gardens]], [[On Thinking]], [[The Art of Note Taking]].\n",
-    "html": "<p>There's a difference between searching and wandering. Searching has a target — you know what you're looking for, and you stop when you find it. Wandering has no target. You move, you notice, you follow a thread, and you stop when something catches you.</p>\n<p>The internet is very good at searching. It is almost hostile to wandering. Feeds, recommendations, and search results all push you toward the thing you already wanted — or the thing the algorithm already knows about. The surprise, the detour, the strange connection between two ideas you'd never have put together — that's been designed out of most interfaces.</p>\n<div class=\"callout\" data-callout=\"quote\"><div class=\"callout-title\"><span class=\"callout-title-icon\">“</span><span class=\"callout-title-text\">The garden is not a filing cabinet. It's a place you walk through.</span></div><div class=\"callout-content\">\n\n</div></div>\n<p>A digital garden, at its best, is built for wandering. The wikilinks are invitations, not directions. The backlinks show you who else has been here. The graph is a map of paths you might take — not a list of tasks to complete. You don't read a garden cover to cover. You wander until you find the thing you didn't know you were looking for.</p>\n<p>This is why <mark class=\"text-highlight\">the note is the unit, not the post</mark>. A post is a destination. A note is a place. You can return to a place. You can pass through it on the way to somewhere else. You can find it again years later and notice something you missed.</p>\n<p>The cost of wandering is inefficiency. You'll read notes that don't help you. You'll follow links to dead ends. You'll spend twenty minutes on a tangent. But the payoff — the unexpected connection, the idea that reorganizes everything — is worth the waste. <mark class=\"text-highlight\">Efficiency is for factories. Gardens are for growing.</mark></p>\n<p>So: don't read this note and leave. Click a link. Follow a backlink. Open the graph and pick a node at random. Get lost for a few minutes. That's the whole point.</p>\n<p>See also <a class=\"internal-link\" href=\"/?p=digital-gardens\" data-slug=\"digital-gardens\">Digital Gardens</a>, <a class=\"internal-link\" href=\"/?p=on-thinking\" data-slug=\"on-thinking\">On Thinking</a>, <a class=\"internal-link\" href=\"/?p=the-art-of-note-taking\" data-slug=\"the-art-of-note-taking\">The Art of Note Taking</a>.</p>",
-    "raw": "---\ntitle: \"On Wandering\"\ndescription: \"Wandering is not aimless — it's how knowledge actually grows. A defense of the non-linear path through a garden of ideas.\"\ndraft: false\ndate: 2024-08-28\ntags: [essay, thinking, garden]\naliases: [\"Wandering\"]\n---\n \nThere's a difference between searching and wandering. Searching has a target — you know what you're looking for, and you stop when you find it. Wandering has no target. You move, you notice, you follow a thread, and you stop when something catches you.\n\nThe internet is very good at searching. It is almost hostile to wandering. Feeds, recommendations, and search results all push you toward the thing you already wanted — or the thing the algorithm already knows about. The surprise, the detour, the strange connection between two ideas you'd never have put together — that's been designed out of most interfaces.\n\n> [!quote]\n> The garden is not a filing cabinet. It's a place you walk through.\n\nA digital garden, at its best, is built for wandering. The wikilinks are invitations, not directions. The backlinks show you who else has been here. The graph is a map of paths you might take — not a list of tasks to complete. You don't read a garden cover to cover. You wander until you find the thing you didn't know you were looking for.\n\nThis is why ==the note is the unit, not the post==. A post is a destination. A note is a place. You can return to a place. You can pass through it on the way to somewhere else. You can find it again years later and notice something you missed.\n\nThe cost of wandering is inefficiency. You'll read notes that don't help you. You'll follow links to dead ends. You'll spend twenty minutes on a tangent. But the payoff — the unexpected connection, the idea that reorganizes everything — is worth the waste. ==Efficiency is for factories. Gardens are for growing.==\n\nSo: don't read this note and leave. Click a link. Follow a backlink. Open the graph and pick a node at random. Get lost for a few minutes. That's the whole point.\n\nSee also [[Digital Gardens]], [[On Thinking]], [[The Art of Note Taking]].\n",
-    "tags": [
-      "essay",
-      "garden",
-      "thinking"
-    ],
-    "aliases": [
-      "Wandering"
-    ],
-    "links": [
-      {
-        "original": "Digital Gardens",
-        "slug": "digital-gardens",
-        "exists": true
-      },
-      {
-        "original": "On Thinking",
-        "slug": "on-thinking",
-        "exists": true
-      },
-      {
-        "original": "The Art of Note Taking",
-        "slug": "the-art-of-note-taking",
-        "exists": true
-      }
-    ],
-    "wordCount": 329,
-    "draft": false,
-    "publishDate": "2024-08-28T00:00:00.000Z",
-    "createdAt": "2024-08-28T00:00:00.000Z",
-    "updatedAt": "2026-06-30T18:40:05.932Z",
-    "path": "essays/on-wandering.md",
-    "folder": "essays",
-    "prevSlug": null,
-    "nextSlug": null
-  },
-  {
-    "slug": "on-writing",
-    "title": "On Writing",
-    "description": "An essay on writing as a practice — the resistance, the revision, and the strange relief of finishing a sentence.",
-    "content": "\nWriting is the thing I keep doing despite having nothing clever to say about how it works. Every essay I've started about writing has collapsed into either cliché (\"just write every day\") or pretension (\"the blank page is a mirror for the soul\"), and I'm not sure this one will escape that gravity. But the garden is the right place to try, because here an unfinished essay is allowed to sit until it's ready.\n\n## The resistance is the material\n\nThe hardest part of writing isn't the writing — it's the moment just before, when the page is empty and the thought feels too large or too small to commit to a sentence. I've spent more hours avoiding writing than writing. The trick I've landed on, after years of fighting it, is to treat the resistance itself as information. If a sentence won't come, the thought usually isn't ready, and forcing it produces prose I'll have to delete. Better to write a bad sentence honestly than a polished one I don't believe.\n\n## Revision is where the writing is\n\nFirst drafts are for figuring out what I think. Revision is for figuring out what I *meant*. I used to conflate these — I'd try to write a clean first draft and end up blocked, because the part of me that explores and the part of me that polishes cannot both be in the room at once. Now I let the first draft be a mess and trust revision to find the shape. Most of what I like in my own writing was discovered in revision, not invented in the draft.\n\n## The garden lowers the stakes\n\nA blog post asks to be finished. A garden note asks to be *started*. That difference is enormous for someone like me who freezes under \"finished.\" In the garden, I can publish a fragment and revise it for years — see [[Digital Gardens]] for why this isn't laziness but a different relationship to completion. The pressure comes off, and paradoxically I write more, because the bar isn't \"is this done?\" but \"is this honest?\"\n\n## A small discipline\n\nWrite the sentence you actually believe, not the sentence that sounds like the kind of thing you'd say. Read it aloud. If you stumble, the reader will too — fix it now, not later. Then publish it into the garden and let it be wrong in public, which is the only way it has a chance to become right.\n\nThe other half of this loop — where the thoughts come from in the first place — is at [[On Thinking]].\n",
-    "html": "<p>Writing is the thing I keep doing despite having nothing clever to say about how it works. Every essay I've started about writing has collapsed into either cliché (\"just write every day\") or pretension (\"the blank page is a mirror for the soul\"), and I'm not sure this one will escape that gravity. But the garden is the right place to try, because here an unfinished essay is allowed to sit until it's ready.</p>\n<h2 id=\"the-resistance-is-the-material\">The resistance is the material<a class=\"heading-anchor\" aria-hidden=\"true\" href=\"#the-resistance-is-the-material\">#</a></h2>\n<p>The hardest part of writing isn't the writing — it's the moment just before, when the page is empty and the thought feels too large or too small to commit to a sentence. I've spent more hours avoiding writing than writing. The trick I've landed on, after years of fighting it, is to treat the resistance itself as information. If a sentence won't come, the thought usually isn't ready, and forcing it produces prose I'll have to delete. Better to write a bad sentence honestly than a polished one I don't believe.</p>\n<h2 id=\"revision-is-where-the-writing-is\">Revision is where the writing is<a class=\"heading-anchor\" aria-hidden=\"true\" href=\"#revision-is-where-the-writing-is\">#</a></h2>\n<p>First drafts are for figuring out what I think. Revision is for figuring out what I <em>meant</em>. I used to conflate these — I'd try to write a clean first draft and end up blocked, because the part of me that explores and the part of me that polishes cannot both be in the room at once. Now I let the first draft be a mess and trust revision to find the shape. Most of what I like in my own writing was discovered in revision, not invented in the draft.</p>\n<h2 id=\"the-garden-lowers-the-stakes\">The garden lowers the stakes<a class=\"heading-anchor\" aria-hidden=\"true\" href=\"#the-garden-lowers-the-stakes\">#</a></h2>\n<p>A blog post asks to be finished. A garden note asks to be <em>started</em>. That difference is enormous for someone like me who freezes under \"finished.\" In the garden, I can publish a fragment and revise it for years — see <a class=\"internal-link\" href=\"/?p=digital-gardens\" data-slug=\"digital-gardens\">Digital Gardens</a> for why this isn't laziness but a different relationship to completion. The pressure comes off, and paradoxically I write more, because the bar isn't \"is this done?\" but \"is this honest?\"</p>\n<h2 id=\"a-small-discipline\">A small discipline<a class=\"heading-anchor\" aria-hidden=\"true\" href=\"#a-small-discipline\">#</a></h2>\n<p>Write the sentence you actually believe, not the sentence that sounds like the kind of thing you'd say. Read it aloud. If you stumble, the reader will too — fix it now, not later. Then publish it into the garden and let it be wrong in public, which is the only way it has a chance to become right.</p>\n<p>The other half of this loop — where the thoughts come from in the first place — is at <a class=\"internal-link\" href=\"/?p=on-thinking\" data-slug=\"on-thinking\">On Thinking</a>.</p>",
-    "raw": "---\ntitle: \"On Writing\"\ndescription: \"An essay on writing as a practice — the resistance, the revision, and the strange relief of finishing a sentence.\"\ndraft: false\ndate: 2024-08-27\ntags: [essay, writing]\naliases: [\"Writing\"]\n---\n\nWriting is the thing I keep doing despite having nothing clever to say about how it works. Every essay I've started about writing has collapsed into either cliché (\"just write every day\") or pretension (\"the blank page is a mirror for the soul\"), and I'm not sure this one will escape that gravity. But the garden is the right place to try, because here an unfinished essay is allowed to sit until it's ready.\n\n## The resistance is the material\n\nThe hardest part of writing isn't the writing — it's the moment just before, when the page is empty and the thought feels too large or too small to commit to a sentence. I've spent more hours avoiding writing than writing. The trick I've landed on, after years of fighting it, is to treat the resistance itself as information. If a sentence won't come, the thought usually isn't ready, and forcing it produces prose I'll have to delete. Better to write a bad sentence honestly than a polished one I don't believe.\n\n## Revision is where the writing is\n\nFirst drafts are for figuring out what I think. Revision is for figuring out what I *meant*. I used to conflate these — I'd try to write a clean first draft and end up blocked, because the part of me that explores and the part of me that polishes cannot both be in the room at once. Now I let the first draft be a mess and trust revision to find the shape. Most of what I like in my own writing was discovered in revision, not invented in the draft.\n\n## The garden lowers the stakes\n\nA blog post asks to be finished. A garden note asks to be *started*. That difference is enormous for someone like me who freezes under \"finished.\" In the garden, I can publish a fragment and revise it for years — see [[Digital Gardens]] for why this isn't laziness but a different relationship to completion. The pressure comes off, and paradoxically I write more, because the bar isn't \"is this done?\" but \"is this honest?\"\n\n## A small discipline\n\nWrite the sentence you actually believe, not the sentence that sounds like the kind of thing you'd say. Read it aloud. If you stumble, the reader will too — fix it now, not later. Then publish it into the garden and let it be wrong in public, which is the only way it has a chance to become right.\n\nThe other half of this loop — where the thoughts come from in the first place — is at [[On Thinking]].\n",
-    "tags": [
-      "essay",
-      "writing"
-    ],
-    "aliases": [
-      "Writing"
-    ],
-    "links": [
-      {
-        "original": "Digital Gardens",
-        "slug": "digital-gardens",
-        "exists": true
-      },
-      {
-        "original": "On Thinking",
-        "slug": "on-thinking",
-        "exists": true
-      }
-    ],
-    "wordCount": 433,
-    "draft": false,
-    "publishDate": "2024-08-27T00:00:00.000Z",
-    "createdAt": "2024-08-27T00:00:00.000Z",
-    "updatedAt": "2026-06-30T18:40:05.932Z",
-    "path": "essays/on-writing.md",
-    "folder": "essays",
-    "prevSlug": null,
-    "nextSlug": null
-  },
-  {
-    "slug": "index",
-    "title": "The Garden",
-    "description": "A digital garden — a quiet, growing collection of notes, essays, and half-formed thoughts. Wander freely.",
-    "content": "\n# The Garden\n\nWelcome. This is a digital garden — not a blog, not a portfolio, but a living collection of notes that I tend to over time. Some are polished essays; others are seedlings I'm still turning over in my head. Nothing here is \"finished\" in the way a published article is finished, and I think that's the point.\n\n> [!info] What you'll find here\n> Notes on **thinking**, **knowledge**, **note-taking**, and the slow craft of building a mind you actually trust. Start at [[Welcome to the Garden]] if you'd like a map, or wander into [[Digital Gardens]] to understand the metaphor.\n\nI used to write exclusively in chronological streams — a blog where each post was a tidy conclusion, dated and forgotten. The garden is the opposite. Ideas here are interconnected by [[Wikilinks and Backlinks]], so a thought planted in one corner can quietly grow roots into another. A note from last spring might be revised tomorrow because something I read today changed my mind.\n\n## How to wander\n\nThere's no right path. You can:\n\n- Use **search** (⌘K) to follow a thread by keyword.\n- Trace the **graph** to see how ideas connect.\n- Read **backlinks** at the bottom of any note to find what references it.\n- Follow **tags** to cluster notes by theme.\n\nIf a note feels incomplete, it probably is. That's the texture of a garden — things are always mid-growth. I'd rather show you the compost than pretend the beds are perfect.\n\n#garden\n",
-    "html": "<h1 id=\"the-garden\">The Garden<a class=\"heading-anchor\" aria-hidden=\"true\" href=\"#the-garden\">#</a></h1>\n<p>Welcome. This is a digital garden — not a blog, not a portfolio, but a living collection of notes that I tend to over time. Some are polished essays; others are seedlings I'm still turning over in my head. Nothing here is \"finished\" in the way a published article is finished, and I think that's the point.</p>\n<div class=\"callout\" data-callout=\"info\"><div class=\"callout-title\"><span class=\"callout-title-icon\">ℹ</span><span class=\"callout-title-text\">What you'll find here</span></div><div class=\"callout-content\">\n<p>\nNotes on <strong>thinking</strong>, <strong>knowledge</strong>, <strong>note-taking</strong>, and the slow craft of building a mind you actually trust. Start at <a class=\"internal-link\" href=\"/?p=welcome-to-the-garden\" data-slug=\"welcome-to-the-garden\">Welcome to the Garden</a> if you'd like a map, or wander into <a class=\"internal-link\" href=\"/?p=digital-gardens\" data-slug=\"digital-gardens\">Digital Gardens</a> to understand the metaphor.</p>\n</div></div>\n<p>I used to write exclusively in chronological streams — a blog where each post was a tidy conclusion, dated and forgotten. The garden is the opposite. Ideas here are interconnected by <a class=\"internal-link\" href=\"/?p=wikilinks-and-backlinks\" data-slug=\"wikilinks-and-backlinks\">Wikilinks and Backlinks</a>, so a thought planted in one corner can quietly grow roots into another. A note from last spring might be revised tomorrow because something I read today changed my mind.</p>\n<h2 id=\"how-to-wander\">How to wander<a class=\"heading-anchor\" aria-hidden=\"true\" href=\"#how-to-wander\">#</a></h2>\n<p>There's no right path. You can:</p>\n<ul>\n<li>Use <strong>search</strong> (⌘K) to follow a thread by keyword.</li>\n<li>Trace the <strong>graph</strong> to see how ideas connect.</li>\n<li>Read <strong>backlinks</strong> at the bottom of any note to find what references it.</li>\n<li>Follow <strong>tags</strong> to cluster notes by theme.</li>\n</ul>\n<p>If a note feels incomplete, it probably is. That's the texture of a garden — things are always mid-growth. I'd rather show you the compost than pretend the beds are perfect.</p>\n<p><a class=\"tag-link\" href=\"/?tag=garden\">#garden</a></p>",
-    "raw": "---\ntitle: \"The Garden\"\ndescription: \"A digital garden — a quiet, growing collection of notes, essays, and half-formed thoughts. Wander freely.\"\ndraft: false\ndate: 2024-08-15\ntags: [garden, meta]\naliases: [\"Home\", \"Index\"]\n---\n\n# The Garden\n\nWelcome. This is a digital garden — not a blog, not a portfolio, but a living collection of notes that I tend to over time. Some are polished essays; others are seedlings I'm still turning over in my head. Nothing here is \"finished\" in the way a published article is finished, and I think that's the point.\n\n> [!info] What you'll find here\n> Notes on **thinking**, **knowledge**, **note-taking**, and the slow craft of building a mind you actually trust. Start at [[Welcome to the Garden]] if you'd like a map, or wander into [[Digital Gardens]] to understand the metaphor.\n\nI used to write exclusively in chronological streams — a blog where each post was a tidy conclusion, dated and forgotten. The garden is the opposite. Ideas here are interconnected by [[Wikilinks and Backlinks]], so a thought planted in one corner can quietly grow roots into another. A note from last spring might be revised tomorrow because something I read today changed my mind.\n\n## How to wander\n\nThere's no right path. You can:\n\n- Use **search** (⌘K) to follow a thread by keyword.\n- Trace the **graph** to see how ideas connect.\n- Read **backlinks** at the bottom of any note to find what references it.\n- Follow **tags** to cluster notes by theme.\n\nIf a note feels incomplete, it probably is. That's the texture of a garden — things are always mid-growth. I'd rather show you the compost than pretend the beds are perfect.\n\n#garden\n",
-    "tags": [
-      "garden",
-      "meta"
-    ],
-    "aliases": [
-      "Home",
-      "Index"
-    ],
-    "links": [
-      {
-        "original": "Welcome to the Garden",
-        "slug": "welcome-to-the-garden",
-        "exists": true
-      },
-      {
-        "original": "Digital Gardens",
-        "slug": "digital-gardens",
-        "exists": true
-      },
-      {
-        "original": "Wikilinks and Backlinks",
-        "slug": "wikilinks-and-backlinks",
-        "exists": true
-      }
-    ],
-    "wordCount": 248,
-    "draft": false,
-    "publishDate": "2024-08-15T00:00:00.000Z",
-    "createdAt": "2024-08-15T00:00:00.000Z",
-    "updatedAt": "2026-06-30T18:40:05.932Z",
-    "path": "index.md",
     "folder": null,
     "prevSlug": null,
     "nextSlug": null
@@ -353,9 +93,9 @@
     "draft": false,
     "publishDate": "2024-08-14T00:00:00.000Z",
     "createdAt": "2024-08-14T00:00:00.000Z",
-    "updatedAt": "2026-06-30T18:40:05.932Z",
-    "path": "notes/bikeshedding-and-the-garden.md",
-    "folder": "notes",
+    "updatedAt": "2026-06-30T20:43:17.348Z",
+    "path": "bikeshedding-and-the-garden.md",
+    "folder": null,
     "prevSlug": null,
     "nextSlug": null
   },
@@ -392,9 +132,9 @@
     "draft": false,
     "publishDate": "2024-08-22T00:00:00.000Z",
     "createdAt": "2024-08-22T00:00:00.000Z",
-    "updatedAt": "2026-06-30T18:40:05.932Z",
-    "path": "notes/building-a-second-brain.md",
-    "folder": "notes",
+    "updatedAt": "2026-06-30T20:43:17.348Z",
+    "path": "building-a-second-brain.md",
+    "folder": null,
     "prevSlug": null,
     "nextSlug": null
   },
@@ -423,9 +163,9 @@
     "draft": false,
     "publishDate": "2024-08-18T00:00:00.000Z",
     "createdAt": "2024-08-18T00:00:00.000Z",
-    "updatedAt": "2026-06-30T18:40:05.932Z",
-    "path": "notes/callouts-reference.md",
-    "folder": "notes",
+    "updatedAt": "2026-06-30T20:43:17.348Z",
+    "path": "callouts-reference.md",
+    "folder": null,
     "prevSlug": null,
     "nextSlug": null
   },
@@ -463,9 +203,9 @@
     "draft": false,
     "publishDate": "2024-09-01T00:00:00.000Z",
     "createdAt": "2024-09-01T00:00:00.000Z",
-    "updatedAt": "2026-06-30T18:40:05.932Z",
-    "path": "notes/code-execution-playground.md",
-    "folder": "notes",
+    "updatedAt": "2026-06-30T20:43:17.348Z",
+    "path": "code-execution-playground.md",
+    "folder": null,
     "prevSlug": null,
     "nextSlug": null
   },
@@ -539,9 +279,9 @@
     "draft": false,
     "publishDate": "2024-08-03T00:00:00.000Z",
     "createdAt": "2024-08-03T00:00:00.000Z",
-    "updatedAt": "2026-06-30T18:40:05.932Z",
-    "path": "notes/composing-with-transclusions.md",
-    "folder": "notes",
+    "updatedAt": "2026-06-30T20:43:17.348Z",
+    "path": "composing-with-transclusions.md",
+    "folder": null,
     "prevSlug": null,
     "nextSlug": null
   },
@@ -589,9 +329,9 @@
     "draft": false,
     "publishDate": "2024-08-20T00:00:00.000Z",
     "createdAt": "2024-08-20T00:00:00.000Z",
-    "updatedAt": "2026-06-30T18:40:05.932Z",
-    "path": "notes/compounding-knowledge.md",
-    "folder": "notes",
+    "updatedAt": "2026-06-30T20:43:17.348Z",
+    "path": "compounding-knowledge.md",
+    "folder": null,
     "prevSlug": null,
     "nextSlug": null
   },
@@ -629,9 +369,9 @@
     "draft": false,
     "publishDate": "2024-09-03T00:00:00.000Z",
     "createdAt": "2024-09-03T00:00:00.000Z",
-    "updatedAt": "2026-06-30T18:40:05.932Z",
-    "path": "notes/contribution-graph.md",
-    "folder": "notes",
+    "updatedAt": "2026-06-30T20:43:17.348Z",
+    "path": "contribution-graph.md",
+    "folder": null,
     "prevSlug": null,
     "nextSlug": null
   },
@@ -677,9 +417,9 @@
     "draft": false,
     "publishDate": "2024-08-15T00:00:00.000Z",
     "createdAt": "2024-08-15T00:00:00.000Z",
-    "updatedAt": "2026-06-30T18:40:05.932Z",
-    "path": "notes/digital-gardens.md",
-    "folder": "notes",
+    "updatedAt": "2026-06-30T20:43:17.348Z",
+    "path": "digital-gardens.md",
+    "folder": null,
     "prevSlug": null,
     "nextSlug": null
   },
@@ -688,7 +428,7 @@
     "title": "Embeds and Transclusions",
     "description": "How to embed one note inside another with transclusions, pull in images, and reuse content without copy-paste.",
     "content": "\nAn embed (or *transclusion*) is what happens when you don't just link to another note — you pull its contents directly into the current page. It's the difference between citing a source and quoting it in full, except the quote stays live: edit the source note, and every embed of it updates too.\n\n## Note embeds\n\nPrefix a wikilink with a bang to transclude the whole note:\n\n```\n![[Digital Gardens]]\n```\n\n![[Digital Gardens]]\n\nYou can also embed just a section:\n\n```\n![[Digital Gardens#The stream vs. the garden]]\n```\n\nThis is wonderful for things like definitions or canonical explanations you don't want to duplicate. Write it once, embed it everywhere.\n\n## Image embeds\n\nImages work the same way. Drop a file into the `assets` folder and embed it:\n\n```\n![[garden-illustration.png]]\n```\n\n![[garden-illustration.png]]\n\nYou can add alt text and dimensions with a pipe:\n\n```\n![[garden-illustration.png|The garden at night, 400x400]]\n```\n\n## When to embed vs. link\n\nEmbeds are powerful but easy to overuse. A page full of embeds is just a page that won't render coherently if any source note moves. My rule of thumb:\n\n- **Link** when the relationship is the point — \"see also\", \"this builds on\", \"this disagrees with\".\n- **Embed** when the *content* is the point — a definition, a canonical diagram, a shared preamble.\n\nThe mechanics of linking are covered in [[Wikilinks and Backlinks]]; this note is for when linking isn't enough and you need the actual bytes inline.\n\n## A subtle benefit\n\nEmbeds make refactoring safe. If I realize my definition of \"digital garden\" is slightly off in five different notes, fixing it once and letting the embeds propagate is infinitely better than five manual edits — and far better than the silent drift that happens when you copy-paste. The embed is the garden's answer to DRY, applied to prose.\n",
-    "html": "<p>An embed (or <em>transclusion</em>) is what happens when you don't just link to another note — you pull its contents directly into the current page. It's the difference between citing a source and quoting it in full, except the quote stays live: edit the source note, and every embed of it updates too.</p>\n<h2 id=\"note-embeds\">Note embeds<a class=\"heading-anchor\" aria-hidden=\"true\" href=\"#note-embeds\">#</a></h2>\n<p>Prefix a wikilink with a bang to transclude the whole note:</p>\n<pre class=\"shiki no-lang\"><code>![[Digital Gardens]]\n</code></pre>\n<p></p><div class=\"transclusion\"><div class=\"transclusion-header\"><span class=\"transclusion-icon\">⌖</span><a class=\"transclusion-link\" href=\"/?p=digital-gardens\">Digital Gardens</a></div><div class=\"transclusion-body\"><p>A digital garden is a collection of notes that you tend rather than publish. The metaphor is doing real work here: a blog is a stream of finished posts flowing past, dated and discarded, while a garden is a place you return to, weed, prune, and let cross-pollinate. Both are valid; they serve different needs.</p>\n<h2 id=\"the-stream-vs-the-garden\">The stream vs. the garden<a class=\"heading-anchor\" aria-hidden=\"true\" href=\"#the-stream-vs-the-garden\">#</a><a class=\"heading-anchor\" aria-hidden=\"true\" href=\"#the-stream-vs-the-garden\">#</a></h2>\n<p>A blog post is a <em>product</em>. You research, draft, edit, publish, and move on. The post freezes a conclusion in time. A garden note is a <em>process</em>. It can sit as a seedling for months, then get revised when something you learn later reshapes it. Notes link to each other instead of being ordered by date, so the structure is spatial rather than chronological.</p>\n<div class=\"callout\" data-callout=\"quote\"><div class=\"callout-title\"><span class=\"callout-title-icon\">“</span><span class=\"callout-title-text\">Maggie Appleton</span></div><div class=\"callout-content\">\n<p>\n\"A digital garden is an open collection of notes... the emphasis is on growth, connection, and exploration rather than presentation.\"</p>\n</div></div>\n<p>That last word — <em>presentation</em> — is the crux. Blogs optimize for being read; gardens optimize for being <em>thought in</em>. The audience for a garden is often the gardener themselves, with readers welcome to overhear.</p>\n<h2 id=\"why-cultivate-instead-of-publish\">Why cultivate instead of publish?<a class=\"heading-anchor\" aria-hidden=\"true\" href=\"#why-cultivate-instead-of-publish\">#</a><a class=\"heading-anchor\" aria-hidden=\"true\" href=\"#why-cultivate-instead-of-publish\">#</a></h2>\n<p>Publishing asks \"is this done?\" Cultivating asks \"is this growing?\" The second question is friendlier. It lets me publish half-formed ideas without the pressure of a polished takeaway, then return to them when I have more to say. Notes accumulate <em>value</em> over time rather than losing it the way a dated post does.</p>\n<p>This also changes how I read my own past. In a blog, old posts embarrass me — they're snapshots of who I was. In a garden, old notes are compost. I revise them in place, and the revision history (or lack thereof) becomes part of the texture.</p>\n<h2 id=\"how-this-fits-with-other-systems\">How this fits with other systems<a class=\"heading-anchor\" aria-hidden=\"true\" href=\"#how-this-fits-with-other-systems\">#</a><a class=\"heading-anchor\" aria-hidden=\"true\" href=\"#how-this-fits-with-other-systems\">#</a></h2>\n<p>The garden is one shape among several. <a class=\"internal-link\" href=\"/?p=building-a-second-brain\" data-slug=\"building-a-second-brain\">Building a Second Brain</a> gives you a workflow for <em>capturing</em> and <em>distilling</em> raw material; the garden is where the distilled ideas live and keep talking to each other. The <a class=\"internal-link\" href=\"/?p=zettelkasten-method\" data-slug=\"zettelkasten-method\">Zettelkasten Method</a> adds the discipline of atomic, linkable notes that makes a garden navigable rather than just a pile. They're complementary, not competing.</p>\n<p>If you'd like to see how the linking actually works, <a class=\"internal-link\" href=\"/?p=wikilinks-and-backlinks\" data-slug=\"wikilinks-and-backlinks\">Wikilinks and Backlinks</a> is the practical companion to this essay. And if you're new here, <a class=\"internal-link\" href=\"/?p=welcome-to-the-garden\" data-slug=\"welcome-to-the-garden\">Welcome to the Garden</a> is the front door.</p>\n<p><a class=\"tag-link\" href=\"/?tag=garden\">#garden</a> <a class=\"tag-link\" href=\"/?tag=knowledge\">#knowledge</a></p></div></div><p></p>\n<p>You can also embed just a section:</p>\n<pre class=\"shiki no-lang\"><code>![[Digital Gardens#The stream vs. the garden]]\n</code></pre>\n<p>This is wonderful for things like definitions or canonical explanations you don't want to duplicate. Write it once, embed it everywhere.</p>\n<h2 id=\"image-embeds\">Image embeds<a class=\"heading-anchor\" aria-hidden=\"true\" href=\"#image-embeds\">#</a></h2>\n<p>Images work the same way. Drop a file into the <code>assets</code> folder and embed it:</p>\n<pre class=\"shiki no-lang\"><code>![[garden-illustration.png]]\n</code></pre>\n<p><img src=\"/content-assets/assets-garden-illustration.png\" alt=\"garden-illustration.png\" loading=\"lazy\"></p>\n<p>You can add alt text and dimensions with a pipe:</p>\n<pre class=\"shiki no-lang\"><code>![[garden-illustration.png|The garden at night, 400x400]]\n</code></pre>\n<h2 id=\"when-to-embed-vs-link\">When to embed vs. link<a class=\"heading-anchor\" aria-hidden=\"true\" href=\"#when-to-embed-vs-link\">#</a></h2>\n<p>Embeds are powerful but easy to overuse. A page full of embeds is just a page that won't render coherently if any source note moves. My rule of thumb:</p>\n<ul>\n<li><strong>Link</strong> when the relationship is the point — \"see also\", \"this builds on\", \"this disagrees with\".</li>\n<li><strong>Embed</strong> when the <em>content</em> is the point — a definition, a canonical diagram, a shared preamble.</li>\n</ul>\n<p>The mechanics of linking are covered in <a class=\"internal-link\" href=\"/?p=wikilinks-and-backlinks\" data-slug=\"wikilinks-and-backlinks\">Wikilinks and Backlinks</a>; this note is for when linking isn't enough and you need the actual bytes inline.</p>\n<h2 id=\"a-subtle-benefit\">A subtle benefit<a class=\"heading-anchor\" aria-hidden=\"true\" href=\"#a-subtle-benefit\">#</a></h2>\n<p>Embeds make refactoring safe. If I realize my definition of \"digital garden\" is slightly off in five different notes, fixing it once and letting the embeds propagate is infinitely better than five manual edits — and far better than the silent drift that happens when you copy-paste. The embed is the garden's answer to DRY, applied to prose.</p>",
+    "html": "<p>An embed (or <em>transclusion</em>) is what happens when you don't just link to another note — you pull its contents directly into the current page. It's the difference between citing a source and quoting it in full, except the quote stays live: edit the source note, and every embed of it updates too.</p>\n<h2 id=\"note-embeds\">Note embeds<a class=\"heading-anchor\" aria-hidden=\"true\" href=\"#note-embeds\">#</a></h2>\n<p>Prefix a wikilink with a bang to transclude the whole note:</p>\n<pre class=\"shiki no-lang\"><code>![[Digital Gardens]]\n</code></pre>\n<p></p><div class=\"transclusion\"><div class=\"transclusion-header\"><span class=\"transclusion-icon\">⌖</span><a class=\"transclusion-link\" href=\"/?p=digital-gardens\">Digital Gardens</a></div><div class=\"transclusion-body\"><p>A digital garden is a collection of notes that you tend rather than publish. The metaphor is doing real work here: a blog is a stream of finished posts flowing past, dated and discarded, while a garden is a place you return to, weed, prune, and let cross-pollinate. Both are valid; they serve different needs.</p>\n<h2 id=\"the-stream-vs-the-garden\">The stream vs. the garden<a class=\"heading-anchor\" aria-hidden=\"true\" href=\"#the-stream-vs-the-garden\">#</a><a class=\"heading-anchor\" aria-hidden=\"true\" href=\"#the-stream-vs-the-garden\">#</a></h2>\n<p>A blog post is a <em>product</em>. You research, draft, edit, publish, and move on. The post freezes a conclusion in time. A garden note is a <em>process</em>. It can sit as a seedling for months, then get revised when something you learn later reshapes it. Notes link to each other instead of being ordered by date, so the structure is spatial rather than chronological.</p>\n<div class=\"callout\" data-callout=\"quote\"><div class=\"callout-title\"><span class=\"callout-title-icon\">“</span><span class=\"callout-title-text\">Maggie Appleton</span></div><div class=\"callout-content\">\n<p>\n\"A digital garden is an open collection of notes... the emphasis is on growth, connection, and exploration rather than presentation.\"</p>\n</div></div>\n<p>That last word — <em>presentation</em> — is the crux. Blogs optimize for being read; gardens optimize for being <em>thought in</em>. The audience for a garden is often the gardener themselves, with readers welcome to overhear.</p>\n<h2 id=\"why-cultivate-instead-of-publish\">Why cultivate instead of publish?<a class=\"heading-anchor\" aria-hidden=\"true\" href=\"#why-cultivate-instead-of-publish\">#</a><a class=\"heading-anchor\" aria-hidden=\"true\" href=\"#why-cultivate-instead-of-publish\">#</a></h2>\n<p>Publishing asks \"is this done?\" Cultivating asks \"is this growing?\" The second question is friendlier. It lets me publish half-formed ideas without the pressure of a polished takeaway, then return to them when I have more to say. Notes accumulate <em>value</em> over time rather than losing it the way a dated post does.</p>\n<p>This also changes how I read my own past. In a blog, old posts embarrass me — they're snapshots of who I was. In a garden, old notes are compost. I revise them in place, and the revision history (or lack thereof) becomes part of the texture.</p>\n<h2 id=\"how-this-fits-with-other-systems\">How this fits with other systems<a class=\"heading-anchor\" aria-hidden=\"true\" href=\"#how-this-fits-with-other-systems\">#</a><a class=\"heading-anchor\" aria-hidden=\"true\" href=\"#how-this-fits-with-other-systems\">#</a></h2>\n<p>The garden is one shape among several. <a class=\"internal-link\" href=\"/?p=building-a-second-brain\" data-slug=\"building-a-second-brain\">Building a Second Brain</a> gives you a workflow for <em>capturing</em> and <em>distilling</em> raw material; the garden is where the distilled ideas live and keep talking to each other. The <a class=\"internal-link\" href=\"/?p=zettelkasten-method\" data-slug=\"zettelkasten-method\">Zettelkasten Method</a> adds the discipline of atomic, linkable notes that makes a garden navigable rather than just a pile. They're complementary, not competing.</p>\n<p>If you'd like to see how the linking actually works, <a class=\"internal-link\" href=\"/?p=wikilinks-and-backlinks\" data-slug=\"wikilinks-and-backlinks\">Wikilinks and Backlinks</a> is the practical companion to this essay. And if you're new here, <a class=\"internal-link\" href=\"/?p=welcome-to-the-garden\" data-slug=\"welcome-to-the-garden\">Welcome to the Garden</a> is the front door.</p>\n<p><a class=\"tag-link\" href=\"/?tag=garden\">#garden</a> <a class=\"tag-link\" href=\"/?tag=knowledge\">#knowledge</a></p></div></div><p></p>\n<p>You can also embed just a section:</p>\n<pre class=\"shiki no-lang\"><code>![[Digital Gardens#The stream vs. the garden]]\n</code></pre>\n<p>This is wonderful for things like definitions or canonical explanations you don't want to duplicate. Write it once, embed it everywhere.</p>\n<h2 id=\"image-embeds\">Image embeds<a class=\"heading-anchor\" aria-hidden=\"true\" href=\"#image-embeds\">#</a></h2>\n<p>Images work the same way. Drop a file into the <code>assets</code> folder and embed it:</p>\n<pre class=\"shiki no-lang\"><code>![[garden-illustration.png]]\n</code></pre>\n<p><img src=\"/content-assets/garden-illustration.png\" alt=\"garden-illustration.png\" loading=\"lazy\"></p>\n<p>You can add alt text and dimensions with a pipe:</p>\n<pre class=\"shiki no-lang\"><code>![[garden-illustration.png|The garden at night, 400x400]]\n</code></pre>\n<h2 id=\"when-to-embed-vs-link\">When to embed vs. link<a class=\"heading-anchor\" aria-hidden=\"true\" href=\"#when-to-embed-vs-link\">#</a></h2>\n<p>Embeds are powerful but easy to overuse. A page full of embeds is just a page that won't render coherently if any source note moves. My rule of thumb:</p>\n<ul>\n<li><strong>Link</strong> when the relationship is the point — \"see also\", \"this builds on\", \"this disagrees with\".</li>\n<li><strong>Embed</strong> when the <em>content</em> is the point — a definition, a canonical diagram, a shared preamble.</li>\n</ul>\n<p>The mechanics of linking are covered in <a class=\"internal-link\" href=\"/?p=wikilinks-and-backlinks\" data-slug=\"wikilinks-and-backlinks\">Wikilinks and Backlinks</a>; this note is for when linking isn't enough and you need the actual bytes inline.</p>\n<h2 id=\"a-subtle-benefit\">A subtle benefit<a class=\"heading-anchor\" aria-hidden=\"true\" href=\"#a-subtle-benefit\">#</a></h2>\n<p>Embeds make refactoring safe. If I realize my definition of \"digital garden\" is slightly off in five different notes, fixing it once and letting the embeds propagate is infinitely better than five manual edits — and far better than the silent drift that happens when you copy-paste. The embed is the garden's answer to DRY, applied to prose.</p>",
     "raw": "---\ntitle: \"Embeds and Transclusions\"\ndescription: \"How to embed one note inside another with transclusions, pull in images, and reuse content without copy-paste.\"\ndraft: false\ndate: 2024-08-25\ntags: [reference, embeds]\naliases: [\"Embeds\", \"Transclusions\"]\n---\n\nAn embed (or *transclusion*) is what happens when you don't just link to another note — you pull its contents directly into the current page. It's the difference between citing a source and quoting it in full, except the quote stays live: edit the source note, and every embed of it updates too.\n\n## Note embeds\n\nPrefix a wikilink with a bang to transclude the whole note:\n\n```\n![[Digital Gardens]]\n```\n\n![[Digital Gardens]]\n\nYou can also embed just a section:\n\n```\n![[Digital Gardens#The stream vs. the garden]]\n```\n\nThis is wonderful for things like definitions or canonical explanations you don't want to duplicate. Write it once, embed it everywhere.\n\n## Image embeds\n\nImages work the same way. Drop a file into the `assets` folder and embed it:\n\n```\n![[garden-illustration.png]]\n```\n\n![[garden-illustration.png]]\n\nYou can add alt text and dimensions with a pipe:\n\n```\n![[garden-illustration.png|The garden at night, 400x400]]\n```\n\n## When to embed vs. link\n\nEmbeds are powerful but easy to overuse. A page full of embeds is just a page that won't render coherently if any source note moves. My rule of thumb:\n\n- **Link** when the relationship is the point — \"see also\", \"this builds on\", \"this disagrees with\".\n- **Embed** when the *content* is the point — a definition, a canonical diagram, a shared preamble.\n\nThe mechanics of linking are covered in [[Wikilinks and Backlinks]]; this note is for when linking isn't enough and you need the actual bytes inline.\n\n## A subtle benefit\n\nEmbeds make refactoring safe. If I realize my definition of \"digital garden\" is slightly off in five different notes, fixing it once and letting the embeds propagate is infinitely better than five manual edits — and far better than the silent drift that happens when you copy-paste. The embed is the garden's answer to DRY, applied to prose.\n",
     "tags": [
       "embeds",
@@ -714,9 +454,9 @@
     "draft": false,
     "publishDate": "2024-08-25T00:00:00.000Z",
     "createdAt": "2024-08-25T00:00:00.000Z",
-    "updatedAt": "2026-06-30T18:40:05.932Z",
-    "path": "notes/embeds-and-transclusions.md",
-    "folder": "notes",
+    "updatedAt": "2026-06-30T20:43:17.348Z",
+    "path": "embeds-and-transclusions.md",
+    "folder": null,
     "prevSlug": null,
     "nextSlug": null
   },
@@ -765,9 +505,51 @@
     "draft": false,
     "publishDate": "2024-09-05T00:00:00.000Z",
     "createdAt": "2024-09-05T00:00:00.000Z",
-    "updatedAt": "2026-06-30T18:40:05.932Z",
-    "path": "notes/how-posting-works.md",
-    "folder": "notes",
+    "updatedAt": "2026-06-30T20:43:17.348Z",
+    "path": "how-posting-works.md",
+    "folder": null,
+    "prevSlug": null,
+    "nextSlug": null
+  },
+  {
+    "slug": "index",
+    "title": "The Garden",
+    "description": "A digital garden — a quiet, growing collection of notes, essays, and half-formed thoughts. Wander freely.",
+    "content": "\n# The Garden\n\nWelcome. This is a digital garden — not a blog, not a portfolio, but a living collection of notes that I tend to over time. Some are polished essays; others are seedlings I'm still turning over in my head. Nothing here is \"finished\" in the way a published article is finished, and I think that's the point.\n\n> [!info] What you'll find here\n> Notes on **thinking**, **knowledge**, **note-taking**, and the slow craft of building a mind you actually trust. Start at [[Welcome to the Garden]] if you'd like a map, or wander into [[Digital Gardens]] to understand the metaphor.\n\nI used to write exclusively in chronological streams — a blog where each post was a tidy conclusion, dated and forgotten. The garden is the opposite. Ideas here are interconnected by [[Wikilinks and Backlinks]], so a thought planted in one corner can quietly grow roots into another. A note from last spring might be revised tomorrow because something I read today changed my mind.\n\n## How to wander\n\nThere's no right path. You can:\n\n- Use **search** (⌘K) to follow a thread by keyword.\n- Trace the **graph** to see how ideas connect.\n- Read **backlinks** at the bottom of any note to find what references it.\n- Follow **tags** to cluster notes by theme.\n\nIf a note feels incomplete, it probably is. That's the texture of a garden — things are always mid-growth. I'd rather show you the compost than pretend the beds are perfect.\n\n#garden\n",
+    "html": "<h1 id=\"the-garden\">The Garden<a class=\"heading-anchor\" aria-hidden=\"true\" href=\"#the-garden\">#</a></h1>\n<p>Welcome. This is a digital garden — not a blog, not a portfolio, but a living collection of notes that I tend to over time. Some are polished essays; others are seedlings I'm still turning over in my head. Nothing here is \"finished\" in the way a published article is finished, and I think that's the point.</p>\n<div class=\"callout\" data-callout=\"info\"><div class=\"callout-title\"><span class=\"callout-title-icon\">ℹ</span><span class=\"callout-title-text\">What you'll find here</span></div><div class=\"callout-content\">\n<p>\nNotes on <strong>thinking</strong>, <strong>knowledge</strong>, <strong>note-taking</strong>, and the slow craft of building a mind you actually trust. Start at <a class=\"internal-link\" href=\"/?p=welcome-to-the-garden\" data-slug=\"welcome-to-the-garden\">Welcome to the Garden</a> if you'd like a map, or wander into <a class=\"internal-link\" href=\"/?p=digital-gardens\" data-slug=\"digital-gardens\">Digital Gardens</a> to understand the metaphor.</p>\n</div></div>\n<p>I used to write exclusively in chronological streams — a blog where each post was a tidy conclusion, dated and forgotten. The garden is the opposite. Ideas here are interconnected by <a class=\"internal-link\" href=\"/?p=wikilinks-and-backlinks\" data-slug=\"wikilinks-and-backlinks\">Wikilinks and Backlinks</a>, so a thought planted in one corner can quietly grow roots into another. A note from last spring might be revised tomorrow because something I read today changed my mind.</p>\n<h2 id=\"how-to-wander\">How to wander<a class=\"heading-anchor\" aria-hidden=\"true\" href=\"#how-to-wander\">#</a></h2>\n<p>There's no right path. You can:</p>\n<ul>\n<li>Use <strong>search</strong> (⌘K) to follow a thread by keyword.</li>\n<li>Trace the <strong>graph</strong> to see how ideas connect.</li>\n<li>Read <strong>backlinks</strong> at the bottom of any note to find what references it.</li>\n<li>Follow <strong>tags</strong> to cluster notes by theme.</li>\n</ul>\n<p>If a note feels incomplete, it probably is. That's the texture of a garden — things are always mid-growth. I'd rather show you the compost than pretend the beds are perfect.</p>\n<p><a class=\"tag-link\" href=\"/?tag=garden\">#garden</a></p>",
+    "raw": "---\ntitle: \"The Garden\"\ndescription: \"A digital garden — a quiet, growing collection of notes, essays, and half-formed thoughts. Wander freely.\"\ndraft: false\ndate: 2024-08-15\ntags: [garden, meta]\naliases: [\"Home\", \"Index\"]\n---\n\n# The Garden\n\nWelcome. This is a digital garden — not a blog, not a portfolio, but a living collection of notes that I tend to over time. Some are polished essays; others are seedlings I'm still turning over in my head. Nothing here is \"finished\" in the way a published article is finished, and I think that's the point.\n\n> [!info] What you'll find here\n> Notes on **thinking**, **knowledge**, **note-taking**, and the slow craft of building a mind you actually trust. Start at [[Welcome to the Garden]] if you'd like a map, or wander into [[Digital Gardens]] to understand the metaphor.\n\nI used to write exclusively in chronological streams — a blog where each post was a tidy conclusion, dated and forgotten. The garden is the opposite. Ideas here are interconnected by [[Wikilinks and Backlinks]], so a thought planted in one corner can quietly grow roots into another. A note from last spring might be revised tomorrow because something I read today changed my mind.\n\n## How to wander\n\nThere's no right path. You can:\n\n- Use **search** (⌘K) to follow a thread by keyword.\n- Trace the **graph** to see how ideas connect.\n- Read **backlinks** at the bottom of any note to find what references it.\n- Follow **tags** to cluster notes by theme.\n\nIf a note feels incomplete, it probably is. That's the texture of a garden — things are always mid-growth. I'd rather show you the compost than pretend the beds are perfect.\n\n#garden\n",
+    "tags": [
+      "garden",
+      "meta"
+    ],
+    "aliases": [
+      "Home",
+      "Index"
+    ],
+    "links": [
+      {
+        "original": "Welcome to the Garden",
+        "slug": "welcome-to-the-garden",
+        "exists": true
+      },
+      {
+        "original": "Digital Gardens",
+        "slug": "digital-gardens",
+        "exists": true
+      },
+      {
+        "original": "Wikilinks and Backlinks",
+        "slug": "wikilinks-and-backlinks",
+        "exists": true
+      }
+    ],
+    "wordCount": 248,
+    "draft": false,
+    "publishDate": "2024-08-15T00:00:00.000Z",
+    "createdAt": "2024-08-15T00:00:00.000Z",
+    "updatedAt": "2026-06-30T20:43:17.348Z",
+    "path": "index.md",
+    "folder": null,
     "prevSlug": null,
     "nextSlug": null
   },
@@ -831,9 +613,9 @@
     "draft": false,
     "publishDate": "2024-08-05T00:00:00.000Z",
     "createdAt": "2024-08-05T00:00:00.000Z",
-    "updatedAt": "2026-06-30T18:40:05.932Z",
-    "path": "notes/links-are-thoughts.md",
-    "folder": "notes",
+    "updatedAt": "2026-06-30T20:43:17.348Z",
+    "path": "links-are-thoughts.md",
+    "folder": null,
     "prevSlug": null,
     "nextSlug": null
   },
@@ -864,9 +646,9 @@
     "draft": false,
     "publishDate": "2024-08-19T00:00:00.000Z",
     "createdAt": "2024-08-19T00:00:00.000Z",
-    "updatedAt": "2026-06-30T18:40:05.932Z",
-    "path": "notes/math-and-latex.md",
-    "folder": "notes",
+    "updatedAt": "2026-06-30T20:43:17.348Z",
+    "path": "math-and-latex.md",
+    "folder": null,
     "prevSlug": null,
     "nextSlug": null
   },
@@ -875,7 +657,7 @@
     "title": "Media Embeds Reference",
     "description": "Test image, audio, video, PDF, and ink drawing embeds — all the media types supported by the garden.",
     "content": "\nThis note tests all media embed types. Use `![[filename.ext]]` to embed any supported media in your notes.\n\n## Images (curved and modern)\n\nImages are rendered with rounded corners, subtle borders, and depth shadows. On hover they scale up slightly.\n\n![[garden-illustration.png]]\n\n## Audio embeds\n\nAudio files (`.mp3`, `.wav`, `.ogg`, `.flac`, `.m4a`) render as native HTML5 audio players:\n\n![[sample-audio.wav]]\n\n## Video embeds\n\nVideo files (`.mp4`, `.webm`, `.mov`) render as native HTML5 video players with controls:\n\n![[sample-video.mp4]]\n\n## PDF embeds\n\nPDF files render in an inline iframe viewer:\n\n![[sample-document.pdf]]\n\n## Obsidian Ink drawings\n\nDrawings from the [Obsidian Ink plugin](https://github.com/daledesilva/obsidian_ink) are rendered as preview images. In Obsidian, use the `handdrawn-ink` or `handwritten-ink` code block:\n\n~~~\n```handdrawn-ink\n{\n\t\"versionAtEmbed\": \"1.2.0\",\n\t\"filepath\": \"Ink/Drawing/test-drawing.drawing\",\n\t\"width\": 400,\n\t\"aspectRatio\": 1.5\n}\n```\n~~~\n\nThe plugin stores the drawing as a `.drawing` file with a tldraw snapshot and a `previewUri` (base64 PNG screenshot). At publish time, the garden reads the file and inlines the preview image.\n\nHere's a sample ink drawing:\n\n```handdrawn-ink\n{\n\t\"versionAtEmbed\": \"1.2.0\",\n\t\"filepath\": \"Ink/Drawing/sample-sketch.drawing\",\n\t\"width\": 400,\n\t\"aspectRatio\": 1.5\n}\n```\n\nIf the drawing file doesn't exist or has no preview, a placeholder is shown:\n\n```handdrawn-ink\n{\n\t\"versionAtEmbed\": \"1.2.0\",\n\t\"filepath\": \"Ink/Drawing/nonexistent.drawing\",\n\t\"width\": 400\n}\n```\n\n> [!info] Supported media types\n> - **Images**: `.png`, `.jpg`, `.jpeg`, `.gif`, `.svg`, `.webp`, `.avif`, `.bmp`, `.ico`\n> - **Video**: `.mp4`, `.webm`, `.ogv`, `.mov`, `.m4v`, `.avi`, `.mkv`\n> - **Audio**: `.mp3`, `.wav`, `.ogg`, `.oga`, `.flac`, `.m4a`, `.aac`, `.opus`\n> - **PDF**: `.pdf`\n> - **Ink**: ` ```handdrawn-ink ` and ` ```handwritten-ink ` code blocks (Obsidian Ink plugin)\n\nSee [[Embeds and Transclusions]], [[Code Execution Playground]], [[Callouts Reference]].\n\n## External Media Embed Tests\n\nHere we test embedding of external URLs for video, audio, and PDF files.\n\n### External Video Embed\n![External Video](https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4)\n\n### External Audio Embed\n![External Audio](https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3)\n\n### External PDF Embed\n![External PDF](https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf)\n\n### Bare URL to Video\nhttps://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4\n\n### Autolink to Audio\n<https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3>\n\n",
-    "html": "<p>This note tests all media embed types. Use <code>![[filename.ext]]</code> to embed any supported media in your notes.</p>\n<h2 id=\"images-curved-and-modern\">Images (curved and modern)<a class=\"heading-anchor\" aria-hidden=\"true\" href=\"#images-curved-and-modern\">#</a></h2>\n<p>Images are rendered with rounded corners, subtle borders, and depth shadows. On hover they scale up slightly.</p>\n<p><img src=\"/content-assets/assets-garden-illustration.png\" alt=\"garden-illustration.png\" loading=\"lazy\"></p>\n<h2 id=\"audio-embeds\">Audio embeds<a class=\"heading-anchor\" aria-hidden=\"true\" href=\"#audio-embeds\">#</a></h2>\n<p>Audio files (<code>.mp3</code>, <code>.wav</code>, <code>.ogg</code>, <code>.flac</code>, <code>.m4a</code>) render as native HTML5 audio players:</p>\n<p><audio src=\"/content-assets/assets-sample-audio.wav\" controls class=\"media-embed audio-embed\" preload=\"metadata\"></audio></p>\n<h2 id=\"video-embeds\">Video embeds<a class=\"heading-anchor\" aria-hidden=\"true\" href=\"#video-embeds\">#</a></h2>\n<p>Video files (<code>.mp4</code>, <code>.webm</code>, <code>.mov</code>) render as native HTML5 video players with controls:</p>\n<p><video src=\"/content-assets/sample-video.mp4\" controls class=\"media-embed video-embed\" preload=\"metadata\"></video></p>\n<h2 id=\"pdf-embeds\">PDF embeds<a class=\"heading-anchor\" aria-hidden=\"true\" href=\"#pdf-embeds\">#</a></h2>\n<p>PDF files render in an inline iframe viewer:</p>\n<p></p><div class=\"pdf-embed-wrapper\"><div class=\"pdf-embed-header\"><span class=\"pdf-embed-icon\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.75\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z\"></path><polyline points=\"14 2 14 8 20 8\"></polyline><line x1=\"9\" y1=\"13\" x2=\"15\" y2=\"13\"></line><line x1=\"9\" y1=\"17\" x2=\"15\" y2=\"17\"></line></svg></span><span class=\"pdf-embed-filename\">sample-document.pdf</span><a class=\"pdf-embed-open\" href=\"/content-assets/assets-sample-document.pdf\" target=\"_blank\" rel=\"noopener noreferrer\">Open <svg xmlns=\"http://www.w3.org/2000/svg\" width=\"11\" height=\"11\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6\"></path><polyline points=\"15 3 21 3 21 9\"></polyline><line x1=\"10\" y1=\"14\" x2=\"21\" y2=\"3\"></line></svg></a></div><iframe src=\"/content-assets/assets-sample-document.pdf\" class=\"pdf-embed\" title=\"sample-document.pdf\"></iframe><a class=\"pdf-float-open\" href=\"/content-assets/assets-sample-document.pdf\" target=\"_blank\" rel=\"noopener noreferrer\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"11\" height=\"11\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6\"></path><polyline points=\"15 3 21 3 21 9\"></polyline><line x1=\"10\" y1=\"14\" x2=\"21\" y2=\"3\"></line></svg> Open PDF</a></div><p></p>\n<h2 id=\"obsidian-ink-drawings\">Obsidian Ink drawings<a class=\"heading-anchor\" aria-hidden=\"true\" href=\"#obsidian-ink-drawings\">#</a></h2>\n<p>Drawings from the <a href=\"https://github.com/daledesilva/obsidian_ink\">Obsidian Ink plugin</a> are rendered as preview images. In Obsidian, use the <code>handdrawn-ink</code> or <code>handwritten-ink</code> code block:</p>\n<pre class=\"shiki no-lang\"><code>```handdrawn-ink\n{\n\t\"versionAtEmbed\": \"1.2.0\",\n\t\"filepath\": \"Ink/Drawing/test-drawing.drawing\",\n\t\"width\": 400,\n\t\"aspectRatio\": 1.5\n}\n```\n</code></pre>\n<p>The plugin stores the drawing as a <code>.drawing</code> file with a tldraw snapshot and a <code>previewUri</code> (base64 PNG screenshot). At publish time, the garden reads the file and inlines the preview image.</p>\n<p>Here's a sample ink drawing:</p>\n<div class=\"ink-placeholder\">✎ Ink drawing (preview unavailable)</div>\n<p>If the drawing file doesn't exist or has no preview, a placeholder is shown:</p>\n<div class=\"ink-placeholder\">✎ Ink drawing (preview unavailable)</div>\n<div class=\"callout\" data-callout=\"info\"><div class=\"callout-title\"><span class=\"callout-title-icon\">ℹ</span><span class=\"callout-title-text\">Supported media types</span></div><div class=\"callout-content\">\n\n<ul>\n<li><strong>Images</strong>: <code>.png</code>, <code>.jpg</code>, <code>.jpeg</code>, <code>.gif</code>, <code>.svg</code>, <code>.webp</code>, <code>.avif</code>, <code>.bmp</code>, <code>.ico</code></li>\n<li><strong>Video</strong>: <code>.mp4</code>, <code>.webm</code>, <code>.ogv</code>, <code>.mov</code>, <code>.m4v</code>, <code>.avi</code>, <code>.mkv</code></li>\n<li><strong>Audio</strong>: <code>.mp3</code>, <code>.wav</code>, <code>.ogg</code>, <code>.oga</code>, <code>.flac</code>, <code>.m4a</code>, <code>.aac</code>, <code>.opus</code></li>\n<li><strong>PDF</strong>: <code>.pdf</code></li>\n<li><strong>Ink</strong>: <code>```handdrawn-ink</code> and <code>```handwritten-ink</code> code blocks (Obsidian Ink plugin)</li>\n</ul>\n</div></div>\n<p>See <a class=\"internal-link\" href=\"/?p=embeds-and-transclusions\" data-slug=\"embeds-and-transclusions\">Embeds and Transclusions</a>, <a class=\"internal-link\" href=\"/?p=code-execution-playground\" data-slug=\"code-execution-playground\">Code Execution Playground</a>, <a class=\"internal-link\" href=\"/?p=callouts-reference\" data-slug=\"callouts-reference\">Callouts Reference</a>.</p>\n<h2 id=\"external-media-embed-tests\">External Media Embed Tests<a class=\"heading-anchor\" aria-hidden=\"true\" href=\"#external-media-embed-tests\">#</a></h2>\n<p>Here we test embedding of external URLs for video, audio, and PDF files.</p>\n<h3 id=\"external-video-embed\">External Video Embed<a class=\"heading-anchor\" aria-hidden=\"true\" href=\"#external-video-embed\">#</a></h3>\n<p><video src=\"https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4\" controls class=\"media-embed video-embed\" preload=\"metadata\"></video></p>\n<h3 id=\"external-audio-embed\">External Audio Embed<a class=\"heading-anchor\" aria-hidden=\"true\" href=\"#external-audio-embed\">#</a></h3>\n<p><audio src=\"https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3\" controls class=\"media-embed audio-embed\" preload=\"metadata\"></audio></p>\n<h3 id=\"external-pdf-embed\">External PDF Embed<a class=\"heading-anchor\" aria-hidden=\"true\" href=\"#external-pdf-embed\">#</a></h3>\n<p><div class=\"pdf-embed-wrapper\"><div class=\"pdf-embed-header\"><span class=\"pdf-embed-icon\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.75\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z\"/><polyline points=\"14 2 14 8 20 8\"/><line x1=\"9\" y1=\"13\" x2=\"15\" y2=\"13\"/><line x1=\"9\" y1=\"17\" x2=\"15\" y2=\"17\"/></svg></span><span class=\"pdf-embed-filename\">External PDF</span><a class=\"pdf-embed-open\" href=\"https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf\" target=\"_blank\" rel=\"noopener noreferrer\">Open <svg xmlns=\"http://www.w3.org/2000/svg\" width=\"11\" height=\"11\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6\"/><polyline points=\"15 3 21 3 21 9\"/><line x1=\"10\" y1=\"14\" x2=\"21\" y2=\"3\"/></svg></a></div><iframe src=\"https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf\" class=\"pdf-embed\" title=\"External PDF\"></iframe><a class=\"pdf-float-open\" href=\"https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf\" target=\"_blank\" rel=\"noopener noreferrer\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"11\" height=\"11\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6\"/><polyline points=\"15 3 21 3 21 9\"/><line x1=\"10\" y1=\"14\" x2=\"21\" y2=\"3\"/></svg> Open PDF</a></div></p>\n<h3 id=\"bare-url-to-video\">Bare URL to Video<a class=\"heading-anchor\" aria-hidden=\"true\" href=\"#bare-url-to-video\">#</a></h3>\n<p><video src=\"https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4\" controls class=\"media-embed video-embed\" preload=\"metadata\"></video></p>\n<h3 id=\"autolink-to-audio\">Autolink to Audio<a class=\"heading-anchor\" aria-hidden=\"true\" href=\"#autolink-to-audio\">#</a></h3>\n<p><audio src=\"https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3\" controls class=\"media-embed audio-embed\" preload=\"metadata\"></audio></p>",
+    "html": "<p>This note tests all media embed types. Use <code>![[filename.ext]]</code> to embed any supported media in your notes.</p>\n<h2 id=\"images-curved-and-modern\">Images (curved and modern)<a class=\"heading-anchor\" aria-hidden=\"true\" href=\"#images-curved-and-modern\">#</a></h2>\n<p>Images are rendered with rounded corners, subtle borders, and depth shadows. On hover they scale up slightly.</p>\n<p><img src=\"/content-assets/garden-illustration.png\" alt=\"garden-illustration.png\" loading=\"lazy\"></p>\n<h2 id=\"audio-embeds\">Audio embeds<a class=\"heading-anchor\" aria-hidden=\"true\" href=\"#audio-embeds\">#</a></h2>\n<p>Audio files (<code>.mp3</code>, <code>.wav</code>, <code>.ogg</code>, <code>.flac</code>, <code>.m4a</code>) render as native HTML5 audio players:</p>\n<p><audio src=\"/content-assets/sample-audio.wav\" controls class=\"media-embed audio-embed\" preload=\"metadata\"></audio></p>\n<h2 id=\"video-embeds\">Video embeds<a class=\"heading-anchor\" aria-hidden=\"true\" href=\"#video-embeds\">#</a></h2>\n<p>Video files (<code>.mp4</code>, <code>.webm</code>, <code>.mov</code>) render as native HTML5 video players with controls:</p>\n<p><video src=\"/content-assets/sample-video.mp4\" controls class=\"media-embed video-embed\" preload=\"metadata\"></video></p>\n<h2 id=\"pdf-embeds\">PDF embeds<a class=\"heading-anchor\" aria-hidden=\"true\" href=\"#pdf-embeds\">#</a></h2>\n<p>PDF files render in an inline iframe viewer:</p>\n<p></p><div class=\"pdf-embed-wrapper\"><div class=\"pdf-embed-header\"><span class=\"pdf-embed-icon\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.75\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z\"></path><polyline points=\"14 2 14 8 20 8\"></polyline><line x1=\"9\" y1=\"13\" x2=\"15\" y2=\"13\"></line><line x1=\"9\" y1=\"17\" x2=\"15\" y2=\"17\"></line></svg></span><span class=\"pdf-embed-filename\">sample-document.pdf</span><a class=\"pdf-embed-open\" href=\"/content-assets/sample-document.pdf\" target=\"_blank\" rel=\"noopener noreferrer\">Open <svg xmlns=\"http://www.w3.org/2000/svg\" width=\"11\" height=\"11\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6\"></path><polyline points=\"15 3 21 3 21 9\"></polyline><line x1=\"10\" y1=\"14\" x2=\"21\" y2=\"3\"></line></svg></a></div><iframe src=\"/content-assets/sample-document.pdf\" class=\"pdf-embed\" title=\"sample-document.pdf\"></iframe><a class=\"pdf-float-open\" href=\"/content-assets/sample-document.pdf\" target=\"_blank\" rel=\"noopener noreferrer\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"11\" height=\"11\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6\"></path><polyline points=\"15 3 21 3 21 9\"></polyline><line x1=\"10\" y1=\"14\" x2=\"21\" y2=\"3\"></line></svg> Open PDF</a></div><p></p>\n<h2 id=\"obsidian-ink-drawings\">Obsidian Ink drawings<a class=\"heading-anchor\" aria-hidden=\"true\" href=\"#obsidian-ink-drawings\">#</a></h2>\n<p>Drawings from the <a href=\"https://github.com/daledesilva/obsidian_ink\">Obsidian Ink plugin</a> are rendered as preview images. In Obsidian, use the <code>handdrawn-ink</code> or <code>handwritten-ink</code> code block:</p>\n<pre class=\"shiki no-lang\"><code>```handdrawn-ink\n{\n\t\"versionAtEmbed\": \"1.2.0\",\n\t\"filepath\": \"Ink/Drawing/test-drawing.drawing\",\n\t\"width\": 400,\n\t\"aspectRatio\": 1.5\n}\n```\n</code></pre>\n<p>The plugin stores the drawing as a <code>.drawing</code> file with a tldraw snapshot and a <code>previewUri</code> (base64 PNG screenshot). At publish time, the garden reads the file and inlines the preview image.</p>\n<p>Here's a sample ink drawing:</p>\n<div class=\"ink-placeholder\">✎ Ink drawing (preview unavailable)</div>\n<p>If the drawing file doesn't exist or has no preview, a placeholder is shown:</p>\n<div class=\"ink-placeholder\">✎ Ink drawing (preview unavailable)</div>\n<div class=\"callout\" data-callout=\"info\"><div class=\"callout-title\"><span class=\"callout-title-icon\">ℹ</span><span class=\"callout-title-text\">Supported media types</span></div><div class=\"callout-content\">\n\n<ul>\n<li><strong>Images</strong>: <code>.png</code>, <code>.jpg</code>, <code>.jpeg</code>, <code>.gif</code>, <code>.svg</code>, <code>.webp</code>, <code>.avif</code>, <code>.bmp</code>, <code>.ico</code></li>\n<li><strong>Video</strong>: <code>.mp4</code>, <code>.webm</code>, <code>.ogv</code>, <code>.mov</code>, <code>.m4v</code>, <code>.avi</code>, <code>.mkv</code></li>\n<li><strong>Audio</strong>: <code>.mp3</code>, <code>.wav</code>, <code>.ogg</code>, <code>.oga</code>, <code>.flac</code>, <code>.m4a</code>, <code>.aac</code>, <code>.opus</code></li>\n<li><strong>PDF</strong>: <code>.pdf</code></li>\n<li><strong>Ink</strong>: <code>```handdrawn-ink</code> and <code>```handwritten-ink</code> code blocks (Obsidian Ink plugin)</li>\n</ul>\n</div></div>\n<p>See <a class=\"internal-link\" href=\"/?p=embeds-and-transclusions\" data-slug=\"embeds-and-transclusions\">Embeds and Transclusions</a>, <a class=\"internal-link\" href=\"/?p=code-execution-playground\" data-slug=\"code-execution-playground\">Code Execution Playground</a>, <a class=\"internal-link\" href=\"/?p=callouts-reference\" data-slug=\"callouts-reference\">Callouts Reference</a>.</p>\n<h2 id=\"external-media-embed-tests\">External Media Embed Tests<a class=\"heading-anchor\" aria-hidden=\"true\" href=\"#external-media-embed-tests\">#</a></h2>\n<p>Here we test embedding of external URLs for video, audio, and PDF files.</p>\n<h3 id=\"external-video-embed\">External Video Embed<a class=\"heading-anchor\" aria-hidden=\"true\" href=\"#external-video-embed\">#</a></h3>\n<p><video src=\"https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4\" controls class=\"media-embed video-embed\" preload=\"metadata\"></video></p>\n<h3 id=\"external-audio-embed\">External Audio Embed<a class=\"heading-anchor\" aria-hidden=\"true\" href=\"#external-audio-embed\">#</a></h3>\n<p><audio src=\"https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3\" controls class=\"media-embed audio-embed\" preload=\"metadata\"></audio></p>\n<h3 id=\"external-pdf-embed\">External PDF Embed<a class=\"heading-anchor\" aria-hidden=\"true\" href=\"#external-pdf-embed\">#</a></h3>\n<p><div class=\"pdf-embed-wrapper\"><div class=\"pdf-embed-header\"><span class=\"pdf-embed-icon\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.75\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z\"/><polyline points=\"14 2 14 8 20 8\"/><line x1=\"9\" y1=\"13\" x2=\"15\" y2=\"13\"/><line x1=\"9\" y1=\"17\" x2=\"15\" y2=\"17\"/></svg></span><span class=\"pdf-embed-filename\">External PDF</span><a class=\"pdf-embed-open\" href=\"https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf\" target=\"_blank\" rel=\"noopener noreferrer\">Open <svg xmlns=\"http://www.w3.org/2000/svg\" width=\"11\" height=\"11\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6\"/><polyline points=\"15 3 21 3 21 9\"/><line x1=\"10\" y1=\"14\" x2=\"21\" y2=\"3\"/></svg></a></div><iframe src=\"https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf\" class=\"pdf-embed\" title=\"External PDF\"></iframe><a class=\"pdf-float-open\" href=\"https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf\" target=\"_blank\" rel=\"noopener noreferrer\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"11\" height=\"11\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6\"/><polyline points=\"15 3 21 3 21 9\"/><line x1=\"10\" y1=\"14\" x2=\"21\" y2=\"3\"/></svg> Open PDF</a></div></p>\n<h3 id=\"bare-url-to-video\">Bare URL to Video<a class=\"heading-anchor\" aria-hidden=\"true\" href=\"#bare-url-to-video\">#</a></h3>\n<p><video src=\"https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4\" controls class=\"media-embed video-embed\" preload=\"metadata\"></video></p>\n<h3 id=\"autolink-to-audio\">Autolink to Audio<a class=\"heading-anchor\" aria-hidden=\"true\" href=\"#autolink-to-audio\">#</a></h3>\n<p><audio src=\"https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3\" controls class=\"media-embed audio-embed\" preload=\"metadata\"></audio></p>",
     "raw": "---\ntitle: \"Media Embeds Reference\"\ndescription: \"Test image, audio, video, PDF, and ink drawing embeds — all the media types supported by the garden.\"\ndraft: false\ndate: 2024-09-02\ntags: [reference, media, embeds]\n---\n\nThis note tests all media embed types. Use `![[filename.ext]]` to embed any supported media in your notes.\n\n## Images (curved and modern)\n\nImages are rendered with rounded corners, subtle borders, and depth shadows. On hover they scale up slightly.\n\n![[garden-illustration.png]]\n\n## Audio embeds\n\nAudio files (`.mp3`, `.wav`, `.ogg`, `.flac`, `.m4a`) render as native HTML5 audio players:\n\n![[sample-audio.wav]]\n\n## Video embeds\n\nVideo files (`.mp4`, `.webm`, `.mov`) render as native HTML5 video players with controls:\n\n![[sample-video.mp4]]\n\n## PDF embeds\n\nPDF files render in an inline iframe viewer:\n\n![[sample-document.pdf]]\n\n## Obsidian Ink drawings\n\nDrawings from the [Obsidian Ink plugin](https://github.com/daledesilva/obsidian_ink) are rendered as preview images. In Obsidian, use the `handdrawn-ink` or `handwritten-ink` code block:\n\n~~~\n```handdrawn-ink\n{\n\t\"versionAtEmbed\": \"1.2.0\",\n\t\"filepath\": \"Ink/Drawing/test-drawing.drawing\",\n\t\"width\": 400,\n\t\"aspectRatio\": 1.5\n}\n```\n~~~\n\nThe plugin stores the drawing as a `.drawing` file with a tldraw snapshot and a `previewUri` (base64 PNG screenshot). At publish time, the garden reads the file and inlines the preview image.\n\nHere's a sample ink drawing:\n\n```handdrawn-ink\n{\n\t\"versionAtEmbed\": \"1.2.0\",\n\t\"filepath\": \"Ink/Drawing/sample-sketch.drawing\",\n\t\"width\": 400,\n\t\"aspectRatio\": 1.5\n}\n```\n\nIf the drawing file doesn't exist or has no preview, a placeholder is shown:\n\n```handdrawn-ink\n{\n\t\"versionAtEmbed\": \"1.2.0\",\n\t\"filepath\": \"Ink/Drawing/nonexistent.drawing\",\n\t\"width\": 400\n}\n```\n\n> [!info] Supported media types\n> - **Images**: `.png`, `.jpg`, `.jpeg`, `.gif`, `.svg`, `.webp`, `.avif`, `.bmp`, `.ico`\n> - **Video**: `.mp4`, `.webm`, `.ogv`, `.mov`, `.m4v`, `.avi`, `.mkv`\n> - **Audio**: `.mp3`, `.wav`, `.ogg`, `.oga`, `.flac`, `.m4a`, `.aac`, `.opus`\n> - **PDF**: `.pdf`\n> - **Ink**: ` ```handdrawn-ink ` and ` ```handwritten-ink ` code blocks (Obsidian Ink plugin)\n\nSee [[Embeds and Transclusions]], [[Code Execution Playground]], [[Callouts Reference]].\n\n## External Media Embed Tests\n\nHere we test embedding of external URLs for video, audio, and PDF files.\n\n### External Video Embed\n![External Video](https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4)\n\n### External Audio Embed\n![External Audio](https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3)\n\n### External PDF Embed\n![External PDF](https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf)\n\n### Bare URL to Video\nhttps://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4\n\n### Autolink to Audio\n<https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3>\n\n",
     "tags": [
       "embeds",
@@ -904,9 +686,9 @@
     "draft": false,
     "publishDate": "2024-09-02T00:00:00.000Z",
     "createdAt": "2024-09-02T00:00:00.000Z",
-    "updatedAt": "2026-06-30T18:40:05.932Z",
-    "path": "notes/media-embeds-reference.md",
-    "folder": "notes",
+    "updatedAt": "2026-06-30T20:43:17.348Z",
+    "path": "media-embeds-reference.md",
+    "folder": null,
     "prevSlug": null,
     "nextSlug": null
   },
@@ -941,9 +723,227 @@
     "draft": false,
     "publishDate": "2024-08-20T00:00:00.000Z",
     "createdAt": "2024-08-20T00:00:00.000Z",
-    "updatedAt": "2026-06-30T18:40:05.932Z",
-    "path": "notes/mermaid-diagrams.md",
-    "folder": "notes",
+    "updatedAt": "2026-06-30T20:43:17.348Z",
+    "path": "mermaid-diagrams.md",
+    "folder": null,
+    "prevSlug": null,
+    "nextSlug": null
+  },
+  {
+    "slug": "on-forgetting",
+    "title": "On Forgetting",
+    "description": "Forgetting is not the enemy of learning — it's part of it. A garden that remembers everything is a hoard. The right kind of forgetting is what lets the structure show through.",
+    "content": "\nWe treat forgetting as a failure. If you read a book and can't remember it a year later, you say you've forgotten it — as if the reading was wasted. But that's not how memory works, and it's not how a garden works either.\n\n> [!quote]\n> \"Memory is not a recording. It's a reconstruction. What you keep is not what happened — it's what was useful enough to rebuild.\"\n\nThe notes you don't remember writing are not lost. They're compost. They broke down into the structure of your thinking — into the way you frame problems, the examples you reach for, the connections you make. ==You don't need to remember a note for it to have changed you.==\n\nThis is why a digital garden is better than a notebook for long-term thinking. A notebook demands you remember where you wrote something. A garden lets the links remember for you. The [[Backlinks|backlinks]] panel is a prosthetic memory — it shows you who else thought this note mattered, even if you've forgotten.\n\n> [!abstract] Three kinds of forgetting\n> 1. **Composting** — the note breaks down into your general thinking. Good.\n> 2. **Archiving** — the note is dormant but findable. Fine.\n> 3. **Losing** — the note is gone and unfindable. The only bad kind.\n\nThe garden is designed to prevent the third kind. As long as a note is in the vault with `draft: false`, it's findable — by search, by tag, by graph, by backlink. You don't have to remember it. You just have to be able to encounter it again.\n\nThe [[On Reading Slowly|slow reading]] philosophy applies here too. You read a note, you forget the details, but the next time you encounter the idea, you recognize it. That recognition is the residue. That's what the garden is growing.\n\nSee [[On Thinking]], [[Compounding Knowledge]], [[The Vault and the Garden]].\n",
+    "html": "<p>We treat forgetting as a failure. If you read a book and can't remember it a year later, you say you've forgotten it — as if the reading was wasted. But that's not how memory works, and it's not how a garden works either.</p>\n<div class=\"callout\" data-callout=\"quote\"><div class=\"callout-title\"><span class=\"callout-title-icon\">“</span><span class=\"callout-title-text\">\"Memory is not a recording. It's a reconstruction. What you keep is not what happened — it's what was useful enough to rebuild.\"</span></div><div class=\"callout-content\">\n\n</div></div>\n<p>The notes you don't remember writing are not lost. They're compost. They broke down into the structure of your thinking — into the way you frame problems, the examples you reach for, the connections you make. <mark class=\"text-highlight\">You don't need to remember a note for it to have changed you.</mark></p>\n<p>This is why a digital garden is better than a notebook for long-term thinking. A notebook demands you remember where you wrote something. A garden lets the links remember for you. The <a class=\"internal-link\" href=\"/?p=wikilinks-and-backlinks\" title=\"backlinks\" data-slug=\"wikilinks-and-backlinks\">backlinks</a> panel is a prosthetic memory — it shows you who else thought this note mattered, even if you've forgotten.</p>\n<div class=\"callout\" data-callout=\"abstract\"><div class=\"callout-title\"><span class=\"callout-title-icon\">📋</span><span class=\"callout-title-text\">Three kinds of forgetting</span></div><div class=\"callout-content\">\n\n<ol>\n<li><strong>Composting</strong> — the note breaks down into your general thinking. Good.</li>\n<li><strong>Archiving</strong> — the note is dormant but findable. Fine.</li>\n<li><strong>Losing</strong> — the note is gone and unfindable. The only bad kind.</li>\n</ol>\n</div></div>\n<p>The garden is designed to prevent the third kind. As long as a note is in the vault with <code>draft: false</code>, it's findable — by search, by tag, by graph, by backlink. You don't have to remember it. You just have to be able to encounter it again.</p>\n<p>The <a class=\"internal-link\" href=\"/?p=on-reading-slowly\" title=\"slow reading\" data-slug=\"on-reading-slowly\">slow reading</a> philosophy applies here too. You read a note, you forget the details, but the next time you encounter the idea, you recognize it. That recognition is the residue. That's what the garden is growing.</p>\n<p>See <a class=\"internal-link\" href=\"/?p=on-thinking\" data-slug=\"on-thinking\">On Thinking</a>, <a class=\"internal-link\" href=\"/?p=compounding-knowledge\" data-slug=\"compounding-knowledge\">Compounding Knowledge</a>, <a class=\"internal-link\" href=\"/?p=the-vault-and-the-garden\" data-slug=\"the-vault-and-the-garden\">The Vault and the Garden</a>.</p>",
+    "raw": "---\ntitle: \"On Forgetting\"\ndescription: \"Forgetting is not the enemy of learning — it's part of it. A garden that remembers everything is a hoard. The right kind of forgetting is what lets the structure show through.\"\ndraft: false\ndate: 2024-07-30\ntags: [essay, thinking, memory, garden]\naliases: [\"Forgetting\"]\n---\n\nWe treat forgetting as a failure. If you read a book and can't remember it a year later, you say you've forgotten it — as if the reading was wasted. But that's not how memory works, and it's not how a garden works either.\n\n> [!quote]\n> \"Memory is not a recording. It's a reconstruction. What you keep is not what happened — it's what was useful enough to rebuild.\"\n\nThe notes you don't remember writing are not lost. They're compost. They broke down into the structure of your thinking — into the way you frame problems, the examples you reach for, the connections you make. ==You don't need to remember a note for it to have changed you.==\n\nThis is why a digital garden is better than a notebook for long-term thinking. A notebook demands you remember where you wrote something. A garden lets the links remember for you. The [[Backlinks|backlinks]] panel is a prosthetic memory — it shows you who else thought this note mattered, even if you've forgotten.\n\n> [!abstract] Three kinds of forgetting\n> 1. **Composting** — the note breaks down into your general thinking. Good.\n> 2. **Archiving** — the note is dormant but findable. Fine.\n> 3. **Losing** — the note is gone and unfindable. The only bad kind.\n\nThe garden is designed to prevent the third kind. As long as a note is in the vault with `draft: false`, it's findable — by search, by tag, by graph, by backlink. You don't have to remember it. You just have to be able to encounter it again.\n\nThe [[On Reading Slowly|slow reading]] philosophy applies here too. You read a note, you forget the details, but the next time you encounter the idea, you recognize it. That recognition is the residue. That's what the garden is growing.\n\nSee [[On Thinking]], [[Compounding Knowledge]], [[The Vault and the Garden]].\n",
+    "tags": [
+      "essay",
+      "garden",
+      "memory",
+      "thinking"
+    ],
+    "aliases": [
+      "Forgetting"
+    ],
+    "links": [
+      {
+        "original": "Backlinks",
+        "slug": "wikilinks-and-backlinks",
+        "alias": "backlinks",
+        "exists": true
+      },
+      {
+        "original": "On Reading Slowly",
+        "slug": "on-reading-slowly",
+        "alias": "slow reading",
+        "exists": true
+      },
+      {
+        "original": "On Thinking",
+        "slug": "on-thinking",
+        "exists": true
+      },
+      {
+        "original": "Compounding Knowledge",
+        "slug": "compounding-knowledge",
+        "exists": true
+      },
+      {
+        "original": "The Vault and the Garden",
+        "slug": "the-vault-and-the-garden",
+        "exists": true
+      }
+    ],
+    "wordCount": 313,
+    "draft": false,
+    "publishDate": "2024-07-30T00:00:00.000Z",
+    "createdAt": "2024-07-30T00:00:00.000Z",
+    "updatedAt": "2026-06-30T20:43:17.348Z",
+    "path": "on-forgetting.md",
+    "folder": null,
+    "prevSlug": null,
+    "nextSlug": null
+  },
+  {
+    "slug": "on-reading-slowly",
+    "title": "On Reading Slowly",
+    "description": "Slow reading is not a deficiency — it's a discipline. The point of reading a garden note isn't to finish it, it's to be changed by it.",
+    "content": "\nThere's a difference between reading and finishing. Most of what we call reading is actually finishing — moving our eyes across pages until we reach the end, so we can say we did it. The information enters short-term memory, gets summarized into a sentence, and evaporates.\n\nSlow reading is the opposite. You read a paragraph, and then you stop. You think about it. You write down what it made you feel. You follow a link to something it reminds you of. You come back the next day and read the same paragraph again, and it means something different because you're different.\n\n> [!quote]\n> \"The reader should be the writer's co-conspirator. The text is just the meeting place.\" — adapted from Italo Calvino\n\nA digital garden is built for slow reading. ==There is no finish line.== No progress bar (well, there is one, but it's not the point). No \"you've read 73% of this note.\" You read until you're done — which might be halfway through, or might be three paragraphs in, or might be the whole thing twice.\n\n> [!tip] Three habits of slow reading\n> 1. **Stop when something catches you.** Don't push through to the end. If a sentence makes you think, stop and think.\n> 2. **Write while you read.** A note in the margin, a link to another note, a question. Reading and writing are not separate activities.\n> 3. **Come back.** A good note rewards re-reading. You'll be a different person next time.\n\nThis is why the [[The Map Is Not the Territory|map-is-not-territory]] principle matters. If you're only scanning titles and snippets — only reading the map — you're not slow reading. You're finishing. The territory is slower and more valuable.\n\nSee [[On Thinking]], [[On Wandering]], [[The Art of Note Taking]].\n",
+    "html": "<p>There's a difference between reading and finishing. Most of what we call reading is actually finishing — moving our eyes across pages until we reach the end, so we can say we did it. The information enters short-term memory, gets summarized into a sentence, and evaporates.</p>\n<p>Slow reading is the opposite. You read a paragraph, and then you stop. You think about it. You write down what it made you feel. You follow a link to something it reminds you of. You come back the next day and read the same paragraph again, and it means something different because you're different.</p>\n<div class=\"callout\" data-callout=\"quote\"><div class=\"callout-title\"><span class=\"callout-title-icon\">“</span><span class=\"callout-title-text\">\"The reader should be the writer's co-conspirator. The text is just the meeting place.\" — adapted from Italo Calvino</span></div><div class=\"callout-content\">\n\n</div></div>\n<p>A digital garden is built for slow reading. <mark class=\"text-highlight\">There is no finish line.</mark> No progress bar (well, there is one, but it's not the point). No \"you've read 73% of this note.\" You read until you're done — which might be halfway through, or might be three paragraphs in, or might be the whole thing twice.</p>\n<div class=\"callout\" data-callout=\"tip\"><div class=\"callout-title\"><span class=\"callout-title-icon\">💡</span><span class=\"callout-title-text\">Three habits of slow reading</span></div><div class=\"callout-content\">\n\n<ol>\n<li><strong>Stop when something catches you.</strong> Don't push through to the end. If a sentence makes you think, stop and think.</li>\n<li><strong>Write while you read.</strong> A note in the margin, a link to another note, a question. Reading and writing are not separate activities.</li>\n<li><strong>Come back.</strong> A good note rewards re-reading. You'll be a different person next time.</li>\n</ol>\n</div></div>\n<p>This is why the <a class=\"internal-link\" href=\"/?p=the-map-is-not-the-territory\" title=\"map-is-not-territory\" data-slug=\"the-map-is-not-the-territory\">map-is-not-territory</a> principle matters. If you're only scanning titles and snippets — only reading the map — you're not slow reading. You're finishing. The territory is slower and more valuable.</p>\n<p>See <a class=\"internal-link\" href=\"/?p=on-thinking\" data-slug=\"on-thinking\">On Thinking</a>, <a class=\"internal-link\" href=\"/?p=on-wandering\" data-slug=\"on-wandering\">On Wandering</a>, <a class=\"internal-link\" href=\"/?p=the-art-of-note-taking\" data-slug=\"the-art-of-note-taking\">The Art of Note Taking</a>.</p>",
+    "raw": "---\ntitle: \"On Reading Slowly\"\ndescription: \"Slow reading is not a deficiency — it's a discipline. The point of reading a garden note isn't to finish it, it's to be changed by it.\"\ndraft: false\ndate: 2024-08-10\ntags: [essay, reading, thinking]\naliases: [\"Slow Reading\", \"Reading\"]\n---\n\nThere's a difference between reading and finishing. Most of what we call reading is actually finishing — moving our eyes across pages until we reach the end, so we can say we did it. The information enters short-term memory, gets summarized into a sentence, and evaporates.\n\nSlow reading is the opposite. You read a paragraph, and then you stop. You think about it. You write down what it made you feel. You follow a link to something it reminds you of. You come back the next day and read the same paragraph again, and it means something different because you're different.\n\n> [!quote]\n> \"The reader should be the writer's co-conspirator. The text is just the meeting place.\" — adapted from Italo Calvino\n\nA digital garden is built for slow reading. ==There is no finish line.== No progress bar (well, there is one, but it's not the point). No \"you've read 73% of this note.\" You read until you're done — which might be halfway through, or might be three paragraphs in, or might be the whole thing twice.\n\n> [!tip] Three habits of slow reading\n> 1. **Stop when something catches you.** Don't push through to the end. If a sentence makes you think, stop and think.\n> 2. **Write while you read.** A note in the margin, a link to another note, a question. Reading and writing are not separate activities.\n> 3. **Come back.** A good note rewards re-reading. You'll be a different person next time.\n\nThis is why the [[The Map Is Not the Territory|map-is-not-territory]] principle matters. If you're only scanning titles and snippets — only reading the map — you're not slow reading. You're finishing. The territory is slower and more valuable.\n\nSee [[On Thinking]], [[On Wandering]], [[The Art of Note Taking]].\n",
+    "tags": [
+      "essay",
+      "reading",
+      "thinking"
+    ],
+    "aliases": [
+      "Slow Reading",
+      "Reading"
+    ],
+    "links": [
+      {
+        "original": "The Map Is Not the Territory",
+        "slug": "the-map-is-not-the-territory",
+        "alias": "map-is-not-territory",
+        "exists": true
+      },
+      {
+        "original": "On Thinking",
+        "slug": "on-thinking",
+        "exists": true
+      },
+      {
+        "original": "On Wandering",
+        "slug": "on-wandering",
+        "exists": true
+      },
+      {
+        "original": "The Art of Note Taking",
+        "slug": "the-art-of-note-taking",
+        "exists": true
+      }
+    ],
+    "wordCount": 301,
+    "draft": false,
+    "publishDate": "2024-08-10T00:00:00.000Z",
+    "createdAt": "2024-08-10T00:00:00.000Z",
+    "updatedAt": "2026-06-30T20:43:17.348Z",
+    "path": "on-reading-slowly.md",
+    "folder": null,
+    "prevSlug": null,
+    "nextSlug": null
+  },
+  {
+    "slug": "on-thinking",
+    "title": "On Thinking",
+    "description": "A personal essay on what thinking actually feels like — slow, recursive, and inseparable from the act of writing.",
+    "content": "\nI used to believe thinking happened in the head and writing was just the cleanup — a transcription of ideas that had already arrived. ==I no longer believe this.== For me, and I suspect for most people who write regularly, thinking and writing are the same act performed at different speeds. The thought doesn't exist fully formed before the sentence; the sentence *is* the thought, working itself out on the page.\n\n> Writing is thinking. To write well is to think clearly, that's why it's so hard.\n\nThis is the real case for keeping notes. Not to remember — I remember the important things — but to *think*. A note is a place where a half-formed idea can sit long enough to be examined, turned over, contradicted, and either grown or composted. Memory is a poor substrate for this because memory compresses and edits; a written note holds still long enough to be wrong in a useful way.\n\n## Thinking is recursive\n\nThe thoughts I'm proudest of never arrived in a single sitting. They came back, revised, across months — sometimes years. This is why a chronological blog undersells the process: it can only show the *output* of the recursion, the final draft, and has to hide the loops that actually produced it. A garden shows the loops. A note from January gets a backlink in March, a revision in June, a contradiction in September. The thinking is visible in the *history of the note*, not just its current state.\n\n## The cost of skipping the page\n\nWhen I \"think\" without writing — in the shower, on a walk — I almost always feel smarter than I am. The thought feels complete because there's nothing to push back against it. Writing it down is the moment the thought meets friction: missing steps surface, metaphors break, contradictions appear. ==The page is the only honest mirror a thought has.==\n\nThis is also why I find [[The Art of Note Taking]] worth taking seriously as a practice and not just a productivity trick. The discipline of writing things down — clearly, with positions, for a forgetful reader — is the discipline of thinking at all. The garden is just where that discipline leaves its residue.\n\nThere's a companion piece on the other half of the loop — what it costs to actually put thoughts into sentences — at [[On Writing]].\n",
+    "html": "<p>I used to believe thinking happened in the head and writing was just the cleanup — a transcription of ideas that had already arrived. <mark class=\"text-highlight\">I no longer believe this.</mark> For me, and I suspect for most people who write regularly, thinking and writing are the same act performed at different speeds. The thought doesn't exist fully formed before the sentence; the sentence <em>is</em> the thought, working itself out on the page.</p>\n<blockquote>\n<p>Writing is thinking. To write well is to think clearly, that's why it's so hard.</p>\n</blockquote>\n<p>This is the real case for keeping notes. Not to remember — I remember the important things — but to <em>think</em>. A note is a place where a half-formed idea can sit long enough to be examined, turned over, contradicted, and either grown or composted. Memory is a poor substrate for this because memory compresses and edits; a written note holds still long enough to be wrong in a useful way.</p>\n<h2 id=\"thinking-is-recursive\">Thinking is recursive<a class=\"heading-anchor\" aria-hidden=\"true\" href=\"#thinking-is-recursive\">#</a></h2>\n<p>The thoughts I'm proudest of never arrived in a single sitting. They came back, revised, across months — sometimes years. This is why a chronological blog undersells the process: it can only show the <em>output</em> of the recursion, the final draft, and has to hide the loops that actually produced it. A garden shows the loops. A note from January gets a backlink in March, a revision in June, a contradiction in September. The thinking is visible in the <em>history of the note</em>, not just its current state.</p>\n<h2 id=\"the-cost-of-skipping-the-page\">The cost of skipping the page<a class=\"heading-anchor\" aria-hidden=\"true\" href=\"#the-cost-of-skipping-the-page\">#</a></h2>\n<p>When I \"think\" without writing — in the shower, on a walk — I almost always feel smarter than I am. The thought feels complete because there's nothing to push back against it. Writing it down is the moment the thought meets friction: missing steps surface, metaphors break, contradictions appear. <mark class=\"text-highlight\">The page is the only honest mirror a thought has.</mark></p>\n<p>This is also why I find <a class=\"internal-link\" href=\"/?p=the-art-of-note-taking\" data-slug=\"the-art-of-note-taking\">The Art of Note Taking</a> worth taking seriously as a practice and not just a productivity trick. The discipline of writing things down — clearly, with positions, for a forgetful reader — is the discipline of thinking at all. The garden is just where that discipline leaves its residue.</p>\n<p>There's a companion piece on the other half of the loop — what it costs to actually put thoughts into sentences — at <a class=\"internal-link\" href=\"/?p=on-writing\" data-slug=\"on-writing\">On Writing</a>.</p>",
+    "raw": "---\ntitle: \"On Thinking\"\ndescription: \"A personal essay on what thinking actually feels like — slow, recursive, and inseparable from the act of writing.\"\ndraft: false\ndate: 2024-08-26\ntags: [essay, thinking]\naliases: [\"Thinking\"]\n---\n\nI used to believe thinking happened in the head and writing was just the cleanup — a transcription of ideas that had already arrived. ==I no longer believe this.== For me, and I suspect for most people who write regularly, thinking and writing are the same act performed at different speeds. The thought doesn't exist fully formed before the sentence; the sentence *is* the thought, working itself out on the page.\n\n> Writing is thinking. To write well is to think clearly, that's why it's so hard.\n\nThis is the real case for keeping notes. Not to remember — I remember the important things — but to *think*. A note is a place where a half-formed idea can sit long enough to be examined, turned over, contradicted, and either grown or composted. Memory is a poor substrate for this because memory compresses and edits; a written note holds still long enough to be wrong in a useful way.\n\n## Thinking is recursive\n\nThe thoughts I'm proudest of never arrived in a single sitting. They came back, revised, across months — sometimes years. This is why a chronological blog undersells the process: it can only show the *output* of the recursion, the final draft, and has to hide the loops that actually produced it. A garden shows the loops. A note from January gets a backlink in March, a revision in June, a contradiction in September. The thinking is visible in the *history of the note*, not just its current state.\n\n## The cost of skipping the page\n\nWhen I \"think\" without writing — in the shower, on a walk — I almost always feel smarter than I am. The thought feels complete because there's nothing to push back against it. Writing it down is the moment the thought meets friction: missing steps surface, metaphors break, contradictions appear. ==The page is the only honest mirror a thought has.==\n\nThis is also why I find [[The Art of Note Taking]] worth taking seriously as a practice and not just a productivity trick. The discipline of writing things down — clearly, with positions, for a forgetful reader — is the discipline of thinking at all. The garden is just where that discipline leaves its residue.\n\nThere's a companion piece on the other half of the loop — what it costs to actually put thoughts into sentences — at [[On Writing]].\n",
+    "tags": [
+      "essay",
+      "thinking"
+    ],
+    "aliases": [
+      "Thinking"
+    ],
+    "links": [
+      {
+        "original": "The Art of Note Taking",
+        "slug": "the-art-of-note-taking",
+        "exists": true
+      },
+      {
+        "original": "On Writing",
+        "slug": "on-writing",
+        "exists": true
+      }
+    ],
+    "wordCount": 398,
+    "draft": false,
+    "publishDate": "2024-08-26T00:00:00.000Z",
+    "createdAt": "2024-08-26T00:00:00.000Z",
+    "updatedAt": "2026-06-30T20:43:17.348Z",
+    "path": "on-thinking.md",
+    "folder": null,
+    "prevSlug": null,
+    "nextSlug": null
+  },
+  {
+    "slug": "on-wandering",
+    "title": "On Wandering",
+    "description": "Wandering is not aimless — it's how knowledge actually grows. A defense of the non-linear path through a garden of ideas.",
+    "content": " \nThere's a difference between searching and wandering. Searching has a target — you know what you're looking for, and you stop when you find it. Wandering has no target. You move, you notice, you follow a thread, and you stop when something catches you.\n\nThe internet is very good at searching. It is almost hostile to wandering. Feeds, recommendations, and search results all push you toward the thing you already wanted — or the thing the algorithm already knows about. The surprise, the detour, the strange connection between two ideas you'd never have put together — that's been designed out of most interfaces.\n\n> [!quote]\n> The garden is not a filing cabinet. It's a place you walk through.\n\nA digital garden, at its best, is built for wandering. The wikilinks are invitations, not directions. The backlinks show you who else has been here. The graph is a map of paths you might take — not a list of tasks to complete. You don't read a garden cover to cover. You wander until you find the thing you didn't know you were looking for.\n\nThis is why ==the note is the unit, not the post==. A post is a destination. A note is a place. You can return to a place. You can pass through it on the way to somewhere else. You can find it again years later and notice something you missed.\n\nThe cost of wandering is inefficiency. You'll read notes that don't help you. You'll follow links to dead ends. You'll spend twenty minutes on a tangent. But the payoff — the unexpected connection, the idea that reorganizes everything — is worth the waste. ==Efficiency is for factories. Gardens are for growing.==\n\nSo: don't read this note and leave. Click a link. Follow a backlink. Open the graph and pick a node at random. Get lost for a few minutes. That's the whole point.\n\nSee also [[Digital Gardens]], [[On Thinking]], [[The Art of Note Taking]].\n",
+    "html": "<p>There's a difference between searching and wandering. Searching has a target — you know what you're looking for, and you stop when you find it. Wandering has no target. You move, you notice, you follow a thread, and you stop when something catches you.</p>\n<p>The internet is very good at searching. It is almost hostile to wandering. Feeds, recommendations, and search results all push you toward the thing you already wanted — or the thing the algorithm already knows about. The surprise, the detour, the strange connection between two ideas you'd never have put together — that's been designed out of most interfaces.</p>\n<div class=\"callout\" data-callout=\"quote\"><div class=\"callout-title\"><span class=\"callout-title-icon\">“</span><span class=\"callout-title-text\">The garden is not a filing cabinet. It's a place you walk through.</span></div><div class=\"callout-content\">\n\n</div></div>\n<p>A digital garden, at its best, is built for wandering. The wikilinks are invitations, not directions. The backlinks show you who else has been here. The graph is a map of paths you might take — not a list of tasks to complete. You don't read a garden cover to cover. You wander until you find the thing you didn't know you were looking for.</p>\n<p>This is why <mark class=\"text-highlight\">the note is the unit, not the post</mark>. A post is a destination. A note is a place. You can return to a place. You can pass through it on the way to somewhere else. You can find it again years later and notice something you missed.</p>\n<p>The cost of wandering is inefficiency. You'll read notes that don't help you. You'll follow links to dead ends. You'll spend twenty minutes on a tangent. But the payoff — the unexpected connection, the idea that reorganizes everything — is worth the waste. <mark class=\"text-highlight\">Efficiency is for factories. Gardens are for growing.</mark></p>\n<p>So: don't read this note and leave. Click a link. Follow a backlink. Open the graph and pick a node at random. Get lost for a few minutes. That's the whole point.</p>\n<p>See also <a class=\"internal-link\" href=\"/?p=digital-gardens\" data-slug=\"digital-gardens\">Digital Gardens</a>, <a class=\"internal-link\" href=\"/?p=on-thinking\" data-slug=\"on-thinking\">On Thinking</a>, <a class=\"internal-link\" href=\"/?p=the-art-of-note-taking\" data-slug=\"the-art-of-note-taking\">The Art of Note Taking</a>.</p>",
+    "raw": "---\ntitle: \"On Wandering\"\ndescription: \"Wandering is not aimless — it's how knowledge actually grows. A defense of the non-linear path through a garden of ideas.\"\ndraft: false\ndate: 2024-08-28\ntags: [essay, thinking, garden]\naliases: [\"Wandering\"]\n---\n \nThere's a difference between searching and wandering. Searching has a target — you know what you're looking for, and you stop when you find it. Wandering has no target. You move, you notice, you follow a thread, and you stop when something catches you.\n\nThe internet is very good at searching. It is almost hostile to wandering. Feeds, recommendations, and search results all push you toward the thing you already wanted — or the thing the algorithm already knows about. The surprise, the detour, the strange connection between two ideas you'd never have put together — that's been designed out of most interfaces.\n\n> [!quote]\n> The garden is not a filing cabinet. It's a place you walk through.\n\nA digital garden, at its best, is built for wandering. The wikilinks are invitations, not directions. The backlinks show you who else has been here. The graph is a map of paths you might take — not a list of tasks to complete. You don't read a garden cover to cover. You wander until you find the thing you didn't know you were looking for.\n\nThis is why ==the note is the unit, not the post==. A post is a destination. A note is a place. You can return to a place. You can pass through it on the way to somewhere else. You can find it again years later and notice something you missed.\n\nThe cost of wandering is inefficiency. You'll read notes that don't help you. You'll follow links to dead ends. You'll spend twenty minutes on a tangent. But the payoff — the unexpected connection, the idea that reorganizes everything — is worth the waste. ==Efficiency is for factories. Gardens are for growing.==\n\nSo: don't read this note and leave. Click a link. Follow a backlink. Open the graph and pick a node at random. Get lost for a few minutes. That's the whole point.\n\nSee also [[Digital Gardens]], [[On Thinking]], [[The Art of Note Taking]].\n",
+    "tags": [
+      "essay",
+      "garden",
+      "thinking"
+    ],
+    "aliases": [
+      "Wandering"
+    ],
+    "links": [
+      {
+        "original": "Digital Gardens",
+        "slug": "digital-gardens",
+        "exists": true
+      },
+      {
+        "original": "On Thinking",
+        "slug": "on-thinking",
+        "exists": true
+      },
+      {
+        "original": "The Art of Note Taking",
+        "slug": "the-art-of-note-taking",
+        "exists": true
+      }
+    ],
+    "wordCount": 329,
+    "draft": false,
+    "publishDate": "2024-08-28T00:00:00.000Z",
+    "createdAt": "2024-08-28T00:00:00.000Z",
+    "updatedAt": "2026-06-30T20:43:17.348Z",
+    "path": "on-wandering.md",
+    "folder": null,
+    "prevSlug": null,
+    "nextSlug": null
+  },
+  {
+    "slug": "on-writing",
+    "title": "On Writing",
+    "description": "An essay on writing as a practice — the resistance, the revision, and the strange relief of finishing a sentence.",
+    "content": "\nWriting is the thing I keep doing despite having nothing clever to say about how it works. Every essay I've started about writing has collapsed into either cliché (\"just write every day\") or pretension (\"the blank page is a mirror for the soul\"), and I'm not sure this one will escape that gravity. But the garden is the right place to try, because here an unfinished essay is allowed to sit until it's ready.\n\n## The resistance is the material\n\nThe hardest part of writing isn't the writing — it's the moment just before, when the page is empty and the thought feels too large or too small to commit to a sentence. I've spent more hours avoiding writing than writing. The trick I've landed on, after years of fighting it, is to treat the resistance itself as information. If a sentence won't come, the thought usually isn't ready, and forcing it produces prose I'll have to delete. Better to write a bad sentence honestly than a polished one I don't believe.\n\n## Revision is where the writing is\n\nFirst drafts are for figuring out what I think. Revision is for figuring out what I *meant*. I used to conflate these — I'd try to write a clean first draft and end up blocked, because the part of me that explores and the part of me that polishes cannot both be in the room at once. Now I let the first draft be a mess and trust revision to find the shape. Most of what I like in my own writing was discovered in revision, not invented in the draft.\n\n## The garden lowers the stakes\n\nA blog post asks to be finished. A garden note asks to be *started*. That difference is enormous for someone like me who freezes under \"finished.\" In the garden, I can publish a fragment and revise it for years — see [[Digital Gardens]] for why this isn't laziness but a different relationship to completion. The pressure comes off, and paradoxically I write more, because the bar isn't \"is this done?\" but \"is this honest?\"\n\n## A small discipline\n\nWrite the sentence you actually believe, not the sentence that sounds like the kind of thing you'd say. Read it aloud. If you stumble, the reader will too — fix it now, not later. Then publish it into the garden and let it be wrong in public, which is the only way it has a chance to become right.\n\nThe other half of this loop — where the thoughts come from in the first place — is at [[On Thinking]].\n",
+    "html": "<p>Writing is the thing I keep doing despite having nothing clever to say about how it works. Every essay I've started about writing has collapsed into either cliché (\"just write every day\") or pretension (\"the blank page is a mirror for the soul\"), and I'm not sure this one will escape that gravity. But the garden is the right place to try, because here an unfinished essay is allowed to sit until it's ready.</p>\n<h2 id=\"the-resistance-is-the-material\">The resistance is the material<a class=\"heading-anchor\" aria-hidden=\"true\" href=\"#the-resistance-is-the-material\">#</a></h2>\n<p>The hardest part of writing isn't the writing — it's the moment just before, when the page is empty and the thought feels too large or too small to commit to a sentence. I've spent more hours avoiding writing than writing. The trick I've landed on, after years of fighting it, is to treat the resistance itself as information. If a sentence won't come, the thought usually isn't ready, and forcing it produces prose I'll have to delete. Better to write a bad sentence honestly than a polished one I don't believe.</p>\n<h2 id=\"revision-is-where-the-writing-is\">Revision is where the writing is<a class=\"heading-anchor\" aria-hidden=\"true\" href=\"#revision-is-where-the-writing-is\">#</a></h2>\n<p>First drafts are for figuring out what I think. Revision is for figuring out what I <em>meant</em>. I used to conflate these — I'd try to write a clean first draft and end up blocked, because the part of me that explores and the part of me that polishes cannot both be in the room at once. Now I let the first draft be a mess and trust revision to find the shape. Most of what I like in my own writing was discovered in revision, not invented in the draft.</p>\n<h2 id=\"the-garden-lowers-the-stakes\">The garden lowers the stakes<a class=\"heading-anchor\" aria-hidden=\"true\" href=\"#the-garden-lowers-the-stakes\">#</a></h2>\n<p>A blog post asks to be finished. A garden note asks to be <em>started</em>. That difference is enormous for someone like me who freezes under \"finished.\" In the garden, I can publish a fragment and revise it for years — see <a class=\"internal-link\" href=\"/?p=digital-gardens\" data-slug=\"digital-gardens\">Digital Gardens</a> for why this isn't laziness but a different relationship to completion. The pressure comes off, and paradoxically I write more, because the bar isn't \"is this done?\" but \"is this honest?\"</p>\n<h2 id=\"a-small-discipline\">A small discipline<a class=\"heading-anchor\" aria-hidden=\"true\" href=\"#a-small-discipline\">#</a></h2>\n<p>Write the sentence you actually believe, not the sentence that sounds like the kind of thing you'd say. Read it aloud. If you stumble, the reader will too — fix it now, not later. Then publish it into the garden and let it be wrong in public, which is the only way it has a chance to become right.</p>\n<p>The other half of this loop — where the thoughts come from in the first place — is at <a class=\"internal-link\" href=\"/?p=on-thinking\" data-slug=\"on-thinking\">On Thinking</a>.</p>",
+    "raw": "---\ntitle: \"On Writing\"\ndescription: \"An essay on writing as a practice — the resistance, the revision, and the strange relief of finishing a sentence.\"\ndraft: false\ndate: 2024-08-27\ntags: [essay, writing]\naliases: [\"Writing\"]\n---\n\nWriting is the thing I keep doing despite having nothing clever to say about how it works. Every essay I've started about writing has collapsed into either cliché (\"just write every day\") or pretension (\"the blank page is a mirror for the soul\"), and I'm not sure this one will escape that gravity. But the garden is the right place to try, because here an unfinished essay is allowed to sit until it's ready.\n\n## The resistance is the material\n\nThe hardest part of writing isn't the writing — it's the moment just before, when the page is empty and the thought feels too large or too small to commit to a sentence. I've spent more hours avoiding writing than writing. The trick I've landed on, after years of fighting it, is to treat the resistance itself as information. If a sentence won't come, the thought usually isn't ready, and forcing it produces prose I'll have to delete. Better to write a bad sentence honestly than a polished one I don't believe.\n\n## Revision is where the writing is\n\nFirst drafts are for figuring out what I think. Revision is for figuring out what I *meant*. I used to conflate these — I'd try to write a clean first draft and end up blocked, because the part of me that explores and the part of me that polishes cannot both be in the room at once. Now I let the first draft be a mess and trust revision to find the shape. Most of what I like in my own writing was discovered in revision, not invented in the draft.\n\n## The garden lowers the stakes\n\nA blog post asks to be finished. A garden note asks to be *started*. That difference is enormous for someone like me who freezes under \"finished.\" In the garden, I can publish a fragment and revise it for years — see [[Digital Gardens]] for why this isn't laziness but a different relationship to completion. The pressure comes off, and paradoxically I write more, because the bar isn't \"is this done?\" but \"is this honest?\"\n\n## A small discipline\n\nWrite the sentence you actually believe, not the sentence that sounds like the kind of thing you'd say. Read it aloud. If you stumble, the reader will too — fix it now, not later. Then publish it into the garden and let it be wrong in public, which is the only way it has a chance to become right.\n\nThe other half of this loop — where the thoughts come from in the first place — is at [[On Thinking]].\n",
+    "tags": [
+      "essay",
+      "writing"
+    ],
+    "aliases": [
+      "Writing"
+    ],
+    "links": [
+      {
+        "original": "Digital Gardens",
+        "slug": "digital-gardens",
+        "exists": true
+      },
+      {
+        "original": "On Thinking",
+        "slug": "on-thinking",
+        "exists": true
+      }
+    ],
+    "wordCount": 433,
+    "draft": false,
+    "publishDate": "2024-08-27T00:00:00.000Z",
+    "createdAt": "2024-08-27T00:00:00.000Z",
+    "updatedAt": "2026-06-30T20:43:17.348Z",
+    "path": "on-writing.md",
+    "folder": null,
     "prevSlug": null,
     "nextSlug": null
   },
@@ -992,9 +992,9 @@
     "draft": false,
     "publishDate": "2024-09-04T00:00:00.000Z",
     "createdAt": "2024-09-04T00:00:00.000Z",
-    "updatedAt": "2026-06-30T18:40:05.932Z",
-    "path": "notes/setup-guide.md",
-    "folder": "notes",
+    "updatedAt": "2026-06-30T20:43:17.348Z",
+    "path": "setup-guide.md",
+    "folder": null,
     "prevSlug": null,
     "nextSlug": null
   },
@@ -1024,9 +1024,9 @@
     "draft": false,
     "publishDate": "2024-08-24T00:00:00.000Z",
     "createdAt": "2024-08-24T00:00:00.000Z",
-    "updatedAt": "2026-06-30T18:40:05.932Z",
-    "path": "notes/tags-and-organization.md",
-    "folder": "notes",
+    "updatedAt": "2026-06-30T20:43:17.348Z",
+    "path": "tags-and-organization.md",
+    "folder": null,
     "prevSlug": null,
     "nextSlug": null
   },
@@ -1062,9 +1062,9 @@
     "draft": false,
     "publishDate": "2024-08-23T00:00:00.000Z",
     "createdAt": "2024-08-23T00:00:00.000Z",
-    "updatedAt": "2026-06-30T18:40:05.932Z",
-    "path": "notes/the-art-of-note-taking.md",
-    "folder": "notes",
+    "updatedAt": "2026-06-30T20:43:17.348Z",
+    "path": "the-art-of-note-taking.md",
+    "folder": null,
     "prevSlug": null,
     "nextSlug": null
   },
@@ -1109,9 +1109,9 @@
     "draft": false,
     "publishDate": "2024-08-18T00:00:00.000Z",
     "createdAt": "2024-08-18T00:00:00.000Z",
-    "updatedAt": "2026-06-30T18:40:05.932Z",
-    "path": "notes/the-map-is-not-the-territory.md",
-    "folder": "notes",
+    "updatedAt": "2026-06-30T20:43:17.348Z",
+    "path": "the-map-is-not-the-territory.md",
+    "folder": null,
     "prevSlug": null,
     "nextSlug": null
   },
@@ -1162,9 +1162,9 @@
     "draft": false,
     "publishDate": "2024-08-08T00:00:00.000Z",
     "createdAt": "2024-08-08T00:00:00.000Z",
-    "updatedAt": "2026-06-30T18:40:05.932Z",
-    "path": "notes/the-vault-and-the-garden.md",
-    "folder": "notes",
+    "updatedAt": "2026-06-30T20:43:17.348Z",
+    "path": "the-vault-and-the-garden.md",
+    "folder": null,
     "prevSlug": null,
     "nextSlug": null
   },
@@ -1209,9 +1209,9 @@
     "draft": false,
     "publishDate": "2024-08-16T00:00:00.000Z",
     "createdAt": "2024-08-16T00:00:00.000Z",
-    "updatedAt": "2026-06-30T18:40:05.932Z",
-    "path": "notes/welcome-to-the-garden.md",
-    "folder": "notes",
+    "updatedAt": "2026-06-30T20:43:17.348Z",
+    "path": "welcome-to-the-garden.md",
+    "folder": null,
     "prevSlug": null,
     "nextSlug": null
   },
@@ -1256,9 +1256,9 @@
     "draft": false,
     "publishDate": "2024-08-17T00:00:00.000Z",
     "createdAt": "2024-08-17T00:00:00.000Z",
-    "updatedAt": "2026-06-30T18:40:05.932Z",
-    "path": "notes/wikilinks-and-backlinks.md",
-    "folder": "notes",
+    "updatedAt": "2026-06-30T20:43:17.348Z",
+    "path": "wikilinks-and-backlinks.md",
+    "folder": null,
     "prevSlug": null,
     "nextSlug": null
   },
@@ -1304,9 +1304,9 @@
     "draft": false,
     "publishDate": "2024-08-21T00:00:00.000Z",
     "createdAt": "2024-08-21T00:00:00.000Z",
-    "updatedAt": "2026-06-30T18:40:05.932Z",
-    "path": "notes/zettelkasten-method.md",
-    "folder": "notes",
+    "updatedAt": "2026-06-30T20:43:17.348Z",
+    "path": "zettelkasten-method.md",
+    "folder": null,
     "prevSlug": null,
     "nextSlug": null
   }
