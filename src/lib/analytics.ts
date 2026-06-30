@@ -24,10 +24,15 @@ export async function getTotalVisitors(): Promise<number> {
   }
 
   try {
+    const formattedPrivateKey = privateKey
+      .replace(/\\n/g, "\n")
+      .replace(/"/g, "")
+      .trim();
+
     const client = new BetaAnalyticsDataClient({
       credentials: {
         client_email: clientEmail,
-        private_key: privateKey.replace(/\\n/g, "\n"),
+        private_key: formattedPrivateKey,
       },
     });
 
