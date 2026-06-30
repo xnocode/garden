@@ -10704,7 +10704,7 @@
       },
       {
         "date": "2026-06-30",
-        "filePath": "notes/mermaid-diagrams.md",
+        "filePath": "mermaid-diagrams.md",
         "wordCountStart": 285,
         "charCountStart": 2046,
         "changes": [
@@ -10718,7 +10718,7 @@
       },
       {
         "date": "2026-06-30",
-        "filePath": "notes/code-execution-playground.md",
+        "filePath": "code-execution-playground.md",
         "wordCountStart": 558,
         "charCountStart": 3823,
         "changes": [],
@@ -10742,7 +10742,7 @@
       },
       {
         "date": "2026-06-30",
-        "filePath": "notes/zettelkasten-method.md",
+        "filePath": "zettelkasten-method.md",
         "wordCountStart": 468,
         "charCountStart": 2718,
         "changes": [],
@@ -10750,7 +10750,7 @@
       },
       {
         "date": "2026-06-30",
-        "filePath": "notes/wikilinks-and-backlinks.md",
+        "filePath": "wikilinks-and-backlinks.md",
         "wordCountStart": 391,
         "charCountStart": 2333,
         "changes": [],
@@ -10758,7 +10758,7 @@
       },
       {
         "date": "2026-06-30",
-        "filePath": "notes/welcome-to-the-garden.md",
+        "filePath": "welcome-to-the-garden.md",
         "wordCountStart": 309,
         "charCountStart": 1849,
         "changes": [],
@@ -10766,7 +10766,7 @@
       },
       {
         "date": "2026-06-30",
-        "filePath": "notes/the-vault-and-the-garden.md",
+        "filePath": "the-vault-and-the-garden.md",
         "wordCountStart": 353,
         "charCountStart": 2211,
         "changes": [],
@@ -10774,7 +10774,7 @@
       },
       {
         "date": "2026-06-30",
-        "filePath": "notes/the-map-is-not-the-territory.md",
+        "filePath": "the-map-is-not-the-territory.md",
         "wordCountStart": 397,
         "charCountStart": 2304,
         "changes": [],
@@ -10782,7 +10782,7 @@
       },
       {
         "date": "2026-06-30",
-        "filePath": "notes/the-art-of-note-taking.md",
+        "filePath": "the-art-of-note-taking.md",
         "wordCountStart": 480,
         "charCountStart": 2799,
         "changes": [],
@@ -10790,7 +10790,7 @@
       },
       {
         "date": "2026-06-30",
-        "filePath": "notes/tags-and-organization.md",
+        "filePath": "tags-and-organization.md",
         "wordCountStart": 405,
         "charCountStart": 2472,
         "changes": [],
@@ -10798,7 +10798,7 @@
       },
       {
         "date": "2026-06-30",
-        "filePath": "notes/setup-guide.md",
+        "filePath": "setup-guide.md",
         "wordCountStart": 1174,
         "charCountStart": 7817,
         "changes": [],
@@ -10806,7 +10806,7 @@
       },
       {
         "date": "2026-06-30",
-        "filePath": "notes/private-draft.md",
+        "filePath": "private-draft.md",
         "wordCountStart": 143,
         "charCountStart": 817,
         "changes": [],
@@ -10814,7 +10814,7 @@
       },
       {
         "date": "2026-06-30",
-        "filePath": "notes/media-embeds-reference.md",
+        "filePath": "media-embeds-reference.md",
         "wordCountStart": 412,
         "charCountStart": 2892,
         "changes": [],
@@ -10822,7 +10822,7 @@
       },
       {
         "date": "2026-06-30",
-        "filePath": "notes/math-and-latex.md",
+        "filePath": "math-and-latex.md",
         "wordCountStart": 313,
         "charCountStart": 1838,
         "changes": [],
@@ -10830,7 +10830,7 @@
       },
       {
         "date": "2026-06-30",
-        "filePath": "notes/links-are-thoughts.md",
+        "filePath": "links-are-thoughts.md",
         "wordCountStart": 365,
         "charCountStart": 2102,
         "changes": [],
@@ -10838,7 +10838,7 @@
       },
       {
         "date": "2026-06-30",
-        "filePath": "notes/how-posting-works.md",
+        "filePath": "how-posting-works.md",
         "wordCountStart": 1329,
         "charCountStart": 9358,
         "changes": [],
@@ -10846,7 +10846,7 @@
       },
       {
         "date": "2026-06-30",
-        "filePath": "notes/embeds-and-transclusions.md",
+        "filePath": "embeds-and-transclusions.md",
         "wordCountStart": 342,
         "charCountStart": 2093,
         "changes": [],
@@ -10854,7 +10854,7 @@
       },
       {
         "date": "2026-06-30",
-        "filePath": "notes/digital-gardens.md",
+        "filePath": "digital-gardens.md",
         "wordCountStart": 427,
         "charCountStart": 2568,
         "changes": [],
@@ -10862,7 +10862,7 @@
       },
       {
         "date": "2026-06-30",
-        "filePath": "notes/contribution-graph.md",
+        "filePath": "contribution-graph.md",
         "wordCountStart": 397,
         "charCountStart": 2752,
         "changes": [],
@@ -10870,7 +10870,7 @@
       },
       {
         "date": "2026-06-30",
-        "filePath": "notes/compounding-knowledge.md",
+        "filePath": "compounding-knowledge.md",
         "wordCountStart": 388,
         "charCountStart": 2311,
         "changes": [],
@@ -10878,7 +10878,7 @@
       },
       {
         "date": "2026-06-30",
-        "filePath": "notes/composing-with-transclusions.md",
+        "filePath": "composing-with-transclusions.md",
         "wordCountStart": 354,
         "charCountStart": 2286,
         "changes": [],
@@ -10886,7 +10886,7 @@
       },
       {
         "date": "2026-06-30",
-        "filePath": "notes/callouts-reference.md",
+        "filePath": "callouts-reference.md",
         "wordCountStart": 399,
         "charCountStart": 2396,
         "changes": [],
@@ -10894,7 +10894,7 @@
       },
       {
         "date": "2026-06-30",
-        "filePath": "notes/building-a-second-brain.md",
+        "filePath": "building-a-second-brain.md",
         "wordCountStart": 459,
         "charCountStart": 2887,
         "changes": [],
@@ -10902,7 +10902,7 @@
       },
       {
         "date": "2026-06-30",
-        "filePath": "notes/bikeshedding-and-the-garden.md",
+        "filePath": "bikeshedding-and-the-garden.md",
         "wordCountStart": 383,
         "charCountStart": 2158,
         "changes": [],
@@ -10910,7 +10910,7 @@
       },
       {
         "date": "2026-06-30",
-        "filePath": "essays/on-writing.md",
+        "filePath": "on-writing.md",
         "wordCountStart": 475,
         "charCountStart": 2565,
         "changes": [],
@@ -10918,7 +10918,7 @@
       },
       {
         "date": "2026-06-30",
-        "filePath": "essays/on-wandering.md",
+        "filePath": "on-wandering.md",
         "wordCountStart": 373,
         "charCountStart": 2093,
         "changes": [],
@@ -10926,7 +10926,7 @@
       },
       {
         "date": "2026-06-30",
-        "filePath": "essays/on-thinking.md",
+        "filePath": "on-thinking.md",
         "wordCountStart": 425,
         "charCountStart": 2483,
         "changes": [],
@@ -10934,7 +10934,7 @@
       },
       {
         "date": "2026-06-30",
-        "filePath": "essays/on-reading-slowly.md",
+        "filePath": "on-reading-slowly.md",
         "wordCountStart": 350,
         "charCountStart": 1994,
         "changes": [],

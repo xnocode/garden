@@ -78,5 +78,25 @@
       "image": null,
       "siteName": "Google Docs"
     }
+  ],
+  [
+    "https://github.com/YOUR_USERNAME/second-brain.git",
+    {
+      "url": "https://github.com/YOUR_USERNAME/second-brain.git",
+      "title": null,
+      "description": null,
+      "image": null,
+      "siteName": null
+    }
+  ],
+  [
+    "http://localhost:3000**",
+    {
+      "url": "http://localhost:3000**",
+      "title": null,
+      "description": null,
+      "image": null,
+      "siteName": null
+    }
   ]
 ]
