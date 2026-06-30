@@ -60,6 +60,11 @@
           "calc": "AVG"
         }
       ]
+    },
+    "backupConfig": {
+      "enabled": true,
+      "folderPath": ".keep-the-rhythm",
+      "maxNumberOfBackups": 3
     }
   },
   "stats": {
@@ -10615,7 +10620,7 @@
       },
       {
         "date": "2026-06-28",
-        "filePath": "Let's Try.md",
+        "filePath": "hi.md",
         "wordCountStart": 0,
         "charCountStart": 0,
         "changes": [
@@ -10647,7 +10652,7 @@
       },
       {
         "date": "2026-06-29",
-        "filePath": "Let's Try.md",
+        "filePath": "hi.md",
         "wordCountStart": 0,
         "charCountStart": 0,
         "changes": [
@@ -10655,239 +10660,56 @@
             "timeKey": "07:05",
             "w": 171,
             "c": 1098
-          },
-          {
-            "timeKey": "20:20",
-            "w": -171,
-            "c": -1098
-          },
-          {
-            "timeKey": "20:30",
-            "w": 94,
-            "c": 648
-          },
-          {
-            "timeKey": "20:45",
-            "w": -22,
-            "c": -95
-          },
-          {
-            "timeKey": "20:50",
-            "w": -16,
-            "c": -155
-          },
-          {
-            "timeKey": "20:55",
-            "w": 0,
-            "c": 9
-          },
-          {
-            "timeKey": "21:10",
-            "w": -15,
-            "c": -77
           }
         ],
         "id": 581
       },
       {
-        "date": "2026-06-29",
-        "filePath": "Ink/Drawing/Untitled.md",
+        "date": "2026-06-30",
+        "filePath": "hi.md",
         "wordCountStart": 0,
         "charCountStart": 0,
         "changes": [
           {
-            "timeKey": "20:30",
-            "w": 0,
-            "c": 0
-          }
-        ],
-        "id": 582
-      },
-      {
-        "date": "2026-06-29",
-        "filePath": "notes/bikeshedding-and-the-garden.md",
-        "wordCountStart": 383,
-        "charCountStart": 2158,
-        "changes": [],
-        "id": 583
-      },
-      {
-        "date": "2026-06-29",
-        "filePath": "Attachments/Templates/Template.md",
-        "wordCountStart": 10,
-        "charCountStart": 69,
-        "changes": [
-          {
-            "timeKey": "20:15",
-            "w": 0,
-            "c": 34
+            "timeKey": "14:50",
+            "w": 61,
+            "c": 508
           },
           {
-            "timeKey": "20:20",
+            "timeKey": "14:55",
+            "w": 146,
+            "c": 1024
+          }
+        ],
+        "id": 630
+      },
+      {
+        "date": "2026-06-30",
+        "filePath": "notes/Last.md",
+        "wordCountStart": 55,
+        "charCountStart": 420,
+        "changes": [
+          {
+            "timeKey": "14:55",
+            "w": -55,
+            "c": -420
+          }
+        ],
+        "id": 631
+      },
+      {
+        "date": "2026-06-30",
+        "filePath": "notes/mermaid-diagrams.md",
+        "wordCountStart": 285,
+        "charCountStart": 2046,
+        "changes": [
+          {
+            "timeKey": "14:55",
             "w": 0,
-            "c": 0
-          },
-          {
-            "timeKey": "21:10",
-            "w": 4,
-            "c": 25
+            "c": -1
           }
         ],
-        "id": 584
-      },
-      {
-        "date": "2026-06-29",
-        "filePath": "notes/contribution-graph.md",
-        "wordCountStart": 265,
-        "charCountStart": 1774,
-        "changes": [],
-        "id": 585
-      },
-      {
-        "date": "2026-06-29",
-        "filePath": "notes/media-embeds-reference.md",
-        "wordCountStart": 328,
-        "charCountStart": 2245,
-        "changes": [],
-        "id": 586
-      },
-      {
-        "date": "2026-06-29",
-        "filePath": "notes/zettelkasten-method.md",
-        "wordCountStart": 468,
-        "charCountStart": 2718,
-        "changes": [],
-        "id": 587
-      },
-      {
-        "date": "2026-06-29",
-        "filePath": "notes/links-are-thoughts.md",
-        "wordCountStart": 365,
-        "charCountStart": 2102,
-        "changes": [],
-        "id": 588
-      },
-      {
-        "date": "2026-06-29",
-        "filePath": "notes/how-posting-works.md",
-        "wordCountStart": 940,
-        "charCountStart": 6442,
-        "changes": [],
-        "id": 589
-      },
-      {
-        "date": "2026-06-29",
-        "filePath": "notes/compounding-knowledge.md",
-        "wordCountStart": 388,
-        "charCountStart": 2311,
-        "changes": [],
-        "id": 590
-      },
-      {
-        "date": "2026-06-29",
-        "filePath": "notes/the-vault-and-the-garden.md",
-        "wordCountStart": 353,
-        "charCountStart": 2211,
-        "changes": [],
-        "id": 591
-      },
-      {
-        "date": "2026-06-29",
-        "filePath": "index.md",
-        "wordCountStart": 280,
-        "charCountStart": 1656,
-        "changes": [],
-        "id": 592
-      },
-      {
-        "date": "2026-06-30",
-        "filePath": "Let's Try.md",
-        "wordCountStart": 37,
-        "charCountStart": 283,
-        "changes": [
-          {
-            "timeKey": "05:35",
-            "w": -37,
-            "c": -283
-          }
-        ],
-        "id": 593
-      },
-      {
-        "date": "2026-06-30",
-        "filePath": "Attachments/Templates/Template.md",
-        "wordCountStart": 14,
-        "charCountStart": 128,
-        "changes": [
-          {
-            "timeKey": "05:40",
-            "w": -1,
-            "c": -12
-          }
-        ],
-        "id": 594
-      },
-      {
-        "date": "2026-06-30",
-        "filePath": "notes/bikeshedding-and-the-garden.md",
-        "wordCountStart": 383,
-        "charCountStart": 2158,
-        "changes": [],
-        "id": 595
-      },
-      {
-        "date": "2026-06-30",
-        "filePath": "essays/on-forgetting.md",
-        "wordCountStart": 366,
-        "charCountStart": 2083,
-        "changes": [],
-        "id": 596
-      },
-      {
-        "date": "2026-06-30",
-        "filePath": "essays/on-reading-slowly.md",
-        "wordCountStart": 350,
-        "charCountStart": 1994,
-        "changes": [],
-        "id": 597
-      },
-      {
-        "date": "2026-06-30",
-        "filePath": "essays/on-wandering.md",
-        "wordCountStart": 373,
-        "charCountStart": 2092,
-        "changes": [
-          {
-            "timeKey": "07:00",
-            "w": 0,
-            "c": 1
-          }
-        ],
-        "id": 598
-      },
-      {
-        "date": "2026-06-30",
-        "filePath": "essays/on-writing.md",
-        "wordCountStart": 475,
-        "charCountStart": 2565,
-        "changes": [],
-        "id": 599
-      },
-      {
-        "date": "2026-06-30",
-        "filePath": "notes/building-a-second-brain.md",
-        "wordCountStart": 459,
-        "charCountStart": 2887,
-        "changes": [],
-        "id": 600
-      },
-      {
-        "date": "2026-06-30",
-        "filePath": "notes/callouts-reference.md",
-        "wordCountStart": 399,
-        "charCountStart": 2396,
-        "changes": [],
-        "id": 601
+        "id": 632
       },
       {
         "date": "2026-06-30",
@@ -10895,288 +10717,10 @@
         "wordCountStart": 558,
         "charCountStart": 3823,
         "changes": [],
-        "id": 602
-      },
-      {
-        "date": "2026-06-30",
-        "filePath": "notes/composing-with-transclusions.md",
-        "wordCountStart": 354,
-        "charCountStart": 2286,
-        "changes": [],
-        "id": 603
-      },
-      {
-        "date": "2026-06-30",
-        "filePath": "notes/compounding-knowledge.md",
-        "wordCountStart": 388,
-        "charCountStart": 2311,
-        "changes": [],
-        "id": 604
-      },
-      {
-        "date": "2026-06-30",
-        "filePath": "notes/contribution-graph.md",
-        "wordCountStart": 265,
-        "charCountStart": 1774,
-        "changes": [],
-        "id": 605
-      },
-      {
-        "date": "2026-06-30",
-        "filePath": "notes/digital-gardens.md",
-        "wordCountStart": 427,
-        "charCountStart": 2568,
-        "changes": [],
-        "id": 606
-      },
-      {
-        "date": "2026-06-30",
-        "filePath": "notes/embeds-and-transclusions.md",
-        "wordCountStart": 342,
-        "charCountStart": 2093,
-        "changes": [],
-        "id": 607
-      },
-      {
-        "date": "2026-06-30",
-        "filePath": "notes/links-are-thoughts.md",
-        "wordCountStart": 365,
-        "charCountStart": 2102,
-        "changes": [],
-        "id": 608
-      },
-      {
-        "date": "2026-06-30",
-        "filePath": "notes/math-and-latex.md",
-        "wordCountStart": 313,
-        "charCountStart": 1838,
-        "changes": [],
-        "id": 609
-      },
-      {
-        "date": "2026-06-30",
-        "filePath": "notes/mermaid-diagrams.md",
-        "wordCountStart": 285,
-        "charCountStart": 2046,
-        "changes": [],
-        "id": 610
-      },
-      {
-        "date": "2026-06-30",
-        "filePath": "notes/private-draft.md",
-        "wordCountStart": 143,
-        "charCountStart": 817,
-        "changes": [],
-        "id": 611
-      },
-      {
-        "date": "2026-06-30",
-        "filePath": "notes/setup-guide.md",
-        "wordCountStart": 1174,
-        "charCountStart": 7817,
-        "changes": [],
-        "id": 612
-      },
-      {
-        "date": "2026-06-30",
-        "filePath": "notes/tags-and-organization.md",
-        "wordCountStart": 405,
-        "charCountStart": 2472,
-        "changes": [],
-        "id": 613
-      },
-      {
-        "date": "2026-06-30",
-        "filePath": "notes/the-art-of-note-taking.md",
-        "wordCountStart": 480,
-        "charCountStart": 2799,
-        "changes": [],
-        "id": 614
-      },
-      {
-        "date": "2026-06-30",
-        "filePath": "Attachments/Templates/Untitled.md",
-        "wordCountStart": 0,
-        "charCountStart": 0,
-        "changes": [
-          {
-            "timeKey": "05:40",
-            "w": 0,
-            "c": 0
-          }
-        ],
-        "id": 615
-      },
-      {
-        "date": "2026-06-30",
-        "filePath": "notes/Python.md",
-        "wordCountStart": 0,
-        "charCountStart": 0,
-        "changes": [
-          {
-            "timeKey": "05:45",
-            "w": 49,
-            "c": 300
-          },
-          {
-            "timeKey": "05:50",
-            "w": 55,
-            "c": 531
-          },
-          {
-            "timeKey": "05:55",
-            "w": 20,
-            "c": 43
-          },
-          {
-            "timeKey": "06:00",
-            "w": -33,
-            "c": -168
-          },
-          {
-            "timeKey": "06:35",
-            "w": 0,
-            "c": 0
-          },
-          {
-            "timeKey": "06:40",
-            "w": 27,
-            "c": 164
-          },
-          {
-            "timeKey": "06:45",
-            "w": -118,
-            "c": -870
-          }
-        ],
-        "id": 616
-      },
-      {
-        "date": "2026-06-30",
-        "filePath": "about.md",
-        "wordCountStart": 293,
-        "charCountStart": 1667,
-        "changes": [
-          {
-            "timeKey": "06:40",
-            "w": 0,
-            "c": -1
-          }
-        ],
-        "id": 617
-      },
-      {
-        "date": "2026-06-30",
-        "filePath": "notes/Last.md",
-        "wordCountStart": 0,
-        "charCountStart": 0,
-        "changes": [
-          {
-            "timeKey": "06:50",
-            "w": 42,
-            "c": 402
-          },
-          {
-            "timeKey": "06:55",
-            "w": 51,
-            "c": 431
-          },
-          {
-            "timeKey": "07:00",
-            "w": -70,
-            "c": -661
-          },
-          {
-            "timeKey": "07:05",
-            "w": 12,
-            "c": 103
-          },
-          {
-            "timeKey": "07:10",
-            "w": 12,
-            "c": 94
-          },
-          {
-            "timeKey": "07:25",
-            "w": 9,
-            "c": 60
-          },
-          {
-            "timeKey": "07:30",
-            "w": 21,
-            "c": 199
-          },
-          {
-            "timeKey": "07:35",
-            "w": -25,
-            "c": -226
-          },
-          {
-            "timeKey": "07:40",
-            "w": 0,
-            "c": -4
-          },
-          {
-            "timeKey": "08:00",
-            "w": 2,
-            "c": 17
-          },
-          {
-            "timeKey": "08:05",
-            "w": 0,
-            "c": 1
-          },
-          {
-            "timeKey": "08:15",
-            "w": 1,
-            "c": 1
-          },
-          {
-            "timeKey": "08:25",
-            "w": 0,
-            "c": 1
-          },
-          {
-            "timeKey": "08:30",
-            "w": 7,
-            "c": 48
-          },
-          {
-            "timeKey": "08:40",
-            "w": -7,
-            "c": -45
-          },
-          {
-            "timeKey": "09:25",
-            "w": -3,
-            "c": -24
-          },
-          {
-            "timeKey": "09:35",
-            "w": 1,
-            "c": 9
-          }
-        ],
-        "id": 618
-      },
-      {
-        "date": "2026-06-30",
-        "filePath": "essays/on-thinking.md",
-        "wordCountStart": 425,
-        "charCountStart": 2483,
-        "changes": [],
-        "id": 619
-      },
-      {
-        "date": "2026-06-30",
-        "filePath": "notes/media-embeds-reference.md",
-        "wordCountStart": 328,
-        "charCountStart": 2245,
-        "changes": [],
-        "id": 620
+        "id": 633
       }
     ],
-    "wholeVaultWordCount": 19160,
-    "wholeVaultCharCount": 135985
+    "wholeVaultWordCount": 19257,
+    "wholeVaultCharCount": 136298
   }
 }

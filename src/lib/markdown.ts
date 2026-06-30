@@ -845,12 +845,14 @@ function ctx_noteMeta(_node: EmbedNode) {
 function resolveAssetUrl(rawUrl: string): string {
   const isExternalUrl = /^https?:\/\//i.test(rawUrl);
   if (isExternalUrl) return rawUrl;
-  const rawName = rawUrl.replace(/[\\/]/g, "-");
-  const assetName = _ctx?.assetNames?.get(rawUrl.toLowerCase())
+  const decoded = decodeURIComponent(rawUrl);
+  const rawName = decoded.replace(/[\\/]/g, "-");
+  const assetName = _ctx?.assetNames?.get(decoded.toLowerCase())
     ?? _ctx?.assetNames?.get(rawName.toLowerCase())
     ?? rawName;
   const assetBase = _ctx?.assetBase ?? "";
-  return `${assetBase}/content-assets/${assetName}`;
+  const encodedName = assetName.split("/").map(encodeURIComponent).join("/");
+  return `${assetBase}/content-assets/${encodedName}`;
 }
 
 function escapeHtmlEntities(s: string): string {
@@ -1362,6 +1364,55 @@ export function rehypeObsidianInk() {
 }
 
 // ----------------------------------------------------------------------------
+// Rehype plugin: Strip Obsidian Ink edit links & style ink SVG images
+// ----------------------------------------------------------------------------
+
+/**
+ * The Obsidian Ink plugin embeds handwriting/drawing as:
+ *   ![InkWriting](<path.svg>) [Edit Writing](url?type=inkWriting&...)
+ *   ![InkDrawing](<path.svg>) [Edit Drawing](url?type=inkDrawing&...)
+ *
+ * The "Edit Writing"/"Edit Drawing" links only work inside Obsidian, so we
+ * strip them from the published output. We also add the `ink-embed` class
+ * to img elements whose alt text is "InkWriting" or "InkDrawing" for styling.
+ */
+export function rehypeStripInkEditLinks() {
+  return (tree: HastRoot) => {
+    // Pass 1: Mark ink images with proper class
+    visit(tree, "element", (node: Element) => {
+      if (node.tagName !== "img") return;
+      const alt = (node.properties?.alt as string) || "";
+      if (alt === "InkWriting" || alt === "InkDrawing") {
+        const existing = (node.properties?.className as string[] | undefined) ?? [];
+        node.properties = node.properties ?? {};
+        node.properties.className = [...existing, "ink-embed"];
+        // Set a more descriptive alt text
+        node.properties.alt = alt === "InkDrawing" ? "Ink drawing" : "Handwritten ink";
+      }
+    });
+
+    // Pass 2: Remove "Edit Writing" / "Edit Drawing" links whose href
+    // contains type=inkWriting or type=inkDrawing
+    visit(tree, "element", (node: Element) => {
+      if (!node.children) return;
+      node.children = node.children.filter((child) => {
+        if (child.type !== "element" || (child as Element).tagName !== "a") return true;
+        const el = child as Element;
+        const href = (el.properties?.href as string) || "";
+        if (!href.includes("type=inkWriting") && !href.includes("type=inkDrawing")) return true;
+        // Also check the link text
+        const text = (el.children || [])
+          .map((c) => (c.type === "text" ? (c as any).value : ""))
+          .join("")
+          .trim();
+        if (text === "Edit Writing" || text === "Edit Drawing") return false;
+        return true;
+      });
+    });
+  };
+}
+
+// ----------------------------------------------------------------------------
 // Rehype plugin: Contribution Graph (obsidian-contribution-graph plugin)
 // ----------------------------------------------------------------------------
 
@@ -1400,6 +1451,14 @@ export function rehypeFixBrokenImages() {
       if (src.startsWith("data:")) return;
       // Skip if it's a local path (starts with /)
       if (src.startsWith("/")) return;
+
+      // If it's a relative path to a local image (not external), resolve it
+      const isExternalUrl = /^https?:\/\//i.test(src);
+      if (!isExternalUrl && IMAGE_EXT.test(src)) {
+        node.properties.src = resolveAssetUrl(src);
+        return;
+      }
+
       // Check if it's actually an image URL
       if (IMAGE_EXT.test(src)) return;
       // It's a broken image — check for embed or link preview
@@ -1773,6 +1832,7 @@ export async function renderMarkdown(
     .use(rehypeObsidianInk)
     .use(rehypeContributionGraph)
     .use(rehypeFixBrokenImages)
+    .use(rehypeStripInkEditLinks)
     .use(rehypeStringify, { allowDangerousHtml: true });
 
   const file = await processor.process(body);

@@ -482,9 +482,14 @@
 .garden-prose img.ink-embed {
   border-radius: 8px;
   border: 1px solid var(--border);
-  background: var(--surface);
+  background: transparent;
   padding: 0.5rem;
   box-shadow: var(--shadow-sm);
+  filter: invert(1) hue-rotate(180deg);
+}
+.light .garden-prose img.ink-embed {
+  filter: none;
+  background: #fff;
 }
 .garden-prose .ink-placeholder {
   display: flex;
