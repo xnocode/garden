@@ -41,7 +41,7 @@ export async function getTotalVisitors(): Promise<number> {
       ],
       metrics: [
         {
-          name: "activeUsers", // Standard metric for unique active users in GA4
+          name: "totalUsers", // Standard metric for total unique users in GA4
         },
       ],
     });
