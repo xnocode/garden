@@ -145,7 +145,7 @@ export function Explorer({ tree }: { tree: ExplorerNode[] }) {
           Explorer
         </h2>
         <span className="text-[10px] font-mono text-muted-foreground/50">
-          {tree.length} folders
+          {tree.length} notes
         </span>
       </div>
       <div className="styled-scroll flex-1 overflow-y-auto px-2 py-2">
