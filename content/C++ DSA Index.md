@@ -31,12 +31,12 @@ cellStyleRules: []
 
 | 1    | C++ Fundamentals               |
 | ---- | ------------------------------ |
-| 1.1  | [[C++ Boilerplate Code]]       |
-| 1.2  | [[C++ Preprocessor Directive]] |
+| 1.1  | [[cpp-boilerplate-code]]       |
+| 1.2  | [[cpp-preprocessor-directive]] |
 | 1.3  | [[C++ Macros]]                 |
 | 1.4  | [[C++ Namespace]]              |
 | 1.5  | [[C++ Variables]]              |
-| 1.6  | [[C++ Assignment Operator]]    |
+| 1.6  | [[cpp-assignment-operator]]    |
 | 1.7  | [[C++ Garbage Value]]          |
 | 1.8  | [[C++ Naming Convention]]      |
 | 1.9  | [[C++ Data Types]]             |
@@ -54,6 +54,3 @@ cellStyleRules: []
 | 1.20 | [[C++ Patterns]]               |
 |      |                                |
 |      |                                |
-# ==CPP DSA==
-
-

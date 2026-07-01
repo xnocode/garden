@@ -9982,7 +9982,7 @@
       },
       {
         "date": "2026-06-25",
-        "filePath": "C++ Boilerplate Code.md",
+        "filePath": "cpp-boilerplate-code.md",
         "wordCountStart": 0,
         "charCountStart": 0,
         "changes": [
@@ -10063,7 +10063,7 @@
       },
       {
         "date": "2026-06-25",
-        "filePath": "C++ Preprocessor Directive.md",
+        "filePath": "cpp-preprocessor-directive.md",
         "wordCountStart": 0,
         "charCountStart": 0,
         "changes": [
@@ -10282,7 +10282,7 @@
       },
       {
         "date": "2026-06-26",
-        "filePath": "C++ Assignment Operator.md",
+        "filePath": "cpp-assignment-operator.md",
         "wordCountStart": 0,
         "charCountStart": 0,
         "changes": [
@@ -10966,9 +10966,166 @@
           }
         ],
         "id": 662
+      },
+      {
+        "date": "2026-07-01",
+        "filePath": "AI & ML Index.md",
+        "wordCountStart": 222,
+        "charCountStart": 3568,
+        "changes": [
+          {
+            "timeKey": "02:50",
+            "w": -222,
+            "c": -3568
+          },
+          {
+            "timeKey": "05:50",
+            "w": 222,
+            "c": 3568
+          }
+        ],
+        "id": 663
+      },
+      {
+        "date": "2026-07-01",
+        "filePath": "About me.md",
+        "wordCountStart": 177,
+        "charCountStart": 1088,
+        "changes": [
+          {
+            "timeKey": "05:45",
+            "w": 0,
+            "c": -1
+          },
+          {
+            "timeKey": "05:50",
+            "w": 13,
+            "c": 30
+          }
+        ],
+        "id": 664
+      },
+      {
+        "date": "2026-07-01",
+        "filePath": "about.md",
+        "wordCountStart": 293,
+        "charCountStart": 1666,
+        "changes": [],
+        "id": 665
+      },
+      {
+        "date": "2026-07-01",
+        "filePath": "bikeshedding-and-the-garden.md",
+        "wordCountStart": 383,
+        "charCountStart": 2158,
+        "changes": [],
+        "id": 666
+      },
+      {
+        "date": "2026-07-01",
+        "filePath": "cpp-assignment-operator.md",
+        "wordCountStart": 48,
+        "charCountStart": 276,
+        "changes": [
+          {
+            "timeKey": "05:50",
+            "w": 8,
+            "c": 70
+          },
+          {
+            "timeKey": "05:55",
+            "w": -2,
+            "c": -15
+          }
+        ],
+        "id": 667
+      },
+      {
+        "date": "2026-07-01",
+        "filePath": "the-art-of-note-taking.md",
+        "wordCountStart": 480,
+        "charCountStart": 2799,
+        "changes": [],
+        "id": 668
+      },
+      {
+        "date": "2026-07-01",
+        "filePath": "Remote Job Search Guide.md",
+        "wordCountStart": 860,
+        "charCountStart": 6409,
+        "changes": [],
+        "id": 669
+      },
+      {
+        "date": "2026-07-01",
+        "filePath": "PHP Index.md",
+        "wordCountStart": 673,
+        "charCountStart": 5804,
+        "changes": [],
+        "id": 670
+      },
+      {
+        "date": "2026-07-01",
+        "filePath": "C++ DSA Index.md",
+        "wordCountStart": 134,
+        "charCountStart": 1543,
+        "changes": [
+          {
+            "timeKey": "13:05",
+            "w": 1,
+            "c": 26
+          },
+          {
+            "timeKey": "13:10",
+            "w": -3,
+            "c": -42
+          }
+        ],
+        "id": 671
+      },
+      {
+        "date": "2026-07-01",
+        "filePath": "Compounding Knowledge.md",
+        "wordCountStart": 0,
+        "charCountStart": 0,
+        "changes": [
+          {
+            "timeKey": "13:05",
+            "w": 0,
+            "c": 0
+          }
+        ],
+        "id": 672
+      },
+      {
+        "date": "2026-07-01",
+        "filePath": "cpp-boilerplate-code.md",
+        "wordCountStart": 194,
+        "charCountStart": 1313,
+        "changes": [
+          {
+            "timeKey": "13:10",
+            "w": 6,
+            "c": 52
+          },
+          {
+            "timeKey": "13:15",
+            "w": 15,
+            "c": 133
+          }
+        ],
+        "id": 673
+      },
+      {
+        "date": "2026-07-01",
+        "filePath": "cpp-preprocessor-directive.md",
+        "wordCountStart": 96,
+        "charCountStart": 749,
+        "changes": [],
+        "id": 674
       }
     ],
-    "wholeVaultWordCount": 19258,
-    "wholeVaultCharCount": 136306
+    "wholeVaultWordCount": 19518,
+    "wholeVaultCharCount": 140127
   }
 }

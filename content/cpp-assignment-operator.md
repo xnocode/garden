@@ -3,7 +3,11 @@ draft: false
 tags:
   - cpp
 date: 2026-06-26
-author: xnocode
+title: C++ Assignment Operator
+description:
+prev: ""
+next: ""
+aliases:
 ---
 The assignment operator (=) copies the value from right to left.
 

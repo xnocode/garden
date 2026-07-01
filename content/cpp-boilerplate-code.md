@@ -3,7 +3,11 @@ draft: false
 tags:
   - cpp
 date: 2026-06-25
-author: xnocode
+title: C++ Boilerplate Code
+description: An introduction to the C++ boilerplate, explaining the essential components every program starts with.
+prev: ""
+next: "[[cpp-preprocessor-directive]]"
+aliases:
 ---
 In C++, this is one of the first programs we write to print something on the screen.
 
