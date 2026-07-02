@@ -3,7 +3,14 @@ draft: false
 tags:
   - cpp
 date: 2026-06-25
-author: xnocode
+title: C++ DSA Index
+description: A structured roadmap to C++ and Data Structures & Algorithms with links to all related notes.
+prev: ""
+next: cpp-boilerplate-code
+aliases:
+  - c++ dsa
+  - cpp dsa
+  - dsa roadmap
 ---
 ```contributionGraph
 title: C++ DSA
@@ -23,7 +30,7 @@ dataSource:
   filters: []
 fillTheScreen: false
 enableMainContainerShadow: false
-fromDate: 2026-01-01
+fromDate: 2026-06-25
 toDate: 2026-12-31
 cellStyleRules: []
 
@@ -33,9 +40,9 @@ cellStyleRules: []
 | ---- | ------------------------------ |
 | 1.1  | [[cpp-boilerplate-code]]       |
 | 1.2  | [[cpp-preprocessor-directive]] |
-| 1.3  | [[C++ Macros]]                 |
-| 1.4  | [[C++ Namespace]]              |
-| 1.5  | [[C++ Variables]]              |
+| 1.3  | [[cpp-macros]]                 |
+| 1.4  | [[cpp-namespace]]              |
+| 1.5  | [[cpp-variables]]              |
 | 1.6  | [[cpp-assignment-operator]]    |
 | 1.7  | [[C++ Garbage Value]]          |
 | 1.8  | [[C++ Naming Convention]]      |

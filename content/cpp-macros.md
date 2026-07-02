@@ -2,14 +2,19 @@
 draft: false
 tags:
   - cpp
-date: 2026-06-25
-author: xnocode
+date: 2026-06-26
+title: C++ Macros
+description: Macros are preprocessor definitions that replace identifiers with code before compilation.
+prev: cpp-preprocessor-directive
+next: cpp-namespace
+aliases:
+  - macros
 ---
 Macros are symbolic names that are replaced by their values before compilation.
 
 syntax
 
-```cpp
+```text
 #define NAME value
 ```
 
@@ -23,12 +28,6 @@ int main() {
     cout << PI << endl;
     return 0;
 }
-```
-
-**output**
-
-```bash
-3.14
 ```
 
 > [!note]  

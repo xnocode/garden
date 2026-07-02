@@ -513,7 +513,7 @@ export function NoteView({ note }: { note: NoteDetail }) {
             dangerouslySetInnerHTML={{ __html: html }}
           />
           {/* Code block runner — adds Run buttons to runnable code blocks */}
-          <CodeBlockRunner />
+          <CodeBlockRunner key={note.slug} />
         </div>
 
         {/* Right rail: TOC */}

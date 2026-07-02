@@ -5,9 +5,10 @@ tags:
 date: 2026-06-25
 title: C++ Boilerplate Code
 description: An introduction to the C++ boilerplate, explaining the essential components every program starts with.
-prev: ""
-next: "[[cpp-preprocessor-directive]]"
+prev: cpp-dsa-index
+next: cpp-preprocessor-directive
 aliases:
+  - boilerplate
 ---
 In C++, this is one of the first programs we write to print something on the screen.
 
@@ -16,19 +17,14 @@ In C++, this is one of the first programs we write to print something on the scr
 using namespace std; // preprocessor directive
 int main()
 {
-    cout << "xnocode" << endl; // execution of the program starts from here
+    cout << "xnocode" << endl; 
+    // execution of the program starts from here
 }
-```
-
-**output**
-
-```bash
-Hello World
 ```
 
 It is also called **Boilerplate Code** because it contains the basic structure required to write and run a C++ program.
 
-```text
+```plaintext
 Boilerplate Code
 ├── basic structure of a C++ program
 ├── contains necessary components to run a program
@@ -52,6 +48,5 @@ Explanation:
     - Ends the `main()` function.
     - `0` indicates that the program executed successfully.
 
-> [!note]  
-> Every C++ program must contain a `main()` function because program execution always starts from there.
+> [!note]  Every C++ program must contain a `main()` function because program execution always starts from there.
 

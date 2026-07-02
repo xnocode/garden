@@ -110,6 +110,7 @@ function CodeBlockEnhancer({ block }: { block: CodeBlockInfo }) {
     const pres = Array.from(
       container.querySelectorAll("pre")
     ) as HTMLPreElement[];
+    let createdOut: HTMLDivElement | null = null;
     for (const pre of pres) {
       const codeEl = pre.querySelector("code");
       if (!codeEl) continue;
@@ -123,9 +124,15 @@ function CodeBlockEnhancer({ block }: { block: CodeBlockInfo }) {
         out.className = "code-output-wrapper";
         pre.parentNode?.insertBefore(out, pre.nextSibling);
         setOutputEl(out);
+        createdOut = out;
         break;
       }
     }
+    return () => {
+      if (createdOut) {
+        createdOut.remove();
+      }
+    };
   }, [block]);
 
   const run = useCallback(async () => {

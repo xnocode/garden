@@ -2,8 +2,13 @@
 draft: false
 tags:
   - cpp
-date: 2026-06-25
-author: xnocode
+date: 2026-06-26
+title: C++ Namespace
+description: A namespace is used to organize code and prevent name collisions between identifiers.
+prev: cpp-macros
+next: cpp-variables
+aliases:
+  - namespace
 ---
 A namespace is used to organize code and avoid naming conflicts. The standard C++ library is contained inside the `std` namespace.
 
@@ -11,7 +16,7 @@ A namespace is used to organize code and avoid naming conflicts. The standard C+
 #include <iostream>
 using namespace std;   // use the standard C++ namespace
 int main() {
-    cout << "Hello";
+    cout << "Hello" << endl;
     return 0;
 }
 ```
@@ -27,8 +32,6 @@ The objects `cout`, `cin`, `endl`, etc. are defined in the `iostream` header fil
 
 Without `using namespace std;`, we must use the scope resolution operator `::`.
 
-**example**
-
 ```cpp
 #include <iostream>
 int main() {
@@ -37,14 +40,7 @@ int main() {
 }
 ```
 
-**output**
-
-```bash
-xnocode
-```
-
 Explanation:
-
 - `using namespace std;`
     - Allows us to use `cout`, `cin`, `endl`, etc. without writing `std::`.
         
@@ -52,7 +48,15 @@ Explanation:
     - `std` → namespace
     - `::` → scope resolution operator
 
-Another Example
+> [!question]  
+> Write a C++ program to print the following pattern:
+> 
+> ```text
+> * * * *
+> * * *
+> * *
+> *
+> ```
 
 ```cpp
 #include <iostream>
@@ -63,15 +67,6 @@ int main() {
     std::cout << "*" << std::endl;
     return 0;
 }
-```
-
-**output**
-
-```bash
-* * * *
-* * *
-* *
-*
 ```
 
 > [!note]  
