@@ -2,29 +2,35 @@
 draft: false
 tags:
   - cpp
-date: 2026-06-26
+date: 2026-06-27
 title: C++ Assignment Operator
-description:
-prev: ""
-next: ""
+description: The assignment operator assigns a value to a variable.
+prev: cpp-variables
+next: cpp-garbage-value
 aliases:
+  - operator
 ---
-The assignment operator (=) copies the value from right to left.
-
-example
+The **assignment operator (=)** assigns the value of the expression on the **right-hand side (RHS)** to the variable on the **left-hand side (LHS)**.
 
 ```cpp
-int a = 5;
-int b = 10;
-
-a = b;
+#include <iostream>
+using namespace std;
+int main() {
+    int a = 5;
+    int b = 10;
+    a = b;
+    cout << a << endl;
+    return 0;
+}
 ```
 
-After assignment:
+> [!summary] Summary
+> The value stored in `b` is copied to `a`. 
+> ```text
+> a = b
+> │   │
+> │   └── RHS (value: 10)
+> └────── LHS (variable: a)
+> ```
+> The assignment operator assigns a value to a variable.
 
-```text
-a = 10
-b = 10
-```
-
-Because the value of `b` is copied into `a`.

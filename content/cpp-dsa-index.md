@@ -44,10 +44,10 @@ cellStyleRules: []
 | 1.4  | [[cpp-namespace]]              |
 | 1.5  | [[cpp-variables]]              |
 | 1.6  | [[cpp-assignment-operator]]    |
-| 1.7  | [[C++ Garbage Value]]          |
-| 1.8  | [[C++ Naming Convention]]      |
-| 1.9  | [[C++ Data Types]]             |
-| 1.10 | [[C++ Size Of Data Type]]      |
+| 1.7  | [[cpp-garbage-value]]          |
+| 1.8  | [[cpp-naming-convention]]      |
+| 1.9  | [[cpp-data-types]]             |
+| 1.10 | [[cpp-size-of-data-types]]      |
 | 1.11 | [[C++ Precision]]              |
 | 1.12 | [[C++ Comments]]               |
 | 1.13 | [[C++ Input]]                  |

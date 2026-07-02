@@ -25,14 +25,20 @@ int main(){
 ```
 
 ```text
-                   2 * (a + b)
-                  ╱    │    ╲
-                 ▼     ▼     ▼
-              Literal  │  Variable
-             (2)       │   (b)
-                       ▼
-                   Variable
-                      (a)
+2 * (a + b)
+├── 2
+│   └── Literal
+│       ├── Fixed value
+│       └── Cannot be changed
+└── (a + b)
+    ├── a
+    │   └── Variable
+    │       ├── Stores data
+    │       └── Value can change
+    └── b
+        └── Variable
+            ├── Stores data
+            └── Value can change
 ```
 
 ```text
@@ -44,7 +50,7 @@ Variable
 └── Value can be changed
 ```
 
-> [!note]  
+> [!note] Note
 > Always use meaningful variable names.
 > Examples: `age`, `salary`, `studentName`
 
@@ -72,6 +78,6 @@ int main(){
 }
 ```
 
-> [!info]  
+> [!info] Info
 > Variables are also called **identifiers** because they are used to identify memory locations.
 

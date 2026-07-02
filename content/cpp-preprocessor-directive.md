@@ -18,8 +18,6 @@ Preprocessor Directive
 └── used to include files or define macros
 ```
 
-example
-
 ```cpp
 #include <iostream>   // preprocessor directive
 using namespace std;

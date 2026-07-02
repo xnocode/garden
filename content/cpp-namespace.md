@@ -48,9 +48,8 @@ Explanation:
     - `std` → namespace
     - `::` → scope resolution operator
 
-> [!question]  
+> [!question] Question 
 > Write a C++ program to print the following pattern:
-> 
 > ```text
 > * * * *
 > * * *
@@ -69,7 +68,8 @@ int main() {
 }
 ```
 
-> [!note]  
+> [!note] Note
 > `cout` is declared in the `iostream` header file and belongs to the `std` namespace.
 > 
 > Without `using namespace std;`, we must write `std::cout`, `std::cin`, etc.
+

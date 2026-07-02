@@ -48,5 +48,6 @@ Explanation:
     - Ends the `main()` function.
     - `0` indicates that the program executed successfully.
 
-> [!note]  Every C++ program must contain a `main()` function because program execution always starts from there.
+> [!note] Note
+> Every C++ program must contain a `main()` function because program execution always starts from there.
 

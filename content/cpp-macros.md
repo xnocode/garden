@@ -18,8 +18,6 @@ syntax
 #define NAME value
 ```
 
-example
-
 ```cpp
 #include <iostream>
 #define PI 3.14
@@ -30,7 +28,7 @@ int main() {
 }
 ```
 
-> [!note]  
+> [!note] Note
 > All preprocessor directives start with `#`.
 > 
 > Examples: `#include`, `#define`

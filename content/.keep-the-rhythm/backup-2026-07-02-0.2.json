@@ -10087,7 +10087,7 @@
       },
       {
         "date": "2026-06-25",
-        "filePath": "C++ Namespace.md",
+        "filePath": "cpp-namespace.md",
         "wordCountStart": 0,
         "charCountStart": 0,
         "changes": [
@@ -10135,7 +10135,7 @@
       },
       {
         "date": "2026-06-25",
-        "filePath": "C++ Macros.md",
+        "filePath": "cpp-macros.md",
         "wordCountStart": 0,
         "charCountStart": 0,
         "changes": [
@@ -10263,7 +10263,7 @@
       },
       {
         "date": "2026-06-26",
-        "filePath": "C++ Variables.md",
+        "filePath": "cpp-variables.md",
         "wordCountStart": 0,
         "charCountStart": 0,
         "changes": [
@@ -10296,7 +10296,7 @@
       },
       {
         "date": "2026-06-26",
-        "filePath": "C++ Namespace.md",
+        "filePath": "cpp-namespace.md",
         "wordCountStart": 197,
         "charCountStart": 1444,
         "changes": [],
@@ -10304,7 +10304,7 @@
       },
       {
         "date": "2026-06-26",
-        "filePath": "C++ Garbage Value.md",
+        "filePath": "cpp-garbage-value.md",
         "wordCountStart": 0,
         "charCountStart": 0,
         "changes": [
@@ -11139,6 +11139,16 @@
             "timeKey": "04:25",
             "w": 0,
             "c": -5
+          },
+          {
+            "timeKey": "08:35",
+            "w": 0,
+            "c": 7
+          },
+          {
+            "timeKey": "08:40",
+            "w": 1,
+            "c": 6
           }
         ],
         "id": 675
@@ -11171,9 +11181,225 @@
           }
         ],
         "id": 676
+      },
+      {
+        "date": "2026-07-02",
+        "filePath": "cpp-preprocessor-directive.md",
+        "wordCountStart": 96,
+        "charCountStart": 749,
+        "changes": [
+          {
+            "timeKey": "07:00",
+            "w": 6,
+            "c": 73
+          },
+          {
+            "timeKey": "07:05",
+            "w": 18,
+            "c": 111
+          },
+          {
+            "timeKey": "07:10",
+            "w": 1,
+            "c": 8
+          },
+          {
+            "timeKey": "08:40",
+            "w": -1,
+            "c": -9
+          },
+          {
+            "timeKey": "08:45",
+            "w": 0,
+            "c": 0
+          }
+        ],
+        "id": 677
+      },
+      {
+        "date": "2026-07-02",
+        "filePath": "07/02/2026.md",
+        "wordCountStart": 16,
+        "charCountStart": 108,
+        "changes": [
+          {
+            "timeKey": "07:05",
+            "w": -16,
+            "c": -108
+          }
+        ],
+        "id": 678
+      },
+      {
+        "date": "2026-07-02",
+        "filePath": "cpp-macros.md",
+        "wordCountStart": 64,
+        "charCountStart": 444,
+        "changes": [
+          {
+            "timeKey": "07:10",
+            "w": 18,
+            "c": 168
+          },
+          {
+            "timeKey": "07:15",
+            "w": -2,
+            "c": -14
+          },
+          {
+            "timeKey": "07:20",
+            "w": 0,
+            "c": 0
+          },
+          {
+            "timeKey": "08:30",
+            "w": -1,
+            "c": -4
+          },
+          {
+            "timeKey": "08:45",
+            "w": 1,
+            "c": 0
+          },
+          {
+            "timeKey": "08:50",
+            "w": -1,
+            "c": -6
+          }
+        ],
+        "id": 679
+      },
+      {
+        "date": "2026-07-02",
+        "filePath": "cpp-namespace.md",
+        "wordCountStart": 197,
+        "charCountStart": 1444,
+        "changes": [
+          {
+            "timeKey": "07:15",
+            "w": 14,
+            "c": 86
+          },
+          {
+            "timeKey": "08:30",
+            "w": 4,
+            "c": 48
+          },
+          {
+            "timeKey": "08:35",
+            "w": 7,
+            "c": 47
+          },
+          {
+            "timeKey": "08:45",
+            "w": 2,
+            "c": 13
+          }
+        ],
+        "id": 680
+      },
+      {
+        "date": "2026-07-02",
+        "filePath": "cpp-variables.md",
+        "wordCountStart": 167,
+        "charCountStart": 1153,
+        "changes": [
+          {
+            "timeKey": "07:20",
+            "w": 30,
+            "c": 237
+          },
+          {
+            "timeKey": "07:25",
+            "w": -11,
+            "c": -64
+          },
+          {
+            "timeKey": "07:30",
+            "w": 9,
+            "c": 236
+          },
+          {
+            "timeKey": "08:20",
+            "w": 121,
+            "c": 977
+          },
+          {
+            "timeKey": "08:25",
+            "w": -137,
+            "c": -1072
+          },
+          {
+            "timeKey": "08:50",
+            "w": 17,
+            "c": 87
+          },
+          {
+            "timeKey": "08:55",
+            "w": 2,
+            "c": -34
+          },
+          {
+            "timeKey": "09:05",
+            "w": 0,
+            "c": 0
+          }
+        ],
+        "id": 681
+      },
+      {
+        "date": "2026-07-02",
+        "filePath": "callouts-reference.md",
+        "wordCountStart": 399,
+        "charCountStart": 2396,
+        "changes": [],
+        "id": 682
+      },
+      {
+        "date": "2026-07-02",
+        "filePath": "cpp-assignment-operator.md",
+        "wordCountStart": 54,
+        "charCountStart": 331,
+        "changes": [
+          {
+            "timeKey": "08:55",
+            "w": 12,
+            "c": 90
+          },
+          {
+            "timeKey": "09:00",
+            "w": 16,
+            "c": 144
+          },
+          {
+            "timeKey": "09:05",
+            "w": 21,
+            "c": 160
+          }
+        ],
+        "id": 683
+      },
+      {
+        "date": "2026-07-02",
+        "filePath": "cpp-garbage-value.md",
+        "wordCountStart": 60,
+        "charCountStart": 418,
+        "changes": [
+          {
+            "timeKey": "09:05",
+            "w": 8,
+            "c": 65
+          },
+          {
+            "timeKey": "09:10",
+            "w": -1,
+            "c": -11
+          }
+        ],
+        "id": 684
       }
     ],
-    "wholeVaultWordCount": 19543,
-    "wholeVaultCharCount": 140313
+    "wholeVaultWordCount": 19697,
+    "wholeVaultCharCount": 141662
   }
 }

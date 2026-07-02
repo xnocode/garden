@@ -2,8 +2,13 @@
 draft: false
 tags:
   - cpp
-date: 2026-06-26
-author: xnocode
+date: 2026-06-29
+title: C++ Data Types
+description: A data type defines the type of data a variable can store.
+prev: cpp-naming-convention
+next: cpp-size-of-data-types
+aliases:
+  - data types
 ---
 A data type specifies the type of data a variable can store.
 
@@ -21,17 +26,7 @@ Data Types
     └── etc.
 ```
 
-
 The `int` data type is used to store whole numbers.
-
-```text
-Integer Type
-├── stores whole numbers
-├── size = 4 bytes
-└── size = 32 bits
-```
-
-example
 
 ```cpp
 #include <iostream>
@@ -43,49 +38,31 @@ int main() {
 }
 ```
 
-**output**
-
-```bash
-2
+```text
+Integer Type
+├── stores whole numbers
+├── size = 4 bytes
+└── size = 32 bits
 ```
-
-- Common Primitive Data Types
-
-example
 
 ```cpp
 #include <iostream>
 using namespace std;
-
 int main() {
-
     int age = 24;
     int marks = 200;
     char grade = 'A';
     float y = 324.23f;
     bool isAdult = true;
     double z = 3.234;
-
     cout << age << endl;
     cout << marks << endl;
     cout << grade << endl;
     cout << y << endl;
     cout << isAdult << endl;
     cout << z << endl;
-
     return 0;
 }
-```
-
-**output**
-
-```bash
-24
-200
-A
-324.23
-1
-3.234
 ```
 
 ```text
@@ -97,7 +74,7 @@ Data Type Examples
 └── bool   → true or false
 ```
 
-> [!note]  
+> [!note] Note
 > `bool` prints `1` for `true` and `0` for `false`.
 
 
