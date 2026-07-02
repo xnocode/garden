@@ -2,8 +2,13 @@
 draft: false
 tags:
   - cpp
-date: 2026-06-26
+date: 2026-07-02
 author: xnocode
+title: C++ Conditional Statements
+description:
+prev: ""
+next: ""
+aliases:
 ---
 Conditional statements allow a program to make decisions based on conditions.
 

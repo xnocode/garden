@@ -2,8 +2,13 @@
 draft: false
 tags:
   - cpp
-date: 2026-06-26
+date: 2026-07-02
 author: xnocode
+title: C++ Loops
+description:
+prev: ""
+next: ""
+aliases:
 ---
 Loops are used to execute a block of code repeatedly.
 

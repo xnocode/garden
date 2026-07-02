@@ -2,8 +2,13 @@
 draft: false
 tags:
   - cpp
-date: 2026-06-26
+date: 2026-07-02
 author: xnocode
+title: C++ Operators
+description:
+prev: ""
+next: ""
+aliases:
 ---
 Operators are symbols that tell the compiler to perform some operation.
 

@@ -47,17 +47,17 @@ cellStyleRules: []
 | 1.7  | [[cpp-garbage-value]]          |
 | 1.8  | [[cpp-naming-convention]]      |
 | 1.9  | [[cpp-data-types]]             |
-| 1.10 | [[cpp-size-of-data-types]]      |
-| 1.11 | [[C++ Precision]]              |
-| 1.12 | [[C++ Comments]]               |
-| 1.13 | [[C++ Input]]                  |
-| 1.14 | [[C++ Constant]]               |
-| 1.15 | [[C++ Type Casting]]           |
-| 1.15 | [[C++ Operators]]              |
-| 1.16 | [[C++ Conditional Statements]] |
-| 1.17 | [[C++ Loops]]                  |
-| 1.18 | [[C++ Break & Continue]]       |
-| 1.19 | [[C++ Nested Loop]]            |
-| 1.20 | [[C++ Patterns]]               |
+| 1.10 | [[cpp-size-of-data-types]]     |
+| 1.11 | [[cpp-precision]]              |
+| 1.12 | [[cpp-comments]]               |
+| 1.13 | [[cpp-input]]                  |
+| 1.14 | [[cpp-constant]]               |
+| 1.15 | [[cpp-type-casting]]           |
+| 1.15 | [[cpp-operators]]              |
+| 1.16 | [[cpp-conditional-statements]] |
+| 1.17 | [[cpp-loops]]                  |
+| 1.18 | [[cpp-break-and-continue]]       |
+| 1.19 | [[cpp-nested-loop]]            |
+| 1.20 | [[cpp-patterns]]               |
 |      |                                |
 |      |                                |

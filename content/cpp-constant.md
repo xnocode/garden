@@ -2,8 +2,12 @@
 draft: false
 tags:
   - cpp
-date: 2026-06-26
-author: xnocode
+date: 2026-07-02
+title: C++ Constant
+description:
+prev: ""
+next: ""
+aliases:
 ---
 A constant is a variable whose value cannot be changed during program execution.
 

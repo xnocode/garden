@@ -2,8 +2,13 @@
 draft: false
 tags:
   - cpp
-date: 2026-06-26
+date: 2026-07-02
 author: xnocode
+title: C++ Type Casting
+description:
+prev: ""
+next: ""
+aliases:
 ---
 Type casting means converting data from one data type to another.
 

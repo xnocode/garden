@@ -2,8 +2,12 @@
 draft: false
 tags:
   - cpp
-date: 06.26.2026
-author: xnocode
+date: 2026-07-02
+title: C++ Input
+description:
+prev: ""
+next: ""
+aliases:
 ---
 In C++, `cin` is used to take input from the user.
 
