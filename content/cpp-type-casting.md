@@ -3,12 +3,12 @@ draft: false
 tags:
   - cpp
 date: 2026-07-02
-author: xnocode
 title: C++ Type Casting
-description:
-prev: ""
-next: ""
+description: Type casting is the process of converting one data type into another.
+prev: cpp-constant
+next: cpp-operators
 aliases:
+  - type casting
 ---
 Type casting means converting data from one data type to another.
 
@@ -25,8 +25,6 @@ Implicit Type Conversion
 bool → char → int → float → double
 ```
 
-example
-
 ```cpp
 #include <iostream>
 using namespace std;
@@ -35,13 +33,6 @@ int main() {
     cout << (10 / 3.0) << endl;
     return 0;
 }
-```
-
-**output**
-
-```bash
-3
-3.33333
 ```
 
 > [!note]  
@@ -55,8 +46,6 @@ syntax
 (data_type) expression
 ```
 
-example
-
 ```cpp
 #include <iostream>
 using namespace std;
@@ -64,10 +53,4 @@ int main() {
     cout << (int)('A') << endl;
     return 0;
 }
-```
-
-**output**
-
-```bash
-65
 ```

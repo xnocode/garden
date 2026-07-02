@@ -3,7 +3,6 @@ draft: false
 tags:
   - cpp
 date: 2026-07-02
-author: xnocode
 title: C++ Nested Loop
 description:
 prev: ""

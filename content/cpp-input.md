@@ -4,10 +4,11 @@ tags:
   - cpp
 date: 2026-07-02
 title: C++ Input
-description:
-prev: ""
-next: ""
+description: Input is the process of receiving data from the user or another source during program execution.
+prev: cpp-comments
+next: cpp-constant
 aliases:
+  - input
 ---
 In C++, `cin` is used to take input from the user.
 
@@ -17,8 +18,6 @@ Input in C++
 ├── >> is called extraction operator
 └── stores user input in variables
 ```
-
-example
 
 ```cpp
 #include <iostream>
@@ -31,17 +30,11 @@ int main() {
 }
 ```
 
-**output**
-
-```bash
-25
-Your age is 25
-```
-
-> [!note]  
+> [!note] Note 
 > `cin` reads data from the keyboard and stores it in variables.
 
-Q. Calculate the Sum of Two Numbers
+> [!question] Question 
+> WAP to calculate the sum of two numbers.
 
 ```cpp
 #include <iostream>
@@ -54,15 +47,8 @@ int main() {
 }
 ```
 
-**output**
-
-```bash
-4
-2
-A + B : 6
-```
-
-Q. Print Average Marks
+> [!question] Question 
+> WAP to calculate and print the average marks of three subjects.
 
 ```cpp
 #include <iostream>
@@ -75,13 +61,8 @@ int main() {
 }
 ```
 
-Q. Area of a Square
-
-Formula:
-
-```text
-Area = side × side
-```
+> [!question] Question  
+> WAP to calculate the area of a square.
 
 ```cpp
 #include <iostream>
@@ -94,13 +75,11 @@ int main() {
 }
 ```
 
-Q. Simple Interest Calculator
-
-Formula:
-
-```text
-Simple Interest = (P × R × T) / 100
-```
+> [!question] Question  
+> WAP to calculate the simple interest.
+> ```text
+> Simple Interest = (P × R × T) / 100
+> ```
 
 ```cpp
 #include <iostream>
@@ -113,13 +92,11 @@ int main() {
 }
 ```
 
-Q. Area of a Circle
-
-Formula:
-
-```text
-Area = π × r × r
-```
+> [!question] Question  
+> WAP to calculate the area of a circle.
+> ```text
+> Area = π × r × r
+> ```
 
 ```cpp
 #include <iostream>
@@ -133,7 +110,8 @@ int main() {
 }
 ```
 
-Q. Total Price With and Without GST
+> [!question] Question  
+> WAP to calculate the total price with and without GST.
 
 ```cpp
 #include <iostream>

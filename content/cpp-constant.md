@@ -4,10 +4,11 @@ tags:
   - cpp
 date: 2026-07-02
 title: C++ Constant
-description:
-prev: ""
-next: ""
+description: A constant is a value that cannot be changed during program execution.
+prev: cpp-input
+next: cpp-type-casting
 aliases:
+  - constant
 ---
 A constant is a variable whose value cannot be changed during program execution.
 
@@ -18,7 +19,7 @@ Constant
 └── must be initialized during declaration
 ```
 
-example
+Allowed
 
 ```cpp
 #include<iostream>
@@ -33,9 +34,13 @@ int main(){
 Not allowed
 
 ```cpp
-const int n;
-n = 25;   // Error
+#include<iostream>
+using namespace std;
+int main(){
+	const int n;
+	n = 25;   // Error
+}
 ```
 
-> [!note]  
+> [!important] Important
 > A `const` variable must be initialized when it is declared.
