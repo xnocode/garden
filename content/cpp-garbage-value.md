@@ -5,7 +5,7 @@ tags:
 date: 2026-06-27
 title: C++ Garbage Value
 description: A garbage value is an unpredictable value stored in an uninitialized variable.
-prev: "[[cpp-assignment-operator]]"
+prev: "[[cpp-assignment-operators]]"
 next: "[[cpp-naming-convention]]"
 aliases:
   - garbage value

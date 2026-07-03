@@ -5,7 +5,7 @@ draft: false
 date: 2026-07-01
 tags:
   - cpp
-prev: "[[cpp-assignment-operator]]"
+prev: "[[cpp-assignment-operators]]"
 next: "[[cpp-logical-operators]]"
 aliases:
   - relational

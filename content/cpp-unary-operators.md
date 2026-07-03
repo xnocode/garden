@@ -6,7 +6,7 @@ date: 2026-07-01
 tags:
   - cpp
 prev: "[[cpp-arithmetic-operators]]"
-next: "[[cpp-assignment-operator]]"
+next: "[[cpp-assignment-operators]]"
 aliases:
   - unary
 ---

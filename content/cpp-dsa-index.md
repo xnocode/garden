@@ -43,7 +43,7 @@ cellStyleRules: []
 | 1.3  | [[cpp-macros]]                 |
 | 1.4  | [[cpp-namespace]]              |
 | 1.5  | [[cpp-variables]]              |
-| 1.6  | [[cpp-assignment-operator]]    |
+| 1.6  | [[cpp-assignment-operators]]    |
 | 1.7  | [[cpp-garbage-value]]          |
 | 1.8  | [[cpp-naming-convention]]      |
 | 1.9  | [[cpp-data-types]]             |
