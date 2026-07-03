@@ -3,7 +3,7 @@ draft: false
 tags:
   - cpp
 date: 2026-06-29
-title: cpp-size-of-data-types
+title: C++ Size of Data Types
 description: The size of a data type determines how much memory it occupies.
 prev: cpp-size-of-data-types
 next: cpp-precision

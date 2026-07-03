@@ -16,7 +16,7 @@ A namespace is used to organize code and avoid naming conflicts. The standard C+
 #include <iostream>
 using namespace std;   // use the standard C++ namespace
 int main() {
-    cout << "Hello" << endl;
+    cout << "xnocode" << endl;
     return 0;
 }
 ```

@@ -12,8 +12,6 @@ aliases:
 ---
 If a local variable is declared but not initialized, it contains a garbage value.
 
-example
-
 ```cpp
 #include <iostream>
 using namespace std;
@@ -23,8 +21,6 @@ int main() {
     return 0;
 }
 ```
-
-**output**
 
 ```text
 a = unpredictable value

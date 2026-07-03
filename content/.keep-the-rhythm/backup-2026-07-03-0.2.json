@@ -9460,7 +9460,7 @@
       },
       {
         "date": "2026-06-25",
-        "filePath": "C++ DSA Index.md",
+        "filePath": "cpp-dsa-index.md",
         "wordCountStart": 0,
         "charCountStart": 0,
         "changes": [
@@ -9982,7 +9982,7 @@
       },
       {
         "date": "2026-06-25",
-        "filePath": "C++ Boilerplate Code.md",
+        "filePath": "cpp-boilerplate-code.md",
         "wordCountStart": 0,
         "charCountStart": 0,
         "changes": [
@@ -10063,7 +10063,7 @@
       },
       {
         "date": "2026-06-25",
-        "filePath": "C++ Preprocessor Directive.md",
+        "filePath": "cpp-preprocessor-directive.md",
         "wordCountStart": 0,
         "charCountStart": 0,
         "changes": [
@@ -10087,7 +10087,7 @@
       },
       {
         "date": "2026-06-25",
-        "filePath": "C++ Namespace.md",
+        "filePath": "cpp-namespace.md",
         "wordCountStart": 0,
         "charCountStart": 0,
         "changes": [
@@ -10135,7 +10135,7 @@
       },
       {
         "date": "2026-06-25",
-        "filePath": "C++ Macros.md",
+        "filePath": "cpp-macros.md",
         "wordCountStart": 0,
         "charCountStart": 0,
         "changes": [
@@ -10149,7 +10149,7 @@
       },
       {
         "date": "2026-06-26",
-        "filePath": "C++ DSA Index.md",
+        "filePath": "cpp-dsa-index.md",
         "wordCountStart": 2674,
         "charCountStart": 18780,
         "changes": [
@@ -10263,7 +10263,7 @@
       },
       {
         "date": "2026-06-26",
-        "filePath": "C++ Variables.md",
+        "filePath": "cpp-variables.md",
         "wordCountStart": 0,
         "charCountStart": 0,
         "changes": [
@@ -10282,7 +10282,7 @@
       },
       {
         "date": "2026-06-26",
-        "filePath": "C++ Assignment Operator.md",
+        "filePath": "cpp-assignment-operator.md",
         "wordCountStart": 0,
         "charCountStart": 0,
         "changes": [
@@ -10296,7 +10296,7 @@
       },
       {
         "date": "2026-06-26",
-        "filePath": "C++ Namespace.md",
+        "filePath": "cpp-namespace.md",
         "wordCountStart": 197,
         "charCountStart": 1444,
         "changes": [],
@@ -10304,7 +10304,7 @@
       },
       {
         "date": "2026-06-26",
-        "filePath": "C++ Garbage Value.md",
+        "filePath": "cpp-garbage-value.md",
         "wordCountStart": 0,
         "charCountStart": 0,
         "changes": [
@@ -10318,7 +10318,7 @@
       },
       {
         "date": "2026-06-26",
-        "filePath": "C++ Naming Convention.md",
+        "filePath": "cpp-naming-convention.md",
         "wordCountStart": 0,
         "charCountStart": 0,
         "changes": [
@@ -10332,7 +10332,7 @@
       },
       {
         "date": "2026-06-26",
-        "filePath": "C++ Data Types.md",
+        "filePath": "cpp-data-types.md",
         "wordCountStart": 0,
         "charCountStart": 0,
         "changes": [
@@ -10359,7 +10359,7 @@
       },
       {
         "date": "2026-06-26",
-        "filePath": "C++ Size Of Data Type.md",
+        "filePath": "cpp-size-of-data-types.md",
         "wordCountStart": 0,
         "charCountStart": 0,
         "changes": [
@@ -10373,7 +10373,7 @@
       },
       {
         "date": "2026-06-26",
-        "filePath": "C++ Precision.md",
+        "filePath": "cpp-precision.md",
         "wordCountStart": 0,
         "charCountStart": 0,
         "changes": [
@@ -10387,7 +10387,7 @@
       },
       {
         "date": "2026-06-26",
-        "filePath": "C++ Comments.md",
+        "filePath": "cpp-comments.md",
         "wordCountStart": 0,
         "charCountStart": 0,
         "changes": [
@@ -10406,7 +10406,7 @@
       },
       {
         "date": "2026-06-26",
-        "filePath": "C++ Input.md",
+        "filePath": "cpp-input.md",
         "wordCountStart": 0,
         "charCountStart": 0,
         "changes": [
@@ -10420,7 +10420,7 @@
       },
       {
         "date": "2026-06-26",
-        "filePath": "C++ Constant.md",
+        "filePath": "cpp-constant.md",
         "wordCountStart": 0,
         "charCountStart": 0,
         "changes": [
@@ -10434,7 +10434,7 @@
       },
       {
         "date": "2026-06-26",
-        "filePath": "C++ Type Casting.md",
+        "filePath": "cpp-type-casting.md",
         "wordCountStart": 0,
         "charCountStart": 0,
         "changes": [
@@ -10467,7 +10467,7 @@
       },
       {
         "date": "2026-06-26",
-        "filePath": "C++ Operators.md",
+        "filePath": "cpp-operators.md",
         "wordCountStart": 0,
         "charCountStart": 0,
         "changes": [
@@ -10481,7 +10481,7 @@
       },
       {
         "date": "2026-06-26",
-        "filePath": "C++ Conditional Statements.md",
+        "filePath": "cpp-conditional-statements.md",
         "wordCountStart": 0,
         "charCountStart": 0,
         "changes": [
@@ -10495,7 +10495,7 @@
       },
       {
         "date": "2026-06-26",
-        "filePath": "C++ Loops.md",
+        "filePath": "cpp-loops.md",
         "wordCountStart": 0,
         "charCountStart": 0,
         "changes": [
@@ -10514,7 +10514,7 @@
       },
       {
         "date": "2026-06-26",
-        "filePath": "C++ Break & Continue.md",
+        "filePath": "cpp-break-and-continue.md",
         "wordCountStart": 0,
         "charCountStart": 0,
         "changes": [
@@ -10566,7 +10566,7 @@
       },
       {
         "date": "2026-06-26",
-        "filePath": "C++ Nested Loop.md",
+        "filePath": "cpp-nested-loop.md",
         "wordCountStart": 0,
         "charCountStart": 0,
         "changes": [
@@ -10585,7 +10585,7 @@
       },
       {
         "date": "2026-06-26",
-        "filePath": "C++ Patterns.md",
+        "filePath": "cpp-patterns.md",
         "wordCountStart": 0,
         "charCountStart": 0,
         "changes": [
@@ -10604,7 +10604,7 @@
       },
       {
         "date": "2026-06-28",
-        "filePath": "C++ Patterns.md",
+        "filePath": "cpp-patterns.md",
         "wordCountStart": 474,
         "charCountStart": 3442,
         "changes": [],
@@ -10644,7 +10644,7 @@
       },
       {
         "date": "2026-06-28",
-        "filePath": "C++ Comments.md",
+        "filePath": "cpp-comments.md",
         "wordCountStart": 119,
         "charCountStart": 823,
         "changes": [],
@@ -10704,7 +10704,7 @@
       },
       {
         "date": "2026-06-30",
-        "filePath": "notes/mermaid-diagrams.md",
+        "filePath": "mermaid-diagrams.md",
         "wordCountStart": 285,
         "charCountStart": 2046,
         "changes": [
@@ -10718,7 +10718,7 @@
       },
       {
         "date": "2026-06-30",
-        "filePath": "notes/code-execution-playground.md",
+        "filePath": "code-execution-playground.md",
         "wordCountStart": 558,
         "charCountStart": 3823,
         "changes": [],
@@ -10742,7 +10742,7 @@
       },
       {
         "date": "2026-06-30",
-        "filePath": "notes/zettelkasten-method.md",
+        "filePath": "zettelkasten-method.md",
         "wordCountStart": 468,
         "charCountStart": 2718,
         "changes": [],
@@ -10750,7 +10750,7 @@
       },
       {
         "date": "2026-06-30",
-        "filePath": "notes/wikilinks-and-backlinks.md",
+        "filePath": "wikilinks-and-backlinks.md",
         "wordCountStart": 391,
         "charCountStart": 2333,
         "changes": [],
@@ -10758,7 +10758,7 @@
       },
       {
         "date": "2026-06-30",
-        "filePath": "notes/welcome-to-the-garden.md",
+        "filePath": "welcome-to-the-garden.md",
         "wordCountStart": 309,
         "charCountStart": 1849,
         "changes": [],
@@ -10766,7 +10766,7 @@
       },
       {
         "date": "2026-06-30",
-        "filePath": "notes/the-vault-and-the-garden.md",
+        "filePath": "the-vault-and-the-garden.md",
         "wordCountStart": 353,
         "charCountStart": 2211,
         "changes": [],
@@ -10774,7 +10774,7 @@
       },
       {
         "date": "2026-06-30",
-        "filePath": "notes/the-map-is-not-the-territory.md",
+        "filePath": "the-map-is-not-the-territory.md",
         "wordCountStart": 397,
         "charCountStart": 2304,
         "changes": [],
@@ -10782,7 +10782,7 @@
       },
       {
         "date": "2026-06-30",
-        "filePath": "notes/the-art-of-note-taking.md",
+        "filePath": "the-art-of-note-taking.md",
         "wordCountStart": 480,
         "charCountStart": 2799,
         "changes": [],
@@ -10790,7 +10790,7 @@
       },
       {
         "date": "2026-06-30",
-        "filePath": "notes/tags-and-organization.md",
+        "filePath": "tags-and-organization.md",
         "wordCountStart": 405,
         "charCountStart": 2472,
         "changes": [],
@@ -10798,7 +10798,7 @@
       },
       {
         "date": "2026-06-30",
-        "filePath": "notes/setup-guide.md",
+        "filePath": "setup-guide.md",
         "wordCountStart": 1174,
         "charCountStart": 7817,
         "changes": [],
@@ -10806,7 +10806,7 @@
       },
       {
         "date": "2026-06-30",
-        "filePath": "notes/private-draft.md",
+        "filePath": "private-draft.md",
         "wordCountStart": 143,
         "charCountStart": 817,
         "changes": [],
@@ -10814,7 +10814,7 @@
       },
       {
         "date": "2026-06-30",
-        "filePath": "notes/media-embeds-reference.md",
+        "filePath": "media-embeds-reference.md",
         "wordCountStart": 412,
         "charCountStart": 2892,
         "changes": [],
@@ -10822,7 +10822,7 @@
       },
       {
         "date": "2026-06-30",
-        "filePath": "notes/math-and-latex.md",
+        "filePath": "math-and-latex.md",
         "wordCountStart": 313,
         "charCountStart": 1838,
         "changes": [],
@@ -10830,7 +10830,7 @@
       },
       {
         "date": "2026-06-30",
-        "filePath": "notes/links-are-thoughts.md",
+        "filePath": "links-are-thoughts.md",
         "wordCountStart": 365,
         "charCountStart": 2102,
         "changes": [],
@@ -10838,7 +10838,7 @@
       },
       {
         "date": "2026-06-30",
-        "filePath": "notes/how-posting-works.md",
+        "filePath": "how-posting-works.md",
         "wordCountStart": 1329,
         "charCountStart": 9358,
         "changes": [],
@@ -10846,7 +10846,7 @@
       },
       {
         "date": "2026-06-30",
-        "filePath": "notes/embeds-and-transclusions.md",
+        "filePath": "embeds-and-transclusions.md",
         "wordCountStart": 342,
         "charCountStart": 2093,
         "changes": [],
@@ -10854,7 +10854,7 @@
       },
       {
         "date": "2026-06-30",
-        "filePath": "notes/digital-gardens.md",
+        "filePath": "digital-gardens.md",
         "wordCountStart": 427,
         "charCountStart": 2568,
         "changes": [],
@@ -10862,7 +10862,7 @@
       },
       {
         "date": "2026-06-30",
-        "filePath": "notes/contribution-graph.md",
+        "filePath": "contribution-graph.md",
         "wordCountStart": 397,
         "charCountStart": 2752,
         "changes": [],
@@ -10870,7 +10870,7 @@
       },
       {
         "date": "2026-06-30",
-        "filePath": "notes/compounding-knowledge.md",
+        "filePath": "compounding-knowledge.md",
         "wordCountStart": 388,
         "charCountStart": 2311,
         "changes": [],
@@ -10878,7 +10878,7 @@
       },
       {
         "date": "2026-06-30",
-        "filePath": "notes/composing-with-transclusions.md",
+        "filePath": "composing-with-transclusions.md",
         "wordCountStart": 354,
         "charCountStart": 2286,
         "changes": [],
@@ -10886,7 +10886,7 @@
       },
       {
         "date": "2026-06-30",
-        "filePath": "notes/callouts-reference.md",
+        "filePath": "callouts-reference.md",
         "wordCountStart": 399,
         "charCountStart": 2396,
         "changes": [],
@@ -10894,7 +10894,7 @@
       },
       {
         "date": "2026-06-30",
-        "filePath": "notes/building-a-second-brain.md",
+        "filePath": "building-a-second-brain.md",
         "wordCountStart": 459,
         "charCountStart": 2887,
         "changes": [],
@@ -10902,7 +10902,7 @@
       },
       {
         "date": "2026-06-30",
-        "filePath": "notes/bikeshedding-and-the-garden.md",
+        "filePath": "bikeshedding-and-the-garden.md",
         "wordCountStart": 383,
         "charCountStart": 2158,
         "changes": [],
@@ -10910,7 +10910,7 @@
       },
       {
         "date": "2026-06-30",
-        "filePath": "essays/on-writing.md",
+        "filePath": "on-writing.md",
         "wordCountStart": 475,
         "charCountStart": 2565,
         "changes": [],
@@ -10918,7 +10918,7 @@
       },
       {
         "date": "2026-06-30",
-        "filePath": "essays/on-wandering.md",
+        "filePath": "on-wandering.md",
         "wordCountStart": 373,
         "charCountStart": 2093,
         "changes": [],
@@ -10926,7 +10926,7 @@
       },
       {
         "date": "2026-06-30",
-        "filePath": "essays/on-thinking.md",
+        "filePath": "on-thinking.md",
         "wordCountStart": 425,
         "charCountStart": 2483,
         "changes": [],
@@ -10934,7 +10934,7 @@
       },
       {
         "date": "2026-06-30",
-        "filePath": "essays/on-reading-slowly.md",
+        "filePath": "on-reading-slowly.md",
         "wordCountStart": 350,
         "charCountStart": 1994,
         "changes": [],
@@ -10947,9 +10947,720 @@
         "charCountStart": 116,
         "changes": [],
         "id": 661
+      },
+      {
+        "date": "2026-06-30",
+        "filePath": "Untitled.md",
+        "wordCountStart": 0,
+        "charCountStart": 0,
+        "changes": [
+          {
+            "timeKey": "15:15",
+            "w": 39,
+            "c": 297
+          },
+          {
+            "timeKey": "15:20",
+            "w": -39,
+            "c": -297
+          }
+        ],
+        "id": 662
+      },
+      {
+        "date": "2026-07-01",
+        "filePath": "AI & ML Index.md",
+        "wordCountStart": 222,
+        "charCountStart": 3568,
+        "changes": [
+          {
+            "timeKey": "02:50",
+            "w": -222,
+            "c": -3568
+          },
+          {
+            "timeKey": "05:50",
+            "w": 222,
+            "c": 3568
+          }
+        ],
+        "id": 663
+      },
+      {
+        "date": "2026-07-01",
+        "filePath": "About me.md",
+        "wordCountStart": 177,
+        "charCountStart": 1088,
+        "changes": [
+          {
+            "timeKey": "05:45",
+            "w": 0,
+            "c": -1
+          },
+          {
+            "timeKey": "05:50",
+            "w": 13,
+            "c": 30
+          }
+        ],
+        "id": 664
+      },
+      {
+        "date": "2026-07-01",
+        "filePath": "about.md",
+        "wordCountStart": 293,
+        "charCountStart": 1666,
+        "changes": [],
+        "id": 665
+      },
+      {
+        "date": "2026-07-01",
+        "filePath": "bikeshedding-and-the-garden.md",
+        "wordCountStart": 383,
+        "charCountStart": 2158,
+        "changes": [],
+        "id": 666
+      },
+      {
+        "date": "2026-07-01",
+        "filePath": "cpp-assignment-operator.md",
+        "wordCountStart": 48,
+        "charCountStart": 276,
+        "changes": [
+          {
+            "timeKey": "05:50",
+            "w": 8,
+            "c": 70
+          },
+          {
+            "timeKey": "05:55",
+            "w": -2,
+            "c": -15
+          }
+        ],
+        "id": 667
+      },
+      {
+        "date": "2026-07-01",
+        "filePath": "the-art-of-note-taking.md",
+        "wordCountStart": 480,
+        "charCountStart": 2799,
+        "changes": [],
+        "id": 668
+      },
+      {
+        "date": "2026-07-01",
+        "filePath": "Remote Job Search Guide.md",
+        "wordCountStart": 860,
+        "charCountStart": 6409,
+        "changes": [],
+        "id": 669
+      },
+      {
+        "date": "2026-07-01",
+        "filePath": "PHP Index.md",
+        "wordCountStart": 673,
+        "charCountStart": 5804,
+        "changes": [],
+        "id": 670
+      },
+      {
+        "date": "2026-07-01",
+        "filePath": "cpp-dsa-index.md",
+        "wordCountStart": 134,
+        "charCountStart": 1543,
+        "changes": [
+          {
+            "timeKey": "13:05",
+            "w": 1,
+            "c": 26
+          },
+          {
+            "timeKey": "13:10",
+            "w": -3,
+            "c": -42
+          }
+        ],
+        "id": 671
+      },
+      {
+        "date": "2026-07-01",
+        "filePath": "Compounding Knowledge.md",
+        "wordCountStart": 0,
+        "charCountStart": 0,
+        "changes": [
+          {
+            "timeKey": "13:05",
+            "w": 0,
+            "c": 0
+          }
+        ],
+        "id": 672
+      },
+      {
+        "date": "2026-07-01",
+        "filePath": "cpp-boilerplate-code.md",
+        "wordCountStart": 194,
+        "charCountStart": 1313,
+        "changes": [
+          {
+            "timeKey": "13:10",
+            "w": 6,
+            "c": 52
+          },
+          {
+            "timeKey": "13:15",
+            "w": 15,
+            "c": 133
+          }
+        ],
+        "id": 673
+      },
+      {
+        "date": "2026-07-01",
+        "filePath": "cpp-preprocessor-directive.md",
+        "wordCountStart": 96,
+        "charCountStart": 749,
+        "changes": [],
+        "id": 674
+      },
+      {
+        "date": "2026-07-02",
+        "filePath": "cpp-boilerplate-code.md",
+        "wordCountStart": 215,
+        "charCountStart": 1498,
+        "changes": [
+          {
+            "timeKey": "03:50",
+            "w": -3,
+            "c": -11
+          },
+          {
+            "timeKey": "04:25",
+            "w": 0,
+            "c": -5
+          },
+          {
+            "timeKey": "08:35",
+            "w": 0,
+            "c": 7
+          },
+          {
+            "timeKey": "08:40",
+            "w": 1,
+            "c": 6
+          }
+        ],
+        "id": 675
+      },
+      {
+        "date": "2026-07-02",
+        "filePath": "cpp-dsa-index.md",
+        "wordCountStart": 128,
+        "charCountStart": 1527,
+        "changes": [
+          {
+            "timeKey": "02:50",
+            "w": 0,
+            "c": 0
+          },
+          {
+            "timeKey": "02:55",
+            "w": 28,
+            "c": 197
+          },
+          {
+            "timeKey": "03:05",
+            "w": 0,
+            "c": 6
+          },
+          {
+            "timeKey": "03:50",
+            "w": 0,
+            "c": -6
+          },
+          {
+            "timeKey": "14:20",
+            "w": -17,
+            "c": 0
+          }
+        ],
+        "id": 676
+      },
+      {
+        "date": "2026-07-02",
+        "filePath": "cpp-preprocessor-directive.md",
+        "wordCountStart": 96,
+        "charCountStart": 749,
+        "changes": [
+          {
+            "timeKey": "07:00",
+            "w": 6,
+            "c": 73
+          },
+          {
+            "timeKey": "07:05",
+            "w": 18,
+            "c": 111
+          },
+          {
+            "timeKey": "07:10",
+            "w": 1,
+            "c": 8
+          },
+          {
+            "timeKey": "08:40",
+            "w": -1,
+            "c": -9
+          },
+          {
+            "timeKey": "08:45",
+            "w": 0,
+            "c": 0
+          }
+        ],
+        "id": 677
+      },
+      {
+        "date": "2026-07-02",
+        "filePath": "07/02/2026.md",
+        "wordCountStart": 16,
+        "charCountStart": 108,
+        "changes": [
+          {
+            "timeKey": "07:05",
+            "w": -16,
+            "c": -108
+          }
+        ],
+        "id": 678
+      },
+      {
+        "date": "2026-07-02",
+        "filePath": "cpp-macros.md",
+        "wordCountStart": 64,
+        "charCountStart": 444,
+        "changes": [
+          {
+            "timeKey": "07:10",
+            "w": 18,
+            "c": 168
+          },
+          {
+            "timeKey": "07:15",
+            "w": -2,
+            "c": -14
+          },
+          {
+            "timeKey": "07:20",
+            "w": 0,
+            "c": 0
+          },
+          {
+            "timeKey": "08:30",
+            "w": -1,
+            "c": -4
+          },
+          {
+            "timeKey": "08:45",
+            "w": 1,
+            "c": 0
+          },
+          {
+            "timeKey": "08:50",
+            "w": -1,
+            "c": -6
+          }
+        ],
+        "id": 679
+      },
+      {
+        "date": "2026-07-02",
+        "filePath": "cpp-namespace.md",
+        "wordCountStart": 197,
+        "charCountStart": 1444,
+        "changes": [
+          {
+            "timeKey": "07:15",
+            "w": 14,
+            "c": 86
+          },
+          {
+            "timeKey": "08:30",
+            "w": 4,
+            "c": 48
+          },
+          {
+            "timeKey": "08:35",
+            "w": 7,
+            "c": 47
+          },
+          {
+            "timeKey": "08:45",
+            "w": 2,
+            "c": 13
+          },
+          {
+            "timeKey": "13:50",
+            "w": 0,
+            "c": -3
+          }
+        ],
+        "id": 680
+      },
+      {
+        "date": "2026-07-02",
+        "filePath": "cpp-variables.md",
+        "wordCountStart": 167,
+        "charCountStart": 1153,
+        "changes": [
+          {
+            "timeKey": "07:20",
+            "w": 30,
+            "c": 237
+          },
+          {
+            "timeKey": "07:25",
+            "w": -11,
+            "c": -64
+          },
+          {
+            "timeKey": "07:30",
+            "w": 9,
+            "c": 236
+          },
+          {
+            "timeKey": "08:20",
+            "w": 121,
+            "c": 977
+          },
+          {
+            "timeKey": "08:25",
+            "w": -137,
+            "c": -1072
+          },
+          {
+            "timeKey": "08:50",
+            "w": 17,
+            "c": 87
+          },
+          {
+            "timeKey": "08:55",
+            "w": 2,
+            "c": -34
+          },
+          {
+            "timeKey": "09:05",
+            "w": 0,
+            "c": 0
+          }
+        ],
+        "id": 681
+      },
+      {
+        "date": "2026-07-02",
+        "filePath": "callouts-reference.md",
+        "wordCountStart": 399,
+        "charCountStart": 2396,
+        "changes": [],
+        "id": 682
+      },
+      {
+        "date": "2026-07-02",
+        "filePath": "cpp-assignment-operator.md",
+        "wordCountStart": 54,
+        "charCountStart": 331,
+        "changes": [
+          {
+            "timeKey": "08:55",
+            "w": 12,
+            "c": 90
+          },
+          {
+            "timeKey": "09:00",
+            "w": 16,
+            "c": 144
+          },
+          {
+            "timeKey": "09:05",
+            "w": 21,
+            "c": 160
+          }
+        ],
+        "id": 683
+      },
+      {
+        "date": "2026-07-02",
+        "filePath": "cpp-garbage-value.md",
+        "wordCountStart": 60,
+        "charCountStart": 418,
+        "changes": [
+          {
+            "timeKey": "09:05",
+            "w": 8,
+            "c": 65
+          },
+          {
+            "timeKey": "09:10",
+            "w": -1,
+            "c": -11
+          },
+          {
+            "timeKey": "13:50",
+            "w": 14,
+            "c": 119
+          },
+          {
+            "timeKey": "13:55",
+            "w": 2,
+            "c": 18
+          }
+        ],
+        "id": 684
+      },
+      {
+        "date": "2026-07-02",
+        "filePath": "cpp-naming-convention.md",
+        "wordCountStart": 120,
+        "charCountStart": 831,
+        "changes": [
+          {
+            "timeKey": "13:55",
+            "w": 33,
+            "c": 292
+          },
+          {
+            "timeKey": "14:00",
+            "w": 2,
+            "c": 14
+          }
+        ],
+        "id": 685
+      },
+      {
+        "date": "2026-07-02",
+        "filePath": "cpp-data-types.md",
+        "wordCountStart": 181,
+        "charCountStart": 1349,
+        "changes": [
+          {
+            "timeKey": "14:00",
+            "w": -8,
+            "c": -27
+          },
+          {
+            "timeKey": "14:10",
+            "w": 12,
+            "c": 59
+          }
+        ],
+        "id": 686
+      },
+      {
+        "date": "2026-07-02",
+        "filePath": "cpp-size-of-data-types.md",
+        "wordCountStart": 51,
+        "charCountStart": 319,
+        "changes": [
+          {
+            "timeKey": "14:05",
+            "w": 39,
+            "c": 335
+          },
+          {
+            "timeKey": "14:10",
+            "w": 0,
+            "c": 0
+          }
+        ],
+        "id": 687
+      },
+      {
+        "date": "2026-07-02",
+        "filePath": "cpp-precision.md",
+        "wordCountStart": 92,
+        "charCountStart": 709,
+        "changes": [
+          {
+            "timeKey": "14:10",
+            "w": 14,
+            "c": 118
+          }
+        ],
+        "id": 688
+      },
+      {
+        "date": "2026-07-02",
+        "filePath": "cpp-comments.md",
+        "wordCountStart": 119,
+        "charCountStart": 823,
+        "changes": [
+          {
+            "timeKey": "14:10",
+            "w": 7,
+            "c": 59
+          },
+          {
+            "timeKey": "14:15",
+            "w": 25,
+            "c": 183
+          }
+        ],
+        "id": 689
+      },
+      {
+        "date": "2026-07-02",
+        "filePath": "cpp-input.md",
+        "wordCountStart": 328,
+        "charCountStart": 2184,
+        "changes": [
+          {
+            "timeKey": "14:15",
+            "w": 7,
+            "c": 41
+          },
+          {
+            "timeKey": "14:25",
+            "w": 17,
+            "c": 138
+          },
+          {
+            "timeKey": "14:30",
+            "w": 14,
+            "c": 121
+          }
+        ],
+        "id": 690
+      },
+      {
+        "date": "2026-07-02",
+        "filePath": "cpp-constant.md",
+        "wordCountStart": 81,
+        "charCountStart": 537,
+        "changes": [
+          {
+            "timeKey": "14:15",
+            "w": 5,
+            "c": 44
+          },
+          {
+            "timeKey": "14:35",
+            "w": 23,
+            "c": 174
+          }
+        ],
+        "id": 691
+      },
+      {
+        "date": "2026-07-02",
+        "filePath": "cpp-type-casting.md",
+        "wordCountStart": 119,
+        "charCountStart": 912,
+        "changes": [
+          {
+            "timeKey": "14:20",
+            "w": 8,
+            "c": 64
+          },
+          {
+            "timeKey": "14:35",
+            "w": 10,
+            "c": 54
+          },
+          {
+            "timeKey": "14:40",
+            "w": -7,
+            "c": -44
+          }
+        ],
+        "id": 692
+      },
+      {
+        "date": "2026-07-02",
+        "filePath": "cpp-operators.md",
+        "wordCountStart": 375,
+        "charCountStart": 2754,
+        "changes": [
+          {
+            "timeKey": "14:20",
+            "w": 7,
+            "c": 61
+          }
+        ],
+        "id": 693
+      },
+      {
+        "date": "2026-07-02",
+        "filePath": "cpp-conditional-statements.md",
+        "wordCountStart": 561,
+        "charCountStart": 4171,
+        "changes": [
+          {
+            "timeKey": "14:20",
+            "w": 8,
+            "c": 74
+          }
+        ],
+        "id": 694
+      },
+      {
+        "date": "2026-07-02",
+        "filePath": "cpp-loops.md",
+        "wordCountStart": 557,
+        "charCountStart": 3578,
+        "changes": [
+          {
+            "timeKey": "14:20",
+            "w": 7,
+            "c": 57
+          }
+        ],
+        "id": 695
+      },
+      {
+        "date": "2026-07-02",
+        "filePath": "cpp-break-and-continue.md",
+        "wordCountStart": 322,
+        "charCountStart": 2088,
+        "changes": [
+          {
+            "timeKey": "14:20",
+            "w": 8,
+            "c": 68
+          }
+        ],
+        "id": 696
+      },
+      {
+        "date": "2026-07-02",
+        "filePath": "cpp-nested-loop.md",
+        "wordCountStart": 175,
+        "charCountStart": 1016,
+        "changes": [
+          {
+            "timeKey": "14:20",
+            "w": 6,
+            "c": 47
+          }
+        ],
+        "id": 697
+      },
+      {
+        "date": "2026-07-02",
+        "filePath": "cpp-patterns.md",
+        "wordCountStart": 474,
+        "charCountStart": 3442,
+        "changes": [
+          {
+            "timeKey": "14:20",
+            "w": 5,
+            "c": 44
+          }
+        ],
+        "id": 698
       }
     ],
-    "wholeVaultWordCount": 19257,
-    "wholeVaultCharCount": 136298
+    "wholeVaultWordCount": 19938,
+    "wholeVaultCharCount": 143772
   }
 }
