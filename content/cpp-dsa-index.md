@@ -53,11 +53,23 @@ cellStyleRules: []
 | 1.13 | [[cpp-input]]                  |
 | 1.14 | [[cpp-constant]]               |
 | 1.15 | [[cpp-type-casting]]           |
-| 1.15 | [[cpp-operators]]              |
-| 1.16 | [[cpp-conditional-statements]] |
-| 1.17 | [[cpp-loops]]                  |
-| 1.18 | [[cpp-break-and-continue]]       |
-| 1.19 | [[cpp-nested-loop]]            |
-| 1.20 | [[cpp-patterns]]               |
+| 1.16 | [[cpp-operators]]              |
+| 1.17 | [[cpp-arithmetic-operators]]   |
+| 1.18 | [[cpp-unary-operators]]        |
+| 1,19 | [[cpp-assignment-operators]]   |
+| 1.20 | [[cpp-relational-operators]]   |
+| 1.21 | [[cpp-logical-operators]]      |
+|      |                                |
+|      |                                |
+|      |                                |
+|      |                                |
+|      |                                |
+|      |                                |
+|      |                                |
+| 1.17 | [[cpp-conditional-statements]] |
+| 1.18 | [[cpp-loops]]                  |
+| 1.19 | [[cpp-break-and-continue]]     |
+| 1.20 | [[cpp-nested-loop]]            |
+| 1.21 | [[cpp-patterns]]               |
 |      |                                |
 |      |                                |

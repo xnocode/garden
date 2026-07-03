@@ -2,8 +2,7 @@
 draft: false
 tags:
   - cpp
-date: 2026-07-02
-author: xnocode
+date: 2026-07-03
 title: C++ Conditional Statements
 description:
 prev: ""

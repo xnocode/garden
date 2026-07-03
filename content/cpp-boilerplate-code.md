@@ -5,8 +5,8 @@ tags:
 date: 2026-06-25
 title: C++ Boilerplate Code
 description: An introduction to the C++ boilerplate, explaining the essential components every program starts with.
-prev: cpp-dsa-index
-next: cpp-preprocessor-directive
+prev: "[[cpp-dsa-index]]"
+next: "[[cpp-preprocessor-directive]]"
 aliases:
   - boilerplate
 ---

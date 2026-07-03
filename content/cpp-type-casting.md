@@ -18,7 +18,7 @@ Type Casting
 └── Explicit Conversion
 ```
 
-Implicit Conversion --> Conversion performed automatically by the compiler.
+Implicit Conversion -> Conversion performed automatically by the compiler.
 
 ```text
 Implicit Type Conversion
@@ -35,14 +35,14 @@ int main() {
 }
 ```
 
-> [!note]  
+> [!note] Note
 > In mixed-type expressions, smaller data types are automatically promoted to larger data types.
 
 Explicit Conversion --> Conversion forced by the programmer.
 
 syntax
 
-```cpp
+```text
 (data_type) expression
 ```
 

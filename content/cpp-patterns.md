@@ -2,7 +2,7 @@
 draft: false
 tags:
   - cpp
-date: 2026-07-02
+date: 2026-07-05
 title: C++ Patterns
 description:
 prev: ""
