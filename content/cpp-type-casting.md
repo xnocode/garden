@@ -2,11 +2,11 @@
 draft: false
 tags:
   - cpp
-date: 2026-07-02
+date: 2026-06-30
 title: C++ Type Casting
 description: Type casting is the process of converting one data type into another.
-prev: cpp-constant
-next: cpp-operators
+prev: "[[cpp-constant]]"
+next: "[[cpp-operators]]"
 aliases:
   - type casting
 ---

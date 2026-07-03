@@ -2,11 +2,11 @@
 title: Arithmetic Operators
 description: Arithmetic operators perform mathematical operations on numeric operands.
 draft: false
-date: 2026-07-03
+date: 2026-06-30
 tags:
   - cpp
-prev: cpp-operators
-next: cpp-unary-operators
+prev: "[[cpp-operators]]"
+next: "[[cpp-unary-operators]]"
 aliases:
   - arithmetic
 ---

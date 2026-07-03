@@ -2,11 +2,11 @@
 draft: false
 tags:
   - cpp
-date: 2026-06-27
+date: 2026-06-26
 title: C++ Variables
 description: A variable is a named memory location used to store data that can change during program execution.
-prev: cpp-namespace
-next: cpp-assignment-operator
+prev: "[[cpp-namespace]]"
+next: "[[cpp-assignment-operator]]"
 aliases:
   - variable
 ---

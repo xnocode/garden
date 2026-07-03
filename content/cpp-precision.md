@@ -2,11 +2,11 @@
 draft: false
 tags:
   - cpp
-date: 2026-06-30
+date: 2026-06-28
 title: C++ Precision
 description: Precision determines the number of significant digits used to represent a floating-point value.
-prev: cpp-size-of-data-types
-next: cpp-comments
+prev: "[[cpp-size-of-data-types]]"
+next: "[[cpp-comments]]"
 aliases:
   - precision
 ---

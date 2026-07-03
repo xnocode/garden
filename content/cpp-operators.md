@@ -2,11 +2,11 @@
 draft: false
 tags:
   - cpp
-date: 2026-07-02
+date: 2026-06-30
 title: C++ Operators
 description: Operators are symbols that perform operations on one or more operands.
-prev: cpp-type-casting
-next: cpp-conditional-statements
+prev: "[[cpp-type-casting]]"
+next: "[[cpp-arithmetic-operators]]"
 aliases:
   - operators
 ---

@@ -6,7 +6,7 @@ date: 2026-06-25
 title: C++ DSA Index
 description: A structured roadmap to C++ and Data Structures & Algorithms with links to all related notes.
 prev: ""
-next: cpp-boilerplate-code
+next: "[[cpp-boilerplate-code]]"
 aliases:
   - c++ dsa
   - cpp dsa

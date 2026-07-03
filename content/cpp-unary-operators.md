@@ -1,12 +1,12 @@
 ---
-title: cpp-unary-operators
+title: C++ Unary Operators
 description: Unary operators perform operations such as increment, decrement, and negation on a single operand.
 draft: false
-date: 2026-07-03
+date: 2026-07-01
 tags:
   - cpp
-prev: cpp-arithmetic-operators
-next: cpp-assignment-operator
+prev: "[[cpp-arithmetic-operators]]"
+next: "[[cpp-assignment-operator]]"
 aliases:
   - unary
 ---

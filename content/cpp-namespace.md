@@ -5,8 +5,8 @@ tags:
 date: 2026-06-26
 title: C++ Namespace
 description: A namespace is used to organize code and prevent name collisions between identifiers.
-prev: cpp-macros
-next: cpp-variables
+prev: "[[cpp-macros]]"
+next: "[[cpp-variables]]"
 aliases:
   - namespace
 ---

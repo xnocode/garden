@@ -5,8 +5,8 @@ tags:
 date: 2026-06-25
 title: C++ Preprocessor Directive
 description: Learn what preprocessor directives are, how they work, and why they are used in C++.
-prev: cpp-boilerplate-code
-next: cpp-macros
+prev: "[[cpp-boilerplate-code]]"
+next: "[[cpp-macros]]"
 aliases: preprocessor directive
 ---
 A preprocessor directive is a statement that is processed before the actual compilation starts.

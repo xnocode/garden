@@ -2,11 +2,11 @@
 draft: false
 tags:
   - cpp
-date: 2026-07-01
+date: 2026-06-29
 title: C++ Input
 description: Input is the process of receiving data from the user or another source during program execution.
-prev: cpp-comments
-next: cpp-constant
+prev: "[[cpp-comments]]"
+next: "[[cpp-constant]]"
 aliases:
   - input
 ---

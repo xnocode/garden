@@ -2,11 +2,11 @@
 draft: false
 tags:
   - cpp
-date: 2026-06-28
+date: 2026-06-27
 title: C++ Naming Convention
 description: Naming conventions are guidelines for choosing clear, consistent, and meaningful names in C++.
-prev: cpp-garbage-value
-next: cpp-data-types
+prev: "[[cpp-garbage-value]]"
+next: "[[cpp-data-types]]"
 aliases:
   - naming
 ---

@@ -2,13 +2,13 @@
 draft: false
 tags:
   - cpp
-date: 2026-06-27
+date: 2026-07-01
 title: C++ Assignment Operator
 description: The assignment operator assigns a value to a variable.
-prev: cpp-variables
-next: cpp-garbage-value
+prev: "[[cpp-unary-operators]]"
+next: "[[cpp-relational-operators]]"
 aliases:
-  - operator
+  - assignment
 ---
 The **assignment operator (=)** assigns the value of the expression on the **right-hand side (RHS)** to the variable on the **left-hand side (LHS)**.
 

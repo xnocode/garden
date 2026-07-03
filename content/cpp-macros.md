@@ -5,8 +5,8 @@ tags:
 date: 2026-06-26
 title: C++ Macros
 description: Macros are preprocessor definitions that replace identifiers with code before compilation.
-prev: cpp-preprocessor-directive
-next: cpp-namespace
+prev: "[[cpp-preprocessor-directive]]"
+next: "[[cpp-namespace]]"
 aliases:
   - macros
 ---

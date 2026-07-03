@@ -2,11 +2,11 @@
 draft: false
 tags:
   - cpp
-date: 2026-06-29
+date: 2026-06-28
 title: C++ Data Types
 description: A data type defines the type of data a variable can store.
-prev: cpp-naming-convention
-next: cpp-size-of-data-types
+prev: "[[cpp-naming-convention]]"
+next: "[[cpp-size-of-data-types]]"
 aliases:
   - data types
 ---
