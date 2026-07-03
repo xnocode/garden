@@ -2,7 +2,7 @@
 draft: false
 tags:
   - cpp
-date: 2026-07-02
+date: 2026-07-01
 title: C++ Constant
 description: A constant is a value that cannot be changed during program execution.
 prev: cpp-input

@@ -2,7 +2,7 @@
 draft: false
 tags:
   - cpp
-date: 2026-07-02
+date: 2026-06-30
 title: C++ Comments
 description: Comments are non-executable text used to explain or document C++ code.
 prev: cpp-precision

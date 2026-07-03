@@ -2,7 +2,7 @@
 draft: false
 tags:
   - cpp
-date: 2026-07-02
+date: 2026-07-01
 title: C++ Input
 description: Input is the process of receiving data from the user or another source during program execution.
 prev: cpp-comments
@@ -61,7 +61,7 @@ int main() {
 }
 ```
 
-> [!question] Question  
+> [!question] question
 > WAP to calculate the area of a square.
 
 ```cpp
@@ -92,7 +92,7 @@ int main() {
 }
 ```
 
-> [!question] Question  
+> [!question] Question
 > WAP to calculate the area of a circle.
 > ```text
 > Area = π × r × r
@@ -110,7 +110,7 @@ int main() {
 }
 ```
 
-> [!question] Question  
+> [!question] Question
 > WAP to calculate the total price with and without GST.
 
 ```cpp
@@ -131,10 +131,9 @@ int main() {
 }
 ```
 
-> [!note]  
+> [!note] Note
 > Multiple inputs can be taken in a single statement:
-> 
-> ```cpp
+> ```text
 > cin >> a >> b >> c;
 > ```
 
