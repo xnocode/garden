@@ -80,3 +80,6 @@ server.log
 
 # Prisma generated client (regenerated on install)
 node_modules/.prisma
+
+# Obsidian keep-the-rhythm plugin
+/content/.keep-the-rhythm/
