@@ -54,6 +54,9 @@ export const metadata: Metadata = {
     title: "Garden — a digital garden",
     description: "Notes grown in Obsidian, published with a single command.",
   },
+  other: {
+    "google-adsense-account": "ca-pub-5993975585691806",
+  },
 };
 
 export default function RootLayout({
