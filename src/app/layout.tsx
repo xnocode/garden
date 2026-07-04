@@ -4,6 +4,7 @@ import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
 import { ThemeProvider } from "@/components/theme-provider";
 import { GoogleAnalytics } from "@next/third-parties/google";
+import Script from "next/script";
 
 const headingFont = Schibsted_Grotesk({
   variable: "--font-serif",
@@ -75,6 +76,13 @@ export default function RootLayout({
       >
         <ThemeProvider>{children}</ThemeProvider>
         <Toaster />
+        {/* Google AdSense site verification & scripts loaded safely after interaction */}
+        <Script
+          async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5993975585691806"
+          crossOrigin="anonymous"
+          strategy="afterInteractive"
+        />
         {process.env.NEXT_PUBLIC_GA_ID && (
           <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID} />
         )}

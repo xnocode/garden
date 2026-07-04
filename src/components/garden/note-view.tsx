@@ -19,6 +19,7 @@ import {
   CornerDownRight,
   Download,
 } from "lucide-react";
+import { AdBanner } from "../../ads/AdBanner";
 import type { NoteDetail } from "@/lib/notes";
 import { TableOfContents, extractToc } from "./table-of-contents";
 import { Backlinks } from "./backlinks";
@@ -514,6 +515,7 @@ export function NoteView({ note }: { note: NoteDetail }) {
           />
           {/* Code block runner — adds Run buttons to runnable code blocks */}
           <CodeBlockRunner key={note.slug} />
+          <AdBanner slotId="5327787791" />
         </div>
 
         {/* Right rail: TOC */}

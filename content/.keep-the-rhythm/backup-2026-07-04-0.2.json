@@ -8844,7 +8844,7 @@
       },
       {
         "date": "2026-06-09",
-        "filePath": "Untitled 1.md",
+        "filePath": "Ffmpg.md",
         "wordCountStart": 0,
         "charCountStart": 0,
         "changes": [
@@ -8863,7 +8863,7 @@
       },
       {
         "date": "2026-06-10",
-        "filePath": "Untitled 1.md",
+        "filePath": "Ffmpg.md",
         "wordCountStart": 0,
         "charCountStart": 0,
         "changes": [],
@@ -9460,7 +9460,7 @@
       },
       {
         "date": "2026-06-25",
-        "filePath": "C++ DSA Index.md",
+        "filePath": "cpp-dsa-index.md",
         "wordCountStart": 0,
         "charCountStart": 0,
         "changes": [
@@ -10087,7 +10087,7 @@
       },
       {
         "date": "2026-06-25",
-        "filePath": "C++ Namespace.md",
+        "filePath": "cpp-namespace.md",
         "wordCountStart": 0,
         "charCountStart": 0,
         "changes": [
@@ -10135,7 +10135,7 @@
       },
       {
         "date": "2026-06-25",
-        "filePath": "C++ Macros.md",
+        "filePath": "cpp-macros.md",
         "wordCountStart": 0,
         "charCountStart": 0,
         "changes": [
@@ -10149,7 +10149,7 @@
       },
       {
         "date": "2026-06-26",
-        "filePath": "C++ DSA Index.md",
+        "filePath": "cpp-dsa-index.md",
         "wordCountStart": 2674,
         "charCountStart": 18780,
         "changes": [
@@ -10263,7 +10263,7 @@
       },
       {
         "date": "2026-06-26",
-        "filePath": "C++ Variables.md",
+        "filePath": "cpp-variables.md",
         "wordCountStart": 0,
         "charCountStart": 0,
         "changes": [
@@ -10282,7 +10282,7 @@
       },
       {
         "date": "2026-06-26",
-        "filePath": "cpp-assignment-operator.md",
+        "filePath": "cpp-assignment-operators.md",
         "wordCountStart": 0,
         "charCountStart": 0,
         "changes": [
@@ -10296,7 +10296,7 @@
       },
       {
         "date": "2026-06-26",
-        "filePath": "C++ Namespace.md",
+        "filePath": "cpp-namespace.md",
         "wordCountStart": 197,
         "charCountStart": 1444,
         "changes": [],
@@ -10304,7 +10304,7 @@
       },
       {
         "date": "2026-06-26",
-        "filePath": "C++ Garbage Value.md",
+        "filePath": "cpp-garbage-value.md",
         "wordCountStart": 0,
         "charCountStart": 0,
         "changes": [
@@ -10318,7 +10318,7 @@
       },
       {
         "date": "2026-06-26",
-        "filePath": "C++ Naming Convention.md",
+        "filePath": "cpp-naming-convention.md",
         "wordCountStart": 0,
         "charCountStart": 0,
         "changes": [
@@ -10332,7 +10332,7 @@
       },
       {
         "date": "2026-06-26",
-        "filePath": "C++ Data Types.md",
+        "filePath": "cpp-data-types.md",
         "wordCountStart": 0,
         "charCountStart": 0,
         "changes": [
@@ -10359,7 +10359,7 @@
       },
       {
         "date": "2026-06-26",
-        "filePath": "C++ Size Of Data Type.md",
+        "filePath": "cpp-size-of-data-types.md",
         "wordCountStart": 0,
         "charCountStart": 0,
         "changes": [
@@ -10373,7 +10373,7 @@
       },
       {
         "date": "2026-06-26",
-        "filePath": "C++ Precision.md",
+        "filePath": "cpp-precision.md",
         "wordCountStart": 0,
         "charCountStart": 0,
         "changes": [
@@ -10387,7 +10387,7 @@
       },
       {
         "date": "2026-06-26",
-        "filePath": "C++ Comments.md",
+        "filePath": "cpp-comments.md",
         "wordCountStart": 0,
         "charCountStart": 0,
         "changes": [
@@ -10406,7 +10406,7 @@
       },
       {
         "date": "2026-06-26",
-        "filePath": "C++ Input.md",
+        "filePath": "cpp-input.md",
         "wordCountStart": 0,
         "charCountStart": 0,
         "changes": [
@@ -10420,7 +10420,7 @@
       },
       {
         "date": "2026-06-26",
-        "filePath": "C++ Constant.md",
+        "filePath": "cpp-constant.md",
         "wordCountStart": 0,
         "charCountStart": 0,
         "changes": [
@@ -10434,7 +10434,7 @@
       },
       {
         "date": "2026-06-26",
-        "filePath": "C++ Type Casting.md",
+        "filePath": "cpp-type-casting.md",
         "wordCountStart": 0,
         "charCountStart": 0,
         "changes": [
@@ -10467,7 +10467,7 @@
       },
       {
         "date": "2026-06-26",
-        "filePath": "C++ Operators.md",
+        "filePath": "cpp-operators.md",
         "wordCountStart": 0,
         "charCountStart": 0,
         "changes": [
@@ -10481,7 +10481,7 @@
       },
       {
         "date": "2026-06-26",
-        "filePath": "C++ Conditional Statements.md",
+        "filePath": "cpp-conditional-statements.md",
         "wordCountStart": 0,
         "charCountStart": 0,
         "changes": [
@@ -10495,7 +10495,7 @@
       },
       {
         "date": "2026-06-26",
-        "filePath": "C++ Loops.md",
+        "filePath": "cpp-loops.md",
         "wordCountStart": 0,
         "charCountStart": 0,
         "changes": [
@@ -10514,7 +10514,7 @@
       },
       {
         "date": "2026-06-26",
-        "filePath": "C++ Break & Continue.md",
+        "filePath": "cpp-break-and-continue.md",
         "wordCountStart": 0,
         "charCountStart": 0,
         "changes": [
@@ -10566,7 +10566,7 @@
       },
       {
         "date": "2026-06-26",
-        "filePath": "C++ Nested Loop.md",
+        "filePath": "cpp-nested-loop.md",
         "wordCountStart": 0,
         "charCountStart": 0,
         "changes": [
@@ -10585,7 +10585,7 @@
       },
       {
         "date": "2026-06-26",
-        "filePath": "C++ Patterns.md",
+        "filePath": "cpp-patterns.md",
         "wordCountStart": 0,
         "charCountStart": 0,
         "changes": [
@@ -10604,7 +10604,7 @@
       },
       {
         "date": "2026-06-28",
-        "filePath": "C++ Patterns.md",
+        "filePath": "cpp-patterns.md",
         "wordCountStart": 474,
         "charCountStart": 3442,
         "changes": [],
@@ -10644,7 +10644,7 @@
       },
       {
         "date": "2026-06-28",
-        "filePath": "C++ Comments.md",
+        "filePath": "cpp-comments.md",
         "wordCountStart": 119,
         "charCountStart": 823,
         "changes": [],
@@ -11023,7 +11023,7 @@
       },
       {
         "date": "2026-07-01",
-        "filePath": "cpp-assignment-operator.md",
+        "filePath": "cpp-assignment-operators.md",
         "wordCountStart": 48,
         "charCountStart": 276,
         "changes": [
@@ -11066,7 +11066,7 @@
       },
       {
         "date": "2026-07-01",
-        "filePath": "C++ DSA Index.md",
+        "filePath": "cpp-dsa-index.md",
         "wordCountStart": 134,
         "charCountStart": 1543,
         "changes": [
@@ -11123,9 +11123,1336 @@
         "charCountStart": 749,
         "changes": [],
         "id": 674
+      },
+      {
+        "date": "2026-07-02",
+        "filePath": "cpp-boilerplate-code.md",
+        "wordCountStart": 215,
+        "charCountStart": 1498,
+        "changes": [
+          {
+            "timeKey": "03:50",
+            "w": -3,
+            "c": -11
+          },
+          {
+            "timeKey": "04:25",
+            "w": 0,
+            "c": -5
+          },
+          {
+            "timeKey": "08:35",
+            "w": 0,
+            "c": 7
+          },
+          {
+            "timeKey": "08:40",
+            "w": 1,
+            "c": 6
+          }
+        ],
+        "id": 675
+      },
+      {
+        "date": "2026-07-02",
+        "filePath": "cpp-dsa-index.md",
+        "wordCountStart": 128,
+        "charCountStart": 1527,
+        "changes": [
+          {
+            "timeKey": "02:50",
+            "w": 0,
+            "c": 0
+          },
+          {
+            "timeKey": "02:55",
+            "w": 28,
+            "c": 197
+          },
+          {
+            "timeKey": "03:05",
+            "w": 0,
+            "c": 6
+          },
+          {
+            "timeKey": "03:50",
+            "w": 0,
+            "c": -6
+          },
+          {
+            "timeKey": "14:20",
+            "w": -17,
+            "c": 0
+          }
+        ],
+        "id": 676
+      },
+      {
+        "date": "2026-07-02",
+        "filePath": "cpp-preprocessor-directive.md",
+        "wordCountStart": 96,
+        "charCountStart": 749,
+        "changes": [
+          {
+            "timeKey": "07:00",
+            "w": 6,
+            "c": 73
+          },
+          {
+            "timeKey": "07:05",
+            "w": 18,
+            "c": 111
+          },
+          {
+            "timeKey": "07:10",
+            "w": 1,
+            "c": 8
+          },
+          {
+            "timeKey": "08:40",
+            "w": -1,
+            "c": -9
+          },
+          {
+            "timeKey": "08:45",
+            "w": 0,
+            "c": 0
+          }
+        ],
+        "id": 677
+      },
+      {
+        "date": "2026-07-02",
+        "filePath": "07/02/2026.md",
+        "wordCountStart": 16,
+        "charCountStart": 108,
+        "changes": [
+          {
+            "timeKey": "07:05",
+            "w": -16,
+            "c": -108
+          }
+        ],
+        "id": 678
+      },
+      {
+        "date": "2026-07-02",
+        "filePath": "cpp-macros.md",
+        "wordCountStart": 64,
+        "charCountStart": 444,
+        "changes": [
+          {
+            "timeKey": "07:10",
+            "w": 18,
+            "c": 168
+          },
+          {
+            "timeKey": "07:15",
+            "w": -2,
+            "c": -14
+          },
+          {
+            "timeKey": "07:20",
+            "w": 0,
+            "c": 0
+          },
+          {
+            "timeKey": "08:30",
+            "w": -1,
+            "c": -4
+          },
+          {
+            "timeKey": "08:45",
+            "w": 1,
+            "c": 0
+          },
+          {
+            "timeKey": "08:50",
+            "w": -1,
+            "c": -6
+          }
+        ],
+        "id": 679
+      },
+      {
+        "date": "2026-07-02",
+        "filePath": "cpp-namespace.md",
+        "wordCountStart": 197,
+        "charCountStart": 1444,
+        "changes": [
+          {
+            "timeKey": "07:15",
+            "w": 14,
+            "c": 86
+          },
+          {
+            "timeKey": "08:30",
+            "w": 4,
+            "c": 48
+          },
+          {
+            "timeKey": "08:35",
+            "w": 7,
+            "c": 47
+          },
+          {
+            "timeKey": "08:45",
+            "w": 2,
+            "c": 13
+          },
+          {
+            "timeKey": "13:50",
+            "w": 0,
+            "c": -3
+          }
+        ],
+        "id": 680
+      },
+      {
+        "date": "2026-07-02",
+        "filePath": "cpp-variables.md",
+        "wordCountStart": 167,
+        "charCountStart": 1153,
+        "changes": [
+          {
+            "timeKey": "07:20",
+            "w": 30,
+            "c": 237
+          },
+          {
+            "timeKey": "07:25",
+            "w": -11,
+            "c": -64
+          },
+          {
+            "timeKey": "07:30",
+            "w": 9,
+            "c": 236
+          },
+          {
+            "timeKey": "08:20",
+            "w": 121,
+            "c": 977
+          },
+          {
+            "timeKey": "08:25",
+            "w": -137,
+            "c": -1072
+          },
+          {
+            "timeKey": "08:50",
+            "w": 17,
+            "c": 87
+          },
+          {
+            "timeKey": "08:55",
+            "w": 2,
+            "c": -34
+          },
+          {
+            "timeKey": "09:05",
+            "w": 0,
+            "c": 0
+          }
+        ],
+        "id": 681
+      },
+      {
+        "date": "2026-07-02",
+        "filePath": "callouts-reference.md",
+        "wordCountStart": 399,
+        "charCountStart": 2396,
+        "changes": [],
+        "id": 682
+      },
+      {
+        "date": "2026-07-02",
+        "filePath": "cpp-assignment-operators.md",
+        "wordCountStart": 54,
+        "charCountStart": 331,
+        "changes": [
+          {
+            "timeKey": "08:55",
+            "w": 12,
+            "c": 90
+          },
+          {
+            "timeKey": "09:00",
+            "w": 16,
+            "c": 144
+          },
+          {
+            "timeKey": "09:05",
+            "w": 21,
+            "c": 160
+          }
+        ],
+        "id": 683
+      },
+      {
+        "date": "2026-07-02",
+        "filePath": "cpp-garbage-value.md",
+        "wordCountStart": 60,
+        "charCountStart": 418,
+        "changes": [
+          {
+            "timeKey": "09:05",
+            "w": 8,
+            "c": 65
+          },
+          {
+            "timeKey": "09:10",
+            "w": -1,
+            "c": -11
+          },
+          {
+            "timeKey": "13:50",
+            "w": 14,
+            "c": 119
+          },
+          {
+            "timeKey": "13:55",
+            "w": 2,
+            "c": 18
+          }
+        ],
+        "id": 684
+      },
+      {
+        "date": "2026-07-02",
+        "filePath": "cpp-naming-convention.md",
+        "wordCountStart": 120,
+        "charCountStart": 831,
+        "changes": [
+          {
+            "timeKey": "13:55",
+            "w": 33,
+            "c": 292
+          },
+          {
+            "timeKey": "14:00",
+            "w": 2,
+            "c": 14
+          }
+        ],
+        "id": 685
+      },
+      {
+        "date": "2026-07-02",
+        "filePath": "cpp-data-types.md",
+        "wordCountStart": 181,
+        "charCountStart": 1349,
+        "changes": [
+          {
+            "timeKey": "14:00",
+            "w": -8,
+            "c": -27
+          },
+          {
+            "timeKey": "14:10",
+            "w": 12,
+            "c": 59
+          }
+        ],
+        "id": 686
+      },
+      {
+        "date": "2026-07-02",
+        "filePath": "cpp-size-of-data-types.md",
+        "wordCountStart": 51,
+        "charCountStart": 319,
+        "changes": [
+          {
+            "timeKey": "14:05",
+            "w": 39,
+            "c": 335
+          },
+          {
+            "timeKey": "14:10",
+            "w": 0,
+            "c": 0
+          }
+        ],
+        "id": 687
+      },
+      {
+        "date": "2026-07-02",
+        "filePath": "cpp-precision.md",
+        "wordCountStart": 92,
+        "charCountStart": 709,
+        "changes": [
+          {
+            "timeKey": "14:10",
+            "w": 14,
+            "c": 118
+          }
+        ],
+        "id": 688
+      },
+      {
+        "date": "2026-07-02",
+        "filePath": "cpp-comments.md",
+        "wordCountStart": 119,
+        "charCountStart": 823,
+        "changes": [
+          {
+            "timeKey": "14:10",
+            "w": 7,
+            "c": 59
+          },
+          {
+            "timeKey": "14:15",
+            "w": 25,
+            "c": 183
+          }
+        ],
+        "id": 689
+      },
+      {
+        "date": "2026-07-02",
+        "filePath": "cpp-input.md",
+        "wordCountStart": 328,
+        "charCountStart": 2184,
+        "changes": [
+          {
+            "timeKey": "14:15",
+            "w": 7,
+            "c": 41
+          },
+          {
+            "timeKey": "14:25",
+            "w": 17,
+            "c": 138
+          },
+          {
+            "timeKey": "14:30",
+            "w": 14,
+            "c": 121
+          }
+        ],
+        "id": 690
+      },
+      {
+        "date": "2026-07-02",
+        "filePath": "cpp-constant.md",
+        "wordCountStart": 81,
+        "charCountStart": 537,
+        "changes": [
+          {
+            "timeKey": "14:15",
+            "w": 5,
+            "c": 44
+          },
+          {
+            "timeKey": "14:35",
+            "w": 23,
+            "c": 174
+          }
+        ],
+        "id": 691
+      },
+      {
+        "date": "2026-07-02",
+        "filePath": "cpp-type-casting.md",
+        "wordCountStart": 119,
+        "charCountStart": 912,
+        "changes": [
+          {
+            "timeKey": "14:20",
+            "w": 8,
+            "c": 64
+          },
+          {
+            "timeKey": "14:35",
+            "w": 10,
+            "c": 54
+          },
+          {
+            "timeKey": "14:40",
+            "w": -7,
+            "c": -44
+          }
+        ],
+        "id": 692
+      },
+      {
+        "date": "2026-07-02",
+        "filePath": "cpp-operators.md",
+        "wordCountStart": 375,
+        "charCountStart": 2754,
+        "changes": [
+          {
+            "timeKey": "14:20",
+            "w": 7,
+            "c": 61
+          }
+        ],
+        "id": 693
+      },
+      {
+        "date": "2026-07-02",
+        "filePath": "cpp-conditional-statements.md",
+        "wordCountStart": 561,
+        "charCountStart": 4171,
+        "changes": [
+          {
+            "timeKey": "14:20",
+            "w": 8,
+            "c": 74
+          }
+        ],
+        "id": 694
+      },
+      {
+        "date": "2026-07-02",
+        "filePath": "cpp-loops.md",
+        "wordCountStart": 557,
+        "charCountStart": 3578,
+        "changes": [
+          {
+            "timeKey": "14:20",
+            "w": 7,
+            "c": 57
+          }
+        ],
+        "id": 695
+      },
+      {
+        "date": "2026-07-02",
+        "filePath": "cpp-break-and-continue.md",
+        "wordCountStart": 322,
+        "charCountStart": 2088,
+        "changes": [
+          {
+            "timeKey": "14:20",
+            "w": 8,
+            "c": 68
+          }
+        ],
+        "id": 696
+      },
+      {
+        "date": "2026-07-02",
+        "filePath": "cpp-nested-loop.md",
+        "wordCountStart": 175,
+        "charCountStart": 1016,
+        "changes": [
+          {
+            "timeKey": "14:20",
+            "w": 6,
+            "c": 47
+          }
+        ],
+        "id": 697
+      },
+      {
+        "date": "2026-07-02",
+        "filePath": "cpp-patterns.md",
+        "wordCountStart": 474,
+        "charCountStart": 3442,
+        "changes": [
+          {
+            "timeKey": "14:20",
+            "w": 5,
+            "c": 44
+          }
+        ],
+        "id": 698
+      },
+      {
+        "date": "2026-07-03",
+        "filePath": "cpp-dsa-index.md",
+        "wordCountStart": 128,
+        "charCountStart": 1726,
+        "changes": [
+          {
+            "timeKey": "17:40",
+            "w": 0,
+            "c": -2
+          },
+          {
+            "timeKey": "17:55",
+            "w": 8,
+            "c": 504
+          },
+          {
+            "timeKey": "18:00",
+            "w": 2,
+            "c": 0
+          },
+          {
+            "timeKey": "18:15",
+            "w": 0,
+            "c": 6
+          },
+          {
+            "timeKey": "19:05",
+            "w": 0,
+            "c": 0
+          }
+        ],
+        "id": 699
+      },
+      {
+        "date": "2026-07-03",
+        "filePath": "Ffmpg.md",
+        "wordCountStart": 0,
+        "charCountStart": 0,
+        "changes": [
+          {
+            "timeKey": "09:25",
+            "w": 1342,
+            "c": 9055
+          },
+          {
+            "timeKey": "10:40",
+            "w": -1342,
+            "c": -9055
+          }
+        ],
+        "id": 700
+      },
+      {
+        "date": "2026-07-03",
+        "filePath": "AI & ML Index.md",
+        "wordCountStart": 222,
+        "charCountStart": 3568,
+        "changes": [],
+        "id": 701
+      },
+      {
+        "date": "2026-07-03",
+        "filePath": "cpp-boilerplate-code.md",
+        "wordCountStart": 213,
+        "charCountStart": 1495,
+        "changes": [
+          {
+            "timeKey": "18:10",
+            "w": 0,
+            "c": 12
+          }
+        ],
+        "id": 702
+      },
+      {
+        "date": "2026-07-03",
+        "filePath": "cpp-preprocessor-directive.md",
+        "wordCountStart": 120,
+        "charCountStart": 932,
+        "changes": [
+          {
+            "timeKey": "18:15",
+            "w": 0,
+            "c": 12
+          }
+        ],
+        "id": 703
+      },
+      {
+        "date": "2026-07-03",
+        "filePath": "cpp-macros.md",
+        "wordCountStart": 79,
+        "charCountStart": 588,
+        "changes": [
+          {
+            "timeKey": "18:15",
+            "w": 0,
+            "c": 12
+          }
+        ],
+        "id": 704
+      },
+      {
+        "date": "2026-07-03",
+        "filePath": "cpp-namespace.md",
+        "wordCountStart": 224,
+        "charCountStart": 1635,
+        "changes": [
+          {
+            "timeKey": "17:10",
+            "w": 0,
+            "c": 2
+          },
+          {
+            "timeKey": "18:15",
+            "w": 0,
+            "c": 12
+          }
+        ],
+        "id": 705
+      },
+      {
+        "date": "2026-07-03",
+        "filePath": "cpp-variables.md",
+        "wordCountStart": 198,
+        "charCountStart": 1520,
+        "changes": [
+          {
+            "timeKey": "18:15",
+            "w": 0,
+            "c": 12
+          }
+        ],
+        "id": 706
+      },
+      {
+        "date": "2026-07-03",
+        "filePath": "cpp-assignment-operators.md",
+        "wordCountStart": 103,
+        "charCountStart": 725,
+        "changes": [
+          {
+            "timeKey": "17:15",
+            "w": 0,
+            "c": 0
+          },
+          {
+            "timeKey": "18:15",
+            "w": 0,
+            "c": 12
+          },
+          {
+            "timeKey": "18:25",
+            "w": 0,
+            "c": 15
+          }
+        ],
+        "id": 707
+      },
+      {
+        "date": "2026-07-03",
+        "filePath": "cpp-garbage-value.md",
+        "wordCountStart": 83,
+        "charCountStart": 609,
+        "changes": [
+          {
+            "timeKey": "17:15",
+            "w": -2,
+            "c": -21
+          },
+          {
+            "timeKey": "18:15",
+            "w": 0,
+            "c": 12
+          }
+        ],
+        "id": 708
+      },
+      {
+        "date": "2026-07-03",
+        "filePath": "cpp-naming-convention.md",
+        "wordCountStart": 155,
+        "charCountStart": 1137,
+        "changes": [
+          {
+            "timeKey": "17:20",
+            "w": 2,
+            "c": 0
+          },
+          {
+            "timeKey": "18:15",
+            "w": 0,
+            "c": 12
+          }
+        ],
+        "id": 709
+      },
+      {
+        "date": "2026-07-03",
+        "filePath": "cpp-data-types.md",
+        "wordCountStart": 185,
+        "charCountStart": 1381,
+        "changes": [
+          {
+            "timeKey": "18:15",
+            "w": 0,
+            "c": 12
+          }
+        ],
+        "id": 710
+      },
+      {
+        "date": "2026-07-03",
+        "filePath": "cpp-size-of-data-types.md",
+        "wordCountStart": 90,
+        "charCountStart": 654,
+        "changes": [
+          {
+            "timeKey": "17:25",
+            "w": 4,
+            "c": 0
+          },
+          {
+            "timeKey": "18:20",
+            "w": 0,
+            "c": 12
+          }
+        ],
+        "id": 711
+      },
+      {
+        "date": "2026-07-03",
+        "filePath": "cpp-precision.md",
+        "wordCountStart": 106,
+        "charCountStart": 827,
+        "changes": [
+          {
+            "timeKey": "18:20",
+            "w": 0,
+            "c": 12
+          }
+        ],
+        "id": 712
+      },
+      {
+        "date": "2026-07-03",
+        "filePath": "cpp-comments.md",
+        "wordCountStart": 151,
+        "charCountStart": 1065,
+        "changes": [
+          {
+            "timeKey": "17:25",
+            "w": 0,
+            "c": 0
+          },
+          {
+            "timeKey": "18:20",
+            "w": 0,
+            "c": 12
+          }
+        ],
+        "id": 713
+      },
+      {
+        "date": "2026-07-03",
+        "filePath": "cpp-input.md",
+        "wordCountStart": 366,
+        "charCountStart": 2484,
+        "changes": [
+          {
+            "timeKey": "17:25",
+            "w": 0,
+            "c": 0
+          },
+          {
+            "timeKey": "17:30",
+            "w": 1,
+            "c": -5
+          },
+          {
+            "timeKey": "18:20",
+            "w": 0,
+            "c": 12
+          }
+        ],
+        "id": 714
+      },
+      {
+        "date": "2026-07-03",
+        "filePath": "cpp-constant.md",
+        "wordCountStart": 109,
+        "charCountStart": 755,
+        "changes": [
+          {
+            "timeKey": "17:25",
+            "w": 0,
+            "c": 0
+          },
+          {
+            "timeKey": "18:20",
+            "w": 0,
+            "c": 12
+          }
+        ],
+        "id": 715
+      },
+      {
+        "date": "2026-07-03",
+        "filePath": "cpp-type-casting.md",
+        "wordCountStart": 130,
+        "charCountStart": 986,
+        "changes": [
+          {
+            "timeKey": "17:35",
+            "w": 1,
+            "c": 3
+          },
+          {
+            "timeKey": "18:20",
+            "w": 0,
+            "c": 12
+          }
+        ],
+        "id": 716
+      },
+      {
+        "date": "2026-07-03",
+        "filePath": "cpp-operators.md",
+        "wordCountStart": 382,
+        "charCountStart": 2815,
+        "changes": [
+          {
+            "timeKey": "17:40",
+            "w": 14,
+            "c": 123
+          },
+          {
+            "timeKey": "17:45",
+            "w": -2,
+            "c": -16
+          },
+          {
+            "timeKey": "17:50",
+            "w": -68,
+            "c": -549
+          },
+          {
+            "timeKey": "17:55",
+            "w": -230,
+            "c": -1587
+          },
+          {
+            "timeKey": "18:20",
+            "w": 0,
+            "c": 10
+          }
+        ],
+        "id": 717
+      },
+      {
+        "date": "2026-07-03",
+        "filePath": "cpp-conditional-statements.md",
+        "wordCountStart": 569,
+        "charCountStart": 4245,
+        "changes": [
+          {
+            "timeKey": "17:40",
+            "w": 0,
+            "c": 0
+          },
+          {
+            "timeKey": "17:45",
+            "w": -2,
+            "c": -16
+          },
+          {
+            "timeKey": "18:35",
+            "w": -537,
+            "c": -3971
+          },
+          {
+            "timeKey": "18:40",
+            "w": 2,
+            "c": 17
+          },
+          {
+            "timeKey": "18:50",
+            "w": 34,
+            "c": 263
+          }
+        ],
+        "id": 718
+      },
+      {
+        "date": "2026-07-03",
+        "filePath": "cpp-loops.md",
+        "wordCountStart": 564,
+        "charCountStart": 3635,
+        "changes": [
+          {
+            "timeKey": "17:40",
+            "w": 0,
+            "c": 0
+          }
+        ],
+        "id": 719
+      },
+      {
+        "date": "2026-07-03",
+        "filePath": "cpp-break-and-continue.md",
+        "wordCountStart": 330,
+        "charCountStart": 2156,
+        "changes": [
+          {
+            "timeKey": "17:40",
+            "w": 0,
+            "c": 0
+          }
+        ],
+        "id": 720
+      },
+      {
+        "date": "2026-07-03",
+        "filePath": "cpp-nested-loop.md",
+        "wordCountStart": 181,
+        "charCountStart": 1063,
+        "changes": [
+          {
+            "timeKey": "17:40",
+            "w": 0,
+            "c": 0
+          }
+        ],
+        "id": 721
+      },
+      {
+        "date": "2026-07-03",
+        "filePath": "cpp-patterns.md",
+        "wordCountStart": 479,
+        "charCountStart": 3486,
+        "changes": [
+          {
+            "timeKey": "17:40",
+            "w": 0,
+            "c": 0
+          }
+        ],
+        "id": 722
+      },
+      {
+        "date": "2026-07-03",
+        "filePath": "cpp-arithmetic-operators.md",
+        "wordCountStart": 0,
+        "charCountStart": 0,
+        "changes": [
+          {
+            "timeKey": "17:50",
+            "w": 234,
+            "c": 1869
+          },
+          {
+            "timeKey": "18:00",
+            "w": -129,
+            "c": -945
+          },
+          {
+            "timeKey": "18:05",
+            "w": 1,
+            "c": 15
+          },
+          {
+            "timeKey": "18:20",
+            "w": 0,
+            "c": 12
+          }
+        ],
+        "id": 723
+      },
+      {
+        "date": "2026-07-03",
+        "filePath": "cpp-unary-operators.md",
+        "wordCountStart": 0,
+        "charCountStart": 0,
+        "changes": [
+          {
+            "timeKey": "18:00",
+            "w": 134,
+            "c": 994
+          },
+          {
+            "timeKey": "18:05",
+            "w": 9,
+            "c": 86
+          },
+          {
+            "timeKey": "18:20",
+            "w": 2,
+            "c": 12
+          }
+        ],
+        "id": 724
+      },
+      {
+        "date": "2026-07-03",
+        "filePath": "cpp-relational-operators.md",
+        "wordCountStart": 0,
+        "charCountStart": 0,
+        "changes": [
+          {
+            "timeKey": "18:25",
+            "w": 125,
+            "c": 970
+          }
+        ],
+        "id": 725
+      },
+      {
+        "date": "2026-07-03",
+        "filePath": "cpp-logical-operators.md",
+        "wordCountStart": 0,
+        "charCountStart": 0,
+        "changes": [
+          {
+            "timeKey": "18:25",
+            "w": 14,
+            "c": 119
+          },
+          {
+            "timeKey": "18:30",
+            "w": 262,
+            "c": 1780
+          },
+          {
+            "timeKey": "18:35",
+            "w": 1,
+            "c": 30
+          }
+        ],
+        "id": 726
+      },
+      {
+        "date": "2026-07-03",
+        "filePath": "cpp-if-statement.md",
+        "wordCountStart": 0,
+        "charCountStart": 0,
+        "changes": [
+          {
+            "timeKey": "18:40",
+            "w": 16,
+            "c": 166
+          },
+          {
+            "timeKey": "18:50",
+            "w": 17,
+            "c": 83
+          },
+          {
+            "timeKey": "19:00",
+            "w": 99,
+            "c": 677
+          },
+          {
+            "timeKey": "19:05",
+            "w": -18,
+            "c": -121
+          }
+        ],
+        "id": 727
+      },
+      {
+        "date": "2026-07-03",
+        "filePath": "cpp-if-else-statement.md",
+        "wordCountStart": 0,
+        "charCountStart": 0,
+        "changes": [
+          {
+            "timeKey": "18:40",
+            "w": 16,
+            "c": 161
+          },
+          {
+            "timeKey": "18:50",
+            "w": 626,
+            "c": 5198
+          },
+          {
+            "timeKey": "18:55",
+            "w": -443,
+            "c": -3944
+          }
+        ],
+        "id": 728
+      },
+      {
+        "date": "2026-07-03",
+        "filePath": "cpp-else-if-statement.md",
+        "wordCountStart": 0,
+        "charCountStart": 0,
+        "changes": [
+          {
+            "timeKey": "18:40",
+            "w": 16,
+            "c": 165
+          },
+          {
+            "timeKey": "18:50",
+            "w": 15,
+            "c": 111
+          },
+          {
+            "timeKey": "18:55",
+            "w": 437,
+            "c": 3821
+          },
+          {
+            "timeKey": "19:00",
+            "w": -244,
+            "c": -2374
+          }
+        ],
+        "id": 729
+      },
+      {
+        "date": "2026-07-03",
+        "filePath": "cpp-ternary-operator.md",
+        "wordCountStart": 0,
+        "charCountStart": 0,
+        "changes": [
+          {
+            "timeKey": "18:40",
+            "w": 16,
+            "c": 164
+          },
+          {
+            "timeKey": "18:45",
+            "w": 15,
+            "c": 91
+          },
+          {
+            "timeKey": "19:00",
+            "w": 67,
+            "c": 535
+          }
+        ],
+        "id": 730
+      },
+      {
+        "date": "2026-07-03",
+        "filePath": "cpp-switch-statement.md",
+        "wordCountStart": 0,
+        "charCountStart": 0,
+        "changes": [
+          {
+            "timeKey": "18:45",
+            "w": 33,
+            "c": 223
+          },
+          {
+            "timeKey": "19:00",
+            "w": 164,
+            "c": 1640
+          }
+        ],
+        "id": 731
+      },
+      {
+        "date": "2026-07-03",
+        "filePath": "cpp-assignment-operators.md",
+        "wordCountStart": 0,
+        "charCountStart": 0,
+        "changes": [
+          {
+            "timeKey": "19:05",
+            "w": 0,
+            "c": 0
+          }
+        ],
+        "id": 732
+      },
+      {
+        "date": "2026-07-03",
+        "filePath": "composing-with-transclusions.md",
+        "wordCountStart": 354,
+        "charCountStart": 2286,
+        "changes": [],
+        "id": 733
+      },
+      {
+        "date": "2026-07-03",
+        "filePath": "Nirob Bhai Skills.md",
+        "wordCountStart": 34,
+        "charCountStart": 361,
+        "changes": [],
+        "id": 734
+      },
+      {
+        "date": "2026-07-03",
+        "filePath": "media-embeds-reference.md",
+        "wordCountStart": 412,
+        "charCountStart": 2892,
+        "changes": [],
+        "id": 735
+      },
+      {
+        "date": "2026-07-03",
+        "filePath": "index.md",
+        "wordCountStart": 280,
+        "charCountStart": 1656,
+        "changes": [],
+        "id": 736
+      },
+      {
+        "date": "2026-07-04",
+        "filePath": "index.md",
+        "wordCountStart": 280,
+        "charCountStart": 1656,
+        "changes": [],
+        "id": 737
+      },
+      {
+        "date": "2026-07-04",
+        "filePath": "edc-besic.md",
+        "wordCountStart": 0,
+        "charCountStart": 0,
+        "changes": [
+          {
+            "timeKey": "11:25",
+            "w": 116,
+            "c": 5945
+          },
+          {
+            "timeKey": "11:30",
+            "w": 514,
+            "c": 15065
+          },
+          {
+            "timeKey": "11:35",
+            "w": 274,
+            "c": 5758
+          }
+        ],
+        "id": 738
+      },
+      {
+        "date": "2026-07-04",
+        "filePath": "cpp-comments.md",
+        "wordCountStart": 151,
+        "charCountStart": 1077,
+        "changes": [],
+        "id": 739
+      },
+      {
+        "date": "2026-07-04",
+        "filePath": "cpp-else-if-statement.md",
+        "wordCountStart": 224,
+        "charCountStart": 1723,
+        "changes": [],
+        "id": 740
+      },
+      {
+        "date": "2026-07-04",
+        "filePath": "Python Assignment Operators.md",
+        "wordCountStart": 108,
+        "charCountStart": 731,
+        "changes": [],
+        "id": 741
+      },
+      {
+        "date": "2026-07-04",
+        "filePath": "Python Case-Sensitive.md",
+        "wordCountStart": 55,
+        "charCountStart": 424,
+        "changes": [],
+        "id": 742
+      },
+      {
+        "date": "2026-07-04",
+        "filePath": "cpp-switch-statement.md",
+        "wordCountStart": 197,
+        "charCountStart": 1863,
+        "changes": [],
+        "id": 743
+      },
+      {
+        "date": "2026-07-04",
+        "filePath": "cpp-arithmetic-operators.md",
+        "wordCountStart": 106,
+        "charCountStart": 951,
+        "changes": [],
+        "id": 744
       }
     ],
-    "wholeVaultWordCount": 19518,
-    "wholeVaultCharCount": 140127
+    "wholeVaultWordCount": 22896,
+    "wholeVaultCharCount": 186089
   }
 }
