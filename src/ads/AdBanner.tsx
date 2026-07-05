@@ -59,16 +59,19 @@ export const AdBanner: React.FC<AdBannerProps> = ({ slotId = '5327787791' }) => 
     return () => mo.disconnect();
   }, [isVisible]);
 
-  // Don't render anything if the slot was not filled — no white box.
-  if (adStatus === 'unfilled') return null;
+  // Completely invisible until AdSense confirms the slot is filled.
+  // height:0 + overflow:hidden hides the AdSense iframe during pending/unfilled
+  // without removing it from the DOM (so AdSense can still measure width).
+  const isFilled = adStatus === 'filled';
 
   return (
     <div
       ref={containerRef}
       style={{
         width: '100%',
-        // Only reserve height once an ad is confirmed filled.
-        minHeight: adStatus === 'filled' ? '120px' : undefined,
+        height: isFilled ? 'auto' : 0,
+        overflow: 'hidden',
+        minHeight: isFilled ? '120px' : undefined,
       }}
     >
       {isVisible && (
