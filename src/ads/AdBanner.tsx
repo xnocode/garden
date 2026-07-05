@@ -5,13 +5,18 @@ type AdBannerProps = {
   slotId?: string;
 };
 
+type AdStatus = 'pending' | 'filled' | 'unfilled';
+
 /**
  * Lazy‑loads a Google AdSense ad when it scrolls into view.
- * A fixed min‑height placeholder prevents CLS (cumulative layout shift).
+ * Hides itself completely when AdSense does not fill the slot,
+ * preventing an empty white box from appearing on the page.
  */
 export const AdBanner: React.FC<AdBannerProps> = ({ slotId = '5327787791' }) => {
   const containerRef = useRef<HTMLDivElement>(null);
+  const insRef = useRef<HTMLInsElement>(null);
   const [isVisible, setIsVisible] = useState(false);
+  const [adStatus, setAdStatus] = useState<AdStatus>('pending');
 
   // Observe when the placeholder enters the viewport.
   useEffect(() => {
@@ -31,9 +36,10 @@ export const AdBanner: React.FC<AdBannerProps> = ({ slotId = '5327787791' }) => 
     return () => observer.disconnect();
   }, []);
 
-  // Once visible, request AdSense to render the ad.
+  // Once visible, push to AdSense and watch fill status via MutationObserver.
   useEffect(() => {
-    if (!isVisible) return;
+    if (!isVisible || !insRef.current) return;
+
     try {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (window as any).adsbygoogle = (window as any).adsbygoogle || [];
@@ -42,20 +48,32 @@ export const AdBanner: React.FC<AdBannerProps> = ({ slotId = '5327787791' }) => 
     } catch (e) {
       console.error('AdSense init error', e);
     }
+
+    // AdSense sets data-ad-status="filled" or "unfilled" on the <ins> element.
+    const mo = new MutationObserver(() => {
+      const status = insRef.current?.getAttribute('data-ad-status');
+      if (status === 'filled') setAdStatus('filled');
+      else if (status === 'unfilled') setAdStatus('unfilled');
+    });
+    mo.observe(insRef.current, { attributes: true, attributeFilter: ['data-ad-status'] });
+    return () => mo.disconnect();
   }, [isVisible]);
+
+  // Don't render anything if the slot was not filled — no white box.
+  if (adStatus === 'unfilled') return null;
 
   return (
     <div
       ref={containerRef}
       style={{
-        minHeight: '120px',
         width: '100%',
-        display: 'flex',
-        justifyContent: 'center',
+        // Only reserve height once an ad is confirmed filled.
+        minHeight: adStatus === 'filled' ? '120px' : undefined,
       }}
     >
       {isVisible && (
         <ins
+          ref={insRef}
           className="adsbygoogle"
           style={{ display: 'block', textAlign: 'center', width: '100%' }}
           data-ad-client="ca-pub-5993975585691806"
