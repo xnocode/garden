@@ -4,7 +4,7 @@ import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
 import { ThemeProvider } from "@/components/theme-provider";
 import { GoogleAnalytics } from "@next/third-parties/google";
-import Script from "next/script";
+
 
 const headingFont = Schibsted_Grotesk({
   variable: "--font-serif",
@@ -73,19 +73,19 @@ export default function RootLayout({
             __html: `(function(){try{var t=localStorage.getItem('garden-theme');if(t==='light'){document.documentElement.classList.remove('dark');document.documentElement.classList.add('light');}}catch(e){}})();`,
           }}
         />
+        {/* Google AdSense — plain <script> avoids the data-nscript attribute warning */}
+        <script
+          async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5993975585691806"
+          crossOrigin="anonymous"
+        />
       </head>
       <body
         className={`${headingFont.variable} ${bodyFont.variable} ${monoFont.variable} antialiased bg-background text-foreground font-sans`}
       >
         <ThemeProvider>{children}</ThemeProvider>
         <Toaster />
-        {/* Google AdSense site verification & scripts loaded safely after interaction */}
-        <Script
-          async
-          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5993975585691806"
-          crossOrigin="anonymous"
-          strategy="afterInteractive"
-        />
+
         {process.env.NEXT_PUBLIC_GA_ID && (
           <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID} />
         )}
