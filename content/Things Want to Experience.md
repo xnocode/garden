@@ -1,8 +1,15 @@
 ---
-draft: false
+draft: true
 tags:
+  - life
 date: 2026-04-18
 author: xnocode
+title: Things Want to Experience
+description: This is a collection of my goals, dreams, and ideas that I want to accomplish over time. It helps me stay focused, motivated, and organized.
+prev: ""
+next: ""
+aliases:
+  - life
 ---
 - [x] Capture beautiful moments with a camera, even without me in the frame 
 - [ ] Go skydiving and feel like touching the sky

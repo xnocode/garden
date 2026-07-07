@@ -1,3 +1,15 @@
+---
+title: Death
+description: Death is the permanent end of life when the body can no longer function. It is a natural part of the life cycle experienced by all living beings.
+draft: false
+date: 2026-04-08
+tags:
+  - death
+prev: ""
+next: ""
+aliases:
+  - death
+---
 ![|639x360](https://res.cloudinary.com/dqkxxdrsg/image/upload/v1778474130/obsidian/rgqkcjn2tguqnwyrpjkl.png)
 
 When my time comes, remember me in your prayers. And if I lose my memory before I leave this world, pray for me again. Because I may not even remember to ask.

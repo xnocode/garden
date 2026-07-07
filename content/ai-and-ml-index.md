@@ -29,43 +29,8 @@ dataSource:
   dateField: {}
 fillTheScreen: false
 enableMainContainerShadow: false
-fromDate: 2026-07-06
+fromDate: 2026-07-07
 toDate: 2026-12-31
 cellStyleRules: []
 
 ```
-
-
-
-
-
-
-
-
-
-| 2.36 | [[Python String Operations]]      |
-| ---- | --------------------------------- |
-| 2.37 | [[Python String Membership]]      |
-| 2.38 | [[Python String Length]]          |
-| 2.39 | [[Python String Formatting]]      |
-| 2.40 | [[Python f-strings]]              |
-| 2.41 | [[Python formart()]]              |
-|      |                                   |
-|      |                                   |
-|      |                                   |
-|      |                                   |
-|      |                                   |
-|      |                                   |
-|      |                                   |
-|      |                                   |
-|      |                                   |
-|      |                                   |
-|      |                                   |
-|      |                                   |
-|      |                                   |
-|      |                                   |
-|      |                                   |
-|      |                                   |
-|      |                                   |
-|      |                                   |
-|      | [[Python Practice Problems]]      |
