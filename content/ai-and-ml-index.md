@@ -1,14 +1,12 @@
 ---
 draft: true
 tags:
-  - alml
+  - aiml
 date: 2026-07-06
 title: AI & ML Index
-description: "AI enables machines to think and make decisions.\r
-
-  ML helps machines learn from data."
+description: AI enables machines to think and make decisions. ML helps machines learn from data.
 prev:
-next: "[[al-and-ml-introduction]]"
+next: "[[ai-and-ml-introduction]]"
 aliases:
   - AI & ML
 ---
@@ -25,7 +23,7 @@ titleStyle:
   fontWeight: normal
 dataSource:
   type: PAGE
-  value: "#alml"
+  value: "#aiml"
   dateField: {}
 fillTheScreen: false
 enableMainContainerShadow: false
@@ -34,3 +32,12 @@ toDate: 2026-12-31
 cellStyleRules: []
 
 ```
+
+| No  | AI & ML                           |
+| --- | --------------------------------- |
+| 1.  | [[ai-and-ml-introduction]]        |
+| 1.1 | [[prerequisites-tools-for-ai-ml]] |
+
+| No  | Python                   |
+| --- | ------------------------ |
+| 2   | [[python-first-program]] |
