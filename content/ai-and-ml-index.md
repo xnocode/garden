@@ -41,3 +41,6 @@ cellStyleRules: []
 | No  | Python                   |
 | --- | ------------------------ |
 | 2   | [[python-first-program]] |
+| 2.1 | [[python-character-set]] |
+| 2.2 | [[python-variables]]     |
+| 2.3 | [[python-indentation]]   |

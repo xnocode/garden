@@ -7,7 +7,7 @@ tags:
   - python
   - aiml
 prev: "[[prerequisites-tools-for-ai-ml]]"
-next: ""
+next: "[[python-character-set]]"
 aliases:
   - first program
 ---
