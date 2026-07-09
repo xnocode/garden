@@ -2,7 +2,7 @@
 title: Death
 description: Death is the permanent end of life when the body can no longer function. It is a natural part of the life cycle experienced by all living beings.
 draft: false
-date: 2026-04-08
+date: 2026-07-09
 tags:
   - death
 prev: ""
@@ -18,4 +18,6 @@ Sometimes, I wish I could forget the pain...the memories of losing people I love
 
 This world is temporary. We leave everything behind wealth, status, possessions. But there is one thing that can follow us beyond it, the prayers of others. So live in a way that people remember you not for what you had, but for what you gave. Do something meaningful. Leave kindness behind. Because in the end, good deeds are the only way to “hack” this life and keep receiving prayers even after you’re gone.
 
+> [!Important] Important
+> Life is not a race to survive the longest; it is a chance to live without regret. I want to embrace every moment, take risks, and never let routine steal my spirit. Whether my path leads to paradise or hell will depend on the choices I make. Until the end, I will keep asking myself one question: Am I becoming a better man or a monster?
 
