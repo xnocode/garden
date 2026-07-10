@@ -1,5 +1,5 @@
 ---
-draft: true
+draft: false
 tags:
   - aiml
 date: 2026-07-06

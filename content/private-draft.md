@@ -1,9 +1,11 @@
 ---
-title: "Private Draft"
-description: "A note intentionally left unpublished to test the draft filter."
-draft: true
+title: Private Draft
+description: A note intentionally left unpublished to test the draft filter.
+draft: false
 date: 2024-08-10
-tags: [meta, draft]
+tags:
+  - meta
+  - draft
 ---
 
 %% This note is intentionally unpublished. It exists to verify that the publish script's draft filter works: notes with `draft: true` (or no draft field) should never appear on the public site. If you're reading this in production, something is wrong with the filter. %%

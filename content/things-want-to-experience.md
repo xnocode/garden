@@ -1,5 +1,5 @@
 ---
-draft: true
+draft: false
 tags:
   - life
 date: 2026-04-18

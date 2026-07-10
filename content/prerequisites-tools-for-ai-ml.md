@@ -1,7 +1,7 @@
 ---
 title: prerequisites-tools-for-ai-ml
 description: An overview of the essential tools and prerequisites for getting started with AI and Machine Learning.
-draft: true
+draft: false
 date: 2026-07-07
 tags:
   - aiml
