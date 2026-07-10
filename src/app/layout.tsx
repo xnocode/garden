@@ -4,6 +4,7 @@ import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
 import { ThemeProvider } from "@/components/theme-provider";
 import { GoogleAnalytics } from "@next/third-parties/google";
+import Script from "next/script";
 
 
 const headingFont = Schibsted_Grotesk({
@@ -69,15 +70,18 @@ export default function RootLayout({
       <head>
         {/* No-flash theme bootstrap — defaults to dark */}
         <script
+          id="theme-initializer"
           dangerouslySetInnerHTML={{
             __html: `(function(){try{var t=localStorage.getItem('garden-theme');if(t==='light'){document.documentElement.classList.remove('dark');document.documentElement.classList.add('light');}}catch(e){}})();`,
           }}
         />
-        {/* Google AdSense — plain <script> avoids the data-nscript attribute warning */}
-        <script
+        {/* Google AdSense */}
+        <Script
+          id="adsense"
           async
           src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5993975585691806"
           crossOrigin="anonymous"
+          strategy="afterInteractive"
         />
       </head>
       <body

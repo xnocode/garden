@@ -90,28 +90,6 @@ export function SiteHeader() {
           <ThemeToggle />
         </div>
       </div>
-
-      {/* Mobile nav drawer */}
-      {mobileNavOpen && (
-        <div className="lg:hidden border-t border-border bg-background">
-          <nav className="flex flex-col gap-1 px-4 py-3">
-            {NAV_ITEMS.map((item) => (
-              <Link
-                key={item.key}
-                href={item.href}
-                onClick={() => setMobileNavOpen(false)}
-                className={`rounded-md px-3 py-2 text-sm font-medium ${
-                  item.key === active
-                    ? "bg-garden/10 text-garden"
-                    : "text-muted-foreground hover:text-foreground hover:bg-surface"
-                }`}
-              >
-                {item.label}
-              </Link>
-            ))}
-          </nav>
-        </div>
-      )}
     </header>
   );
 }

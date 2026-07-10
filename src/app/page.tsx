@@ -14,6 +14,7 @@ import { SiteFooter } from "@/components/garden/site-footer";
 import { Explorer } from "@/components/garden/explorer";
 import { RecentNotes } from "@/components/garden/recent-notes";
 import { Sidebar } from "@/components/garden/sidebar";
+import { MobileSidebar } from "@/components/garden/mobile-sidebar";
 import { CommandPalette } from "@/components/garden/command-palette";
 import { ReadingProgress } from "@/components/garden/reading-progress";
 import { ShortcutsHelp } from "@/components/garden/shortcuts-help";
@@ -121,6 +122,11 @@ export default async function Page({ searchParams }: PageProps) {
     <div className="garden-ambience relative flex min-h-screen flex-col bg-background">
       <ReadingProgress />
       <SiteHeader />
+      <MobileSidebar
+        tree={explorer}
+        recentNotes={recentNotes}
+        showExplorer={showExplorer}
+      />
       <div className="flex flex-1">
         {showExplorer && (
           <aside className="sticky top-14 hidden h-[calc(100vh-3.5rem)] w-60 flex-shrink-0 border-r border-sidebar-border bg-sidebar/40 lg:block">
