@@ -1,5 +1,5 @@
 ---
-title: python-indentation
+title: Python Indentation
 description: Python uses indentation instead of braces to group statements into blocks.
 draft: false
 date: 2026-07-08
