@@ -9,6 +9,7 @@ tags:
 prev: "[[python-character-set]]"
 next: "[[python-indentation]]"
 aliases:
+  - variables
 ---
 Variables are like containers where we can store data.
 

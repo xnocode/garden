@@ -38,9 +38,14 @@ cellStyleRules: []
 | 1.  | [[ai-and-ml-introduction]]        |
 | 1.1 | [[prerequisites-tools-for-ai-ml]] |
 
-| No  | Python                   |
-| --- | ------------------------ |
-| 2   | [[python-first-program]] |
-| 2.1 | [[python-character-set]] |
-| 2.2 | [[python-variables]]     |
-| 2.3 | [[python-indentation]]   |
+| No  | Python                    |
+| --- | ------------------------- |
+| 2   | [[python-first-program]]  |
+| 2.1 | [[python-character-set]]  |
+| 2.2 | [[python-variables]]      |
+| 2.3 | [[python-indentation]]    |
+| 2.4 | [[python-case-sensitive]] |
+| 2.5 | [[python-data-types]]     |
+| 2.6 | [[python-type-function]]  |
+| 2.7 | [[python-keywords]]       |
+|     |                           |

@@ -7,8 +7,9 @@ tags:
   - python
   - aiml
 prev: "[[python-variables]]"
-next: ""
+next: "[[python-case-sensitive]]"
 aliases:
+  - indentation
 ---
 Indentation means adding spaces at the beginning of a line to define code blocks. In Python, indentation is required. It tells Python which lines belong together.
 
