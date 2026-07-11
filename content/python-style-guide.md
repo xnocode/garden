@@ -1,7 +1,7 @@
 ---
 title: Python Style Guide
 description: A style guide provides conventions for writing clean, readable, and consistent Python code.
-draft: false
+draft: true
 date: 2026-07-11
 tags:
   - aiml

@@ -1,7 +1,7 @@
 ---
 title: Python Character Set
 description: The Python character set defines the valid characters used to write Python programs.
-draft: false
+draft: true
 date: 2026-07-07
 tags:
   - python

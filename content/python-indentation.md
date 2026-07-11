@@ -1,7 +1,7 @@
 ---
 title: Python Indentation
 description: Python uses indentation instead of braces to group statements into blocks.
-draft: false
+draft: true
 date: 2026-07-08
 tags:
   - python
