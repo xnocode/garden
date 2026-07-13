@@ -11,6 +11,18 @@ export function Comments({ slug }: { slug: string }) {
 
   const giscusTheme = theme === "dark" ? "noborder_dark" : "noborder_light";
 
+  // Resolve the correct theme: custom CSS on HTTPS, built-in fallback on HTTP
+  const resolveTheme = (t: "dark" | "light") => {
+    if (typeof window === "undefined") return t === "dark" ? "noborder_dark" : "noborder_light";
+    const isHttps = window.location.protocol === "https:";
+    if (isHttps) {
+      return t === "dark"
+        ? `${window.location.origin}/giscus-dark.css`
+        : `${window.location.origin}/giscus-light.css`;
+    }
+    return t === "dark" ? "noborder_dark" : "noborder_light";
+  };
+
   // Listen for Giscus metadata → get real comment count
   useEffect(() => {
     const handleMessage = (event: MessageEvent) => {
@@ -48,7 +60,7 @@ export function Comments({ slug }: { slug: string }) {
     script.setAttribute("data-input-position", "top");
     script.setAttribute("data-lang", "en");
     script.setAttribute("crossorigin", "anonymous");
-    script.setAttribute("data-theme", giscusTheme);
+    script.setAttribute("data-theme", resolveTheme(theme as "dark" | "light"));
     script.async = true;
     container.appendChild(script);
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -59,10 +71,11 @@ export function Comments({ slug }: { slug: string }) {
     const iframe = containerRef.current?.querySelector<HTMLIFrameElement>("iframe.giscus-frame");
     if (!iframe) return;
     iframe.contentWindow?.postMessage(
-      { giscus: { setConfig: { theme: giscusTheme } } },
+      { giscus: { setConfig: { theme: resolveTheme(theme as "dark" | "light") } } },
       "https://giscus.app"
     );
-  }, [giscusTheme]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [theme]);
 
   const hasComments = commentCount !== null && commentCount > 0;
 
