@@ -93,9 +93,14 @@ export function Comments({ slug }: { slug: string }) {
             {commentCount}
           </span>
         )}
-        <span className="ml-auto text-[11px] font-mono text-muted-foreground/40 hidden sm:block">
-          via GitHub
-        </span>
+        <a
+          href="https://github.com/xnocode/garden/discussions"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="ml-auto text-[11px] font-mono text-muted-foreground/40 hidden sm:inline-flex items-center gap-1 hover:text-garden transition-colors"
+        >
+          via GitHub Discussions
+        </a>
       </div>
 
       {/* Giscus widget — always visible, no collapse */}
