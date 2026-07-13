@@ -1,0 +1,154 @@
+@import url('https://fonts.googleapis.com/css2?family=Source+Sans+3:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap');
+
+/*! ======================================================
+    Custom Giscus Light Theme — Digital Garden (xnocode)
+    Matches: bg=#faf8f8, surface=#fff, accent=#284b63
+    ====================================================== */
+
+main {
+  /* ── Syntax highlighting ── */
+  --color-prettylights-syntax-comment: #6b6b6b;
+  --color-prettylights-syntax-constant: #284b63;
+  --color-prettylights-syntax-entity: #284b63;
+  --color-prettylights-syntax-storage-modifier-import: #2b2b2b;
+  --color-prettylights-syntax-entity-tag: #284b63;
+  --color-prettylights-syntax-keyword: #c0392b;
+  --color-prettylights-syntax-string: #284b63;
+  --color-prettylights-syntax-variable: #2b2b2b;
+  --color-prettylights-syntax-brackethighlighter-unmatched: #c0392b;
+  --color-prettylights-syntax-invalid-illegal-text: #1a1a1a;
+  --color-prettylights-syntax-invalid-illegal-bg: #c0392b;
+  --color-prettylights-syntax-carriage-return-text: #1a1a1a;
+  --color-prettylights-syntax-carriage-return-bg: #c0392b;
+  --color-prettylights-syntax-string-regexp: #284b63;
+  --color-prettylights-syntax-markup-list: #b8860b;
+  --color-prettylights-syntax-markup-heading: #284b63;
+  --color-prettylights-syntax-markup-italic: #2b2b2b;
+  --color-prettylights-syntax-markup-bold: #2b2b2b;
+  --color-prettylights-syntax-markup-deleted-text: #ffdcd7;
+  --color-prettylights-syntax-markup-deleted-bg: #ffebe9;
+  --color-prettylights-syntax-markup-inserted-text: #aff5b4;
+  --color-prettylights-syntax-markup-inserted-bg: #ddf4ff;
+  --color-prettylights-syntax-markup-changed-text: #ffdfb6;
+  --color-prettylights-syntax-markup-changed-bg: #fff8c5;
+
+  /* ── Buttons ── */
+  --color-btn-text: #2b2b2b;
+  --color-btn-bg: #eeece9;
+  --color-btn-border: #e5e5e5;
+  --color-btn-shadow: 0 1px 0 rgba(0,0,0,0.04);
+  --color-btn-inset-shadow: inset 0 1px 0 rgba(255,255,255,0.25);
+  --color-btn-hover-bg: #e9e6e1;
+  --color-btn-hover-border: #e5e5e5;
+  --color-btn-active-bg: #eeece9;
+  --color-btn-active-border: #e5e5e5;
+  --color-btn-selected-bg: #eeece9;
+
+  /* ── Primary button → site accent blue ── */
+  --color-btn-primary-text: #ffffff;
+  --color-btn-primary-bg: #284b63;
+  --color-btn-primary-border: #284b63;
+  --color-btn-primary-shadow: 0 1px 0 rgba(0,0,0,0.1);
+  --color-btn-primary-inset-shadow: inset 0 1px 0 rgba(255,255,255,0.03);
+  --color-btn-primary-hover-bg: #5a7d94;
+  --color-btn-primary-hover-border: #5a7d94;
+  --color-btn-primary-selected-bg: #284b63;
+  --color-btn-primary-selected-shadow: inset 0 1px 0 rgba(0,0,0,0.2);
+  --color-btn-primary-disabled-text: rgba(255,255,255,0.8);
+  --color-btn-primary-disabled-bg: rgba(40,75,99,0.5);
+  --color-btn-primary-disabled-border: #e5e5e5;
+
+  /* ── Surfaces & foregrounds ── */
+  --color-fg-default: #2b2b2b;
+  --color-fg-muted: #6b6b6b;
+  --color-fg-subtle: #8c8c8c;
+  --color-canvas-default: transparent;
+  --color-canvas-overlay: #ffffff;
+  --color-canvas-inset: #f2f0ef;
+  --color-canvas-subtle: #f2f0ef;
+
+  /* ── Borders ── */
+  --color-border-default: #e5e5e5;
+  --color-border-muted: #eeece9;
+  --color-neutral-muted: rgba(0,0,0,0.04);
+
+  /* ── Accent ── */
+  --color-accent-fg: #284b63;
+  --color-accent-emphasis: #284b63;
+  --color-accent-muted: rgba(40,75,99,0.4);
+  --color-accent-subtle: rgba(40,75,99,0.1);
+
+  /* ── Status ── */
+  --color-success-fg: #09ad7a;
+  --color-attention-fg: #b8860b;
+  --color-danger-fg: #c0392b;
+
+  /* ── Misc ── */
+  --color-action-list-item-default-hover-bg: rgba(0,0,0,0.06);
+  --color-segmented-control-bg: #f2f0ef;
+  --color-segmented-control-button-bg: #ffffff;
+  --color-segmented-control-button-selected-border: #e5e5e5;
+  --color-primer-shadow-inset: inset 0 1px 0 rgba(0,0,0,0.05);
+  --color-scale-gray-1: #eeece9;
+  --color-scale-blue-1: #e9e6e1;
+  --color-social-reaction-bg-hover: var(--color-scale-gray-1);
+  --color-social-reaction-bg-reacted-hover: var(--color-scale-blue-1);
+}
+
+main .pagination-loader-container {
+  background-image: url("https://github.com/images/modules/pulls/progressive-disclosure-line.svg");
+}
+main .gsc-loading-image {
+  background-image: url("https://github.githubassets.com/images/mona-loading-default.gif");
+}
+
+/* ═══════════════════════════════════════════════════════
+   Custom overrides — match the Digital Garden design
+   ═══════════════════════════════════════════════════════ */
+
+/* Font */
+main {
+  font-family: "Source Sans 3", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif !important;
+}
+
+/* ── Hide internal "X comments" header — shown via our own header ── */
+.gsc-left-header {
+  display: none !important;
+}
+
+/* ── Rounded corners ── */
+.gsc-comment,
+.gsc-reply,
+.gsc-comment-box,
+.gsc-comment-box-write,
+.gsc-comment-box-preview {
+  border-radius: 8px !important;
+}
+
+.gsc-comment-box-tabs {
+  border-top-left-radius: 8px !important;
+  border-top-right-radius: 8px !important;
+}
+
+/* ── Buttons ── */
+.btn,
+.btn-primary,
+.form-control {
+  border-radius: 6px !important;
+}
+
+/* ── Force Sign in with GitHub → site accent ── */
+.btn-primary {
+  background-color: #284b63 !important;
+  border-color: #284b63 !important;
+  color: #ffffff !important;
+  font-family: "Source Sans 3", sans-serif !important;
+  font-weight: 500 !important;
+}
+.btn-primary:hover {
+  background-color: #5a7d94 !important;
+  border-color: #5a7d94 !important;
+}
+.btn-primary:focus {
+  box-shadow: 0 0 0 3px rgba(40,75,99,0.35) !important;
+}
