@@ -16,6 +16,7 @@ interface NoteRecord {
   slug: string;
   title: string;
   description: string | null;
+  author: string | null;
   content: string;
   html: string;
   raw: string;
@@ -39,6 +40,7 @@ export interface NoteSummary {
   slug: string;
   title: string;
   description: string | null;
+  author: string | null;
   tags: string[];
   aliases: string[];
   wordCount: number;
@@ -112,6 +114,7 @@ function toSummary(n: NoteRecord): NoteSummary {
     slug: n.slug,
     title: n.title,
     description: n.description,
+    author: n.author ?? null,
     tags: n.tags,
     aliases: n.aliases,
     wordCount: n.wordCount,

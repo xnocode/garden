@@ -17,7 +17,7 @@ import {
   Check,
   Printer,
   CornerDownRight,
-  Download,
+  User,
 } from "lucide-react";
 import { AdBanner } from "../../ads/AdBanner";
 import type { NoteDetail } from "@/lib/notes";
@@ -125,18 +125,6 @@ export function NoteView({ note }: { note: NoteDetail }) {
   const printNote = useCallback(() => {
     window.print();
   }, []);
-
-  const downloadMarkdown = useCallback(() => {
-    const blob = new Blob([note.raw], { type: "text/markdown;charset=utf-8" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `${note.slug}.md`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-  }, [note.raw, note.slug]);
 
   // --- After HTML is injected: wire up mermaid, copy buttons, callouts ---
   useLayoutEffect(() => {
@@ -420,6 +408,12 @@ export function NoteView({ note }: { note: NoteDetail }) {
             <FileText className="h-3.5 w-3.5" />
             {note.wordCount} words
           </span>
+          {note.author && (
+            <span className="inline-flex items-center gap-1.5">
+              <User className="h-3.5 w-3.5" />
+              {note.author}
+            </span>
+          )}
           {note.aliases.length > 0 && (
             <span className="inline-flex items-center gap-1.5">
               <Edit3 className="h-3.5 w-3.5" />
@@ -491,15 +485,6 @@ export function NoteView({ note }: { note: NoteDetail }) {
           >
             <Printer className="h-3.5 w-3.5" />
             <span className="hidden sm:inline">Print</span>
-          </button>
-          <button
-            onClick={downloadMarkdown}
-            className="inline-flex items-center gap-1.5 rounded-md border border-border bg-surface/50 px-2.5 py-1.5 text-xs font-medium text-muted-foreground transition-all hover:border-garden/40 hover:text-foreground"
-            title="Download as Markdown"
-            aria-label="Download this note as Markdown"
-          >
-            <Download className="h-3.5 w-3.5" />
-            <span className="hidden sm:inline">.md</span>
           </button>
         </div>
       </header>

@@ -68,6 +68,7 @@ interface ParsedFile {
   slug: string;
   title: string;
   description?: string;
+  author?: string;
   tags: string[];
   aliases: string[];
   date?: Date;
@@ -139,6 +140,10 @@ async function parsePass(files: string[]): Promise<ParsedFile[]> {
       title,
       description:
         typeof data.description === "string" ? data.description : undefined,
+      author:
+        typeof data.author === "string" && data.author.trim()
+          ? data.author.trim()
+          : undefined,
       tags: coerceTags(data.tags),
       aliases: coerceStringArray(data.aliases),
       date: todate(data.date ?? data.publish),
@@ -460,6 +465,7 @@ async function exportJsonData(rendered: RenderedNote[]) {
       slug: r.slug,
       title: r.title,
       description: r.description,
+      author: r.author ?? null,
       content: r.content,
       html: r.html,
       raw: r.raw,
