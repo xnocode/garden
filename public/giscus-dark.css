@@ -272,6 +272,16 @@ a.btn-primary:hover,
   box-shadow: 0 12px 32px rgba(0,0,0,0.6) !important;
 }
 
+/* ── Main layout ───────────────────────────────────────────────────────── */
+.gsc-main {
+  padding: 0 !important;
+}
+
+/* Hide the internal comment count header — our wrapper labels this section */
+.gsc-header {
+  display: none !important;
+}
+
 /* ── Pagination ────────────────────────────────────────────────────────── */
 .gsc-pagination .btn {
   border-radius: 8px !important;

@@ -22,10 +22,8 @@ export function GiscusComments() {
   const category = process.env.NEXT_PUBLIC_GISCUS_CATEGORY || "General";
   const categoryId = process.env.NEXT_PUBLIC_GISCUS_CATEGORY_ID || "DIC_kwDOTIfJWs4DBHk1";
 
-  const isDemo = false;
-
   useEffect(() => {
-    // CSS files always live in xnocode/garden regardless of which Giscus repo/sandbox is used
+    // CSS always lives in xnocode/garden regardless of Giscus repo/sandbox
     const cssRepo = "xnocode/garden";
     const giscusTheme = origin && origin.startsWith("https")
       ? `${origin}/giscus-${theme}.css`
@@ -67,21 +65,36 @@ export function GiscusComments() {
 
   return (
     <section
-      aria-label="Comments"
+      aria-label="Discussion"
       className="rounded-xl border border-border bg-gradient-to-b from-surface/40 to-transparent p-5 shadow-sm garden-fade-in"
     >
-      <header className="mb-4 flex items-center justify-between">
-        <h3 className="flex items-center gap-2 text-sm font-semibold text-heading">
-          <span className="inline-flex h-6 w-6 items-center justify-center rounded-md bg-garden/10 text-garden ring-1 ring-garden/20">
-            <MessageSquare className="h-3.5 w-3.5" />
+      <header className="mb-5 flex items-center justify-between border-b border-border/40 pb-4">
+        {/* Left: icon + title */}
+        <div className="flex items-center gap-2.5">
+          <span className="inline-flex h-7 w-7 items-center justify-center rounded-lg bg-garden/10 text-garden ring-1 ring-garden/20">
+            <MessageSquare className="h-4 w-4" />
           </span>
-          Comments
-        </h3>
+          <div>
+            <h3 className="text-sm font-semibold text-heading">Discussion</h3>
+            <p className="text-[10px] text-muted-foreground">Powered by GitHub Discussions</p>
+          </div>
+        </div>
 
-          <span className="rounded-full border border-border bg-surface px-2 py-0.5 font-mono text-[10px] text-muted-foreground">
-            via GitHub
-          </span>
-        </header>
+        {/* Right: GitHub link */}
+        <a
+          href={`https://github.com/${repo}/discussions`}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="View discussions on GitHub"
+          className="flex items-center gap-1.5 rounded-full border border-border/60 bg-surface/60 px-3 py-1 text-[11px] font-medium text-muted-foreground transition-colors hover:border-garden/40 hover:text-garden"
+        >
+          {/* GitHub icon */}
+          <svg viewBox="0 0 16 16" className="h-3.5 w-3.5 fill-current" aria-hidden="true">
+            <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z" />
+          </svg>
+          GitHub
+        </a>
+      </header>
 
       {/* Giscus script mounts the iframe inside this container */}
       <div ref={containerRef} className="giscus" />
