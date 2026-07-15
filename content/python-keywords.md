@@ -2,7 +2,7 @@
 title: Python Keywords
 description: Keywords are reserved words with predefined meanings in Python.
 draft: true
-date: 2026-07-11
+date: 2026-07-16
 tags:
   - aiml
   - python

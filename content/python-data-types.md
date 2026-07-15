@@ -2,7 +2,7 @@
 title: Python Data Types
 description: A data type defines the type of value that can be stored and manipulated in Python.
 draft: true
-date: 2026-07-09
+date: 2026-07-16
 tags:
   - aiml
   - python

@@ -16,13 +16,13 @@ export function GiscusComments() {
     }
   }, []);
 
-  // Load configs with fallbacks to public sandbox so it works out of the box!
-  const repo = process.env.NEXT_PUBLIC_GISCUS_REPO || "giscus/giscus-component";
-  const repoId = process.env.NEXT_PUBLIC_GISCUS_REPO_ID || "MDEwOlJlcG9zaXRvcnkzOTEzMTMwMjA=";
+  // Load configs — env vars take priority, fallback to xnocode/garden defaults
+  const repo = process.env.NEXT_PUBLIC_GISCUS_REPO || "xnocode/garden";
+  const repoId = process.env.NEXT_PUBLIC_GISCUS_REPO_ID || "R_kgDOTIfJWg";
   const category = process.env.NEXT_PUBLIC_GISCUS_CATEGORY || "General";
-  const categoryId = process.env.NEXT_PUBLIC_GISCUS_CATEGORY_ID || "DIC_kwDOF1L2fM4B-hVT";
+  const categoryId = process.env.NEXT_PUBLIC_GISCUS_CATEGORY_ID || "DIC_kwDOTIfJWs4DBHk1";
 
-  const isDemo = !process.env.NEXT_PUBLIC_GISCUS_REPO;
+  const isDemo = false;
 
   useEffect(() => {
     // CSS files always live in xnocode/garden regardless of which Giscus repo/sandbox is used
@@ -78,22 +78,10 @@ export function GiscusComments() {
           Comments
         </h3>
 
-        {isDemo ? (
-          <span className="rounded-full border border-yellow-500/20 bg-yellow-500/10 px-2 py-0.5 font-mono text-[9px] text-yellow-500/80">
-            demo sandbox
-          </span>
-        ) : (
           <span className="rounded-full border border-border bg-surface px-2 py-0.5 font-mono text-[10px] text-muted-foreground">
             via GitHub
           </span>
-        )}
-      </header>
-
-      {isDemo && (
-        <div className="mb-4 rounded-lg border border-border/60 bg-surface-2/20 p-4 text-xs text-muted-foreground leading-relaxed">
-          💡 <strong>Demo Mode active:</strong> Comments are currently stored in a public sandbox. To save comments to your own repo, activate Discussions on your GitHub repository (<code>xnocode/garden</code>), install the <a href="https://github.com/apps/giscus" target="_blank" rel="noopener noreferrer" className="text-garden hover:underline">Giscus App</a>, and add the credentials to your local <code>.env</code> file.
-        </div>
-      )}
+        </header>
 
       {/* Giscus script mounts the iframe inside this container */}
       <div ref={containerRef} className="giscus" />

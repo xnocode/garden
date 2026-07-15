@@ -2,7 +2,7 @@
 title: Python type() Function
 description: The type() function is used to determine the data type of a value or variable.
 draft: true
-date: 2026-07-10
+date: 2026-07-16
 tags:
   - aiml
   - python

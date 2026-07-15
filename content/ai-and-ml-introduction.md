@@ -2,7 +2,7 @@
 title: AI & ML Introduction
 description: AI helps computers think and solve problems. ML teaches them to learn from data instead of fixed rules.
 draft: true
-date: 2026-07-07
+date: 2026-07-16
 tags:
   - aiml
 prev: "[[ai-and-ml-index]]"

@@ -2,7 +2,7 @@
 draft: true
 tags:
   - aiml
-date: 2026-07-06
+date: 2026-07-16
 title: AI & ML Index
 description: AI enables machines to think and make decisions. ML helps machines learn from data.
 prev:
@@ -27,7 +27,7 @@ dataSource:
   dateField: {}
 fillTheScreen: false
 enableMainContainerShadow: false
-fromDate: 2026-07-07
+fromDate: 2026-07-16
 toDate: 2026-12-31
 cellStyleRules: []
 

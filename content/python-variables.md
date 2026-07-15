@@ -2,7 +2,7 @@
 title: Python Variables
 description: A variable is a named reference used to store and access data in Python.
 draft: true
-date: 2026-07-07
+date: 2026-07-16
 tags:
   - python
   - aiml
