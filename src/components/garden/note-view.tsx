@@ -501,8 +501,9 @@ export function NoteView({ note }: { note: NoteDetail }) {
             dangerouslySetInnerHTML={{ __html: html }}
           />
           <CodeBlockRunner key={note.slug} />
+          {/* In-article ad: fluid format Google renders natively inside content */}
           <div className="mt-8">
-            <AdBanner slotId="5327787791" />
+            <AdBanner slotId="2493782452" format="in-article" />
           </div>
         </div>
 
@@ -568,9 +569,9 @@ export function NoteView({ note }: { note: NoteDetail }) {
         </div>
       )}
 
-      {/* Ad between backlinks and comments */}
+      {/* Auto-format ad between backlinks and comments */}
       <div className="mt-8">
-        <AdBanner slotId="5327787791" />
+        <AdBanner slotId="5327787791" format="auto" />
       </div>
 
       {/* Giscus Comments Section */}

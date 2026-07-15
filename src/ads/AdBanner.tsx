@@ -1,18 +1,35 @@
 import React, { useEffect, useRef, useState } from 'react';
 
+type AdFormat = 'auto' | 'in-article' | 'in-feed' | 'display';
+
 type AdBannerProps = {
-  /** Optional ad slot ID; defaults to the primary slot. */
-  slotId?: string;
+  /** The AdSense ad slot ID (from your AdSense dashboard). */
+  slotId: string;
+  /**
+   * Ad format:
+   *  - "auto"       — responsive display ad (default)
+   *  - "in-article" — fluid in-article ad (sits inside article content)
+   *  - "in-feed"    — in-feed / native ad
+   *  - "display"    — fixed display ad
+   */
+  format?: AdFormat;
 };
 
 type AdStatus = 'pending' | 'filled' | 'unfilled';
 
+const CLIENT_ID = 'ca-pub-5993975585691806';
+
 /**
- * Lazy‑loads a Google AdSense ad when it scrolls into view.
- * Hides itself completely when AdSense does not fill the slot,
- * preventing an empty white box from appearing on the page.
+ * Universal Google AdSense ad unit.
+ * - Lazy-loads when it scrolls into view (saves bandwidth + improves LCP).
+ * - Hides itself completely when AdSense does not fill the slot,
+ *   so no empty white box ever appears on the page.
+ * - Supports all AdSense formats: auto, in-article, in-feed, display.
  */
-export const AdBanner: React.FC<AdBannerProps> = ({ slotId = '5327787791' }) => {
+export const AdBanner: React.FC<AdBannerProps> = ({
+  slotId,
+  format = 'auto',
+}) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const insRef = useRef<HTMLInsElement>(null);
   const [isVisible, setIsVisible] = useState(false);
@@ -41,9 +58,7 @@ export const AdBanner: React.FC<AdBannerProps> = ({ slotId = '5327787791' }) => 
     if (!isVisible || !insRef.current) return;
 
     try {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (window as any).adsbygoogle = (window as any).adsbygoogle || [];
-      // @ts-ignore – push call defined by AdSense script.
       (window as any).adsbygoogle.push({});
     } catch (e) {
       console.error('AdSense init error', e);
@@ -59,10 +74,30 @@ export const AdBanner: React.FC<AdBannerProps> = ({ slotId = '5327787791' }) => 
     return () => mo.disconnect();
   }, [isVisible]);
 
-  // Completely invisible until AdSense confirms the slot is filled.
-  // height:0 + overflow:hidden hides the AdSense iframe during pending/unfilled
-  // without removing it from the DOM (so AdSense can still measure width).
   const isFilled = adStatus === 'filled';
+
+  // Build <ins> props based on format
+  const insProps: React.HTMLAttributes<HTMLElement> & Record<string, string | undefined> = {
+    className: 'adsbygoogle',
+    style: { display: 'block', textAlign: 'center', width: '100%' } as React.CSSProperties,
+    'data-ad-client': CLIENT_ID,
+    'data-ad-slot': slotId,
+  };
+
+  if (format === 'in-article') {
+    insProps['data-ad-layout'] = 'in-article';
+    insProps['data-ad-format'] = 'fluid';
+  } else if (format === 'in-feed') {
+    insProps['data-ad-layout'] = 'in-feed';
+    insProps['data-ad-format'] = 'fluid';
+  } else if (format === 'display') {
+    insProps['data-ad-format'] = 'display';
+    insProps['data-full-width-responsive'] = 'true';
+  } else {
+    // auto — let Google pick the best format
+    insProps['data-ad-format'] = 'auto';
+    insProps['data-full-width-responsive'] = 'true';
+  }
 
   return (
     <div
@@ -71,19 +106,11 @@ export const AdBanner: React.FC<AdBannerProps> = ({ slotId = '5327787791' }) => 
         width: '100%',
         height: isFilled ? 'auto' : 0,
         overflow: 'hidden',
-        minHeight: isFilled ? '120px' : undefined,
+        minHeight: isFilled ? '100px' : undefined,
       }}
     >
       {isVisible && (
-        <ins
-          ref={insRef}
-          className="adsbygoogle"
-          style={{ display: 'block', textAlign: 'center', width: '100%' }}
-          data-ad-client="ca-pub-5993975585691806"
-          data-ad-slot={slotId}
-          data-ad-format="auto"
-          data-full-width-responsive="true"
-        ></ins>
+        <ins ref={insRef} {...(insProps as any)} />
       )}
     </div>
   );
