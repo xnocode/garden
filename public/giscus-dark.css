@@ -1,5 +1,5 @@
 /*
- * Giscus Dark Theme — Matches the Digital Garden design system
+ * Giscus Dark Theme (v2) — Matches the Digital Garden design system
  * Background: #0a0a0c | Surface: #101013 | Accent: #84a59d (sage-teal)
  */
 
@@ -192,44 +192,41 @@ body, html {
   gap: 8px !important;
 }
 
-/* ── All Buttons ───────────────────────────────────────────────────────── */
-.btn, button.btn,
-.gsc-comment-box-bottom .btn,
-.gsc-login-button,
-[class*="btn-"] {
+/* ── All Buttons (base) ───────────────────────────────────────────────── */
+.btn,
+button.btn {
   border-radius: 8px !important;
   font-size: 13px !important;
   font-weight: 600 !important;
   padding: 6px 14px !important;
   cursor: pointer !important;
-  transition: all 0.15s ease !important;
+  transition: background 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease !important;
   border: 1px solid rgba(255,255,255,0.10) !important;
   background: #161619 !important;
   color: #dcdce0 !important;
 }
 
-/* Primary / Submit / Sign-in Button */
+/* Primary / Sign-in Button — higher specificity (.btn.btn-primary = 0,2,0 vs .btn = 0,1,0) */
+.btn.btn-primary,
+a.btn-primary,
 .btn-primary,
-.gsc-login-button,
-[type="submit"].btn {
+.gsc-login-button {
   background: #84a59d !important;
   border-color: #84a59d !important;
   color: #0a0a0c !important;
   border-radius: 8px !important;
   font-weight: 700 !important;
   letter-spacing: 0.01em !important;
-  transition: background 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease !important;
-  transform: none !important;
 }
 
+.btn.btn-primary:hover,
+a.btn-primary:hover,
 .btn-primary:hover,
-.gsc-login-button:hover,
-[type="submit"].btn:hover {
+.gsc-login-button:hover {
   background: #6b9990 !important;
   border-color: #6b9990 !important;
   color: #0a0a0c !important;
   box-shadow: 0 2px 8px rgba(132,165,157,0.30) !important;
-  transform: none !important;
 }
 
 /* Secondary / Ghost Button */

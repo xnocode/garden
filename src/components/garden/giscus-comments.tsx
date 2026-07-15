@@ -25,12 +25,11 @@ export function GiscusComments() {
   const isDemo = !process.env.NEXT_PUBLIC_GISCUS_REPO;
 
   useEffect(() => {
-    // 1. In secure production HTTPS, load the stylesheet directly from the host.
-    // 2. In unsecure local HTTP localhost, load the stylesheet via a secure HTTPS proxy of your GitHub repository
-    //    to bypass browser Mixed Content security blocks (which prevent loading HTTP styles inside HTTPS Giscus).
+    // CSS files always live in xnocode/garden regardless of which Giscus repo/sandbox is used
+    const cssRepo = "xnocode/garden";
     const giscusTheme = origin && origin.startsWith("https")
-      ? `${origin}/giscus-${theme}-v2.css`
-      : `https://raw.githubusercontent.com/${repo}/main/public/giscus-${theme}-v2.css`;
+      ? `${origin}/giscus-${theme}.css`
+      : `https://raw.githubusercontent.com/${cssRepo}/main/public/giscus-${theme}.css`;
 
     const iframe = document.querySelector<HTMLIFrameElement>("iframe.giscus-frame");
 
