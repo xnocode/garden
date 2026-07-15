@@ -500,9 +500,10 @@ export function NoteView({ note }: { note: NoteDetail }) {
             className="garden-prose max-w-[72ch]"
             dangerouslySetInnerHTML={{ __html: html }}
           />
-          {/* Code block runner — adds Run buttons to runnable code blocks */}
           <CodeBlockRunner key={note.slug} />
-          <AdBanner slotId="5327787791" />
+          <div className="mt-8">
+            <AdBanner slotId="5327787791" />
+          </div>
         </div>
 
         {/* Right rail: TOC */}
@@ -566,6 +567,11 @@ export function NoteView({ note }: { note: NoteDetail }) {
           <Backlinks backlinks={note.backlinks} currentSlug={note.slug} />
         </div>
       )}
+
+      {/* Ad between backlinks and comments */}
+      <div className="mt-8">
+        <AdBanner slotId="5327787791" />
+      </div>
 
       {/* Giscus Comments Section */}
       <div className="mt-8">
