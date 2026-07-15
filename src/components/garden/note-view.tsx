@@ -26,6 +26,7 @@ import { Backlinks } from "./backlinks";
 import { RelatedNotes } from "./related-notes";
 import { useRecordVisit } from "./reading-history";
 import { CodeBlockRunner } from "./code-block-runner";
+import { GiscusComments } from "./giscus-comments";
 
 
 interface PreviewData {
@@ -566,7 +567,10 @@ export function NoteView({ note }: { note: NoteDetail }) {
         </div>
       )}
 
-
+      {/* Giscus Comments Section */}
+      <div className="mt-8">
+        <GiscusComments />
+      </div>
 
       {/* Stats footer */}
       <footer className="mt-10 flex flex-wrap items-center justify-between gap-3 rounded-lg border border-border/60 bg-surface/20 px-4 py-3 text-xs text-muted-foreground">
