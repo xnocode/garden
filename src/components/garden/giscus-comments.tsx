@@ -28,9 +28,10 @@ export function GiscusComments() {
     // 1. In secure production HTTPS, load the stylesheet directly from the host.
     // 2. In unsecure local HTTP localhost, load the stylesheet via a secure HTTPS proxy of your GitHub repository
     //    to bypass browser Mixed Content security blocks (which prevent loading HTTP styles inside HTTPS Giscus).
+    const cacheBuster = Date.now();
     const giscusTheme = origin && origin.startsWith("https")
-      ? `${origin}/giscus-${theme}.css`
-      : `https://raw.githack.com/${repo}/main/public/giscus-${theme}.css`;
+      ? `${origin}/giscus-${theme}.css?v=${cacheBuster}`
+      : `https://raw.githack.com/${repo}/main/public/giscus-${theme}.css?v=${cacheBuster}`;
 
     const iframe = document.querySelector<HTMLIFrameElement>("iframe.giscus-frame");
 
