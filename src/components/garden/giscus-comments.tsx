@@ -31,7 +31,7 @@ export function GiscusComments() {
     const cacheBuster = Date.now();
     const giscusTheme = origin && origin.startsWith("https")
       ? `${origin}/giscus-${theme}.css?v=${cacheBuster}`
-      : `https://raw.githack.com/${repo}/main/public/giscus-${theme}.css?v=${cacheBuster}`;
+      : `https://raw.githubusercontent.com/${repo}/main/public/giscus-${theme}.css?v=${cacheBuster}`;
 
     const iframe = document.querySelector<HTMLIFrameElement>("iframe.giscus-frame");
 
