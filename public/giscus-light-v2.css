@@ -1,0 +1,328 @@
+/*
+ * Giscus Light Theme (v2) — Matches the Digital Garden design system
+ * Background: #faf8f8 | Surface: #ffffff | Accent: #84a59d (sage-teal)
+ */
+
+/* ── Core GitHub Primer Design Tokens ─────────────────────────────────── */
+main {
+  /* Canvas / Backgrounds */
+  --color-canvas-default:        #faf8f8;
+  --color-canvas-subtle:         #ffffff;
+  --color-canvas-inert:          #f2f0ef;
+  --color-canvas-overlay:        #ffffff;
+
+  /* Borders */
+  --color-border-default:        rgba(0,0,0,0.09);
+  --color-border-muted:          rgba(0,0,0,0.07);
+  --color-border-subtle:         rgba(0,0,0,0.05);
+
+  /* Foreground / Text */
+  --color-fg-default:            #2b2b2b;
+  --color-fg-muted:              #6a6a72;
+  --color-fg-subtle:             #909098;
+  --color-fg-on-emphasis:        #faf8f8;
+
+  /* Accent — Sage Teal */
+  --color-accent-fg:             #5a8f88;
+  --color-accent-emphasis:       #5a8f88;
+  --color-accent-muted:          rgba(90,143,136,0.25);
+  --color-accent-subtle:         rgba(90,143,136,0.10);
+
+  /* Misc state colors */
+  --color-success-fg:            #09ad7a;
+  --color-success-emphasis:      #09ad7a;
+  --color-success-subtle:        rgba(9,173,122,0.10);
+  --color-danger-fg:             #c7373f;
+  --color-danger-emphasis:       #c7373f;
+  --color-danger-subtle:         rgba(199,55,63,0.10);
+  --color-attention-fg:          #b35c00;
+  --color-neutral-muted:         rgba(0,0,0,0.05);
+  --color-neutral-subtle:        rgba(0,0,0,0.03);
+
+  /* Social / Reactions */
+  --color-social-reaction-bg-reacted:      rgba(90,143,136,0.12);
+  --color-social-reaction-bg-hover:        rgba(0,0,0,0.04);
+
+  /* Inputs */
+  --color-input-bg:              #ffffff;
+  --color-input-disabled-bg:     rgba(0,0,0,0.04);
+  --color-btn-bg:                #f2f0ef;
+  --color-btn-border:            rgba(0,0,0,0.12);
+  --color-btn-shadow:            none;
+  --color-btn-text:              #2b2b2b;
+
+  /* Primary Button */
+  --color-btn-primary-bg:        #84a59d;
+  --color-btn-primary-border:    #84a59d;
+  --color-btn-primary-text:      #ffffff;
+  --color-btn-primary-hover-bg:  #5a8f88;
+
+  /* Font */
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+  font-size: 14px;
+  color: #2b2b2b;
+  background: transparent;
+}
+
+/* ── Page-level background ─────────────────────────────────────────────── */
+body, html {
+  background: transparent !important;
+}
+
+/* ── Reactions section ─ completely hidden for cleaner look ──────────────── */
+.gsc-reactions {
+  display: none !important;
+}
+
+/* ── Comments count header ─────────────────────────────────────────────── */
+.gsc-comments-count,
+.gsc-header {
+  color: #2b2b2b !important;
+  font-size: 14px !important;
+  font-weight: 600 !important;
+}
+
+/* ── Individual Comment cards ──────────────────────────────────────────── */
+.gsc-comment,
+.gsc-reply {
+  background: #ffffff !important;
+  border: 1px solid rgba(0,0,0,0.08) !important;
+  border-radius: 12px !important;
+  margin-bottom: 10px !important;
+  overflow: hidden !important;
+}
+
+.gsc-comment-header,
+.gsc-reply-header {
+  background: #f2f0ef !important;
+  border-bottom: 1px solid rgba(0,0,0,0.06) !important;
+  padding: 10px 14px !important;
+}
+
+.gsc-comment-content,
+.gsc-reply-content {
+  padding: 12px 14px !important;
+  color: #2b2b2b !important;
+  font-size: 14px !important;
+  line-height: 1.6 !important;
+}
+
+.gsc-author-association-badge,
+[data-catalyst],
+.Label {
+  border-radius: 9999px !important;
+  font-size: 10px !important;
+  font-weight: 500 !important;
+  padding: 1px 8px !important;
+  background: rgba(90,143,136,0.10) !important;
+  border: 1px solid rgba(90,143,136,0.22) !important;
+  color: #5a8f88 !important;
+}
+
+/* ── Textarea / Comment Box ────────────────────────────────────────────── */
+.gsc-comment-box {
+  background: #ffffff !important;
+  border: 1px solid rgba(0,0,0,0.09) !important;
+  border-radius: 12px !important;
+  overflow: hidden !important;
+}
+
+.gsc-comment-box-tabs {
+  background: #f2f0ef !important;
+  border-bottom: 1px solid rgba(0,0,0,0.07) !important;
+  padding: 0 8px !important;
+}
+
+.gsc-comment-box-tabs .tab-button,
+.gsc-comment-box-tabs button,
+.gsc-comment-box-tabs .tabnav-tab {
+  color: #6a6a72 !important;
+  background: transparent !important;
+  border: none !important;
+  border-radius: 6px 6px 0 0 !important;
+  padding: 8px 12px !important;
+  font-size: 13px !important;
+  font-weight: 500 !important;
+  transition: color 0.15s ease !important;
+}
+
+.gsc-comment-box-tabs button[aria-selected="true"],
+.gsc-comment-box-tabs .tabnav-tab.selected {
+  color: #5a8f88 !important;
+  border-bottom: 2px solid #5a8f88 !important;
+}
+
+.gsc-comment-box-main textarea,
+.gsc-comment-box-textarea {
+  background: #faf8f8 !important;
+  color: #2b2b2b !important;
+  border: none !important;
+  resize: vertical !important;
+  font-size: 14px !important;
+  line-height: 1.6 !important;
+  padding: 12px !important;
+  min-height: 100px !important;
+  outline: none !important;
+}
+
+.gsc-comment-box-main textarea::placeholder,
+.gsc-comment-box-textarea::placeholder {
+  color: #909098 !important;
+}
+
+.gsc-comment-box-main textarea:focus,
+.gsc-comment-box-textarea:focus {
+  outline: none !important;
+  box-shadow: inset 0 0 0 1px rgba(90,143,136,0.35) !important;
+}
+
+.gsc-comment-box-bottom {
+  background: #f2f0ef !important;
+  border-top: 1px solid rgba(0,0,0,0.06) !important;
+  padding: 10px 12px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-end !important;
+  gap: 8px !important;
+}
+
+/* ── All Buttons ───────────────────────────────────────────────────────── */
+.btn, button.btn,
+.gsc-comment-box-bottom .btn,
+.gsc-login-button,
+[class*="btn-"] {
+  border-radius: 8px !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  padding: 6px 14px !important;
+  cursor: pointer !important;
+  transition: all 0.15s ease !important;
+  border: 1px solid rgba(0,0,0,0.12) !important;
+  background: #f2f0ef !important;
+  color: #2b2b2b !important;
+}
+
+/* Primary / Submit / Sign-in Button (High specificity to prevent overlap) */
+.gsc-comment-box-bottom .btn-primary,
+.gsc-comment-box-bottom .gsc-login-button,
+.btn-primary,
+.gsc-login-button,
+[type="submit"].btn {
+  background: #84a59d !important;
+  border-color: #84a59d !important;
+  color: #ffffff !important;
+  border-radius: 8px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.01em !important;
+  transition: background 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease !important;
+  transform: none !important;
+}
+
+.gsc-comment-box-bottom .btn-primary:hover,
+.gsc-comment-box-bottom .gsc-login-button:hover,
+.btn-primary:hover,
+.gsc-login-button:hover,
+[type="submit"].btn:hover {
+  background: #6b9990 !important;
+  border-color: #6b9990 !important;
+  color: #ffffff !important;
+  box-shadow: 0 2px 8px rgba(90,143,136,0.25) !important;
+  transform: none !important;
+}
+
+/* Secondary / Ghost Button */
+.btn-invisible,
+.btn[data-action*="toggle"],
+.gsc-direct-reaction-button {
+  background: transparent !important;
+  border-color: transparent !important;
+  color: #6a6a72 !important;
+}
+
+.btn-invisible:hover,
+.gsc-direct-reaction-button:hover {
+  background: rgba(0,0,0,0.05) !important;
+  border-color: rgba(0,0,0,0.09) !important;
+  color: #2b2b2b !important;
+}
+
+/* ── Upvote / Reaction Row ─────────────────────────────────────────────── */
+.gsc-upvote-button {
+  border-radius: 9999px !important;
+  border: 1px solid rgba(0,0,0,0.09) !important;
+  background: transparent !important;
+  padding: 4px 10px !important;
+  color: #6a6a72 !important;
+  font-size: 12px !important;
+  transition: all 0.15s ease !important;
+}
+
+.gsc-upvote-button:hover {
+  background: rgba(90,143,136,0.08) !important;
+  border-color: rgba(90,143,136,0.25) !important;
+  color: #5a8f88 !important;
+}
+
+/* ── Popover / Dropdown menus ──────────────────────────────────────────── */
+.SelectMenu,
+.dropdown-menu,
+[class*="SelectMenu"] {
+  background: #ffffff !important;
+  border: 1px solid rgba(0,0,0,0.10) !important;
+  border-radius: 10px !important;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.12) !important;
+}
+
+/* ── Pagination ────────────────────────────────────────────────────────── */
+.gsc-pagination .btn {
+  border-radius: 8px !important;
+}
+
+/* ── Timeline / Thread line ────────────────────────────────────────────── */
+.gsc-tl-line {
+  background: rgba(0,0,0,0.08) !important;
+}
+
+/* ── Avatar ring ───────────────────────────────────────────────────────── */
+.avatar,
+.avatar-user,
+img.avatar {
+  border-radius: 9999px !important;
+  border: 1.5px solid rgba(0,0,0,0.08) !important;
+}
+
+/* ── Links ─────────────────────────────────────────────────────────────── */
+a {
+  color: #5a8f88 !important;
+  text-decoration: none !important;
+  transition: color 0.15s ease !important;
+}
+
+a:hover {
+  color: #84a59d !important;
+  text-decoration: underline !important;
+}
+
+/* ── Markdown prose inside comments ────────────────────────────────────── */
+.markdown-body {
+  color: #2b2b2b !important;
+  background: transparent !important;
+  font-size: 14px !important;
+  line-height: 1.65 !important;
+}
+
+.markdown-body code,
+.markdown-body pre {
+  background: rgba(0,0,0,0.04) !important;
+  border: 1px solid rgba(0,0,0,0.08) !important;
+  border-radius: 6px !important;
+  color: #5a8f88 !important;
+}
+
+.markdown-body blockquote {
+  border-left: 3px solid #84a59d !important;
+  background: rgba(90,143,136,0.06) !important;
+  border-radius: 0 6px 6px 0 !important;
+  padding: 8px 14px !important;
+  color: #6a6a72 !important;
+}
