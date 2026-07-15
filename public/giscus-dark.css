@@ -251,15 +251,18 @@ body, html {
   border-radius: 8px !important;
   font-weight: 700 !important;
   letter-spacing: 0.01em !important;
+  transition: background 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease !important;
+  transform: none !important;
 }
 
 .btn-primary:hover,
 .gsc-login-button:hover,
 [type="submit"].btn:hover {
-  background: #a8cdb6 !important;
-  border-color: #a8cdb6 !important;
-  box-shadow: 0 4px 12px rgba(132,165,157,0.25) !important;
-  transform: translateY(-1px) !important;
+  background: #6b9990 !important;
+  border-color: #6b9990 !important;
+  color: #0a0a0c !important;
+  box-shadow: 0 2px 8px rgba(132,165,157,0.30) !important;
+  transform: none !important;
 }
 
 /* Secondary / Ghost Button */
