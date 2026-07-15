@@ -69,95 +69,9 @@ body, html {
   background: transparent !important;
 }
 
-/* ── The main reactions section ────────────────────────────────────────── */
+/* ── Reactions section ─ completely hidden for cleaner look ──────────────── */
 .gsc-reactions {
-  background: transparent !important;
-  border: none !important;
-  padding: 0 0 12px 0 !important;
-  margin-bottom: 4px !important;
-  display: flex !important;
-  align-items: center !important;
-  gap: 8px !important;
-  flex-wrap: wrap !important;
-}
-
-/* Hide the "0 reactions" label and the lonely smiley when there are no reactions */
-.gsc-reactions-count {
   display: none !important;
-}
-
-/* The reaction summary row (shows emoji + count pills after someone reacts) */
-.gsc-reactions-count-item {
-  display: inline-flex !important;
-  align-items: center !important;
-  gap: 4px !important;
-  background: rgba(0,0,0,0.04) !important;
-  border: 1px solid rgba(0,0,0,0.09) !important;
-  border-radius: 9999px !important;
-  padding: 3px 10px !important;
-  font-size: 12px !important;
-  color: #6a6a72 !important;
-  cursor: pointer !important;
-  transition: all 0.15s ease !important;
-  user-select: none !important;
-}
-
-.gsc-reactions-count-item:hover {
-  background: rgba(90,143,136,0.08) !important;
-  border-color: rgba(90,143,136,0.25) !important;
-  color: #5a8f88 !important;
-}
-
-.gsc-reactions-count-item.has-reacted,
-.gsc-social-reaction-summary-item.has-reacted {
-  background: rgba(90,143,136,0.12) !important;
-  border-color: rgba(90,143,136,0.35) !important;
-  color: #5a8f88 !important;
-  font-weight: 600 !important;
-}
-
-/* The "add reaction" smiley button — make it a clean icon-only pill */
-.gsc-direct-reaction-button,
-.gsc-reactions > button:not(.gsc-reactions-count-item) {
-  background: transparent !important;
-  border: 1px solid rgba(0,0,0,0.09) !important;
-  border-radius: 9999px !important;
-  color: #909098 !important;
-  padding: 3px 8px !important;
-  font-size: 14px !important;
-  cursor: pointer !important;
-  transition: all 0.15s ease !important;
-  display: inline-flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-}
-
-.gsc-direct-reaction-button:hover,
-.gsc-reactions > button:not(.gsc-reactions-count-item):hover {
-  background: rgba(90,143,136,0.08) !important;
-  border-color: rgba(90,143,136,0.22) !important;
-  color: #5a8f88 !important;
-}
-
-/* Reaction social summary items (the emoji pill list) */
-.gsc-social-reaction-summary-item {
-  background: rgba(0,0,0,0.04) !important;
-  border: 1px solid rgba(0,0,0,0.09) !important;
-  border-radius: 9999px !important;
-  padding: 3px 10px !important;
-  font-size: 12px !important;
-  color: #6a6a72 !important;
-  transition: all 0.15s ease !important;
-  cursor: pointer !important;
-  display: inline-flex !important;
-  align-items: center !important;
-  gap: 4px !important;
-}
-
-.gsc-social-reaction-summary-item:hover {
-  background: rgba(90,143,136,0.08) !important;
-  border-color: rgba(90,143,136,0.22) !important;
-  color: #5a8f88 !important;
 }
 
 /* ── Comments count header ─────────────────────────────────────────────── */
