@@ -8,6 +8,7 @@ tags:
   - aiml
 prev: "[[python-first-program]]"
 next: "[[python-variables]]"
+author: xnocode
 aliases:
   - character set
 ---

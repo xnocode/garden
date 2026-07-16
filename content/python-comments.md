@@ -8,6 +8,7 @@ tags:
   - python
 prev: "[[python-keywords]]"
 next: "[[python-style-guide]]"
+author: xnocode
 aliases:
   - comments
 ---
@@ -32,4 +33,4 @@ often used as a multi-line comment
 
 >[!note] Note
 >Python officially supports single-line comments using `#`.
->Multi-line comments are usually written using multiple `#` or triple quotes (`""" """`).
+>Multi-line comments are usually written using multiple `#` or triple quotes (`""" """`)/(`''' '''`)

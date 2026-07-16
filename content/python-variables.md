@@ -8,16 +8,11 @@ tags:
   - aiml
 prev: "[[python-character-set]]"
 next: "[[python-indentation]]"
+author: xnocode
 aliases:
   - variables
 ---
 Variables are like containers where we can store data.
-
-```python
-name = "xnocode"
-age = 24
-PI = 3.1416
-```
 
 | variable | data    |
 | -------- | ------- |
@@ -32,13 +27,9 @@ age = 25
 PI = 3.1416
 
 print(name)
-
-print(name, age, PI)
-
+print(age, PI)
 print("my name is:", name)
-
 print("my age is:", age)
-
 print("my age is:", age - 5)
 ```
 

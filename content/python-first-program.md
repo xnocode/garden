@@ -8,6 +8,7 @@ tags:
   - aiml
 prev: "[[prerequisites-tools-for-ai-ml]]"
 next: "[[python-character-set]]"
+author: xnocode
 aliases:
   - first program
 ---

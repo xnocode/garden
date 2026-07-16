@@ -8,6 +8,7 @@ tags:
   - python
 prev: "[[python-type-function]]"
 next: "[[python-comments]]"
+author: xnocode
 aliases:
   - keywords
 ---

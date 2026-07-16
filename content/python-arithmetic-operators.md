@@ -8,6 +8,7 @@ tags:
   - python
 prev: "[[python-operators]]"
 next: "[[python-relational-or-comparison]]"
+author: xnocode
 aliases:
   - arithmetic
 ---
@@ -32,10 +33,10 @@ print(a % b)
 `a ** b` → power operator (a raised to the power of b)
 
 
->[!attention] 
+>[!attention] Attention
 >`^` is not a power operator in Python. It is a bitwise operator.
 
-> [!question]  
+> [!question] Question
 > Write a program in Python to find the sum of two numbers
 
 ```python

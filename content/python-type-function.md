@@ -8,6 +8,7 @@ tags:
   - python
 prev: "[[python-data-types]]"
 next: "[[python-keywords]]"
+author: xnocode
 aliases:
   - type() function
 ---
@@ -15,7 +16,7 @@ We can check the data type of a variable using the `type()` function.
 
 ```python
 name = "xnocode"
-age = 35
+age = 24
 PI = 3.14
 
 isPrime = True
@@ -28,5 +29,5 @@ print(type(isPrime))
 print(type(isNone))
 ```
 
->[!note]
+>[!note] Note
 >`type()` returns the data type of a variable.

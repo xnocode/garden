@@ -1,5 +1,5 @@
 ---
-title: python-relational-or-comparison
+title: Python Relational Or Comparison
 description: Comparison operators compare two values and return a boolean result.
 draft: false
 date: 2026-07-16
@@ -7,8 +7,9 @@ tags:
   - aiml
   - python
 prev: "[[python-arithmetic-operators]]"
-next: ""
+next: "[[python-assignment-operators]]"
 aliases:
+  - relational
 ---
 ```text
 a == b
@@ -33,5 +34,6 @@ print(a != b)
 print(a == b)
 ```
 
->[!attention] 
+>[!attention] Attention
 >Comparison operators always return a Boolean value (`True` or `False`).
+

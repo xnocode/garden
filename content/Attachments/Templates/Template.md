@@ -1,10 +1,12 @@
 ---
 title: "{{title}}"
 description:
-author: ""
+author: xnocode
 draft: true
 date: "{{date:YYYY-MM-DD}}"
-tags: []
+tags:
+  - aiml
+  - python
 prev: ""
 next: ""
 aliases:

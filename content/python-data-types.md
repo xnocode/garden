@@ -19,7 +19,7 @@ These are the fundamental data types in Python:
 - Boolean → `True`, `False`
 - None → represents no value
 
-```python
+```text
 age = 25          # Integer
 price = 9.99      # Float
 name = "xnocode"  # String
