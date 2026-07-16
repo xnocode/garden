@@ -11,14 +11,14 @@ aliases:
   - AI & ML
 ---
 ```contributionGraph
-title: Contributions
+title: AI & ML
 graphType: default
 dateRangeValue: 180
 dateRangeType: FIXED_DATE_RANGE
 startOfWeek: 0
 showCellRuleIndicators: true
 titleStyle:
-  textAlign: left
+  textAlign: center
   fontSize: 15px
   fontWeight: normal
 dataSource:
