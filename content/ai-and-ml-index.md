@@ -40,14 +40,23 @@ cellStyleRules: []
 | 1.  | [[ai-and-ml-introduction]]        |
 | 1.1 | [[prerequisites-tools-for-ai-ml]] |
 
-| No  | Python                    |
-| --- | ------------------------- |
-| 2   | [[python-first-program]]  |
-| 2.1 | [[python-character-set]]  |
-| 2.2 | [[python-variables]]      |
-| 2.3 | [[python-indentation]]    |
-| 2.4 | [[python-case-sensitive]] |
-| 2.5 | [[python-data-types]]     |
-| 2.6 | [[python-type-function]]  |
-| 2.7 | [[python-keywords]]       |
-|     |                           |
+| No   | Python                              |
+| ---- | ----------------------------------- |
+| 2    | [[python-first-program]]            |
+| 2.1  | [[python-character-set]]            |
+| 2.2  | [[python-variables]]                |
+| 2.3  | [[python-indentation]]              |
+| 2.4  | [[python-case-sensitive]]           |
+| 2.5  | [[python-data-types]]               |
+| 2.6  | [[python-type-function]]            |
+| 2.7  | [[python-keywords]]                 |
+| 2.8  | [[python-comments]]                 |
+| 2.9  | [[python-style-guide]]              |
+| 2.10 | [[python-operators]]                |
+| 2.11 | [[python-arithmetic-operators]]     |
+| 2.12 | [[python-relational-or-comparison]] |
+| 2.13 | [[python-assignment-operators]]     |
+| 2.14 | [[python-logical-operators]]        |
+| 2.15 | [[python-operator-precedence]]      |
+| 2.16 | [[python-type-conversion]]          |
+| 2.17 |                                     |
