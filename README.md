@@ -1,6 +1,6 @@
 # 🌱 Garden
 
-> *A personal digital garden — a quiet place to think, write, and grow ideas in public.*
+> *A personal digital garden a quiet place to think, write, and grow ideas in public.*
 
 ---
 
@@ -39,4 +39,4 @@ There's no right way to explore. Pick whatever feels natural:
 
 > **Not sure where to start?** Open `welcome-to-the-garden` — it's the front door.
 
-*If a note feels incomplete, it probably is. That's the texture of a garden — things are always mid-growth.*
+*If a note feels incomplete, it probably is. That's the texture of a garden... things are always mid-growth.*
