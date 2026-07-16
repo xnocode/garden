@@ -39,26 +39,4 @@ There's no right way to explore. Pick whatever feels natural:
 
 > **Not sure where to start?** Open `welcome-to-the-garden` — it's the front door.
 
----
-
-## Running Locally
-
-```bash
-# Install dependencies
-bun install
-
-# Start the dev server
-bun run dev
-```
-
-The app runs at `http://localhost:3000`.
-
----
-
-## Tech Stack
-
-Built with **Next.js**, **TypeScript**, **Tailwind CSS**, **Prisma**, and **MDX** — notes are written in plain Markdown and rendered with full support for math, diagrams, and syntax highlighting.
-
----
-
 *If a note feels incomplete, it probably is. That's the texture of a garden — things are always mid-growth.*
