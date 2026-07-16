@@ -156,6 +156,8 @@ export function CommandPalette() {
     return () => window.removeEventListener("keydown", onKey);
   }, [setSearchOpen, searchOpen]);
 
+  const resultsContainerRef = useRef<HTMLDivElement>(null);
+
   // Focus on open
   useEffect(() => {
     if (searchOpen) {
@@ -165,6 +167,19 @@ export function CommandPalette() {
       }, 30);
     }
   }, [searchOpen]);
+
+  // Keep active result scrolled into view during keyboard navigation
+  useEffect(() => {
+    if (results.length > 0 && activeIdx >= 0 && resultsContainerRef.current) {
+      const activeEl = resultsContainerRef.current.children[activeIdx] as HTMLElement;
+      if (activeEl) {
+        activeEl.scrollIntoView({
+          block: "nearest",
+          behavior: "auto",
+        });
+      }
+    }
+  }, [activeIdx, results.length]);
 
   // Instant search via Flexsearch — computed with useMemo (synchronous, no
   // effect needed). The index lookup is fast enough to run on every render.
@@ -291,7 +306,10 @@ export function CommandPalette() {
         </div>
 
         {/* Results */}
-        <div className="max-h-[52vh] overflow-y-auto styled-scroll p-2">
+        <div
+          ref={resultsContainerRef}
+          className="max-h-[52vh] overflow-y-auto styled-scroll p-2"
+        >
           {!query.trim() ? (
             <div className="px-3 py-10 text-center text-sm text-muted-foreground">
               <p className="mb-1 font-medium text-foreground">
