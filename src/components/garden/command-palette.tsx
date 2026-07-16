@@ -137,8 +137,8 @@ export function CommandPalette() {
   const [query, setQuery] = useState("");
   const [active, setActive] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
-  const indexData = useSearchIndex();
-  const indexReady = !!indexData;
+  const searchIndex = useSearchIndex();
+  const indexReady = !!searchIndex;
   const loading = searchOpen && !indexReady;
 
   // Global Cmd+K / Ctrl+K
@@ -184,10 +184,10 @@ export function CommandPalette() {
   // Instant search via Flexsearch — computed with useMemo (synchronous, no
   // effect needed). The index lookup is fast enough to run on every render.
   const results = useMemo<SearchResult[]>(() => {
-    if (!searchOpen || !indexData) return [];
+    if (!searchOpen || !searchIndex) return [];
     const q = query.trim();
     if (!q) return [];
-    const { index, entries } = indexData;
+    const { index, entries } = searchIndex;
     // FlexSearch 0.8: index.search(query, { index: "fieldname" }) returns
     // [{ field, result: [id, id, ...] }]
     const titleRes = index.search(q, { index: "title", limit: 20 }) as Array<{ result: string[] }>;
@@ -233,7 +233,7 @@ export function CommandPalette() {
       });
     }
     return out;
-  }, [query, searchOpen, indexData]);
+  }, [query, searchOpen, searchIndex]);
 
   // Clamp active index when results shrink (e.g. user backspaces)
   const activeIdx = Math.min(active, Math.max(0, results.length - 1));
