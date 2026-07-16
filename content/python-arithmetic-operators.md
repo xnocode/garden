@@ -1,8 +1,8 @@
 ---
 title: Python Arithmetic Operators
 description: Arithmetic operators perform mathematical operations on numeric operands.
-draft: true
-date: 2026-07-11
+draft: false
+date: 2026-07-16
 tags:
   - aiml
   - python

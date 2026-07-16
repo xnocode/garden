@@ -1,7 +1,7 @@
 ---
 title: Python First Program
 description: Learn how to write, run, and understand your first Python program.
-draft: true
+draft: false
 date: 2026-07-16
 tags:
   - python

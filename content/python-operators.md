@@ -1,8 +1,8 @@
 ---
 title: Python Operators
 description: Operators are symbols or keywords that perform operations on one or more operands.
-draft: true
-date: 2026-07-11
+draft: false
+date: 2026-07-16
 tags:
   - aiml
   - python

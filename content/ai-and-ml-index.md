@@ -1,5 +1,5 @@
 ---
-draft: true
+draft: false
 tags:
   - aiml
 date: 2026-07-16
@@ -11,7 +11,7 @@ aliases:
   - AI & ML
 ---
 ```contributionGraph
-title: Al & ML
+title: Contributions
 graphType: default
 dateRangeValue: 180
 dateRangeType: FIXED_DATE_RANGE
@@ -28,10 +28,11 @@ dataSource:
 fillTheScreen: false
 enableMainContainerShadow: false
 fromDate: 2026-07-16
-toDate: 2026-12-31
+toDate: 2026-11-16
 cellStyleRules: []
 
 ```
+
 
 | No  | AI & ML                           |
 | --- | --------------------------------- |

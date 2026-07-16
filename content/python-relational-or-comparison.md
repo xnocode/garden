@@ -1,8 +1,8 @@
 ---
 title: python-relational-or-comparison
 description: Comparison operators compare two values and return a boolean result.
-draft: true
-date: 2026-07-11
+draft: false
+date: 2026-07-16
 tags:
   - aiml
   - python
