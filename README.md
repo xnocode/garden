@@ -1,40 +1,64 @@
-# 🌱 Garden — A Digital Garden
+# 🌱 Garden
 
-> *A quiet, growing collection of notes, essays, and half-formed thoughts. Wander freely.*
-
----
-
-## What This Is
-
-This is my personal digital garden — not a blog, not a portfolio. It's a living space where I think slowly, in public. Notes here are interconnected by ideas, not sorted by date. Some are polished essays; others are seedlings still taking shape. Nothing is ever truly "finished," and that's the point.
+> *A personal digital garden — a quiet place to think, write, and grow ideas in public.*
 
 ---
 
-## What You'll Find
+## What Is This?
 
-| Type | Description |
+Garden is a personal knowledge space — somewhere between a notebook, a blog, and a mind map. It's not sorted by date or polished for an audience. Instead, it's a living collection of notes that grow and connect over time.
+
+Some notes are complete essays. Others are rough seedlings still taking shape. That's intentional — a garden is never truly "finished."
+
+---
+
+## What's Inside
+
+| Section | What You'll Find |
 |---|---|
-| **Essays** | Long-form thinking on knowledge, writing, memory, and the mind |
-| **C++ / DSA** | Programming reference notes and competitive programming walkthroughs |
-| **Python** | Language references, explorations, and code playgrounds |
-| **PHP** | Server-side notes and indexed references |
-| **AI & ML** | Index notes and prerequisite maps for machine learning |
-| **Remote Work** | Guides and research on working remotely |
-| **Personal** | Reflections, dreams, things I want to experience — the unstructured side |
-| **Meta Notes** | Notes *about* the garden itself — how it works, why it exists |
+| 📝 **Essays** | Long-form thoughts on knowledge, writing, memory, and the mind |
+| 💻 **C++ / DSA** | Programming references and competitive programming notes |
+| 🐍 **Python** | Language deep-dives, experiments, and code explorations |
+| 🌐 **PHP** | Server-side references and indexed notes |
+| 🤖 **AI & ML** | Machine learning concepts, prerequisite maps, and ideas |
+| 🏠 **Remote Work** | Research and practical guides on working remotely |
+| 🪴 **Personal** | Reflections, dreams, things I want to explore — the unstructured side |
+| 🗺️ **Meta Notes** | Notes *about* the garden itself — how it's built and why it exists |
 
 ---
 
-## How to Read It
+## How to Navigate
 
-There's no right path. You can:
+There's no right way to explore. Pick whatever feels natural:
 
-- **Search** (`Ctrl+K` or `⌘K`) — Find any note by keyword instantly
-- **Graph** — Explore the visual map of how ideas connect to each other
-- **Backlinks** — See every note that references the one you're currently reading
-- **Tags** — Browse notes grouped by theme
+- **`Ctrl+K` / `⌘K`** — Open the command palette and search any note by keyword
+- **Graph View** — See a visual map of how ideas connect to each other
+- **Backlinks** — Discover every note that references the one you're reading
+- **Tags** — Browse notes grouped by theme or topic
 - **Wikilinks** — Click any `[[linked term]]` inside a note and follow the thread
 
-Not sure where to start? Open `welcome-to-the-garden` — it's the front door.
+> **Not sure where to start?** Open `welcome-to-the-garden` — it's the front door.
 
-If a note feels incomplete, it probably is. That's the texture of a garden — things are always mid-growth.
+---
+
+## Running Locally
+
+```bash
+# Install dependencies
+bun install
+
+# Start the dev server
+bun run dev
+```
+
+The app runs at `http://localhost:3000`.
+
+---
+
+## Tech Stack
+
+Built with **Next.js**, **TypeScript**, **Tailwind CSS**, **Prisma**, and **MDX** — notes are written in plain Markdown and rendered with full support for math, diagrams, and syntax highlighting.
+
+---
+
+*If a note feels incomplete, it probably is. That's the texture of a garden — things are always mid-growth.*
