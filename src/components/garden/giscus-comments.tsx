@@ -23,11 +23,13 @@ export function GiscusComments() {
   const categoryId = process.env.NEXT_PUBLIC_GISCUS_CATEGORY_ID || "DIC_kwDOTIfJWs4DBHk1";
 
   useEffect(() => {
-    // CSS always lives in xnocode/garden regardless of Giscus repo/sandbox
-    const cssRepo = "xnocode/garden";
-    const giscusTheme = origin && origin.startsWith("https")
-      ? `${origin}/giscus-${theme}.css`
-      : `https://raw.githubusercontent.com/${cssRepo}/main/public/giscus-${theme}.css`;
+    // Always use the local CSS file — this avoids a flash of the default
+    // white-border GitHub theme that occurred when origin was empty on first
+    // render and the fallback raw.githubusercontent.com URL was used instead.
+    // We wait until origin is set so we always have an absolute URL for Giscus.
+    if (!origin) return;
+
+    const giscusTheme = `${origin}/giscus-${theme}.css`;
 
     const iframe = document.querySelector<HTMLIFrameElement>("iframe.giscus-frame");
 
