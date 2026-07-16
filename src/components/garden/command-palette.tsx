@@ -148,10 +148,10 @@ export function CommandPalette() {
     const q = query.trim();
     if (!q) return [];
     const { index, entries } = searchIndex;
-    const titleRes = index.search(q, { index: "title", limit: 20 }) as Array<{ result: string[] }>;
-    const descRes = index.search(q, { index: "desc", limit: 20 }) as Array<{ result: string[] }>;
-    const tagRes = index.search(q, { index: "tags", limit: 20 }) as Array<{ result: string[] }>;
-    const pathRes = index.search(q, { index: "path", limit: 10 }) as Array<{ result: string[] }>;
+    const titleRes = index.search(q, { index: "title", limit: 1000 }) as Array<{ result: string[] }>;
+    const descRes = index.search(q, { index: "desc", limit: 1000 }) as Array<{ result: string[] }>;
+    const tagRes = index.search(q, { index: "tags", limit: 1000 }) as Array<{ result: string[] }>;
+    const pathRes = index.search(q, { index: "path", limit: 1000 }) as Array<{ result: string[] }>;
     const flatten = (res: Array<{ result: string[] }>): string[] =>
       res.flatMap((r) => r.result || []);
     const titleIds = flatten(titleRes);
@@ -170,8 +170,7 @@ export function CommandPalette() {
     addResults(descIds, 4);
     addResults(pathIds, 2);
     const ranked = Array.from(scores.entries())
-      .sort((a, b) => b[1] - a[1])
-      .slice(0, 15);
+      .sort((a, b) => b[1] - a[1]);
     const out: SearchResult[] = [];
     for (const [slug] of ranked) {
       const entry = entries.get(slug);
