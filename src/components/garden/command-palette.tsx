@@ -207,6 +207,7 @@ export function CommandPalette() {
   }, [setSearchOpen, searchOpen]);
 
   const resultsContainerRef = useRef<HTMLDivElement>(null);
+  const itemRefs = useRef<(HTMLButtonElement | null)[]>([]);
 
   // Focus on open
   useEffect(() => {
@@ -218,17 +219,27 @@ export function CommandPalette() {
     }
   }, [searchOpen]);
 
-  // Keep active result scrolled into view during keyboard navigation
+  // Smooth scroll: keep active item visible within the scrollable container.
+  // Uses manual scrollTop calculation so we never jump the page — only the
+  // palette list scrolls, and only when the item is outside the visible area.
   useEffect(() => {
-    if (results.length > 0 && activeIdx >= 0 && resultsContainerRef.current) {
-      const activeEl = resultsContainerRef.current.children[activeIdx] as HTMLElement;
-      if (activeEl) {
-        activeEl.scrollIntoView({
-          block: "nearest",
-          behavior: "auto",
-        });
-      }
+    const container = resultsContainerRef.current;
+    const el = itemRefs.current[activeIdx];
+    if (!container || !el || results.length === 0) return;
+
+    const containerTop = container.scrollTop;
+    const containerBottom = containerTop + container.clientHeight;
+    const elTop = el.offsetTop;
+    const elBottom = elTop + el.offsetHeight;
+
+    if (elBottom > containerBottom) {
+      // Item is below the visible area — scroll down just enough
+      container.scrollTo({ top: elBottom - container.clientHeight + 8, behavior: "smooth" });
+    } else if (elTop < containerTop) {
+      // Item is above the visible area — scroll up just enough
+      container.scrollTo({ top: elTop - 8, behavior: "smooth" });
     }
+    // else: item already visible — don't scroll at all
   }, [activeIdx, results.length]);
 
 
@@ -334,21 +345,29 @@ export function CommandPalette() {
             results.map((r, i) => (
               <button
                 key={r.slug}
+                ref={(el) => { itemRefs.current[i] = el; }}
                 onMouseEnter={() => setActive(i)}
                 onClick={() => go(r.slug)}
-                className={`w-full rounded-md px-3 py-2.5 text-left transition-colors ${
-                  i === activeIdx ? "bg-garden/10" : "hover:bg-surface"
+                style={{ transition: "background-color 150ms ease, color 150ms ease" }}
+                className={`w-full rounded-md px-3 py-2.5 text-left ${
+                  i === activeIdx
+                    ? "bg-garden/10 ring-1 ring-garden/20"
+                    : "hover:bg-surface"
                 }`}
               >
                 <div className="flex items-center gap-2">
                   <FileText
-                    className={`h-3.5 w-3.5 flex-shrink-0 ${
+                    className={`h-3.5 w-3.5 flex-shrink-0 transition-colors duration-150 ${
                       i === activeIdx
                         ? "text-garden"
                         : "text-muted-foreground/60"
                     }`}
                   />
-                  <span className="font-medium text-sm text-foreground truncate">
+                  <span
+                    className={`font-medium text-sm truncate transition-colors duration-150 ${
+                      i === activeIdx ? "text-garden" : "text-foreground"
+                    }`}
+                  >
                     {r.title}
                   </span>
                   {r.path && (
