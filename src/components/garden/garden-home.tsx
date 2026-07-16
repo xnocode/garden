@@ -1,8 +1,4 @@
-"use client";
-
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
 import { Sprout, Search, Network, ArrowRight, BookOpen, Link2 } from "lucide-react";
 import type { NoteSummary, TagInfo, GraphData } from "@/lib/notes";
 import { NoteCard } from "./note-card";
@@ -10,6 +6,7 @@ import { TagCloud } from "./tag-cloud";
 import { GraphViewWrapper } from "./graph-view-wrapper";
 import { SearchTrigger } from "./search-trigger";
 import { OnThisDay } from "./on-this-day";
+import { WanderButton } from "./wander-button";
 
 interface HomeData {
   recent: NoteSummary[];
@@ -41,8 +38,6 @@ function Stat({ value, label }: { value: string | number; label: string }) {
 }
 
 export function GardenHome({ data }: { data: HomeData }) {
-  const router = useRouter();
-  const [loading, setLoading] = useState(false);
   const { recent, featured, tags, graph, onThisDay, stats } = data;
   const lastUpdated = stats.lastUpdated
     ? new Date(stats.lastUpdated).toLocaleDateString("en-US", {
@@ -51,26 +46,6 @@ export function GardenHome({ data }: { data: HomeData }) {
         year: "numeric",
       })
     : null;
-
-  const startWandering = async () => {
-    setLoading(true);
-    try {
-      const res = await fetch("/api/random");
-      if (!res.ok) throw new Error();
-      const data = await res.json();
-      if (data.slug) {
-        router.push(`/?p=${encodeURIComponent(data.slug)}`);
-      }
-    } catch {
-      if (featured[0]) {
-        router.push(`/?p=${encodeURIComponent(featured[0].slug)}`);
-      } else {
-        router.push("/?view=index");
-      }
-    } finally {
-      setLoading(false);
-    }
-  };
 
   return (
     <div className="garden-fade-in">
@@ -123,14 +98,7 @@ export function GardenHome({ data }: { data: HomeData }) {
             Not a blog. Not a wiki. Just a garden where ideas are planted, revisited, and connected over time. Wander the paths between thoughts.
           </p>
           <div className="mt-9 flex flex-wrap items-center justify-center gap-3">
-            <button
-              onClick={startWandering}
-              disabled={loading}
-              className="btn-glow inline-flex items-center gap-2 rounded-md bg-garden px-6 py-2.5 text-sm font-medium text-garden-foreground disabled:opacity-50"
-            >
-              <Sprout className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />
-              Start wandering
-            </button>
+            <WanderButton featuredSlug={featured[0]?.slug} />
             <SearchTrigger className="inline-flex items-center gap-2 rounded-md border border-border bg-surface/60 px-6 py-2.5 text-sm font-medium text-foreground transition-colors hover:border-garden/40 hover:bg-surface">
               <Search className="h-4 w-4" />
               Search notes
