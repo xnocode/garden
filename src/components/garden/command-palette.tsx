@@ -141,6 +141,56 @@ export function CommandPalette() {
   const indexReady = !!searchIndex;
   const loading = searchOpen && !indexReady;
 
+  // Instant search via Flexsearch — computed with useMemo (synchronous, no
+  // effect needed). The index lookup is fast enough to run on every render.
+  const results = useMemo<SearchResult[]>(() => {
+    if (!searchOpen || !searchIndex) return [];
+    const q = query.trim();
+    if (!q) return [];
+    const { index, entries } = searchIndex;
+    const titleRes = index.search(q, { index: "title", limit: 20 }) as Array<{ result: string[] }>;
+    const descRes = index.search(q, { index: "desc", limit: 20 }) as Array<{ result: string[] }>;
+    const tagRes = index.search(q, { index: "tags", limit: 20 }) as Array<{ result: string[] }>;
+    const pathRes = index.search(q, { index: "path", limit: 10 }) as Array<{ result: string[] }>;
+    const flatten = (res: Array<{ result: string[] }>): string[] =>
+      res.flatMap((r) => r.result || []);
+    const titleIds = flatten(titleRes);
+    const descIds = flatten(descRes);
+    const tagIds = flatten(tagRes);
+    const pathIds = flatten(pathRes);
+    const scores = new Map<string, number>();
+    const addResults = (ids: string[], weight: number) => {
+      for (let i = 0; i < ids.length; i++) {
+        const s = weight * (1 - i / Math.max(ids.length, 1));
+        scores.set(ids[i], (scores.get(ids[i]) ?? 0) + s);
+      }
+    };
+    addResults(titleIds, 10);
+    addResults(tagIds, 6);
+    addResults(descIds, 4);
+    addResults(pathIds, 2);
+    const ranked = Array.from(scores.entries())
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 15);
+    const out: SearchResult[] = [];
+    for (const [slug] of ranked) {
+      const entry = entries.get(slug);
+      if (!entry) continue;
+      out.push({
+        slug: entry.slug,
+        title: entry.title,
+        description: entry.description,
+        tags: entry.tags,
+        snippet: buildSnippet(q, entry),
+        path: entry.path,
+      });
+    }
+    return out;
+  }, [query, searchOpen, searchIndex]);
+
+  // Clamp active index when results shrink (e.g. user backspaces)
+  const activeIdx = Math.min(active, Math.max(0, results.length - 1));
+
   // Global Cmd+K / Ctrl+K
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -181,62 +231,7 @@ export function CommandPalette() {
     }
   }, [activeIdx, results.length]);
 
-  // Instant search via Flexsearch — computed with useMemo (synchronous, no
-  // effect needed). The index lookup is fast enough to run on every render.
-  const results = useMemo<SearchResult[]>(() => {
-    if (!searchOpen || !searchIndex) return [];
-    const q = query.trim();
-    if (!q) return [];
-    const { index, entries } = searchIndex;
-    // FlexSearch 0.8: index.search(query, { index: "fieldname" }) returns
-    // [{ field, result: [id, id, ...] }]
-    const titleRes = index.search(q, { index: "title", limit: 20 }) as Array<{ result: string[] }>;
-    const descRes = index.search(q, { index: "desc", limit: 20 }) as Array<{ result: string[] }>;
-    const tagRes = index.search(q, { index: "tags", limit: 20 }) as Array<{ result: string[] }>;
-    const pathRes = index.search(q, { index: "path", limit: 10 }) as Array<{ result: string[] }>;
-    // Flatten: each search returns [{ field, result: [id, id, ...] }]
-    const flatten = (res: Array<{ result: string[] }>): string[] =>
-      res.flatMap((r) => r.result || []);
 
-    const titleIds = flatten(titleRes);
-    const descIds = flatten(descRes);
-    const tagIds = flatten(tagRes);
-    const pathIds = flatten(pathRes);
-
-    const scores = new Map<string, number>();
-    const addResults = (ids: string[], weight: number) => {
-      for (let i = 0; i < ids.length; i++) {
-        const s = weight * (1 - i / Math.max(ids.length, 1));
-        scores.set(ids[i], (scores.get(ids[i]) ?? 0) + s);
-      }
-    };
-    addResults(titleIds, 10);
-    addResults(tagIds, 6);
-    addResults(descIds, 4);
-    addResults(pathIds, 2);
-
-    const ranked = Array.from(scores.entries())
-      .sort((a, b) => b[1] - a[1])
-      .slice(0, 15);
-
-    const out: SearchResult[] = [];
-    for (const [slug] of ranked) {
-      const entry = entries.get(slug);
-      if (!entry) continue;
-      out.push({
-        slug: entry.slug,
-        title: entry.title,
-        description: entry.description,
-        tags: entry.tags,
-        snippet: buildSnippet(q, entry),
-        path: entry.path,
-      });
-    }
-    return out;
-  }, [query, searchOpen, searchIndex]);
-
-  // Clamp active index when results shrink (e.g. user backspaces)
-  const activeIdx = Math.min(active, Math.max(0, results.length - 1));
 
   const go = useCallback(
     (slug: string) => {
