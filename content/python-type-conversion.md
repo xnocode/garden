@@ -8,7 +8,7 @@ tags:
   - aiml
   - python
 prev: "[[python-operator-precedence]]"
-next: ""
+next: "[[python-user-input]]"
 aliases:
   - conversion
 ---

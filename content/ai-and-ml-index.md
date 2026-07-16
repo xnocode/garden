@@ -19,7 +19,7 @@ dateRangeType: FIXED_DATE_RANGE
 startOfWeek: 0
 showCellRuleIndicators: true
 titleStyle:
-  textAlign: center
+  textAlign: left
   fontSize: 15px
   fontWeight: normal
 dataSource:
@@ -59,4 +59,9 @@ cellStyleRules: []
 | 2.14 | [[python-logical-operators]]        |
 | 2.15 | [[python-operator-precedence]]      |
 | 2.16 | [[python-type-conversion]]          |
-| 2.17 |                                     |
+| 2.17 | [[python-user-input]]               |
+| 2.18 | [[python-conditional-statements]]   |
+| 2.19 | [[python-if-statements]]            |
+| 2.20 | [[python-if-else-statements]]       |
+| 2.21 | [[python-elif-statements]]          |
+|      |                                     |
