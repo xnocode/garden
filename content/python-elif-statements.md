@@ -8,7 +8,7 @@ tags:
   - aiml
   - python
 prev: "[[python-if-else-statements]]"
-next: ""
+next: "[[python-nesting]]"
 aliases:
   - elif
 ---
@@ -26,7 +26,7 @@ else:
 
 Syntax:
 
-```python
+```text
 if condition1:
     print(" ")
 elif condition2:
