@@ -1,5 +1,5 @@
 ---
-title: python-break
+title: Python Break
 description:
 author: xnocode
 draft: false

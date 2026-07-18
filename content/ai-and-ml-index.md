@@ -64,4 +64,10 @@ cellStyleRules: []
 | 2.19 | [[python-if-statements]]            |
 | 2.20 | [[python-if-else-statements]]       |
 | 2.21 | [[python-elif-statements]]          |
-|      |                                     |
+| 2.22 | [[python-nesting]]                  |
+| 2.23 | [[python-match-case]]               |
+| 2.24 | [[python-loops]]                    |
+| 2.25 | [[python-while-loop]]               |
+| 2.26 | [[python-break]]                    |
+| 2.27 | [[python-continue]]                 |
+
