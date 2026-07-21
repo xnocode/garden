@@ -1,5 +1,5 @@
 ---
-draft: false
+draft: true
 tags:
   - thoughts
 date: 2026-06-21
