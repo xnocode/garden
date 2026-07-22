@@ -1,14 +1,13 @@
 ---
-title: Software Engineering & System Analysis Lab
-description: University lecture notes for Software Engineering & System Analysis Lab.
+title: CSE 0613226 | Software Engineering & System Analysis Lab
+description: Notes from my university Software Engineering & System Analysis Lab course.
 author: xnocode
 draft: false
 date: 2026-07-22
 tags:
   - "#university"
-  - "#sesal"
 prev: ""
-next: ""
+next: "[[data-communication-cse0612223]]"
 aliases:
   - class notes
 ---
@@ -52,4 +51,6 @@ aliases:
 #### Slides
 - Chapter 01: [Introduction](https://docs.google.com/presentation/d/1C2PRe3bFO-KkEoFxvDNJ_Gox7QVgbuuV/edit?usp=drive_link&ouid=101274052281868405023&rtpof=true&sd=true)
 - Chapter 02: [Software Processes ](https://docs.google.com/presentation/d/10f-c7gm5FWG15ny2JdhnbypHR1EPXBy0/edit?usp=drive_link&ouid=101274052281868405023&rtpof=true&sd=true)
+
+
 
