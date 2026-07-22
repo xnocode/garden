@@ -1,5 +1,5 @@
 ---
-title: CSE0 613225 | Software Engineering & System Analysis
+title: CSE0613225 | Software Engineering & System Analysis
 description: Notes from my university Software Engineering & System Analysis course.
 author: xnocode
 draft: false

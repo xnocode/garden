@@ -1,5 +1,5 @@
 ---
-title: " CSE 0612223 | Data Communication"
+title: " CSE0612223 | Data Communication"
 description: Notes from my university Data Communication course.
 author: xnocode
 draft: false
