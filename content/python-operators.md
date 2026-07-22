@@ -8,7 +8,7 @@ tags:
   - python
 prev: "[[python-style-guide]]"
 next: "[[python-arithmetic-operators]]"
-author: xnocode
+author: Ridoy
 aliases:
   - operators
 ---

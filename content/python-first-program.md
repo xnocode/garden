@@ -8,14 +8,14 @@ tags:
   - aiml
 prev: "[[prerequisites-tools-for-ai-ml]]"
 next: "[[python-character-set]]"
-author: xnocode
+author: Ridoy
 aliases:
   - first program
 ---
 In Python, this is the first program we are writing where we print something on the screen. So we created our first file here,
 
 ```python
-print("xnocode")
+print("Ridoy")
 ```
 
 `print()` → a **function** used to display output in the console

@@ -8,14 +8,14 @@ tags:
   - python
 prev: "[[python-data-types]]"
 next: "[[python-keywords]]"
-author: xnocode
+author: Ridoy
 aliases:
   - type() function
 ---
 We can check the data type of a variable using the `type()` function.
 
 ```python
-name = "xnocode"
+name = "Ridoy"
 age = 24
 PI = 3.14
 

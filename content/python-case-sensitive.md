@@ -14,7 +14,7 @@ aliases:
 Python is a case-sensitive language. This means uppercase and lowercase letters are treated as different.
 
 ```python
-name = "xnocode"
+name = "Ridoy"
 Name = "python"
 
 print(name)

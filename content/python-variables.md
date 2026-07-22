@@ -8,7 +8,7 @@ tags:
   - aiml
 prev: "[[python-character-set]]"
 next: "[[python-indentation]]"
-author: xnocode
+author: Ridoy
 aliases:
   - variables
 ---
@@ -16,13 +16,13 @@ Variables are like containers where we can store data.
 
 | variable | data    |
 | -------- | ------- |
-| name     | xnocode |
+| name     | Ridoy |
 | age      | 24      |
 | PI       | 3.1416  |
 Inside memory, it stores data like this.
 
 ```python
-name = "xnocode"
+name = "Ridoy"
 age = 25
 PI = 3.1416
 

@@ -20,7 +20,7 @@ aliases:
 
 ```python
 tot_price = 100
-full_name = "xnocode"
+full_name = "Ridoy"
 ```
 
 >[!note] Note

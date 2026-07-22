@@ -1,7 +1,7 @@
 ---
 title: "{{title}}"
 description:
-author: xnocode
+author: Ridoy
 draft: true
 date: "{{date:YYYY-MM-DD}}"
 tags:

@@ -3,7 +3,7 @@ draft: false
 tags:
   - thoughts
 date: 2026-06-16
-author: xnocode
+author: Ridoy
 title: Eye of Tree
 description: Family is where love, support, and lifelong relationships begin.
 prev: ""

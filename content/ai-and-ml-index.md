@@ -9,7 +9,7 @@ prev: ""
 next: "[[ai-and-ml-introduction]]"
 aliases:
   - AI & ML
-author: xnocode
+author: Ridoy
 ---
 ```contributionGraph
 title: AI & ML

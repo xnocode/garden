@@ -3,7 +3,7 @@ draft: false
 tags:
   - life
 date: 2026-04-18
-author: xnocode
+author: Ridoy
 title: Things Want to Experience
 description: This is a collection of my goals, dreams, and ideas that I want to accomplish over time. It helps me stay focused, motivated, and organized.
 prev: ""

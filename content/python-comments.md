@@ -8,7 +8,7 @@ tags:
   - python
 prev: "[[python-keywords]]"
 next: "[[python-style-guide]]"
-author: xnocode
+author: Ridoy
 aliases:
   - comments
 ---

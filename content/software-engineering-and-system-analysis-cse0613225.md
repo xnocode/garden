@@ -1,7 +1,7 @@
 ---
 title: CSE0613225 | Software Engineering & System Analysis
 description: Notes from my university Software Engineering & System Analysis course.
-author: xnocode
+author: Ridoy
 draft: false
 date: 2026-07-22
 tags:

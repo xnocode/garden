@@ -8,7 +8,7 @@ tags:
   - python
 prev: "[[python-operators]]"
 next: "[[python-relational-or-comparison]]"
-author: xnocode
+author: Ridoy
 aliases:
   - arithmetic
 ---

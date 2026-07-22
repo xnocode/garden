@@ -7,7 +7,7 @@ tags:
   - about
 prev: ""
 next: ""
-author: xnocode
+author: Ridoy
 aliases:
   - keep learning
 ---
@@ -16,7 +16,7 @@ aliases:
 
 The more I learn, the more I realize how much I don't know. You've just stumbled into my public second brain a living, evolving collection of everything. I'm learning, building, breaking, and figuring out.
 
-I'm **xnocode**, a free-style learner. This garden is where my deep dives and experiments live together connected, searchable, and always growing. If a concept clicked for me, it's probably here. If I'm still figuring something out, that's here too.
+I'm **Ridoy**, a free-style learner. This garden is where my deep dives and experiments live together connected, searchable, and always growing. If a concept clicked for me, it's probably here. If I'm still figuring something out, that's here too.
 
 >[!warning] Warning
 >If you can’t access a folder or file, it simply means it’s **private**, you don’t have permission to view it.

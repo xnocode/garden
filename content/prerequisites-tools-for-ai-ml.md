@@ -9,7 +9,7 @@ prev: "[[ai-and-ml-introduction]]"
 next: "[[python-first-program]]"
 aliases:
   - aiml
-author: xnocode
+author: Ridoy
 ---
 Before learning **Artificial Intelligence (AI)** and **Machine Learning (ML)**, you need a few essential tools to write, run, and manage your code. These tools provide everything required to build, train, and test machine learning models.
 

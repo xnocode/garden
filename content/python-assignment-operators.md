@@ -1,7 +1,7 @@
 ---
 title: Python Assignment Operators
 description:
-author: xnocode
+author: Ridoy
 draft: false
 date: 2026-07-16
 tags:

@@ -3,7 +3,7 @@ draft: true
 tags:
   - thoughts
 date: 2026-06-21
-author: xnocode
+author: Ridoy
 title: Entering Hell
 description: Every journey into darkness begins with a single step.
 prev: ""

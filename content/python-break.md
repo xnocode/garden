@@ -1,7 +1,7 @@
 ---
 title: Python Break
 description:
-author: xnocode
+author: Ridoy
 draft: false
 date: 2026-07-18
 tags:

@@ -8,7 +8,7 @@ tags:
   - aiml
 prev: "[[python-first-program]]"
 next: "[[python-variables]]"
-author: xnocode
+author: Ridoy
 aliases:
   - character set
 ---

@@ -22,7 +22,7 @@ These are the fundamental data types in Python:
 ```text
 age = 25          # Integer
 price = 9.99      # Float
-name = "xnocode"  # String
+name = "Ridoy"  # String
 is_active = True  # Boolean
 data = None       # None
 ```
