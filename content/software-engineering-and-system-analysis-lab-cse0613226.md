@@ -28,7 +28,7 @@ aliases:
 - **Product**
 - **Testing**
 
-### ==4 Phases of Software Development==
+### 4 Phases of Software Development
 
 1. Specification    
 2. Design & Development
