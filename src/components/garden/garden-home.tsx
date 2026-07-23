@@ -1,3 +1,8 @@
+/**
+ * Copyright (c) 2026 xnocode. All rights reserved.
+ * Source-Available License applies. See LICENSE file in repository root.
+ */
+
 import Link from "next/link";
 import { Sprout, Search, Network, ArrowRight, BookOpen, Link2 } from "lucide-react";
 import type { NoteSummary, TagInfo, GraphData } from "@/lib/notes";

@@ -1,3 +1,8 @@
+/**
+ * Copyright (c) 2026 xnocode. All rights reserved.
+ * Source-Available License applies. See LICENSE file in repository root.
+ */
+
 import Link from "next/link";
 import { Sprout, Rss, Network, BookMarked, Github } from "lucide-react";
 
@@ -56,7 +61,7 @@ export function SiteFooter({ noteCount }: { noteCount: number }) {
           </a>
         </div>
         <div className="text-xs text-muted-foreground/70 font-mono">
-          © {year} · grown with care
+          © {year} xnocode · All Rights Reserved
         </div>
       </div>
     </footer>
