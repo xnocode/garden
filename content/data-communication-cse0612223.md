@@ -5,7 +5,7 @@ author: Ridoy
 draft: false
 date: 2026-07-22
 tags:
-  - "#university"
+  - university
 prev: "[[software-engineering-and-system-analysis-lab-cse0613226]]"
 next: ""
 aliases:
