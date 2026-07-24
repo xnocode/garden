@@ -201,54 +201,37 @@ export async function POST(req: Request) {
 
       const safe = escapeHtml(fileName);
 
-      // Send initial status message
+      // Send ONE status message — we'll edit it ONCE when done
       const msgId = await sendMsg(token, chatId,
-        `⏳ <b>Publishing Note...</b>\n\n📄 <code>${safe}</code>\n\n<i>📥 Downloading file from Telegram...</i>`
+        `⏳ <b>Publishing Note...</b>\n\n📄 <code>${safe}</code>\n\n<i>Downloading, committing &amp; deploying...</i>`
       );
       if (!msgId) return NextResponse.json({ ok: true });
-      await delay(800);
 
       try {
-        // Download file from Telegram
-        await safeEdit(token, chatId, msgId,
-          `⏳ <b>Publishing Note...</b>\n\n📄 <code>${safe}</code>\n\n<i>📥 Getting file info...</i>`
-        );
-
+        // 1. Get file from Telegram
         const fileRes = await tgFetch(`https://api.telegram.org/bot${token}/getFile?file_id=${doc.file_id}`);
         const fileData = await fileRes.json();
 
         if (!fileData.ok || !fileData.result?.file_path) {
           await safeEdit(token, chatId, msgId,
-            `❌ <b>Upload Failed</b>\n\n📄 <code>${safe}</code>\n\n<i>Could not get file from Telegram.</i>`
+            `❌ <b>Failed</b>\n\n📄 <code>${safe}</code>\n\n<i>Could not get file from Telegram.</i>`
           );
           return NextResponse.json({ ok: true });
         }
 
-        await safeEdit(token, chatId, msgId,
-          `⏳ <b>Publishing Note...</b>\n\n📄 <code>${safe}</code>\n\n<i>📦 Downloading content...</i>`
-        );
-
+        // 2. Download content
         const contentRes = await tgFetch(`https://api.telegram.org/file/bot${token}/${fileData.result.file_path}`);
         const fileContent = await contentRes.text();
 
-        // Commit to GitHub
-        await safeEdit(token, chatId, msgId,
-          `⏳ <b>Publishing Note...</b>\n\n📄 <code>${safe}</code>\n\n<i>🚀 Pushing to GitHub...</i>`
-        );
-
+        // 3. Save + commit to GitHub (this is the slow part)
         const result = await saveTelegramNote(fileName, fileContent);
         const slug = result.fileName.replace(/\.md$/, "").replace(/\.markdown$/, "");
         const rawLiveUrl = `https://gardenx.qzz.io/?p=${encodeURIComponent(slug)}`;
         const safeLiveUrl = escapeHtml(rawLiveUrl);
         const pushed = result.githubStatus?.includes("Committed to GitHub") || false;
 
+        // 4. Edit the SAME message with final result
         if (pushed) {
-          await safeEdit(token, chatId, msgId,
-            `⏳ <b>Publishing Note...</b>\n\n📄 <code>${safe}</code>\n\n<i>🌐 Deploying to website...</i>`
-          );
-          await delay(800);
-
-          // Final success — same message
           await safeEdit(token, chatId, msgId,
             `✅ <b>Published!</b>\n\n` +
             `📄 <code>${escapeHtml(result.fileName)}</code>\n` +
@@ -354,9 +337,9 @@ export async function POST(req: Request) {
       if (!target) { await sendMsg(token, chatId, "⚠️ Usage: <code>/delete filename.md</code>"); return NextResponse.json({ ok: true }); }
       const safe = escapeHtml(target);
 
-      // Send initial status message
+      // Send initial status message — edited ONCE at the end
       const delId = await sendMsg(token, chatId,
-        `⏳ <b>Deleting Note...</b>\n\n📄 <code>${safe}</code>\n\n<i>🔍 Finding note...</i>`
+        `⏳ <b>Deleting Note...</b>\n\n📄 <code>${safe}</code>\n\n<i>Deleting note from repository &amp; website...</i>`
       );
       if (!delId) {
         const r = await deleteTelegramNote(target);
@@ -367,30 +350,24 @@ export async function POST(req: Request) {
         return NextResponse.json({ ok: true });
       }
 
-      await delay(800);
+      try {
+        const r = await deleteTelegramNote(target);
 
-      await safeEdit(token, chatId, delId,
-        `⏳ <b>Deleting Note...</b>\n\n📄 <code>${safe}</code>\n\n<i>🗑️ Removing from GitHub...</i>`
-      );
-
-      const r = await deleteTelegramNote(target);
-
-      if (r.success) {
+        if (r.success) {
+          await safeEdit(token, chatId, delId,
+            `🗑️ <b>Deleted!</b>\n\n` +
+            `📄 <code>${escapeHtml(r.deletedFile || target)}</code>\n` +
+            `✅ Removed from GitHub &amp; garden.\n\n` +
+            `<i>⏳ Vercel will rebuild in ~1 min.</i>`
+          );
+        } else {
+          await safeEdit(token, chatId, delId,
+            `❌ <b>Delete Failed</b>\n\n📄 <code>${safe}</code>\n\n<i>${escapeHtml(r.message)}</i>`
+          );
+        }
+      } catch (err: any) {
         await safeEdit(token, chatId, delId,
-          `⏳ <b>Deleting Note...</b>\n\n📄 <code>${safe}</code>\n\n<i>🌐 Triggering rebuild...</i>`
-        );
-        await delay(800);
-
-        // Final success — same message
-        await safeEdit(token, chatId, delId,
-          `🗑️ <b>Deleted!</b>\n\n` +
-          `📄 <code>${escapeHtml(r.deletedFile || target)}</code>\n` +
-          `✅ Removed from GitHub &amp; garden.\n\n` +
-          `<i>⏳ Vercel will rebuild in ~1 min.</i>`
-        );
-      } else {
-        await safeEdit(token, chatId, delId,
-          `❌ <b>Delete Failed</b>\n\n📄 <code>${safe}</code>\n\n<i>${escapeHtml(r.message)}</i>`
+          `❌ <b>Delete Failed</b>\n\n📄 <code>${safe}</code>\n\n<i>${escapeHtml(err?.message || "Timeout")}</i>`
         );
       }
 
