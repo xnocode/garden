@@ -24,18 +24,7 @@ const MAIN_KEYBOARD = {
   persistent: true,
 };
 
-function renderProgressBar(percent: number): string {
-  const total = 10;
-  const filled = Math.round((percent / 100) * total);
-  const empty = total - filled;
-  return `[${"█".repeat(filled)}${"░".repeat(empty)}] ${percent}%`;
-}
 
-const SPINNERS = ["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"];
-
-function spin(i: number): string {
-  return SPINNERS[i % SPINNERS.length];
-}
 
 function delay(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -212,52 +201,39 @@ export async function POST(req: Request) {
 
       const safe = escapeHtml(fileName);
 
-      // ── STEP 1: Send initial message @ 0% ──
+      // Send initial status message
       const msgId = await sendMsg(token, chatId,
-        `⠋ <b>Publishing Note...</b>\n\n` +
-        `<code>${renderProgressBar(0)}</code>\n` +
-        `<i>Starting upload...</i>\n\n` +
-        `📄 <code>${safe}</code>`
+        `⏳ <b>Publishing Note...</b>\n\n📄 <code>${safe}</code>\n\n<i>📥 Downloading file from Telegram...</i>`
       );
       if (!msgId) return NextResponse.json({ ok: true });
-
-      // Wait 700ms so Telegram registers the message before first edit
-      await delay(700);
+      await delay(800);
 
       try {
-        // ── STEP 2: 20% — Requesting file path ──
+        // Download file from Telegram
         await safeEdit(token, chatId, msgId,
-          `⠙ <b>Publishing Note...</b>\n\n` +
-          `<code>${renderProgressBar(20)}</code>\n` +
-          `<i>Getting file from Telegram...</i>\n\n` +
-          `📄 <code>${safe}</code>`
+          `⏳ <b>Publishing Note...</b>\n\n📄 <code>${safe}</code>\n\n<i>📥 Getting file info...</i>`
         );
 
         const fileRes = await tgFetch(`https://api.telegram.org/bot${token}/getFile?file_id=${doc.file_id}`);
         const fileData = await fileRes.json();
 
         if (!fileData.ok || !fileData.result?.file_path) {
-          await safeEdit(token, chatId, msgId, `❌ <b>Failed</b> — Could not get file from Telegram.`);
+          await safeEdit(token, chatId, msgId,
+            `❌ <b>Upload Failed</b>\n\n📄 <code>${safe}</code>\n\n<i>Could not get file from Telegram.</i>`
+          );
           return NextResponse.json({ ok: true });
         }
 
-        // ── STEP 3: 40% — Downloading content ──
         await safeEdit(token, chatId, msgId,
-          `⠼ <b>Publishing Note...</b>\n\n` +
-          `<code>${renderProgressBar(40)}</code>\n` +
-          `<i>Downloading file content...</i>\n\n` +
-          `📄 <code>${safe}</code>`
+          `⏳ <b>Publishing Note...</b>\n\n📄 <code>${safe}</code>\n\n<i>📦 Downloading content...</i>`
         );
 
         const contentRes = await tgFetch(`https://api.telegram.org/file/bot${token}/${fileData.result.file_path}`);
         const fileContent = await contentRes.text();
 
-        // ── STEP 4: 60% — Committing to GitHub ──
+        // Commit to GitHub
         await safeEdit(token, chatId, msgId,
-          `⠦ <b>Publishing Note...</b>\n\n` +
-          `<code>${renderProgressBar(60)}</code>\n` +
-          `<i>Committing to GitHub...</i>\n\n` +
-          `📄 <code>${safe}</code>`
+          `⏳ <b>Publishing Note...</b>\n\n📄 <code>${safe}</code>\n\n<i>🚀 Pushing to GitHub...</i>`
         );
 
         const result = await saveTelegramNote(fileName, fileContent);
@@ -267,42 +243,35 @@ export async function POST(req: Request) {
         const pushed = result.githubStatus?.includes("Committed to GitHub") || false;
 
         if (pushed) {
-          // ── STEP 5: 80% — Deploy triggered ──
           await safeEdit(token, chatId, msgId,
-            `⠏ <b>Publishing Note...</b>\n\n` +
-            `<code>${renderProgressBar(80)}</code>\n` +
-            `<i>Vercel deployment triggered...</i>\n\n` +
-            `📄 <code>${safe}</code>`
+            `⏳ <b>Publishing Note...</b>\n\n📄 <code>${safe}</code>\n\n<i>🌐 Deploying to website...</i>`
           );
-          await delay(600);
+          await delay(800);
 
-          // ── STEP 6: 100% — Done! ──
+          // Final success — same message
           await safeEdit(token, chatId, msgId,
-            `✅ <b>Published to Digital Garden!</b>\n\n` +
-            `<code>${renderProgressBar(100)}</code>\n\n` +
-            `📄 <b>File:</b> <code>${escapeHtml(result.fileName)}</code>\n` +
-            `📊 <b>Status:</b> ${result.isUpdate ? "✏️ Updated" : "🌱 New Note"} — Live ✓\n` +
-            `🔗 <b>Link:</b> <a href="${safeLiveUrl}">${safeLiveUrl}</a>\n\n` +
-            `<i>⏳ Vercel is building (~1 min). Tap below to open:</i>`,
-            { inline_keyboard: [[{ text: "🌐 Open Note on Website", url: rawLiveUrl }]] }
+            `✅ <b>Published!</b>\n\n` +
+            `📄 <code>${escapeHtml(result.fileName)}</code>\n` +
+            `📊 ${result.isUpdate ? "Updated" : "New note"} — live ✓\n` +
+            `🔗 <a href="${safeLiveUrl}">${safeLiveUrl}</a>\n\n` +
+            `<i>⏳ Building (~1 min). Tap below:</i>`,
+            { inline_keyboard: [[{ text: "🌐 Open Note", url: rawLiveUrl }]] }
           );
         } else {
           await safeEdit(token, chatId, msgId,
-            `⚠️ <b>Saved — GitHub Push Failed</b>\n\n` +
-            `<code>${renderProgressBar(50)}</code>\n\n` +
+            `⚠️ <b>GitHub Push Failed</b>\n\n` +
             `📄 <code>${escapeHtml(result.fileName)}</code>\n\n` +
-            `❌ <b>Reason:</b> <code>${escapeHtml(result.githubStatus || "Unknown error")}</code>\n\n` +
-            `💡 <i>Verify GITHUB_TOKEN is set in Vercel environment variables.</i>`
+            `❌ <code>${escapeHtml(result.githubStatus || "Unknown error")}</code>\n\n` +
+            `<i>Check GITHUB_TOKEN on Vercel.</i>`
           );
         }
       } catch (err: any) {
         await safeEdit(token, chatId, msgId,
-          `❌ <b>Upload Failed:</b> ${escapeHtml(err?.message || "Timeout or network error")}`
+          `❌ <b>Upload Failed</b>\n\n📄 <code>${safe}</code>\n\n<i>${escapeHtml(err?.message || "Timeout")}</i>`
         );
       }
 
       return NextResponse.json({ ok: true, file: fileName });
-
     }
 
     // ═══════════════════════════════════════
@@ -385,12 +354,9 @@ export async function POST(req: Request) {
       if (!target) { await sendMsg(token, chatId, "⚠️ Usage: <code>/delete filename.md</code>"); return NextResponse.json({ ok: true }); }
       const safe = escapeHtml(target);
 
-      // ── STEP 1: Send initial message @ 0% ──
+      // Send initial status message
       const delId = await sendMsg(token, chatId,
-        `⠋ <b>Deleting Note...</b>\n\n` +
-        `<code>${renderProgressBar(0)}</code>\n` +
-        `<i>Finding note in garden...</i>\n\n` +
-        `📄 <code>${safe}</code>`
+        `⏳ <b>Deleting Note...</b>\n\n📄 <code>${safe}</code>\n\n<i>🔍 Finding note...</i>`
       );
       if (!delId) {
         const r = await deleteTelegramNote(target);
@@ -401,43 +367,30 @@ export async function POST(req: Request) {
         return NextResponse.json({ ok: true });
       }
 
-      // Wait for Telegram to register the message
-      await delay(700);
+      await delay(800);
 
-      // ── STEP 2: 40% — Removing from GitHub ──
       await safeEdit(token, chatId, delId,
-        `⠼ <b>Deleting Note...</b>\n\n` +
-        `<code>${renderProgressBar(40)}</code>\n` +
-        `<i>Removing from GitHub repository...</i>\n\n` +
-        `📄 <code>${safe}</code>`
+        `⏳ <b>Deleting Note...</b>\n\n📄 <code>${safe}</code>\n\n<i>🗑️ Removing from GitHub...</i>`
       );
 
       const r = await deleteTelegramNote(target);
 
       if (r.success) {
-        // ── STEP 3: 80% — Rebuilding ──
         await safeEdit(token, chatId, delId,
-          `⠧ <b>Deleting Note...</b>\n\n` +
-          `<code>${renderProgressBar(80)}</code>\n` +
-          `<i>Triggering garden rebuild...</i>\n\n` +
-          `📄 <code>${safe}</code>`
+          `⏳ <b>Deleting Note...</b>\n\n📄 <code>${safe}</code>\n\n<i>🌐 Triggering rebuild...</i>`
         );
-        await delay(600);
+        await delay(800);
 
-        // ── STEP 4: 100% — Done ──
+        // Final success — same message
         await safeEdit(token, chatId, delId,
-          `🗑️ <b>Note Deleted!</b>\n\n` +
-          `<code>${renderProgressBar(100)}</code>\n\n` +
-          `📄 <b>File:</b> <code>${escapeHtml(r.deletedFile || target)}</code>\n` +
-          `✅ <b>Removed from GitHub &amp; garden.</b>\n\n` +
+          `🗑️ <b>Deleted!</b>\n\n` +
+          `📄 <code>${escapeHtml(r.deletedFile || target)}</code>\n` +
+          `✅ Removed from GitHub &amp; garden.\n\n` +
           `<i>⏳ Vercel will rebuild in ~1 min.</i>`
         );
       } else {
         await safeEdit(token, chatId, delId,
-          `❌ <b>Delete Failed</b>\n\n` +
-          `<code>${renderProgressBar(0)}</code>\n\n` +
-          `📄 <code>${safe}</code>\n\n` +
-          `<b>Reason:</b> ${escapeHtml(r.message)}`
+          `❌ <b>Delete Failed</b>\n\n📄 <code>${safe}</code>\n\n<i>${escapeHtml(r.message)}</i>`
         );
       }
 
