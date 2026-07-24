@@ -64,7 +64,8 @@ export function checkDuplicateNote(rawFileName: string): NoteItem | null {
  */
 export async function commitNoteToGitHub(
   fileName: string,
-  content: string
+  content: string,
+  skipCi: boolean = false
 ): Promise<{ success: boolean; message: string }> {
   const token = (process.env.GITHUB_TOKEN || process.env.GH_TOKEN || "").trim();
   if (!token) {
@@ -103,8 +104,12 @@ export async function commitNoteToGitHub(
 
     // 2. PUT file content (2.5s timeout)
     const base64Content = Buffer.from(content).toString("base64");
+    const commitMsg = skipCi 
+      ? `publish note via Telegram: ${fileName} [skip ci]`
+      : `publish note via Telegram: ${fileName}`;
+      
     const putBody: any = {
-      message: `publish note via Telegram: ${fileName}`,
+      message: commitMsg,
       content: base64Content,
     };
     if (sha) putBody.sha = sha;
@@ -216,7 +221,8 @@ export async function deleteNoteFromGitHub(
  */
 export async function saveTelegramNote(
   fileName: string,
-  content: string
+  content: string,
+  skipCi: boolean = false
 ): Promise<{ success: boolean; filePath: string; fileName: string; isUpdate: boolean; githubStatus?: string }> {
   const safeName = sanitizeFilename(fileName);
   const targetPath = path.join(CONTENT_DIR, safeName);
@@ -240,7 +246,7 @@ export async function saveTelegramNote(
   let githubStatus = "Saved locally";
   let committed = false;
   try {
-    const ghRes = await commitNoteToGitHub(safeName, content);
+    const ghRes = await commitNoteToGitHub(safeName, content, skipCi);
     if (ghRes.success) {
       githubStatus = "Committed to GitHub (Vercel deployment triggered)";
       committed = true;

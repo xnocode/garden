@@ -24,7 +24,7 @@ const MAIN_KEYBOARD = {
   persistent: true,
 };
 
-
+const recentMediaGroups = new Set<string>();
 
 function delay(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -64,63 +64,6 @@ async function sendMsg(
   } catch {
     return null;
   }
-}
-
-async function safeEdit(
-  token: string,
-  chatId: number | string,
-  msgId: number,
-  text: string,
-  markup?: any
-): Promise<boolean> {
-  const body: any = {
-    chat_id: chatId,
-    message_id: msgId,
-    parse_mode: "HTML",
-    text,
-    disable_web_page_preview: true,
-  };
-  if (markup) body.reply_markup = markup;
-
-  // Max 2 attempts, fast timeout (2.5s) to avoid Vercel timeouts
-  for (let attempt = 0; attempt < 2; attempt++) {
-    if (attempt > 0) await delay(500);
-    try {
-      const ctrl = new AbortController();
-      const t = setTimeout(() => ctrl.abort(), 2500);
-      const res = await fetch(`https://api.telegram.org/bot${token}/editMessageText`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(body),
-        signal: ctrl.signal,
-      });
-      clearTimeout(t);
-      const data = await res.json();
-
-      if (data?.ok) return true; // ✅ success
-
-      // 429 rate limit
-      if (data?.error_code === 429) {
-        const wait = ((data?.parameters?.retry_after) || 1) * 1000;
-        await delay(wait);
-        continue;
-      }
-
-      // "message is not modified" — treat as success
-      if (data?.description?.includes("not modified")) return true;
-
-      // HTML parse error — retry with plain text
-      if (data?.error_code === 400 && data?.description?.includes("parse")) {
-        body.text = text.replace(/<[^>]*>/g, "");
-        delete body.parse_mode;
-        continue;
-      }
-      break;
-    } catch {
-      // Retry on network/timeout error
-    }
-  }
-  return false; // ❌ failed to edit
 }
 
 
@@ -201,12 +144,6 @@ export async function POST(req: Request) {
 
       const safe = escapeHtml(fileName);
 
-      // Send ONE status message — we'll edit it ONCE when done
-      const msgId = await sendMsg(token, chatId,
-        `⏳ <b>Publishing Note...</b>\n\n📄 <code>${safe}</code>\n\n<i>Downloading, committing &amp; deploying...</i>`
-      );
-      if (!msgId) return NextResponse.json({ ok: true });
-
       after(async () => {
         try {
           // 1. Get file from Telegram
@@ -214,7 +151,7 @@ export async function POST(req: Request) {
           const fileData = await fileRes.json();
 
           if (!fileData.ok || !fileData.result?.file_path) {
-            await safeEdit(token, chatId, msgId,
+            await sendMsg(token, chatId,
               `❌ <b>Failed</b>\n\n📄 <code>${safe}</code>\n\n<i>Could not get file from Telegram.</i>`
             );
             return;
@@ -224,45 +161,33 @@ export async function POST(req: Request) {
           const contentRes = await tgFetch(`https://api.telegram.org/file/bot${token}/${fileData.result.file_path}`);
           const fileContent = await contentRes.text();
 
-          // 3. Save + commit to GitHub (this is the slow part)
-          const result = await saveTelegramNote(fileName, fileContent);
+          // Group logic to prevent multiple deployments
+          let skipCi = false;
+          if (message.media_group_id) {
+            if (recentMediaGroups.has(message.media_group_id)) {
+              skipCi = true; // Not the first file in the group, skip deployment
+            } else {
+              recentMediaGroups.add(message.media_group_id);
+              // Clean up memory after 1 minute
+              setTimeout(() => recentMediaGroups.delete(message.media_group_id), 60000);
+            }
+          }
+
+          // 3. Save + commit to GitHub
+          const result = await saveTelegramNote(fileName, fileContent, skipCi);
           const slug = result.fileName.replace(/\.md$/, "").replace(/\.markdown$/, "");
           const rawLiveUrl = `https://gardenx.qzz.io/?p=${encodeURIComponent(slug)}`;
           const safeLiveUrl = escapeHtml(rawLiveUrl);
           const pushed = result.githubStatus?.includes("Committed to GitHub") || false;
 
-          // 4. Edit the SAME message with final result
+          // 4. Send final result direct confirmation message
           if (pushed) {
-            const successText =
-              `✅ <b>Published!</b>\n\n` +
-              `📄 <code>${escapeHtml(result.fileName)}</code>\n` +
-              `📊 ${result.isUpdate ? "Updated" : "New note"} — live ✓\n` +
-              `🔗 <a href="${safeLiveUrl}">${safeLiveUrl}</a>\n\n` +
-              `<i>⏳ Building (~1 min). Tap below:</i>`;
-            const markup = { inline_keyboard: [[{ text: "🌐 Open Note", url: rawLiveUrl }]] };
-
-            const edited = await safeEdit(token, chatId, msgId, successText, markup);
-            if (!edited) {
-              await sendMsg(token, chatId, successText, markup);
-            }
+            await sendMsg(token, chatId, `✅ <b>Published!</b>`);
           } else {
-            const failText =
-              `⚠️ <b>GitHub Push Failed</b>\n\n` +
-              `📄 <code>${escapeHtml(result.fileName)}</code>\n\n` +
-              `❌ <code>${escapeHtml(result.githubStatus || "Unknown error")}</code>\n\n` +
-              `<i>Check GITHUB_TOKEN on Vercel.</i>`;
-
-            const edited = await safeEdit(token, chatId, msgId, failText);
-            if (!edited) {
-              await sendMsg(token, chatId, failText);
-            }
+            await sendMsg(token, chatId, `❌ <b>Failed!</b>`);
           }
         } catch (err: any) {
-          const errText = `❌ <b>Upload Failed</b>\n\n📄 <code>${safe}</code>\n\n<i>${escapeHtml(err?.message || "Timeout")}</i>`;
-          const edited = await safeEdit(token, chatId, msgId, errText);
-          if (!edited) {
-            await sendMsg(token, chatId, errText);
-          }
+          await sendMsg(token, chatId, `❌ <b>Failed!</b>`);
         }
       });
 
@@ -349,47 +274,17 @@ export async function POST(req: Request) {
       if (!target) { await sendMsg(token, chatId, "⚠️ Usage: <code>/delete filename.md</code>"); return NextResponse.json({ ok: true }); }
       const safe = escapeHtml(target);
 
-      // Send initial status message — edited ONCE at the end
-      const delId = await sendMsg(token, chatId,
-        `⏳ <b>Deleting Note...</b>\n\n📄 <code>${safe}</code>\n\n<i>Deleting note from repository &amp; website...</i>`
-      );
-      if (!delId) {
-        const r = await deleteTelegramNote(target);
-        await sendMsg(token, chatId, r.success
-          ? `🗑️ Deleted <code>${escapeHtml(r.deletedFile || target)}</code>`
-          : `❌ ${escapeHtml(r.message)}`
-        );
-        return NextResponse.json({ ok: true });
-      }
-
       after(async () => {
         try {
           const r = await deleteTelegramNote(target);
 
           if (r.success) {
-            const successText =
-              `🗑️ <b>Deleted!</b>\n\n` +
-              `📄 <code>${escapeHtml(r.deletedFile || target)}</code>\n` +
-              `✅ Removed from GitHub &amp; garden.\n\n` +
-              `<i>⏳ Vercel will rebuild in ~1 min.</i>`;
-
-            const edited = await safeEdit(token, chatId, delId, successText);
-            if (!edited) {
-              await sendMsg(token, chatId, successText);
-            }
+            await sendMsg(token, chatId, `🗑️ <b>Deleted!</b>`);
           } else {
-            const failText = `❌ <b>Delete Failed</b>\n\n📄 <code>${safe}</code>\n\n<i>${escapeHtml(r.message)}</i>`;
-            const edited = await safeEdit(token, chatId, delId, failText);
-            if (!edited) {
-              await sendMsg(token, chatId, failText);
-            }
+            await sendMsg(token, chatId, `❌ <b>Failed!</b>`);
           }
         } catch (err: any) {
-          const errText = `❌ <b>Delete Failed</b>\n\n📄 <code>${safe}</code>\n\n<i>${escapeHtml(err?.message || "Timeout")}</i>`;
-          const edited = await safeEdit(token, chatId, delId, errText);
-          if (!edited) {
-            await sendMsg(token, chatId, errText);
-          }
+          await sendMsg(token, chatId, `❌ <b>Failed!</b>`);
         }
       });
 
