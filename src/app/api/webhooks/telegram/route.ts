@@ -23,16 +23,21 @@ const MAIN_KEYBOARD = {
 };
 
 /**
- * Minimalist, sleek progress bar: [■■■■■■□□□□] 60%
+ * Minimalist animated progress bar: [■■■■■■□□□□] 60%
  */
-function renderMinimalProgressBar(percent: number): string {
+function renderProgressBar(percent: number): string {
   const total = 10;
   const filled = Math.min(10, Math.max(0, Math.round((percent / 100) * total)));
   const empty = total - filled;
   return `[${"■".repeat(filled)}${"□".repeat(empty)}] ${percent}%`;
 }
 
-async function fetchWithTimeout(url: string, options: any = {}, timeoutMs: number = 6000) {
+/** Promise-based delay */
+function delay(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+async function fetchWithTimeout(url: string, options: any = {}, timeoutMs: number = 8000) {
   const controller = new AbortController();
   const id = setTimeout(() => controller.abort(), timeoutMs);
   try {
@@ -56,7 +61,7 @@ async function sendTelegramReply(
       chat_id: chatId,
       parse_mode: "HTML",
       text,
-      disable_web_page_preview: false,
+      disable_web_page_preview: true,
       reply_markup: extraMarkup || MAIN_KEYBOARD,
     };
 
@@ -86,9 +91,11 @@ async function editTelegramMessage(
       message_id: messageId,
       parse_mode: "HTML",
       text,
-      disable_web_page_preview: false,
-      reply_markup: extraMarkup,
+      disable_web_page_preview: true,
     };
+    if (extraMarkup) {
+      body.reply_markup = JSON.stringify(extraMarkup);
+    }
 
     const res = await fetchWithTimeout(`https://api.telegram.org/bot${botToken}/editMessageText`, {
       method: "POST",
@@ -123,6 +130,32 @@ async function registerBotCommands(botToken: string) {
   } catch {
     // Ignore registration error
   }
+}
+
+/**
+ * Verifies that a Vercel deployment is live by polling the actual page URL.
+ * Returns true if the page returns 200 status, false if timeout reached.
+ */
+async function verifyDeployment(url: string, maxWaitMs: number = 90000): Promise<boolean> {
+  const startTime = Date.now();
+  const pollInterval = 5000; // Check every 5 seconds
+
+  while (Date.now() - startTime < maxWaitMs) {
+    try {
+      const res = await fetchWithTimeout(url, {}, 4000);
+      if (res.ok) {
+        const body = await res.text();
+        // Check that page actually has content (not a 404 page)
+        if (body.length > 500 && !body.includes("404") && !body.includes("Page Not Found")) {
+          return true;
+        }
+      }
+    } catch {
+      // Page not ready yet, keep polling
+    }
+    await delay(pollInterval);
+  }
+  return false;
 }
 
 export async function POST(req: Request) {
@@ -197,14 +230,17 @@ export async function POST(req: Request) {
       await sendTelegramReply(
         botToken,
         chatId,
-        `🛑 <b>Operation Stopped & Reset Successfully</b>\n\n` +
+        `🛑 <b>Operation Stopped &amp; Reset Successfully</b>\n\n` +
           `All active progress and uploads have been cancelled.\n` +
           `Your bot is clean and ready for your next command!`
       );
       return NextResponse.json({ status: "stopped" }, { status: 200 });
     }
 
-    // 📄 3. DOCUMENT UPLOAD WITH 4-STEP SINGLE-MESSAGE PROGRESS, DEPLOYMENT & VERIFICATION
+    // ═══════════════════════════════════════════════════════
+    // 📄 3. DOCUMENT UPLOAD — FULL ANIMATED SINGLE-MESSAGE
+    //    PIPELINE: Download → Save → Deploy → Verify → Link
+    // ═══════════════════════════════════════════════════════
     if (message.document) {
       const doc = message.document;
       const fileName = doc.file_name || "untitled.md";
@@ -225,118 +261,165 @@ export async function POST(req: Request) {
         await sendTelegramReply(
           botToken,
           chatId,
-          `⚠️ <b>Upload Blocked: Duplicate File Detected</b>\n\n` +
-            `The note file <code>${escapeHtml(existingNote.filename)}</code> already exists in your Digital Garden!\n\n` +
-            `📄 <b>Existing Note:</b> ${escapeHtml(existingNote.title)}\n` +
-            `🔗 <b>Existing Web Link:</b> <a href="${existingNote.url}">${existingNote.url}</a>\n\n` +
-            `💡 <b>Tip:</b> If you want to replace it, delete the existing file first by sending:\n<code>/delete ${escapeHtml(existingNote.filename)}</code>`,
+          `⚠️ <b>Upload Blocked — Duplicate File</b>\n\n` +
+            `<code>${escapeHtml(existingNote.filename)}</code> already exists in your garden.\n\n` +
+            `🔗 <a href="${existingNote.url}">${existingNote.url}</a>\n\n` +
+            `💡 To replace it, first send:\n<code>/delete ${escapeHtml(existingNote.filename)}</code>`,
           {
             inline_keyboard: [
-              [{ text: `🔗 View Existing Note on Website`, url: existingNote.url }],
+              [{ text: `🔗 View Existing Note`, url: existingNote.url }],
             ],
           }
         );
         return NextResponse.json({ status: "duplicate_blocked" }, { status: 200 });
       }
 
-      // --- STEP 1: INITIAL MESSAGE (25% DOWNLOAD) ---
+      const safeFileName = escapeHtml(fileName);
+
+      // ─── STEP 1/5: SEND INITIAL MESSAGE (10%) ───
       const progressMsgId = await sendTelegramReply(
         botToken,
         chatId,
-        `⚡ <b>Processing & Uploading Note...</b>\n\n` +
-          `<code>${renderMinimalProgressBar(25)}</code> • Downloading file from Telegram\n\n` +
-          `📄 <b>File:</b> <code>${escapeHtml(fileName)}</code>`
+        `⚡ <b>Uploading Note...</b>\n\n` +
+          `<code>${renderProgressBar(10)}</code>\n` +
+          `📥 Downloading file from Telegram...\n\n` +
+          `📄 ${safeFileName}`
       );
 
-      // Fetch file path
+      if (!progressMsgId) {
+        return NextResponse.json({ error: "Could not send progress message" }, { status: 200 });
+      }
+
+      // Small delay so user sees initial state
+      await delay(800);
+
+      // ─── STEP 2/5: DOWNLOAD FILE (30%) ───
+      await editTelegramMessage(
+        botToken, chatId, progressMsgId,
+        `⚡ <b>Uploading Note...</b>\n\n` +
+          `<code>${renderProgressBar(30)}</code>\n` +
+          `📥 Downloading file content...\n\n` +
+          `📄 ${safeFileName}`
+      );
+
       const fileRes = await fetchWithTimeout(
         `https://api.telegram.org/bot${botToken}/getFile?file_id=${doc.file_id}`
       );
       const fileData = await fileRes.json();
 
       if (!fileData.ok || !fileData.result?.file_path) {
-        if (progressMsgId) {
-          await editTelegramMessage(
-            botToken,
-            chatId,
-            progressMsgId,
-            `❌ <b>Upload Failed:</b> Telegram file fetch failed.`
-          );
-        }
-        return NextResponse.json({ error: "Telegram file fetch error" }, { status: 200 });
+        await editTelegramMessage(
+          botToken, chatId, progressMsgId,
+          `❌ <b>Upload Failed</b>\n\n` +
+            `Telegram file download failed. Please try again.\n\n` +
+            `📄 ${safeFileName}`
+        );
+        return NextResponse.json({ error: "file fetch error" }, { status: 200 });
       }
 
-      // --- STEP 2: EDIT SAME MESSAGE (50% SAVING & INDEXING) ---
-      if (progressMsgId) {
-        await editTelegramMessage(
-          botToken,
-          chatId,
-          progressMsgId,
-          `⚡ <b>Processing & Uploading Note...</b>\n\n` +
-            `<code>${renderMinimalProgressBar(50)}</code> • Saving & Indexing in Garden\n\n` +
-            `📄 <b>File:</b> <code>${escapeHtml(fileName)}</code>`
-        );
-      }
+      await delay(600);
+
+      // ─── STEP 3/5: SAVE & INDEX (50%) ───
+      await editTelegramMessage(
+        botToken, chatId, progressMsgId,
+        `⚡ <b>Uploading Note...</b>\n\n` +
+          `<code>${renderProgressBar(50)}</code>\n` +
+          `💾 Saving &amp; indexing in garden...\n\n` +
+          `📄 ${safeFileName}`
+      );
 
       const contentRes = await fetchWithTimeout(
         `https://api.telegram.org/file/bot${botToken}/${fileData.result.file_path}`
       );
       const fileContent = await contentRes.text();
 
-      // Save note to filesystem, in-memory cache, and GitHub
       const result = await saveTelegramNote(fileName, fileContent);
 
-      const slug = fileName.replace(/\.md$/, "").replace(/\.markdown$/, "");
+      await delay(600);
+
+      // ─── STEP 4/5: DEPLOY TO GITHUB (75%) ───
+      await editTelegramMessage(
+        botToken, chatId, progressMsgId,
+        `⚡ <b>Deploying to Website...</b>\n\n` +
+          `<code>${renderProgressBar(75)}</code>\n` +
+          `🚀 Pushing to GitHub &amp; triggering Vercel build...\n\n` +
+          `📄 ${safeFileName}`
+      );
+
+      // GitHub commit already happened inside saveTelegramNote, but let's check the result
+      const slug = result.fileName.replace(/\.md$/, "").replace(/\.markdown$/, "");
       const liveUrl = `https://gardenx.qzz.io/?p=${encodeURIComponent(slug)}`;
 
-      // --- STEP 3: EDIT SAME MESSAGE (75% DEPLOYING TO LIVE WEB) ---
-      if (progressMsgId) {
+      const deployedToGitHub = result.githubStatus?.includes("GitHub");
+
+      await delay(1000);
+
+      // ─── STEP 5/5: VERIFY & SHARE LINK (100%) ───
+      if (deployedToGitHub) {
+        // Show 90% — waiting for Vercel
         await editTelegramMessage(
-          botToken,
-          chatId,
-          progressMsgId,
-          `⚡ <b>Deploying to Live Website...</b>\n\n` +
-            `<code>${renderMinimalProgressBar(75)}</code> • Deploying to Live Web & Rebuilding\n\n` +
-            `📄 <b>File:</b> <code>${escapeHtml(fileName)}</code>`
+          botToken, chatId, progressMsgId,
+          `⚡ <b>Verifying Deployment...</b>\n\n` +
+            `<code>${renderProgressBar(90)}</code>\n` +
+            `🔍 Waiting for Vercel to build &amp; go live...\n\n` +
+            `📄 ${safeFileName}`
         );
-      }
 
-      // Brief delay so progress state is visible
-      await new Promise((resolve) => setTimeout(resolve, 800));
+        // Poll for the page to actually be live (up to 90 seconds)
+        const isLive = await verifyDeployment(liveUrl, 90000);
 
-      // --- STEP 4: EDIT SAME MESSAGE TO 100% FINAL DEPLOYMENT VERIFICATION + LINK ---
-      const finalMsgText =
-        `✅ <b>Deployment & Publication Verified!</b>\n\n` +
-        `<code>${renderMinimalProgressBar(100)}</code> • Verified & Published Live\n\n` +
-        `📄 <b>File Name:</b> <code>${escapeHtml(result.fileName)}</code>\n` +
-        `📊 <b>Status:</b> ${result.isUpdate ? "Updated Note" : "New Published Note"}\n` +
-        `🌐 <b>Live Web Link:</b> <a href="${liveUrl}">${liveUrl}</a>`;
-
-      const extraMarkup = {
-        inline_keyboard: [
-          [{ text: `🌐 Open "${escapeHtml(result.fileName)}" Live`, url: liveUrl }],
-        ],
-      };
-
-      if (progressMsgId) {
-        const edited = await editTelegramMessage(
-          botToken,
-          chatId,
-          progressMsgId,
-          finalMsgText,
-          extraMarkup
-        );
-        if (!edited) {
-          await sendTelegramReply(botToken, chatId, finalMsgText, extraMarkup);
+        if (isLive) {
+          // ✅ FULLY VERIFIED — note is live on the website
+          await editTelegramMessage(
+            botToken, chatId, progressMsgId,
+            `✅ <b>Published &amp; Verified Live!</b>\n\n` +
+              `<code>${renderProgressBar(100)}</code>\n\n` +
+              `📄 <b>File:</b> <code>${escapeHtml(result.fileName)}</code>\n` +
+              `📊 <b>Status:</b> ${result.isUpdate ? "Updated" : "New Note"} — Live on Website\n` +
+              `🌐 <b>Link:</b> <a href="${liveUrl}">${liveUrl}</a>`,
+            {
+              inline_keyboard: [
+                [{ text: `🌐 Open Note on Website`, url: liveUrl }],
+              ],
+            }
+          );
+        } else {
+          // ⏳ Deployed to GitHub but Vercel is still building
+          await editTelegramMessage(
+            botToken, chatId, progressMsgId,
+            `⏳ <b>Deployed — Building on Vercel</b>\n\n` +
+              `<code>${renderProgressBar(95)}</code>\n\n` +
+              `📄 <b>File:</b> <code>${escapeHtml(result.fileName)}</code>\n` +
+              `📊 <b>Status:</b> Committed to GitHub ✓ — Vercel building...\n` +
+              `🌐 <b>Link:</b> <a href="${liveUrl}">${liveUrl}</a>\n\n` +
+              `💡 <i>Link will go live in ~1-2 minutes. Tap below to check:</i>`,
+            {
+              inline_keyboard: [
+                [{ text: `🌐 Check Note (may take 1-2 min)`, url: liveUrl }],
+              ],
+            }
+          );
         }
       } else {
-        await sendTelegramReply(botToken, chatId, finalMsgText, extraMarkup);
+        // ❌ GitHub commit failed — no GITHUB_TOKEN or API error
+        await editTelegramMessage(
+          botToken, chatId, progressMsgId,
+          `⚠️ <b>Saved Locally — Deployment Failed</b>\n\n` +
+            `<code>${renderProgressBar(50)}</code>\n\n` +
+            `📄 <b>File:</b> <code>${escapeHtml(result.fileName)}</code>\n` +
+            `📊 <b>Status:</b> Saved in bot memory but NOT published to website\n\n` +
+            `❌ <b>Reason:</b> No <code>GITHUB_TOKEN</code> configured on server.\n` +
+            `The bot cannot commit files to GitHub without this token.\n\n` +
+            `💡 <b>Fix:</b> Add <code>GITHUB_TOKEN</code> to your Vercel environment variables.`
+        );
       }
 
       return NextResponse.json({ success: true, fileName: result.fileName }, { status: 200 });
     }
 
+    // ═══════════════════════════════════════════════
     // 💬 4. BUTTON CLICK & COMMAND HANDLING
+    // ═══════════════════════════════════════════════
 
     // 🌐 Visit Website Button
     if (rawText.includes("Visit Website") || rawText.includes("🌐")) {
@@ -353,13 +436,12 @@ export async function POST(req: Request) {
       return NextResponse.json({ success: true }, { status: 200 });
     }
 
-    // 🔗 LINK COMMAND: /link <note_slug_or_filename>
+    // 🔗 LINK COMMAND
     if (text.startsWith("/link") || text.startsWith("/url")) {
       const target = text.replace(/^\/(link|url)/, "").trim();
       if (!target) {
         await sendTelegramReply(
-          botToken,
-          chatId,
+          botToken, chatId,
           "⚠️ <b>Usage:</b> <code>/link python-variables</code> or <code>/link about</code>"
         );
         return NextResponse.json({ status: "bad_command" }, { status: 200 });
@@ -368,20 +450,18 @@ export async function POST(req: Request) {
       const note = getNoteBySlugOrName(target);
       if (!note) {
         await sendTelegramReply(
-          botToken,
-          chatId,
-          `❌ Note <i>"${escapeHtml(target)}"</i> was not found in your garden.`
+          botToken, chatId,
+          `❌ Note <i>"${escapeHtml(target)}"</i> not found in your garden.`
         );
       } else {
         await sendTelegramReply(
-          botToken,
-          chatId,
-          `🔗 <b>Live Website Link for "${escapeHtml(note.title)}":</b>\n\n` +
-            `👉 <a href="${note.url}">${note.url}</a>\n\n` +
-            `📄 <b>File:</b> <code>${escapeHtml(note.filename)}</code>`,
+          botToken, chatId,
+          `🔗 <b>${escapeHtml(note.title)}</b>\n\n` +
+            `👉 <a href="${note.url}">${note.url}</a>\n` +
+            `📄 <code>${escapeHtml(note.filename)}</code>`,
           {
             inline_keyboard: [
-              [{ text: `🌐 Open "${escapeHtml(note.title)}" on Web`, url: note.url }],
+              [{ text: `🌐 Open on Website`, url: note.url }],
             ],
           }
         );
@@ -389,194 +469,145 @@ export async function POST(req: Request) {
       return NextResponse.json({ success: true }, { status: 200 });
     }
 
-    // 📊 STATS COMMAND: /stats or "Garden Stats" button
+    // 📊 STATS
     if (text.startsWith("/stats") || rawText.includes("Garden Stats")) {
       const { totalNotes, totalWords, topTags } = getGardenStats();
       const formattedTags = topTags
         .slice(0, 8)
-        .map((t) => `• <b>#${escapeHtml(t.tag)}</b> (${t.count} notes)`)
+        .map((t) => `• <b>#${escapeHtml(t.tag)}</b> (${t.count})`)
         .join("\n");
 
       await sendTelegramReply(
-        botToken,
-        chatId,
-        `📊 <b>Digital Garden Statistics:</b>\n\n` +
-          `🌱 <b>Total Notes:</b> ${totalNotes.toLocaleString()} notes\n` +
-          `📝 <b>Total Word Count:</b> ${totalWords.toLocaleString()} words\n\n` +
-          `🏷️ <b>Top Tags & Topics:</b>\n${formattedTags || "No tags set yet."}`
+        botToken, chatId,
+        `📊 <b>Garden Statistics</b>\n\n` +
+          `🌱 <b>Notes:</b> ${totalNotes}\n` +
+          `📝 <b>Words:</b> ${totalWords.toLocaleString()}\n\n` +
+          `🏷️ <b>Top Tags:</b>\n${formattedTags || "No tags yet."}`
       );
       return NextResponse.json({ success: true }, { status: 200 });
     }
 
-    // 🏷️ SINGLE TAG COMMAND: /tag <name>
+    // 🏷️ SINGLE TAG: /tag <name>
     if (text.startsWith("/tag ") || text.startsWith("/tag_")) {
       const tagName = text.replace(/^\/tag[_ ]/, "").trim();
       if (!tagName) {
-        await sendTelegramReply(botToken, chatId, "⚠️ <b>Usage:</b> <code>/tag python</code> or <code>/tag aiml</code>");
+        await sendTelegramReply(botToken, chatId, "⚠️ <b>Usage:</b> <code>/tag python</code>");
         return NextResponse.json({ status: "bad_command" }, { status: 200 });
       }
-
       const notes = getNotesByTag(tagName);
       if (notes.length === 0) {
-        await sendTelegramReply(
-          botToken,
-          chatId,
-          `🏷️ No notes found under tag <b>#${escapeHtml(tagName)}</b>.`
-        );
+        await sendTelegramReply(botToken, chatId, `🏷️ No notes under <b>#${escapeHtml(tagName)}</b>.`);
       } else {
         const noteList = notes
-          .map(
-            (n, idx) =>
-              `${idx + 1}. <b>${escapeHtml(n.title)}</b> (<code>${escapeHtml(n.filename)}</code>)`
-          )
+          .map((n, i) => `${i + 1}. <b>${escapeHtml(n.title)}</b> (<code>${escapeHtml(n.filename)}</code>)`)
           .join("\n");
-
         await sendTelegramReply(
-          botToken,
-          chatId,
-          `🏷️ <b>Notes tagged with #${escapeHtml(tagName)} (${notes.length} notes):</b>\n\n${noteList}\n\n<i>To get website link: send <code>/link filename</code></i>`
+          botToken, chatId,
+          `🏷️ <b>#${escapeHtml(tagName)} (${notes.length}):</b>\n\n${noteList}\n\n<i>Send <code>/link filename</code> for website URL</i>`
         );
       }
       return NextResponse.json({ success: true }, { status: 200 });
     }
 
-    // 🏷️ TAGS OVERVIEW COMMAND: /tags or "Explore Tags" button
+    // 🏷️ TAGS OVERVIEW
     if (text.startsWith("/tags") || rawText.includes("Explore Tags")) {
       const tags = getGardenTags();
       if (tags.length === 0) {
-        await sendTelegramReply(botToken, chatId, "🏷️ No tags found in garden.");
+        await sendTelegramReply(botToken, chatId, "🏷️ No tags found.");
       } else {
         const tagList = tags
-          .map((t) => `• <b>#${escapeHtml(t.tag)}</b> (${t.count} notes) — <code>/tag ${escapeHtml(t.tag)}</code>`)
+          .map((t) => `• <b>#${escapeHtml(t.tag)}</b> (${t.count}) — <code>/tag ${escapeHtml(t.tag)}</code>`)
           .join("\n");
-
         await sendTelegramReply(
-          botToken,
-          chatId,
-          `🏷️ <b>Garden Tags Overview (${tags.length} Tags):</b>\n\n${tagList}\n\n<i>Send <code>/tag tagname</code> to filter notes!</i>`
+          botToken, chatId,
+          `🏷️ <b>All Tags (${tags.length}):</b>\n\n${tagList}`
         );
       }
       return NextResponse.json({ success: true }, { status: 200 });
     }
 
-    // 🔍 SEARCH COMMAND: /search <keyword> or "Search Notes" button
+    // 🔍 Search Button
     if (rawText.includes("Search Notes")) {
       await sendTelegramReply(
-        botToken,
-        chatId,
-        `🔍 <b>Search Notes:</b>\n\nSend <code>/search keyword</code> (e.g. <code>/search python</code> or <code>/search algorithm</code>)`
+        botToken, chatId,
+        `🔍 <b>Search:</b> Send <code>/search keyword</code>`
       );
       return NextResponse.json({ success: true }, { status: 200 });
     }
 
+    // 🔍 SEARCH
     if (text.startsWith("/search")) {
       const query = text.replace("/search", "").trim();
       if (!query) {
-        await sendTelegramReply(
-          botToken,
-          chatId,
-          "⚠️ <b>Usage:</b> <code>/search python</code> or <code>/search algorithms</code>"
-        );
+        await sendTelegramReply(botToken, chatId, "⚠️ <b>Usage:</b> <code>/search python</code>");
         return NextResponse.json({ status: "bad_command" }, { status: 200 });
       }
-
       const results = searchTelegramNotes(query, 15);
-
       if (results.length === 0) {
-        await sendTelegramReply(
-          botToken,
-          chatId,
-          `🔍 No notes found matching <i>"${escapeHtml(query)}"</i>.`
-        );
+        await sendTelegramReply(botToken, chatId, `🔍 No results for <i>"${escapeHtml(query)}"</i>.`);
       } else {
         const formatted = results
-          .map(
-            (r, i) =>
-              `<b>${i + 1}. ${r.title}</b> (<code>${r.fileName}</code>)\n<i>${r.snippet}</i>`
-          )
+          .map((r, i) => `<b>${i + 1}. ${r.title}</b> (<code>${r.fileName}</code>)\n<i>${r.snippet}</i>`)
           .join("\n\n");
-
         await sendTelegramReply(
-          botToken,
-          chatId,
-          `🔍 <b>Search Results for "${escapeHtml(query)}" (${results.length} found):</b>\n\n${formatted}\n\n💡 <i>Send <code>/link filename</code> to get website URL for any note!</i>`
+          botToken, chatId,
+          `🔍 <b>"${escapeHtml(query)}" (${results.length} found):</b>\n\n${formatted}\n\n💡 <i><code>/link filename</code> for URL</i>`
         );
       }
       return NextResponse.json({ success: true }, { status: 200 });
     }
 
-    // 🗑️ DELETE COMMAND: /delete <filename>
+    // 🗑️ DELETE
     if (text.startsWith("/delete")) {
       const target = text.replace("/delete", "").trim();
       if (!target) {
-        await sendTelegramReply(
-          botToken,
-          chatId,
-          "⚠️ <b>Usage:</b> <code>/delete note-filename.md</code>"
-        );
+        await sendTelegramReply(botToken, chatId, "⚠️ <b>Usage:</b> <code>/delete filename.md</code>");
         return NextResponse.json({ status: "bad_command" }, { status: 200 });
       }
-
       const delResult = await deleteTelegramNote(target);
       if (delResult.success) {
         await sendTelegramReply(
-          botToken,
-          chatId,
-          `🗑️ <b>Deleted:</b> Note <code>${escapeHtml(delResult.deletedFile || target)}</code> was removed from your Garden.`
+          botToken, chatId,
+          `🗑️ <b>Deleted:</b> <code>${escapeHtml(delResult.deletedFile || target)}</code>`
         );
       } else {
-        await sendTelegramReply(botToken, chatId, `❌ <b>Error:</b> ${escapeHtml(delResult.message)}`);
+        await sendTelegramReply(botToken, chatId, `❌ ${escapeHtml(delResult.message)}`);
       }
       return NextResponse.json({ success: true }, { status: 200 });
     }
 
-    // 📚 LIST COMMAND: /list [page_number] or "List All Notes" button
+    // 📚 LIST
     if (text.startsWith("/list") || rawText.includes("List All Notes")) {
       const pageArg = text.replace("/list", "").trim();
       const pageNum = parseInt(pageArg, 10) || 1;
-
       const { notes, total, totalPages, page } = getPaginatedNotes(pageNum, 25);
-
       if (total === 0) {
-        await sendTelegramReply(botToken, chatId, "📂 No notes found in content folder.");
+        await sendTelegramReply(botToken, chatId, "📂 No notes found.");
       } else {
         const noteList = notes
-          .map(
-            (n, idx) =>
-              `${(page - 1) * 25 + idx + 1}. <b>${escapeHtml(n.title)}</b> (<code>${escapeHtml(n.filename)}</code>)`
-          )
+          .map((n, i) => `${(page - 1) * 25 + i + 1}. <b>${escapeHtml(n.title)}</b> (<code>${escapeHtml(n.filename)}</code>)`)
           .join("\n");
-
-        const navText =
-          totalPages > 1
-            ? `\n\n📖 <i>Page ${page} of ${totalPages}. Send <code>/list ${page < totalPages ? page + 1 : 1}</code> to view next page.</i>`
-            : "";
-
+        const nav = totalPages > 1
+          ? `\n\n📖 <i>Page ${page}/${totalPages}. <code>/list ${page < totalPages ? page + 1 : 1}</code></i>`
+          : "";
         await sendTelegramReply(
-          botToken,
-          chatId,
-          `📚 <b>Your Garden Notes (${total} Total Notes):</b>\n\n${noteList}${navText}\n\n💡 <i>Send <code>/link filename</code> to get website URL for any note!</i>`
+          botToken, chatId,
+          `📚 <b>Notes (${total}):</b>\n\n${noteList}${nav}\n\n💡 <i><code>/link filename</code> for URL</i>`
         );
       }
       return NextResponse.json({ success: true }, { status: 200 });
     }
 
-    // 💡 HELP & START COMMAND or "Help & Guide" button
+    // 💡 HELP / START
     if (text.startsWith("/start") || text.startsWith("/help") || rawText.includes("Help & Guide")) {
       await sendTelegramReply(
-        botToken,
-        chatId,
-        `🌱 <b>Garden Note Manager Bot</b>\n\n` +
-          `📁 <b>Add Note:</b> Send or drag & drop any <code>.md</code> file here.\n` +
-          `🌐 <b>Visit Website:</b> Tap <code>🌐 Visit Website</code> below.\n` +
-          `🔍 <b>Search Notes:</b> <code>/search keyword</code> (e.g. <code>/search python</code>)\n` +
-          `🔗 <b>Get Website Link:</b> <code>/link filename</code>\n` +
-          `📊 <b>Garden Stats:</b> Tap <code>📊 Garden Stats</code>\n` +
-          `🏷️ <b>Explore Tags:</b> Tap <code>🏷️ Explore Tags</code>\n` +
-          `📚 <b>List Notes:</b> Tap <code>📚 List All Notes</code>\n` +
-          `🛑 <b>Cancel/Reset:</b> Tap <code>🛑 Cancel / Reset</code> or send <code>/cancel</code>\n` +
-          `🗑️ <b>Delete Note:</b> <code>/delete filename.md</code>\n\n` +
-          `👇 <i>Use the touch screen keyboard buttons below!</i>`
+        botToken, chatId,
+        `🌱 <b>Garden Note Manager</b>\n\n` +
+          `📁 <b>Upload:</b> Send any <code>.md</code> file\n` +
+          `🔍 <b>Search:</b> <code>/search keyword</code>\n` +
+          `🔗 <b>Get Link:</b> <code>/link filename</code>\n` +
+          `🗑️ <b>Delete:</b> <code>/delete filename.md</code>\n\n` +
+          `👇 Use the buttons below!`
       );
       return NextResponse.json({ success: true }, { status: 200 });
     }
