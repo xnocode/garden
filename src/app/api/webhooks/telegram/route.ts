@@ -79,7 +79,7 @@ async function editTelegramMessage(
   messageId: number,
   text: string,
   extraMarkup?: any
-) {
+): Promise<boolean> {
   try {
     const body: any = {
       chat_id: chatId,
@@ -96,12 +96,9 @@ async function editTelegramMessage(
       body: JSON.stringify(body),
     });
     const data = await res.json();
-    if (!data.ok) {
-      // Fallback to fresh reply if message edit fails
-      await sendTelegramReply(botToken, chatId, text, extraMarkup);
-    }
+    return !!data.ok;
   } catch {
-    await sendTelegramReply(botToken, chatId, text, extraMarkup);
+    return false;
   }
 }
 
@@ -188,7 +185,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ status: "unauthorized" }, { status: 200 });
     }
 
-    // 🛑 2. CANCEL & STOP COMMAND
+    // 🛑 2. CANCEL & STOP COMMAND WITH PROMINENT STOP CONFIRMATION MESSAGE
     if (
       text.startsWith("/cancel") ||
       text.startsWith("/stop") ||
@@ -207,7 +204,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ status: "stopped" }, { status: 200 });
     }
 
-    // 📄 3. DOCUMENT UPLOAD WITH DUPLICATE CHECK & PUBLICATION VERIFICATION
+    // 📄 3. DOCUMENT UPLOAD WITH SINGLE-MESSAGE LIVE ANIMATION & PUBLICATION VERIFICATION
     if (message.document) {
       const doc = message.document;
       const fileName = doc.file_name || "untitled.md";
@@ -242,7 +239,7 @@ export async function POST(req: Request) {
         return NextResponse.json({ status: "duplicate_blocked" }, { status: 200 });
       }
 
-      // Step 1: Initial Minimal Progress (30%)
+      // Step 1: Send INITIAL Message (30% Progress)
       const progressMsgId = await sendTelegramReply(
         botToken,
         chatId,
@@ -269,7 +266,7 @@ export async function POST(req: Request) {
         return NextResponse.json({ error: "Telegram file fetch error" }, { status: 200 });
       }
 
-      // Step 2: Processing Progress (70%)
+      // Step 2: Edit SAME Message (70% Progress)
       if (progressMsgId) {
         await editTelegramMessage(
           botToken,
@@ -286,20 +283,20 @@ export async function POST(req: Request) {
       );
       const fileContent = await contentRes.text();
 
-      // Save file locally & in memory map
+      // Save file locally, in memory, & commit to GitHub
       const result = await saveTelegramNote(fileName, fileContent);
 
       const slug = fileName.replace(/\.md$/, "").replace(/\.markdown$/, "");
       const liveUrl = `https://gardenx.qzz.io/?p=${encodeURIComponent(slug)}`;
 
-      // Step 3: Complete & Verified Progress (100%)
+      // Step 3: Edit SAME Message to 100% Final Verification!
       const finalMsgText =
         `✅ <b>Published to Digital Garden!</b>\n\n` +
         `<code>${renderMinimalProgressBar(100)}</code> • Publication Complete\n\n` +
         `📄 <b>File:</b> <code>${escapeHtml(result.fileName)}</code>\n` +
         `📊 <b>Status:</b> ${result.isUpdate ? "Updated Note" : "New Published Note"}\n` +
         `🌐 <b>Website Link:</b> <a href="${liveUrl}">${liveUrl}</a>\n\n` +
-        `💡 <i>Note: Vercel is compiling your site (~1 min). You can open the link above to view your note live!</i>`;
+        `💡 <i>Note: Open the link above to view your note live!</i>`;
 
       const extraMarkup = {
         inline_keyboard: [
@@ -308,7 +305,16 @@ export async function POST(req: Request) {
       };
 
       if (progressMsgId) {
-        await editTelegramMessage(botToken, chatId, progressMsgId, finalMsgText, extraMarkup);
+        const edited = await editTelegramMessage(
+          botToken,
+          chatId,
+          progressMsgId,
+          finalMsgText,
+          extraMarkup
+        );
+        if (!edited) {
+          await sendTelegramReply(botToken, chatId, finalMsgText, extraMarkup);
+        }
       } else {
         await sendTelegramReply(botToken, chatId, finalMsgText, extraMarkup);
       }
