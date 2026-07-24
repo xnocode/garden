@@ -29,13 +29,9 @@ function renderProgressBar(percent: number): string {
   return `[${"■".repeat(filled)}${"□".repeat(empty)}] ${percent}%`;
 }
 
-function delay(ms: number): Promise<void> {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-}
-
 async function tgFetch(url: string, options: any = {}) {
   const controller = new AbortController();
-  const id = setTimeout(() => controller.abort(), 6000);
+  const id = setTimeout(() => controller.abort(), 3500);
   try {
     const res = await fetch(url, { ...options, signal: controller.signal });
     clearTimeout(id);
@@ -145,7 +141,7 @@ export async function POST(req: Request) {
     }
 
     // ═══════════════════════════════════════════
-    // 📄 FILE UPLOAD — Single animated message
+    // 📄 FILE UPLOAD — Ultra-Fast Streamlined Flow
     // ═══════════════════════════════════════════
     if (message.document) {
       const doc = message.document;
@@ -171,84 +167,56 @@ export async function POST(req: Request) {
 
       const safe = escapeHtml(fileName);
 
-      // ── STEP 1: Send initial message (15%) ──
+      // ── STEP 1: Send initial progress message (20%) ──
       const msgId = await sendMsg(token, chatId,
-        `⚡ <b>Uploading Note</b>\n\n<code>${renderProgressBar(15)}</code>\n📥 Receiving file...\n\n📄 ${safe}`
+        `⚡ <b>Uploading &amp; Syncing Note...</b>\n\n<code>${renderProgressBar(20)}</code>\n📥 Processing file &amp; pushing to GitHub...\n\n📄 ${safe}`
       );
       if (!msgId) return NextResponse.json({ ok: true });
 
-      // ── Download file from Telegram ──
-      let filePath: string;
+      // ── Step 2: Download file & Save + Commit to GitHub ──
       try {
         const fileRes = await tgFetch(`https://api.telegram.org/bot${token}/getFile?file_id=${doc.file_id}`);
         const fileData = await fileRes.json();
+
         if (!fileData.ok || !fileData.result?.file_path) {
-          await editMsg(token, chatId, msgId, `❌ <b>Failed</b> — Could not download file from Telegram.`);
+          await editMsg(token, chatId, msgId, `❌ <b>Upload Failed:</b> Could not get file path from Telegram.`);
           return NextResponse.json({ ok: true });
         }
-        filePath = fileData.result.file_path;
-      } catch {
-        await editMsg(token, chatId, msgId, `❌ <b>Failed</b> — Telegram file API timeout.`);
-        return NextResponse.json({ ok: true });
+
+        const contentRes = await tgFetch(`https://api.telegram.org/file/bot${token}/${fileData.result.file_path}`);
+        const fileContent = await contentRes.text();
+
+        // Save & commit to GitHub
+        const result = await saveTelegramNote(fileName, fileContent);
+        const slug = result.fileName.replace(/\.md$/, "").replace(/\.markdown$/, "");
+        const liveUrl = `https://gardenx.qzz.io/?p=${encodeURIComponent(slug)}`;
+        const pushed = result.githubStatus?.includes("Committed to GitHub") || false;
+
+        // ── STEP 3: Edit message to Final Status (100% or Error Diagnostic) ──
+        if (pushed) {
+          await editMsg(token, chatId, msgId,
+            `✅ <b>Published to Digital Garden!</b>\n\n` +
+            `<code>${renderProgressBar(100)}</code>\n\n` +
+            `📄 <b>File:</b> <code>${escapeHtml(result.fileName)}</code>\n` +
+            `📊 <b>Status:</b> ${result.isUpdate ? "Updated" : "New Note"} — Deployed ✓\n` +
+            `🌐 <b>Link:</b> <a href="${liveUrl}">${liveUrl}</a>\n\n` +
+            `⏳ <i>Vercel is building (~1-2 min). Tap below to view:</i>`,
+            { inline_keyboard: [[{ text: "🌐 Open Note on Website", url: liveUrl }]] }
+          );
+        } else {
+          await editMsg(token, chatId, msgId,
+            `⚠️ <b>Saved locally — GitHub Commit Failed</b>\n\n` +
+            `<code>${renderProgressBar(50)}</code>\n\n` +
+            `📄 <code>${escapeHtml(result.fileName)}</code>\n\n` +
+            `❌ <b>Error Reason:</b>\n<code>${escapeHtml(result.githubStatus || "Unknown error")}</code>\n\n` +
+            `💡 <i>Check GITHUB_TOKEN environment variable on Vercel.</i>`
+          );
+        }
+      } catch (err: any) {
+        await editMsg(token, chatId, msgId, `❌ <b>Upload Failed:</b> ${escapeHtml(err?.message || "Timeout or Network Error")}`);
       }
 
-      // ── STEP 2: Edit to 40% ──
-      await editMsg(token, chatId, msgId,
-        `⚡ <b>Uploading Note</b>\n\n<code>${renderProgressBar(40)}</code>\n📥 Downloaded. Reading content...\n\n📄 ${safe}`
-      );
-
-      // ── Read file content ──
-      let fileContent: string;
-      try {
-        const contentRes = await tgFetch(`https://api.telegram.org/file/bot${token}/${filePath}`);
-        fileContent = await contentRes.text();
-      } catch {
-        await editMsg(token, chatId, msgId, `❌ <b>Failed</b> — Could not read file content.`);
-        return NextResponse.json({ ok: true });
-      }
-
-      // ── STEP 3: Edit to 65% ──
-      await editMsg(token, chatId, msgId,
-        `⚡ <b>Uploading Note</b>\n\n<code>${renderProgressBar(65)}</code>\n💾 Saving to garden...\n\n📄 ${safe}`
-      );
-
-      // ── Save + GitHub commit ──
-      const result = await saveTelegramNote(fileName, fileContent);
-      const slug = result.fileName.replace(/\.md$/, "").replace(/\.markdown$/, "");
-      const liveUrl = `https://gardenx.qzz.io/?p=${encodeURIComponent(slug)}`;
-      const pushed = result.githubStatus?.includes("Committed to GitHub") || false;
-
-      // ── STEP 4: Edit to 85% — deploying ──
-      if (pushed) {
-        await editMsg(token, chatId, msgId,
-          `⚡ <b>Deploying to Website</b>\n\n<code>${renderProgressBar(85)}</code>\n🚀 Pushed to GitHub. Vercel building...\n\n📄 ${safe}`
-        );
-        // Brief pause so user sees deploy step
-        await delay(400);
-      }
-
-      // ── STEP 5: Final 100% or Error Diagnostic ──
-      if (pushed) {
-        await editMsg(token, chatId, msgId,
-          `✅ <b>Published to Digital Garden!</b>\n\n` +
-          `<code>${renderProgressBar(100)}</code>\n\n` +
-          `📄 <b>File:</b> <code>${escapeHtml(result.fileName)}</code>\n` +
-          `📊 <b>Status:</b> ${result.isUpdate ? "Updated" : "New Note"} — Deployed ✓\n` +
-          `🌐 <b>Link:</b> <a href="${liveUrl}">${liveUrl}</a>\n\n` +
-          `⏳ <i>Vercel is building (~1-2 min). Tap below to view:</i>`,
-          { inline_keyboard: [[{ text: "🌐 Open Note on Website", url: liveUrl }]] }
-        );
-      } else {
-        await editMsg(token, chatId, msgId,
-          `⚠️ <b>Saved locally — GitHub Commit Failed</b>\n\n` +
-          `<code>${renderProgressBar(50)}</code>\n\n` +
-          `📄 <code>${escapeHtml(result.fileName)}</code>\n\n` +
-          `❌ <b>Error Reason:</b>\n<code>${escapeHtml(result.githubStatus || "Unknown error")}</code>\n\n` +
-          `💡 <i>Check GITHUB_TOKEN environment variable on Vercel.</i>`
-        );
-      }
-
-      return NextResponse.json({ ok: true, file: result.fileName });
+      return NextResponse.json({ ok: true, file: fileName });
     }
 
     // ═══════════════════════════════════════

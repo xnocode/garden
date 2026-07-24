@@ -60,7 +60,7 @@ export function checkDuplicateNote(rawFileName: string): NoteItem | null {
 }
 
 /**
- * Commits uploaded file directly to GitHub repository to trigger Vercel site rebuild.
+ * Fast GitHub commit with 3.5s strict timeout.
  */
 export async function commitNoteToGitHub(
   fileName: string,
@@ -79,9 +79,9 @@ export async function commitNoteToGitHub(
   try {
     let sha: string | undefined;
 
-    // 1. GET existing SHA (4s timeout)
+    // 1. GET existing SHA (2.5s timeout)
     const getController = new AbortController();
-    const getId = setTimeout(() => getController.abort(), 4000);
+    const getId = setTimeout(() => getController.abort(), 2500);
     try {
       const getRes = await fetch(url, {
         signal: getController.signal,
@@ -89,7 +89,6 @@ export async function commitNoteToGitHub(
           Authorization: authHeader,
           Accept: "application/vnd.github.v3+json",
           "User-Agent": "DigitalGardenBot",
-          "X-GitHub-Api-Version": "2022-11-28",
         },
       });
       clearTimeout(getId);
@@ -100,10 +99,9 @@ export async function commitNoteToGitHub(
       }
     } catch {
       clearTimeout(getId);
-      // Ignore GET error, attempt direct PUT
     }
 
-    // 2. PUT file content (5s timeout)
+    // 2. PUT file content (3.5s timeout)
     const base64Content = Buffer.from(content).toString("base64");
     const putBody: any = {
       message: `publish note via Telegram: ${fileName}`,
@@ -112,7 +110,7 @@ export async function commitNoteToGitHub(
     if (sha) putBody.sha = sha;
 
     const putController = new AbortController();
-    const putId = setTimeout(() => putController.abort(), 5000);
+    const putId = setTimeout(() => putController.abort(), 3500);
 
     const putRes = await fetch(url, {
       method: "PUT",
@@ -122,7 +120,6 @@ export async function commitNoteToGitHub(
         Accept: "application/vnd.github.v3+json",
         "Content-Type": "application/json",
         "User-Agent": "DigitalGardenBot",
-        "X-GitHub-Api-Version": "2022-11-28",
       },
       body: JSON.stringify(putBody),
     });
@@ -137,7 +134,7 @@ export async function commitNoteToGitHub(
     }
   } catch (err: any) {
     if (err?.name === "AbortError") {
-      return { success: false, message: "GitHub API request timed out (5s limit)" };
+      return { success: false, message: "GitHub API request timed out (3.5s limit)" };
     }
     return { success: false, message: err.message || "GitHub API network error" };
   }
@@ -183,7 +180,6 @@ export async function saveTelegramNote(
     githubStatus = `GitHub Error: ${err?.message || "Unknown error"}`;
   }
 
-  // Only add to dynamic map if committed or file exists
   if (committed || isUpdate) {
     dynamicNotesMap.set(safeName.toLowerCase(), {
       title: slug.replace(/-/g, " "),
