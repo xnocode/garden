@@ -8,6 +8,7 @@ import {
   getGardenTags,
   getNotesByTag,
   getNoteBySlugOrName,
+  checkDuplicateNote,
   escapeHtml,
 } from "@/lib/telegram-file-handler";
 
@@ -187,7 +188,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ status: "unauthorized" }, { status: 200 });
     }
 
-    // 🛑 2. CANCEL & STOP COMMAND WITH PROMINENT STOP CONFIRMATION MESSAGE
+    // 🛑 2. CANCEL & STOP COMMAND
     if (
       text.startsWith("/cancel") ||
       text.startsWith("/stop") ||
@@ -206,7 +207,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ status: "stopped" }, { status: 200 });
     }
 
-    // 📄 3. DOCUMENT UPLOAD WITH MINIMAL PROGRESS & PUBLICATION VERIFICATION
+    // 📄 3. DOCUMENT UPLOAD WITH DUPLICATE CHECK & PUBLICATION VERIFICATION
     if (message.document) {
       const doc = message.document;
       const fileName = doc.file_name || "untitled.md";
@@ -219,6 +220,26 @@ export async function POST(req: Request) {
           `⚠️ <b>Rejected:</b> Only <code>.md</code> (Markdown) files are accepted.\nFile <i>"${escapeHtml(fileName)}"</i> was ignored.`
         );
         return NextResponse.json({ status: "rejected_format" }, { status: 200 });
+      }
+
+      // 🚫 STRICT DUPLICATE CHECK: DO NOT ALLOW UPLOADING THE SAME FILE TWICE
+      const existingNote = checkDuplicateNote(fileName);
+      if (existingNote) {
+        await sendTelegramReply(
+          botToken,
+          chatId,
+          `⚠️ <b>Upload Blocked: Duplicate File Detected</b>\n\n` +
+            `The note file <code>${escapeHtml(existingNote.filename)}</code> already exists in your Digital Garden!\n\n` +
+            `📄 <b>Existing Note:</b> ${escapeHtml(existingNote.title)}\n` +
+            `🔗 <b>Existing Web Link:</b> <a href="${existingNote.url}">${existingNote.url}</a>\n\n` +
+            `💡 <b>Tip:</b> If you want to replace it, delete the existing file first by sending:\n<code>/delete ${escapeHtml(existingNote.filename)}</code>`,
+          {
+            inline_keyboard: [
+              [{ text: `🔗 View Existing Note on Website`, url: existingNote.url }],
+            ],
+          }
+        );
+        return NextResponse.json({ status: "duplicate_blocked" }, { status: 200 });
       }
 
       // Step 1: Initial Minimal Progress (30%)
@@ -277,7 +298,8 @@ export async function POST(req: Request) {
         `<code>${renderMinimalProgressBar(100)}</code> • Publication Complete\n\n` +
         `📄 <b>File:</b> <code>${escapeHtml(result.fileName)}</code>\n` +
         `📊 <b>Status:</b> ${result.isUpdate ? "Updated Note" : "New Published Note"}\n` +
-        `🌐 <b>Website:</b> <a href="${liveUrl}">${liveUrl}</a>`;
+        `🌐 <b>Website Link:</b> <a href="${liveUrl}">${liveUrl}</a>\n\n` +
+        `💡 <i>Note: Vercel is compiling your site (~1 min). You can open the link above to view your note live!</i>`;
 
       const extraMarkup = {
         inline_keyboard: [

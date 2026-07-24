@@ -43,6 +43,23 @@ export function sanitizeFilename(rawFileName: string): string {
 }
 
 /**
+ * Checks if a note file with the given filename or slug already exists in the garden.
+ */
+export function checkDuplicateNote(rawFileName: string): NoteItem | null {
+  const safeName = sanitizeFilename(rawFileName);
+  const slug = safeName.replace(/\.md$/, "").replace(/\.markdown$/, "");
+  const allNotes = getAllTelegramNotes();
+
+  return (
+    allNotes.find(
+      (n) =>
+        n.filename.toLowerCase() === safeName.toLowerCase() ||
+        n.slug.toLowerCase() === slug.toLowerCase()
+    ) || null
+  );
+}
+
+/**
  * Commits uploaded file directly to GitHub repository to trigger Vercel site rebuild.
  */
 export async function commitNoteToGitHub(
@@ -140,7 +157,6 @@ export async function saveTelegramNote(
     updatedAt: new Date().toISOString(),
   });
 
-  // Try committing to GitHub
   let githubStatus = "Saved locally";
   try {
     const ghRes = await commitNoteToGitHub(safeName, content);
