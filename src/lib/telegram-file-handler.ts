@@ -74,24 +74,36 @@ export async function commitNoteToGitHub(
   const repo = process.env.NEXT_PUBLIC_GISCUS_REPO || "xnocode/garden";
   const filePath = `content/${fileName}`;
   const url = `https://api.github.com/repos/${repo}/contents/${filePath}`;
-  const authHeader = `Bearer ${token}`;
+  const authHeader = token.startsWith("github_pat_") || token.startsWith("ghp_") ? `Bearer ${token}` : `token ${token}`;
 
   try {
     let sha: string | undefined;
-    const getRes = await fetch(url, {
-      headers: {
-        Authorization: authHeader,
-        Accept: "application/vnd.github.v3+json",
-        "User-Agent": "DigitalGardenBot",
-        "X-GitHub-Api-Version": "2022-11-28",
-      },
-    });
 
-    if (getRes.ok) {
-      const existingData = await getRes.json();
-      sha = existingData.sha;
+    // 1. GET existing SHA (4s timeout)
+    const getController = new AbortController();
+    const getId = setTimeout(() => getController.abort(), 4000);
+    try {
+      const getRes = await fetch(url, {
+        signal: getController.signal,
+        headers: {
+          Authorization: authHeader,
+          Accept: "application/vnd.github.v3+json",
+          "User-Agent": "DigitalGardenBot",
+          "X-GitHub-Api-Version": "2022-11-28",
+        },
+      });
+      clearTimeout(getId);
+
+      if (getRes.ok) {
+        const existingData = await getRes.json();
+        sha = existingData.sha;
+      }
+    } catch {
+      clearTimeout(getId);
+      // Ignore GET error, attempt direct PUT
     }
 
+    // 2. PUT file content (5s timeout)
     const base64Content = Buffer.from(content).toString("base64");
     const putBody: any = {
       message: `publish note via Telegram: ${fileName}`,
@@ -99,8 +111,12 @@ export async function commitNoteToGitHub(
     };
     if (sha) putBody.sha = sha;
 
+    const putController = new AbortController();
+    const putId = setTimeout(() => putController.abort(), 5000);
+
     const putRes = await fetch(url, {
       method: "PUT",
+      signal: putController.signal,
       headers: {
         Authorization: authHeader,
         Accept: "application/vnd.github.v3+json",
@@ -110,6 +126,7 @@ export async function commitNoteToGitHub(
       },
       body: JSON.stringify(putBody),
     });
+    clearTimeout(putId);
 
     if (putRes.ok) {
       return { success: true, message: "Committed to GitHub successfully" };
@@ -119,6 +136,9 @@ export async function commitNoteToGitHub(
       return { success: false, message: reason };
     }
   } catch (err: any) {
+    if (err?.name === "AbortError") {
+      return { success: false, message: "GitHub API request timed out (5s limit)" };
+    }
     return { success: false, message: err.message || "GitHub API network error" };
   }
 }
