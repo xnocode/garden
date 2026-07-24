@@ -72,7 +72,7 @@ async function safeEdit(
   msgId: number,
   text: string,
   markup?: any
-): Promise<void> {
+): Promise<boolean> {
   const body: any = {
     chat_id: chatId,
     message_id: msgId,
@@ -97,7 +97,7 @@ async function safeEdit(
       clearTimeout(t);
       const data = await res.json();
 
-      if (data?.ok) return; // ✅ success
+      if (data?.ok) return true; // ✅ success
 
       // 429 rate limit
       if (data?.error_code === 429) {
@@ -107,7 +107,7 @@ async function safeEdit(
       }
 
       // "message is not modified" — treat as success
-      if (data?.description?.includes("not modified")) return;
+      if (data?.description?.includes("not modified")) return true;
 
       // HTML parse error — retry with plain text
       if (data?.error_code === 400 && data?.description?.includes("parse")) {
@@ -120,6 +120,7 @@ async function safeEdit(
       // Retry on network/timeout error
     }
   }
+  return false; // ❌ failed to edit
 }
 
 
@@ -232,26 +233,36 @@ export async function POST(req: Request) {
 
           // 4. Edit the SAME message with final result
           if (pushed) {
-            await safeEdit(token, chatId, msgId,
+            const successText =
               `✅ <b>Published!</b>\n\n` +
               `📄 <code>${escapeHtml(result.fileName)}</code>\n` +
               `📊 ${result.isUpdate ? "Updated" : "New note"} — live ✓\n` +
               `🔗 <a href="${safeLiveUrl}">${safeLiveUrl}</a>\n\n` +
-              `<i>⏳ Building (~1 min). Tap below:</i>`,
-              { inline_keyboard: [[{ text: "🌐 Open Note", url: rawLiveUrl }]] }
-            );
+              `<i>⏳ Building (~1 min). Tap below:</i>`;
+            const markup = { inline_keyboard: [[{ text: "🌐 Open Note", url: rawLiveUrl }]] };
+
+            const edited = await safeEdit(token, chatId, msgId, successText, markup);
+            if (!edited) {
+              await sendMsg(token, chatId, successText, markup);
+            }
           } else {
-            await safeEdit(token, chatId, msgId,
+            const failText =
               `⚠️ <b>GitHub Push Failed</b>\n\n` +
               `📄 <code>${escapeHtml(result.fileName)}</code>\n\n` +
               `❌ <code>${escapeHtml(result.githubStatus || "Unknown error")}</code>\n\n` +
-              `<i>Check GITHUB_TOKEN on Vercel.</i>`
-            );
+              `<i>Check GITHUB_TOKEN on Vercel.</i>`;
+
+            const edited = await safeEdit(token, chatId, msgId, failText);
+            if (!edited) {
+              await sendMsg(token, chatId, failText);
+            }
           }
         } catch (err: any) {
-          await safeEdit(token, chatId, msgId,
-            `❌ <b>Upload Failed</b>\n\n📄 <code>${safe}</code>\n\n<i>${escapeHtml(err?.message || "Timeout")}</i>`
-          );
+          const errText = `❌ <b>Upload Failed</b>\n\n📄 <code>${safe}</code>\n\n<i>${escapeHtml(err?.message || "Timeout")}</i>`;
+          const edited = await safeEdit(token, chatId, msgId, errText);
+          if (!edited) {
+            await sendMsg(token, chatId, errText);
+          }
         }
       });
 
@@ -356,21 +367,29 @@ export async function POST(req: Request) {
           const r = await deleteTelegramNote(target);
 
           if (r.success) {
-            await safeEdit(token, chatId, delId,
+            const successText =
               `🗑️ <b>Deleted!</b>\n\n` +
               `📄 <code>${escapeHtml(r.deletedFile || target)}</code>\n` +
               `✅ Removed from GitHub &amp; garden.\n\n` +
-              `<i>⏳ Vercel will rebuild in ~1 min.</i>`
-            );
+              `<i>⏳ Vercel will rebuild in ~1 min.</i>`;
+
+            const edited = await safeEdit(token, chatId, delId, successText);
+            if (!edited) {
+              await sendMsg(token, chatId, successText);
+            }
           } else {
-            await safeEdit(token, chatId, delId,
-              `❌ <b>Delete Failed</b>\n\n📄 <code>${safe}</code>\n\n<i>${escapeHtml(r.message)}</i>`
-            );
+            const failText = `❌ <b>Delete Failed</b>\n\n📄 <code>${safe}</code>\n\n<i>${escapeHtml(r.message)}</i>`;
+            const edited = await safeEdit(token, chatId, delId, failText);
+            if (!edited) {
+              await sendMsg(token, chatId, failText);
+            }
           }
         } catch (err: any) {
-          await safeEdit(token, chatId, delId,
-            `❌ <b>Delete Failed</b>\n\n📄 <code>${safe}</code>\n\n<i>${escapeHtml(err?.message || "Timeout")}</i>`
-          );
+          const errText = `❌ <b>Delete Failed</b>\n\n📄 <code>${safe}</code>\n\n<i>${escapeHtml(err?.message || "Timeout")}</i>`;
+          const edited = await safeEdit(token, chatId, delId, errText);
+          if (!edited) {
+            await sendMsg(token, chatId, errText);
+          }
         }
       });
 
