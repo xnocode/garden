@@ -11,17 +11,35 @@ import {
   escapeHtml,
 } from "@/lib/telegram-file-handler";
 
-async function sendTelegramReply(botToken: string, chatId: number | string, text: string) {
+const MAIN_KEYBOARD = {
+  keyboard: [
+    [{ text: "🌐 Visit Website" }, { text: "📚 List All Notes" }],
+    [{ text: "📊 Garden Stats" }, { text: "🏷️ Explore Tags" }],
+    [{ text: "🔍 Search Notes" }, { text: "💡 Help & Guide" }],
+  ],
+  resize_keyboard: true,
+  persistent: true,
+};
+
+async function sendTelegramReply(
+  botToken: string,
+  chatId: number | string,
+  text: string,
+  extraMarkup?: any
+) {
   try {
+    const body: any = {
+      chat_id: chatId,
+      parse_mode: "HTML",
+      text,
+      disable_web_page_preview: false,
+      reply_markup: extraMarkup || MAIN_KEYBOARD,
+    };
+
     await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        chat_id: chatId,
-        parse_mode: "HTML",
-        text,
-        disable_web_page_preview: false,
-      }),
+      body: JSON.stringify(body),
     });
   } catch (err) {
     console.error("Failed to send Telegram reply:", err);
@@ -80,7 +98,8 @@ export async function POST(req: Request) {
     const isPrivateChat = message.chat?.type === "private";
 
     // Clean text and strip @bot_username for group chats (e.g. /list@gardenx_connector_bot -> /list)
-    let text = (message.text?.trim() || "").replace(/@\w+_bot/gi, "").trim();
+    let rawText = message.text?.trim() || "";
+    let text = rawText.replace(/@\w+_bot/gi, "").trim();
 
     const isCommand = text.startsWith("/");
     const isDoc = !!message.document;
@@ -156,9 +175,24 @@ export async function POST(req: Request) {
       return NextResponse.json({ success: true, fileName: result.fileName }, { status: 200 });
     }
 
-    // 💬 3. COMMAND HANDLING
+    // 💬 3. BUTTON CLICK & COMMAND HANDLING
 
-    // 🔗 LINK COMMAND: /link <note_slug_or_filename> or /url <note_slug_or_filename>
+    // 🌐 Visit Website Button
+    if (rawText.includes("Visit Website") || rawText.includes("🌐")) {
+      await sendTelegramReply(
+        botToken,
+        chatId,
+        `🌐 <b>Digital Garden Website:</b>\n\n👉 <a href="https://gardenx.qzz.io">https://gardenx.qzz.io</a>`,
+        {
+          inline_keyboard: [
+            [{ text: "🌐 Open Website Now", url: "https://gardenx.qzz.io" }],
+          ],
+        }
+      );
+      return NextResponse.json({ success: true }, { status: 200 });
+    }
+
+    // 🔗 LINK COMMAND: /link <note_slug_or_filename>
     if (text.startsWith("/link") || text.startsWith("/url")) {
       const target = text.replace(/^\/(link|url)/, "").trim();
       if (!target) {
@@ -183,14 +217,19 @@ export async function POST(req: Request) {
           chatId,
           `🔗 <b>Live Website Link for "${escapeHtml(note.title)}":</b>\n\n` +
             `👉 <a href="${note.url}">${note.url}</a>\n\n` +
-            `📄 <b>File:</b> <code>${escapeHtml(note.filename)}</code>`
+            `📄 <b>File:</b> <code>${escapeHtml(note.filename)}</code>`,
+          {
+            inline_keyboard: [
+              [{ text: `🌐 Open "${escapeHtml(note.title)}" on Web`, url: note.url }],
+            ],
+          }
         );
       }
       return NextResponse.json({ success: true }, { status: 200 });
     }
 
-    // 📊 STATS COMMAND: /stats
-    if (text.startsWith("/stats")) {
+    // 📊 STATS COMMAND: /stats or "Garden Stats" button
+    if (text.startsWith("/stats") || rawText.includes("Garden Stats")) {
       const { totalNotes, totalWords, topTags } = getGardenStats();
       const formattedTags = topTags
         .slice(0, 8)
@@ -240,8 +279,8 @@ export async function POST(req: Request) {
       return NextResponse.json({ success: true }, { status: 200 });
     }
 
-    // 🏷️ TAGS OVERVIEW COMMAND: /tags
-    if (text.startsWith("/tags")) {
+    // 🏷️ TAGS OVERVIEW COMMAND: /tags or "Explore Tags" button
+    if (text.startsWith("/tags") || rawText.includes("Explore Tags")) {
       const tags = getGardenTags();
       if (tags.length === 0) {
         await sendTelegramReply(botToken, chatId, "🏷️ No tags found in garden.");
@@ -259,7 +298,16 @@ export async function POST(req: Request) {
       return NextResponse.json({ success: true }, { status: 200 });
     }
 
-    // 🔍 SEARCH COMMAND: /search <keyword>
+    // 🔍 SEARCH COMMAND: /search <keyword> or "Search Notes" button
+    if (rawText.includes("Search Notes")) {
+      await sendTelegramReply(
+        botToken,
+        chatId,
+        `🔍 <b>Search Notes:</b>\n\nSend <code>/search keyword</code> (e.g. <code>/search python</code> or <code>/search algorithm</code>)`
+      );
+      return NextResponse.json({ success: true }, { status: 200 });
+    }
+
     if (text.startsWith("/search")) {
       const query = text.replace("/search", "").trim();
       if (!query) {
@@ -290,7 +338,7 @@ export async function POST(req: Request) {
         await sendTelegramReply(
           botToken,
           chatId,
-          `🔍 <b>Search Results for "${escapeHtml(query)}" (${results.length} found):</b>\n\n${formatted}\n\n💡 <i>Send <code>/link filename</code> to get website link for any note!</i>`
+          `🔍 <b>Search Results for "${escapeHtml(query)}" (${results.length} found):</b>\n\n${formatted}\n\n💡 <i>Send <code>/link filename</code> to get website URL for any note!</i>`
         );
       }
       return NextResponse.json({ success: true }, { status: 200 });
@@ -321,8 +369,8 @@ export async function POST(req: Request) {
       return NextResponse.json({ success: true }, { status: 200 });
     }
 
-    // 📚 LIST COMMAND: /list [page_number]
-    if (text.startsWith("/list")) {
+    // 📚 LIST COMMAND: /list [page_number] or "List All Notes" button
+    if (text.startsWith("/list") || rawText.includes("List All Notes")) {
       const pageArg = text.replace("/list", "").trim();
       const pageNum = parseInt(pageArg, 10) || 1;
 
@@ -352,21 +400,21 @@ export async function POST(req: Request) {
       return NextResponse.json({ success: true }, { status: 200 });
     }
 
-    // 💡 HELP & START COMMAND
-    if (text.startsWith("/start") || text.startsWith("/help")) {
+    // 💡 HELP & START COMMAND or "Help & Guide" button
+    if (text.startsWith("/start") || text.startsWith("/help") || rawText.includes("Help & Guide")) {
       await sendTelegramReply(
         botToken,
         chatId,
         `🌱 <b>Garden Note Manager Bot</b>\n\n` +
           `📁 <b>Add Note:</b> Send or drag & drop any <code>.md</code> file here.\n` +
+          `🌐 <b>Visit Website:</b> Tap <code>🌐 Visit Website</code> below.\n` +
           `🔍 <b>Search Notes:</b> <code>/search keyword</code> (e.g. <code>/search python</code>)\n` +
-          `🔗 <b>Get Website Link:</b> <code>/link filename</code> (e.g. <code>/link about</code>)\n` +
-          `📊 <b>Garden Stats:</b> <code>/stats</code>\n` +
-          `🏷️ <b>Explore Tags:</b> <code>/tags</code> or <code>/tag python</code>\n` +
-          `📚 <b>List All Notes:</b> <code>/list</code> or <code>/list 2</code>\n` +
-          `🗑️ <b>Delete Note:</b> <code>/delete filename.md</code>\n` +
-          `💡 <b>Command Menu:</b> Type <code>/</code> to see all available commands!\n\n` +
-          `🔒 <i>Only you (@${escapeHtml(message.from?.username || "Owner")}) can use this bot.</i>`
+          `🔗 <b>Get Website Link:</b> <code>/link filename</code>\n` +
+          `📊 <b>Garden Stats:</b> Tap <code>📊 Garden Stats</code>\n` +
+          `🏷️ <b>Explore Tags:</b> Tap <code>🏷️ Explore Tags</code>\n` +
+          `📚 <b>List Notes:</b> Tap <code>📚 List All Notes</code>\n` +
+          `🗑️ <b>Delete Note:</b> <code>/delete filename.md</code>\n\n` +
+          `👇 <i>Use the persistent screen keyboard buttons below!</i>`
       );
       return NextResponse.json({ success: true }, { status: 200 });
     }
