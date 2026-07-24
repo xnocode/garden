@@ -32,7 +32,7 @@ function delay(ms: number): Promise<void> {
 
 async function tgFetch(url: string, options: any = {}) {
   const controller = new AbortController();
-  const id = setTimeout(() => controller.abort(), 4000);
+  const id = setTimeout(() => controller.abort(), 2500); // 2.5s timeout is plenty
   try {
     const res = await fetch(url, { ...options, signal: controller.signal });
     clearTimeout(id);
@@ -82,11 +82,12 @@ async function safeEdit(
   };
   if (markup) body.reply_markup = markup;
 
-  for (let attempt = 0; attempt < 4; attempt++) {
-    if (attempt > 0) await delay(1200 * attempt); // backoff: 1.2s, 2.4s, 3.6s
+  // Max 2 attempts, fast timeout (2.5s) to avoid Vercel timeouts
+  for (let attempt = 0; attempt < 2; attempt++) {
+    if (attempt > 0) await delay(500);
     try {
       const ctrl = new AbortController();
-      const t = setTimeout(() => ctrl.abort(), 5000);
+      const t = setTimeout(() => ctrl.abort(), 2500);
       const res = await fetch(`https://api.telegram.org/bot${token}/editMessageText`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -98,9 +99,9 @@ async function safeEdit(
 
       if (data?.ok) return; // ✅ success
 
-      // 429 rate limit — wait retry_after then retry
+      // 429 rate limit
       if (data?.error_code === 429) {
-        const wait = ((data?.parameters?.retry_after) || 2) * 1000;
+        const wait = ((data?.parameters?.retry_after) || 1) * 1000;
         await delay(wait);
         continue;
       }
@@ -114,11 +115,9 @@ async function safeEdit(
         delete body.parse_mode;
         continue;
       }
-
-      // Any other error — stop retrying
       break;
     } catch {
-      // Network/timeout error — retry
+      // Retry on network/timeout error
     }
   }
 }

@@ -79,9 +79,9 @@ export async function commitNoteToGitHub(
   try {
     let sha: string | undefined;
 
-    // 1. GET existing SHA (2.5s timeout)
+    // 1. GET existing SHA (2.0s timeout)
     const getController = new AbortController();
-    const getId = setTimeout(() => getController.abort(), 2500);
+    const getId = setTimeout(() => getController.abort(), 2000);
     try {
       const getRes = await fetch(url, {
         signal: getController.signal,
@@ -101,7 +101,7 @@ export async function commitNoteToGitHub(
       clearTimeout(getId);
     }
 
-    // 2. PUT file content (3.5s timeout)
+    // 2. PUT file content (2.5s timeout)
     const base64Content = Buffer.from(content).toString("base64");
     const putBody: any = {
       message: `publish note via Telegram: ${fileName}`,
@@ -110,7 +110,7 @@ export async function commitNoteToGitHub(
     if (sha) putBody.sha = sha;
 
     const putController = new AbortController();
-    const putId = setTimeout(() => putController.abort(), 3500);
+    const putId = setTimeout(() => putController.abort(), 2500);
 
     const putRes = await fetch(url, {
       method: "PUT",
@@ -157,9 +157,9 @@ export async function deleteNoteFromGitHub(
   const authHeader = token.startsWith("github_pat_") || token.startsWith("ghp_") ? `Bearer ${token}` : `token ${token}`;
 
   try {
-    // 1. GET file SHA (3s timeout)
+    // 1. GET file SHA (2.0s timeout)
     const getController = new AbortController();
-    const getId = setTimeout(() => getController.abort(), 3000);
+    const getId = setTimeout(() => getController.abort(), 2000);
     const getRes = await fetch(url, {
       signal: getController.signal,
       headers: {
@@ -177,9 +177,9 @@ export async function deleteNoteFromGitHub(
     const fileData = await getRes.json();
     const sha = fileData.sha;
 
-    // 2. DELETE file from GitHub (3.5s timeout)
+    // 2. DELETE file from GitHub (2.5s timeout)
     const delController = new AbortController();
-    const delId = setTimeout(() => delController.abort(), 3500);
+    const delId = setTimeout(() => delController.abort(), 2500);
 
     const delRes = await fetch(url, {
       method: "DELETE",
