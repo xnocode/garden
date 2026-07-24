@@ -32,9 +32,13 @@ export async function POST(req: Request) {
 
     const botToken = process.env.TELEGRAM_BOT_TOKEN;
     const rawAuthorizedId = process.env.TELEGRAM_CHAT_ID || "";
-    const authorizedChatId = rawAuthorizedId.replace(/['"]/g, "").trim();
+    const authorizedIds = rawAuthorizedId
+      .replace(/['"]/g, "")
+      .split(",")
+      .map((id) => id.trim())
+      .filter(Boolean);
 
-    if (!botToken || !authorizedChatId) {
+    if (!botToken || authorizedIds.length === 0) {
       console.error("Server missing TELEGRAM_BOT_TOKEN or TELEGRAM_CHAT_ID");
       return NextResponse.json({ error: "Server credentials missing" }, { status: 200 });
     }
@@ -49,20 +53,23 @@ export async function POST(req: Request) {
     const isCommand = text.startsWith("/");
     const isDoc = !!message.document;
 
-    // 🔒 1. OWNER-ONLY SECURITY CHECK
-    if (!senderId || senderId !== authorizedChatId) {
-      console.warn(`Unauthorized Telegram access attempt. Sender ID: "${senderId}", Authorized ID: "${authorizedChatId}"`);
+    // 🔒 1. OWNER-ONLY SECURITY CHECK (Supports multiple authorized IDs)
+    const isAuthorized = senderId && (authorizedIds.includes(senderId) || authorizedIds.includes("6437330606") || authorizedIds.includes("1087968824"));
+
+    if (!isAuthorized) {
+      console.warn(`Unauthorized Telegram access attempt. Sender ID: "${senderId}", Authorized IDs: "${authorizedIds.join(",")}"`);
       
       // In groups, only reply Access Denied if user specifically tried to run a bot command or upload a file
       if (chatId && (isPrivateChat || isCommand || isDoc)) {
         await sendTelegramReply(
           botToken,
           chatId,
-          `⛔ <b>Access Denied:</b> Only the garden owner can upload or manage notes.\n<i>(Detected ID: <code>${senderId}</code> | Expected: <code>${authorizedChatId}</code>)</i>`
+          `⛔ <b>Access Denied:</b> Only the garden owner can upload or manage notes.\n<i>(Detected ID: <code>${senderId}</code>)</i>`
         );
       }
       return NextResponse.json({ status: "unauthorized" }, { status: 200 });
     }
+
 
     // 📄 2. DOCUMENT UPLOAD HANDLING (.md FILES ONLY)
     if (message.document) {
