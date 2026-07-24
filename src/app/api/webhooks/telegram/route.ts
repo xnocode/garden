@@ -130,7 +130,7 @@ export async function POST(req: Request) {
         return NextResponse.json({ ok: true });
       }
 
-      const dup = checkDuplicateNote(fileName);
+      const dup = await checkDuplicateNote(fileName);
       if (dup) {
         await sendMsg(token, chatId,
           `⚠️ <b>Already Exists</b>\n\n` +
@@ -209,7 +209,7 @@ export async function POST(req: Request) {
     if (text.startsWith("/link") || text.startsWith("/url")) {
       const target = text.replace(/^\/(link|url)/, "").trim();
       if (!target) { await sendMsg(token, chatId, "⚠️ <code>/link filename</code>"); return NextResponse.json({ ok: true }); }
-      const note = getNoteBySlugOrName(target);
+      const note = await getNoteBySlugOrName(target);
       if (!note) {
         await sendMsg(token, chatId, `❌ <i>"${escapeHtml(note?.title || target)}"</i> not found.`);
       } else {
@@ -222,7 +222,7 @@ export async function POST(req: Request) {
     }
 
     if (text.startsWith("/stats") || rawText.includes("Garden Stats")) {
-      const { totalNotes, totalWords, topTags } = getGardenStats();
+      const { totalNotes, totalWords, topTags } = await getGardenStats();
       const tags = topTags.slice(0, 8).map((t) => `• #${escapeHtml(t.tag)} (${t.count})`).join("\n");
       await sendMsg(token, chatId,
         `📊 <b>Garden Stats</b>\n\n🌱 ${totalNotes} notes\n📝 ${totalWords.toLocaleString()} words\n\n🏷️ <b>Tags:</b>\n${tags || "None"}`
@@ -233,7 +233,7 @@ export async function POST(req: Request) {
     if (text.startsWith("/tag ") || text.startsWith("/tag_")) {
       const tag = text.replace(/^\/tag[_ ]/, "").trim();
       if (!tag) { await sendMsg(token, chatId, "⚠️ <code>/tag python</code>"); return NextResponse.json({ ok: true }); }
-      const notes = getNotesByTag(tag);
+      const notes = await getNotesByTag(tag);
       if (!notes.length) { await sendMsg(token, chatId, `🏷️ No notes under #${escapeHtml(tag)}`); }
       else {
         const list = notes.map((n, i) => `${i + 1}. <b>${escapeHtml(n.title)}</b> (<code>${escapeHtml(n.filename)}</code>)`).join("\n");
@@ -243,7 +243,7 @@ export async function POST(req: Request) {
     }
 
     if (text.startsWith("/tags") || rawText.includes("Explore Tags")) {
-      const tags = getGardenTags();
+      const tags = await getGardenTags();
       if (!tags.length) { await sendMsg(token, chatId, "🏷️ No tags."); }
       else {
         const list = tags.map((t) => `• <b>#${escapeHtml(t.tag)}</b> (${t.count})`).join("\n");
@@ -260,7 +260,7 @@ export async function POST(req: Request) {
     if (text.startsWith("/search")) {
       const q = text.replace("/search", "").trim();
       if (!q) { await sendMsg(token, chatId, "⚠️ <code>/search keyword</code>"); return NextResponse.json({ ok: true }); }
-      const results = searchTelegramNotes(q, 15);
+      const results = await searchTelegramNotes(q, 15);
       if (!results.length) { await sendMsg(token, chatId, `🔍 No results for "${escapeHtml(q)}".`); }
       else {
         const list = results.map((r, i) => `${i + 1}. <b>${r.title}</b> (<code>${r.fileName}</code>)`).join("\n");
@@ -293,7 +293,7 @@ export async function POST(req: Request) {
 
     if (text.startsWith("/list") || rawText.includes("List All Notes")) {
       const pg = parseInt(text.replace("/list", "").trim(), 10) || 1;
-      const { notes, total, totalPages, page } = getPaginatedNotes(pg, 25);
+      const { notes, total, totalPages, page } = await getPaginatedNotes(pg, 25);
       if (!total) { await sendMsg(token, chatId, "📂 No notes."); }
       else {
         const list = notes.map((n, i) => `${(page - 1) * 25 + i + 1}. <b>${escapeHtml(n.title)}</b> (<code>${escapeHtml(n.filename)}</code>)`).join("\n");

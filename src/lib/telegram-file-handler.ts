@@ -45,10 +45,10 @@ export function sanitizeFilename(rawFileName: string): string {
 /**
  * Checks if a note file with the given filename or slug already exists in the garden.
  */
-export function checkDuplicateNote(rawFileName: string): NoteItem | null {
+export async function checkDuplicateNote(rawFileName: string): Promise<NoteItem | null> {
   const safeName = sanitizeFilename(rawFileName);
   const slug = safeName.replace(/\.md$/, "").replace(/\.markdown$/, "");
-  const allNotes = getAllTelegramNotes();
+  const allNotes = await getAllTelegramNotes();
 
   return (
     allNotes.find(
@@ -323,20 +323,73 @@ export async function deleteTelegramNote(
   return { success: false, message: ghRes.message || `Note file "${cleanName}" not found.` };
 }
 
+let gitHubContentsCache: { files: string[]; timestamp: number } | null = null;
+
+async function getGitHubContents(): Promise<string[]> {
+  const now = Date.now();
+  if (gitHubContentsCache && now - gitHubContentsCache.timestamp < 5000) {
+    return gitHubContentsCache.files;
+  }
+
+  const token = (process.env.GITHUB_TOKEN || process.env.GH_TOKEN || "").trim();
+  if (!token) return [];
+  const repo = process.env.NEXT_PUBLIC_GISCUS_REPO || "xnocode/garden";
+  const url = `https://api.github.com/repos/${repo}/contents/content`;
+  const authHeader = token.startsWith("github_pat_") || token.startsWith("ghp_") ? `Bearer ${token}` : `token ${token}`;
+
+  try {
+    const controller = new AbortController();
+    const id = setTimeout(() => controller.abort(), 2000);
+    const res = await fetch(url, {
+      signal: controller.signal,
+      headers: {
+        Authorization: authHeader,
+        Accept: "application/vnd.github.v3+json",
+        "User-Agent": "DigitalGardenBot",
+      },
+    });
+    clearTimeout(id);
+    if (!res.ok) return [];
+    const files = await res.json();
+    if (Array.isArray(files)) {
+      const resultFiles = files
+        .filter((f: any) => f.type === "file" && (f.name.endsWith(".md") || f.name.endsWith(".markdown")))
+        .map((f: any) => f.name.toLowerCase());
+      
+      gitHubContentsCache = { files: resultFiles, timestamp: now };
+      return resultFiles;
+    }
+  } catch (e) {
+    console.error("Error fetching GitHub contents:", e);
+  }
+  return [];
+}
+
 /**
  * Gets all note items in content/ directory, notes.json database, and dynamic memory map.
  */
-export function getAllTelegramNotes(): NoteItem[] {
+export async function getAllTelegramNotes(): Promise<NoteItem[]> {
   const map = new Map<string, NoteItem>();
 
-  // 1. Load from compiled notes.json
+  // 1. Fetch live filenames from GitHub (source of truth)
+  const liveFiles = await getGitHubContents();
+  const hasLive = liveFiles.length > 0;
+
+  // 2. Load from compiled notes.json
   if (Array.isArray(notesJson)) {
     for (const note of notesJson as any[]) {
       const slug = note.slug || "note";
       const filename = note.path || `${slug}.md`;
+      const filenameLower = filename.toLowerCase();
+
+      // If we have the live list from GitHub, filter out files that are no longer there
+      if (hasLive && !liveFiles.includes(filenameLower)) {
+        continue;
+      }
+
       const url = `${DEFAULT_DOMAIN.replace(/\/$/, "")}/?p=${encodeURIComponent(slug)}`;
 
-      map.set(filename.toLowerCase(), {
+      map.set(filenameLower, {
         title: note.title || slug,
         filename,
         slug,
@@ -349,8 +402,8 @@ export function getAllTelegramNotes(): NoteItem[] {
     }
   }
 
-  // 2. Load from content/ directory if accessible
-  if (fs.existsSync(CONTENT_DIR)) {
+  // 3. Load from content/ directory if accessible (fallback for local development)
+  if (!hasLive && fs.existsSync(CONTENT_DIR)) {
     try {
       const files = fs.readdirSync(CONTENT_DIR);
       for (const f of files) {
@@ -377,8 +430,30 @@ export function getAllTelegramNotes(): NoteItem[] {
     }
   }
 
-  // 3. Load from in-memory dynamic cache
+  // 4. Add any new notes that are on GitHub but not yet in notes.json
+  if (hasLive) {
+    for (const name of liveFiles) {
+      if (!map.has(name)) {
+        const slug = name.replace(/\.md$/, "").replace(/\.markdown$/, "");
+        const url = `${DEFAULT_DOMAIN.replace(/\/$/, "")}/?p=${encodeURIComponent(slug)}`;
+        map.set(name, {
+          title: slug.replace(/-/g, " "),
+          filename: name,
+          slug,
+          url,
+          description: "New note (syncing...)",
+          wordCount: 0,
+          tags: [],
+        });
+      }
+    }
+  }
+
+  // 5. Load from in-memory dynamic cache (fallback for immediate updates)
   for (const [key, item] of dynamicNotesMap.entries()) {
+    if (hasLive && !liveFiles.includes(key)) {
+      continue;
+    }
     map.set(key, item);
   }
 
@@ -388,10 +463,10 @@ export function getAllTelegramNotes(): NoteItem[] {
 /**
  * Finds a specific note by slug or filename.
  */
-export function getNoteBySlugOrName(query: string): NoteItem | null {
+export async function getNoteBySlugOrName(query: string): Promise<NoteItem | null> {
   const clean = query.trim().toLowerCase().replace(/\.md$/, "").replace(/\.markdown$/, "");
   if (!clean) return null;
-  const all = getAllTelegramNotes();
+  const all = await getAllTelegramNotes();
   return (
     all.find(
       (n) =>
@@ -406,13 +481,13 @@ export function getNoteBySlugOrName(query: string): NoteItem | null {
 /**
  * Paginated list of notes for large collections.
  */
-export function getPaginatedNotes(page: number = 1, pageSize: number = 25): {
+export async function getPaginatedNotes(page: number = 1, pageSize: number = 25): Promise<{
   notes: NoteItem[];
   total: number;
   totalPages: number;
   page: number;
-} {
-  const all = getAllTelegramNotes();
+}> {
+  const all = await getAllTelegramNotes();
   const total = all.length;
   const totalPages = Math.ceil(total / pageSize) || 1;
   const currentPage = Math.max(1, Math.min(page, totalPages));
@@ -430,14 +505,14 @@ export function getPaginatedNotes(page: number = 1, pageSize: number = 25): {
 /**
  * Searches note titles, filenames, tags, and content.
  */
-export function searchTelegramNotes(query: string, limit: number = 15): { title: string; fileName: string; slug: string; url: string; snippet: string }[] {
+export async function searchTelegramNotes(query: string, limit: number = 15): Promise<{ title: string; fileName: string; slug: string; url: string; snippet: string }[]> {
   const cleanQuery = query.toLowerCase().trim();
   if (!cleanQuery) return [];
 
   const results: { title: string; fileName: string; slug: string; url: string; snippet: string }[] = [];
   const seen = new Set<string>();
 
-  const allNotes = getAllTelegramNotes();
+  const allNotes = await getAllTelegramNotes();
   for (const note of allNotes) {
     if (results.length >= limit) break;
     const fullText = `${note.title} ${note.filename} ${note.slug} ${note.description} ${note.tags?.join(" ")}`.toLowerCase();
@@ -456,12 +531,12 @@ export function searchTelegramNotes(query: string, limit: number = 15): { title:
   return results;
 }
 
-export function getGardenStats(): {
+export async function getGardenStats(): Promise<{
   totalNotes: number;
   totalWords: number;
   topTags: { tag: string; count: number }[];
-} {
-  const notes = getAllTelegramNotes();
+}> {
+  const notes = await getAllTelegramNotes();
   const totalNotes = notes.length;
   let totalWords = 0;
   const tagMap = new Map<string, number>();
@@ -489,16 +564,16 @@ export function getGardenStats(): {
   };
 }
 
-export function getGardenTags(): { tag: string; count: number }[] {
-  const { topTags } = getGardenStats();
+export async function getGardenTags(): Promise<{ tag: string; count: number }[]> {
+  const { topTags } = await getGardenStats();
   return topTags;
 }
 
-export function getNotesByTag(tagName: string): NoteItem[] {
+export async function getNotesByTag(tagName: string): Promise<NoteItem[]> {
   const cleanTag = tagName.replace(/^#/, "").trim().toLowerCase();
   if (!cleanTag) return [];
 
-  const notes = getAllTelegramNotes();
+  const notes = await getAllTelegramNotes();
   return notes.filter((n) =>
     Array.isArray(n.tags) &&
     n.tags.some((t) => t.replace(/^#/, "").trim().toLowerCase() === cleanTag)
