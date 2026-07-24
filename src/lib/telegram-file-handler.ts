@@ -60,7 +60,7 @@ export function checkDuplicateNote(rawFileName: string): NoteItem | null {
 }
 
 /**
- * Fast GitHub commit with 3.5s strict timeout.
+ * Commits uploaded file directly to GitHub repository to trigger Vercel site rebuild.
  */
 export async function commitNoteToGitHub(
   fileName: string,
@@ -141,6 +141,77 @@ export async function commitNoteToGitHub(
 }
 
 /**
+ * Deletes a note file directly from GitHub repository to trigger Vercel rebuild.
+ */
+export async function deleteNoteFromGitHub(
+  fileName: string
+): Promise<{ success: boolean; message: string }> {
+  const token = (process.env.GITHUB_TOKEN || process.env.GH_TOKEN || "").trim();
+  if (!token) {
+    return { success: false, message: "No GITHUB_TOKEN configured" };
+  }
+
+  const repo = process.env.NEXT_PUBLIC_GISCUS_REPO || "xnocode/garden";
+  const filePath = `content/${fileName}`;
+  const url = `https://api.github.com/repos/${repo}/contents/${filePath}`;
+  const authHeader = token.startsWith("github_pat_") || token.startsWith("ghp_") ? `Bearer ${token}` : `token ${token}`;
+
+  try {
+    // 1. GET file SHA (3s timeout)
+    const getController = new AbortController();
+    const getId = setTimeout(() => getController.abort(), 3000);
+    const getRes = await fetch(url, {
+      signal: getController.signal,
+      headers: {
+        Authorization: authHeader,
+        Accept: "application/vnd.github.v3+json",
+        "User-Agent": "DigitalGardenBot",
+      },
+    });
+    clearTimeout(getId);
+
+    if (!getRes.ok) {
+      return { success: false, message: `File "${fileName}" not found on GitHub` };
+    }
+
+    const fileData = await getRes.json();
+    const sha = fileData.sha;
+
+    // 2. DELETE file from GitHub (3.5s timeout)
+    const delController = new AbortController();
+    const delId = setTimeout(() => delController.abort(), 3500);
+
+    const delRes = await fetch(url, {
+      method: "DELETE",
+      signal: delController.signal,
+      headers: {
+        Authorization: authHeader,
+        Accept: "application/vnd.github.v3+json",
+        "Content-Type": "application/json",
+        "User-Agent": "DigitalGardenBot",
+      },
+      body: JSON.stringify({
+        message: `delete note via Telegram: ${fileName}`,
+        sha,
+      }),
+    });
+    clearTimeout(delId);
+
+    if (delRes.ok) {
+      return { success: true, message: `Deleted "${fileName}" from GitHub & triggered Vercel rebuild` };
+    } else {
+      const errData = await delRes.json().catch(() => ({}));
+      return { success: false, message: errData.message || `GitHub HTTP ${delRes.status}` };
+    }
+  } catch (err: any) {
+    if (err?.name === "AbortError") {
+      return { success: false, message: "GitHub API request timed out (3.5s limit)" };
+    }
+    return { success: false, message: err?.message || "GitHub API delete error" };
+  }
+}
+
+/**
  * Saves markdown content sent via Telegram to the content/ folder & in-memory cache.
  */
 export async function saveTelegramNote(
@@ -203,7 +274,7 @@ export async function saveTelegramNote(
 }
 
 /**
- * Deletes a note file from content/ folder & dynamic memory map.
+ * Deletes a note file from content/ folder, in-memory cache, and GitHub repository.
  */
 export async function deleteTelegramNote(
   nameOrSlug: string
@@ -224,11 +295,26 @@ export async function deleteTelegramNote(
     } catch {}
   }
 
-  if (existedInMap || deletedDisk) {
-    return { success: true, deletedFile: cleanName, message: "Note record deleted." };
+  // Delete from GitHub repository
+  const ghRes = await deleteNoteFromGitHub(cleanName);
+
+  if (ghRes.success) {
+    return {
+      success: true,
+      deletedFile: cleanName,
+      message: `Deleted "${cleanName}" from GitHub & website. Vercel rebuild triggered (~1-2 min).`,
+    };
   }
 
-  return { success: false, message: `Note file "${cleanName}" not found.` };
+  if (existedInMap || deletedDisk) {
+    return {
+      success: true,
+      deletedFile: cleanName,
+      message: `Deleted "${cleanName}" from memory, but GitHub note status: ${ghRes.message}`,
+    };
+  }
+
+  return { success: false, message: ghRes.message || `Note file "${cleanName}" not found.` };
 }
 
 /**
