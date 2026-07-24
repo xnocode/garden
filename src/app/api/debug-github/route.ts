@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
 
+export const dynamic = "force-dynamic";
+
 export async function GET() {
   const token = (process.env.GITHUB_TOKEN || process.env.GH_TOKEN || "").trim();
   const repo = process.env.NEXT_PUBLIC_GISCUS_REPO || "xnocode/garden";

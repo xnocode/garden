@@ -12,6 +12,8 @@ import {
   escapeHtml,
 } from "@/lib/telegram-file-handler";
 
+export const dynamic = "force-dynamic";
+
 const MAIN_KEYBOARD = {
   keyboard: [
     [{ text: "🌐 Visit Website" }, { text: "📚 List All Notes" }],
