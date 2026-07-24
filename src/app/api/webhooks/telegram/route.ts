@@ -202,6 +202,10 @@ export async function POST(req: Request) {
       );
       if (!msgId) return NextResponse.json({ ok: true });
 
+      // ⏳ CRITICAL: wait for Telegram to register the message before editing
+      // Without this delay, Telegram rate-limits the edit and the bar stays stuck at 0%
+      await delay(600);
+
       try {
         // ── Frame 2: Spin @ 10% — Requesting file ──
         await editMsg(token, chatId, msgId,
@@ -210,6 +214,7 @@ export async function POST(req: Request) {
           `<i>Requesting file from Telegram...</i>\n\n` +
           `📄 <code>${safe}</code>`
         );
+        await delay(500);
 
         const fileRes = await tgFetch(`https://api.telegram.org/bot${token}/getFile?file_id=${doc.file_id}`);
         const fileData = await fileRes.json();
@@ -379,6 +384,9 @@ export async function POST(req: Request) {
         `📄 <code>${safe}</code>`
       );
 
+      // ⏳ CRITICAL: wait for Telegram to register the message before editing
+      await delay(600);
+
       if (delId) {
         // ── Frame 2: Spin @ 40% ──
         await editMsg(token, chatId, delId,
@@ -387,6 +395,7 @@ export async function POST(req: Request) {
           `<i>Removing from GitHub repository...</i>\n\n` +
           `📄 <code>${safe}</code>`
         );
+        await delay(500);
       }
 
       const r = await deleteTelegramNote(target);
@@ -400,7 +409,7 @@ export async function POST(req: Request) {
             `<i>Triggering garden rebuild...</i>\n\n` +
             `📄 <code>${safe}</code>`
           );
-          await delay(300);
+          await delay(600);
 
           // ── Final: 100% ──
           await editMsg(token, chatId, delId,
