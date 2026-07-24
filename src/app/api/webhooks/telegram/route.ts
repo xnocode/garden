@@ -2,7 +2,8 @@ import { NextResponse } from "next/server";
 import {
   saveTelegramNote,
   deleteTelegramNote,
-  listTelegramNotes,
+  getPaginatedNotes,
+  searchTelegramNotes,
 } from "@/lib/telegram-file-handler";
 
 async function sendTelegramReply(botToken: string, chatId: number | string, text: string) {
@@ -18,6 +19,28 @@ async function sendTelegramReply(botToken: string, chatId: number | string, text
     });
   } catch (err) {
     console.error("Failed to send Telegram reply:", err);
+  }
+}
+
+/**
+ * Registers bot commands with Telegram so typing '/' pops up the autocomplete command list.
+ */
+async function registerBotCommands(botToken: string) {
+  try {
+    await fetch(`https://api.telegram.org/bot${botToken}/setMyCommands`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        commands: [
+          { command: "list", description: "📚 List all notes in your garden (/list or /list 2)" },
+          { command: "search", description: "🔍 Search notes by keyword (/search python)" },
+          { command: "delete", description: "🗑️ Delete a note file (/delete my-note.md)" },
+          { command: "help", description: "💡 Show help & bot instructions" },
+        ],
+      }),
+    });
+  } catch {
+    // Ignore registration error
   }
 }
 
@@ -53,13 +76,21 @@ export async function POST(req: Request) {
     const isCommand = text.startsWith("/");
     const isDoc = !!message.document;
 
-    // 🔒 1. OWNER-ONLY SECURITY CHECK (Supports multiple authorized IDs)
-    const isAuthorized = senderId && (authorizedIds.includes(senderId) || authorizedIds.includes("6437330606") || authorizedIds.includes("1087968824"));
+    // Register commands menu asynchronously
+    registerBotCommands(botToken);
+
+    // 🔒 1. OWNER-ONLY SECURITY CHECK
+    const isAuthorized =
+      senderId &&
+      (authorizedIds.includes(senderId) ||
+        authorizedIds.includes("6437330606") ||
+        authorizedIds.includes("1087968824"));
 
     if (!isAuthorized) {
-      console.warn(`Unauthorized Telegram access attempt. Sender ID: "${senderId}", Authorized IDs: "${authorizedIds.join(",")}"`);
-      
-      // In groups, only reply Access Denied if user specifically tried to run a bot command or upload a file
+      console.warn(
+        `Unauthorized Telegram access attempt. Sender ID: "${senderId}", Authorized IDs: "${authorizedIds.join(",")}"`
+      );
+
       if (chatId && (isPrivateChat || isCommand || isDoc)) {
         await sendTelegramReply(
           botToken,
@@ -69,7 +100,6 @@ export async function POST(req: Request) {
       }
       return NextResponse.json({ status: "unauthorized" }, { status: 200 });
     }
-
 
     // 📄 2. DOCUMENT UPLOAD HANDLING (.md FILES ONLY)
     if (message.document) {
@@ -117,7 +147,46 @@ export async function POST(req: Request) {
       return NextResponse.json({ success: true, fileName: result.fileName }, { status: 200 });
     }
 
-    // 💬 3. COMMAND HANDLING (/delete, /list, /help)
+    // 💬 3. COMMAND HANDLING
+
+    // 🔍 SEARCH COMMAND: /search <keyword>
+    if (text.startsWith("/search")) {
+      const query = text.replace("/search", "").trim();
+      if (!query) {
+        await sendTelegramReply(
+          botToken,
+          chatId,
+          "⚠️ <b>Usage:</b> <code>/search python</code> or <code>/search algorithms</code>"
+        );
+        return NextResponse.json({ status: "bad_command" }, { status: 200 });
+      }
+
+      const results = searchTelegramNotes(query, 20);
+
+      if (results.length === 0) {
+        await sendTelegramReply(
+          botToken,
+          chatId,
+          `🔍 No notes found matching <i>"${query}"</i>.`
+        );
+      } else {
+        const formatted = results
+          .map(
+            (r, i) =>
+              `${i + 1}. 📄 <code>${r.fileName}</code>\n   <i>${r.snippet || "Matched"}</i>`
+          )
+          .join("\n\n");
+
+        await sendTelegramReply(
+          botToken,
+          chatId,
+          `🔍 <b>Search Results for "${query}" (${results.length} found):</b>\n\n${formatted}`
+        );
+      }
+      return NextResponse.json({ success: true }, { status: 200 });
+    }
+
+    // 🗑️ DELETE COMMAND: /delete <filename>
     if (text.startsWith("/delete")) {
       const target = text.replace("/delete", "").trim();
       if (!target) {
@@ -142,29 +211,42 @@ export async function POST(req: Request) {
       return NextResponse.json({ success: true }, { status: 200 });
     }
 
+    // 📚 LIST COMMAND: /list [page_number]
     if (text.startsWith("/list")) {
-      const notes = listTelegramNotes(15);
-      if (notes.length === 0) {
+      const pageArg = text.replace("/list", "").trim();
+      const pageNum = parseInt(pageArg, 10) || 1;
+
+      const { notes, total, totalPages, page } = getPaginatedNotes(pageNum, 30);
+
+      if (total === 0) {
         await sendTelegramReply(botToken, chatId, "📂 No notes found in content folder.");
       } else {
         const noteList = notes.map((n) => `• <code>${n}</code>`).join("\n");
+        const navText =
+          totalPages > 1
+            ? `\n\n📖 <i>Page ${page} of ${totalPages}. Send <code>/list ${page < totalPages ? page + 1 : 1}</code> to view next page.</i>`
+            : "";
+
         await sendTelegramReply(
           botToken,
           chatId,
-          `📚 <b>Your Garden Notes:</b>\n\n${noteList}`
+          `📚 <b>Your Garden Notes (${total} Total Notes):</b>\n\n${noteList}${navText}`
         );
       }
       return NextResponse.json({ success: true }, { status: 200 });
     }
 
+    // 💡 HELP & START COMMAND
     if (text.startsWith("/start") || text.startsWith("/help")) {
       await sendTelegramReply(
         botToken,
         chatId,
         `🌱 <b>Garden Note Manager Bot</b>\n\n` +
-          `📁 <b>Add Note:</b> Simply attach & send any <code>.md</code> file here.\n` +
-          `🗑️ <b>Delete Note:</b> Send <code>/delete filename.md</code>\n` +
-          `📚 <b>List Notes:</b> Send <code>/list</code>\n\n` +
+          `📁 <b>Add Note:</b> Send or drag & drop any <code>.md</code> file here.\n` +
+          `🔍 <b>Search Notes:</b> <code>/search keyword</code> (e.g. <code>/search python</code>)\n` +
+          `📚 <b>List All Notes:</b> <code>/list</code> or <code>/list 2</code> (paginated for 1000+ notes)\n` +
+          `🗑️ <b>Delete Note:</b> <code>/delete filename.md</code>\n` +
+          `💡 <b>Command Menu:</b> Type <code>/</code> to see all available commands!\n\n` +
           `🔒 <i>Only you (@${message.from?.username || "Owner"}) can use this bot.</i>`
       );
       return NextResponse.json({ success: true }, { status: 200 });

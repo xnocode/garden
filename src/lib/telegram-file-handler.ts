@@ -70,12 +70,76 @@ export async function deleteTelegramNote(
 }
 
 /**
- * Lists current note files in content/ directory.
+ * Gets all note filenames in content/ directory.
  */
-export function listTelegramNotes(limit: number = 10): string[] {
+export function getAllTelegramNotes(): string[] {
   if (!fs.existsSync(CONTENT_DIR)) return [];
   const files = fs.readdirSync(CONTENT_DIR);
   return files
     .filter((f) => f.endsWith(".md") || f.endsWith(".markdown"))
-    .slice(0, limit);
+    .sort((a, b) => a.localeCompare(b));
+}
+
+/**
+ * Paginated list of notes for large collections (100s or 1000s of notes).
+ */
+export function getPaginatedNotes(page: number = 1, pageSize: number = 30): {
+  notes: string[];
+  total: number;
+  totalPages: number;
+  page: number;
+} {
+  const all = getAllTelegramNotes();
+  const total = all.length;
+  const totalPages = Math.ceil(total / pageSize) || 1;
+  const currentPage = Math.max(1, Math.min(page, totalPages));
+  const start = (currentPage - 1) * pageSize;
+  const notes = all.slice(start, start + pageSize);
+
+  return {
+    notes,
+    total,
+    totalPages,
+    page: currentPage,
+  };
+}
+
+/**
+ * Searches note filenames and content for a given keyword query.
+ */
+export function searchTelegramNotes(query: string, limit: number = 25): { fileName: string; snippet?: string }[] {
+  const all = getAllTelegramNotes();
+  const cleanQuery = query.toLowerCase().trim();
+  if (!cleanQuery) return [];
+
+  const results: { fileName: string; snippet?: string }[] = [];
+
+  for (const file of all) {
+    if (results.length >= limit) break;
+
+    // Check if filename matches query
+    if (file.toLowerCase().includes(cleanQuery)) {
+      results.push({ fileName: file, snippet: "Matched filename" });
+      continue;
+    }
+
+    // Check file content
+    try {
+      const fullPath = path.join(CONTENT_DIR, file);
+      const content = fs.readFileSync(fullPath, "utf-8");
+      const lowerContent = content.toLowerCase();
+      const matchIndex = lowerContent.indexOf(cleanQuery);
+
+      if (matchIndex !== -1) {
+        const start = Math.max(0, matchIndex - 30);
+        const end = Math.min(content.length, matchIndex + cleanQuery.length + 30);
+        const snippet = "..." + content.slice(start, end).replace(/\n/g, " ") + "...";
+        results.push({ fileName: file, snippet });
+      }
+    } catch {
+      // Ignore read errors for individual files
+    }
+  }
+
+  return results;
 }
