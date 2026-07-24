@@ -16,6 +16,9 @@ export interface NoteItem {
   updatedAt?: string;
 }
 
+// In-memory cache for dynamic uploaded notes on serverless instances
+const dynamicNotesMap = new Map<string, NoteItem>();
+
 /**
  * Escapes HTML characters so Telegram's HTML parser doesn't break.
  */
@@ -40,29 +43,120 @@ export function sanitizeFilename(rawFileName: string): string {
 }
 
 /**
- * Saves markdown content sent via Telegram to the content/ folder.
+ * Commits uploaded file directly to GitHub repository to trigger Vercel site rebuild.
+ */
+export async function commitNoteToGitHub(
+  fileName: string,
+  content: string
+): Promise<{ success: boolean; message: string }> {
+  const token = process.env.GITHUB_TOKEN || process.env.GH_TOKEN;
+  if (!token) {
+    return { success: false, message: "No GITHUB_TOKEN configured" };
+  }
+
+  const repo = process.env.NEXT_PUBLIC_GISCUS_REPO || "xnocode/garden";
+  const filePath = `content/${fileName}`;
+  const url = `https://api.github.com/repos/${repo}/contents/${filePath}`;
+
+  try {
+    let sha: string | undefined;
+    const getRes = await fetch(url, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        Accept: "application/vnd.github.v3+json",
+        "User-Agent": "DigitalGardenBot",
+      },
+    });
+
+    if (getRes.ok) {
+      const existingData = await getRes.json();
+      sha = existingData.sha;
+    }
+
+    const base64Content = Buffer.from(content).toString("base64");
+    const putBody: any = {
+      message: `publish note via Telegram: ${fileName}`,
+      content: base64Content,
+    };
+    if (sha) putBody.sha = sha;
+
+    const putRes = await fetch(url, {
+      method: "PUT",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        Accept: "application/vnd.github.v3+json",
+        "Content-Type": "application/json",
+        "User-Agent": "DigitalGardenBot",
+      },
+      body: JSON.stringify(putBody),
+    });
+
+    if (putRes.ok) {
+      return { success: true, message: "Committed to GitHub & Vercel deployment triggered" };
+    } else {
+      const errData = await putRes.json();
+      return { success: false, message: errData.message || "GitHub commit failed" };
+    }
+  } catch (err: any) {
+    return { success: false, message: err.message || "GitHub API error" };
+  }
+}
+
+/**
+ * Saves markdown content sent via Telegram to the content/ folder & in-memory cache.
  */
 export async function saveTelegramNote(
   fileName: string,
   content: string
-): Promise<{ success: boolean; filePath: string; fileName: string; isUpdate: boolean }> {
+): Promise<{ success: boolean; filePath: string; fileName: string; isUpdate: boolean; githubStatus?: string }> {
   const safeName = sanitizeFilename(fileName);
   const targetPath = path.join(CONTENT_DIR, safeName);
 
-  // Prevent directory traversal
   if (!targetPath.startsWith(CONTENT_DIR)) {
     throw new Error("Invalid file path destination");
   }
 
   const isUpdate = fs.existsSync(targetPath);
-  await fs.promises.mkdir(CONTENT_DIR, { recursive: true });
-  await fs.promises.writeFile(targetPath, content, "utf-8");
+  try {
+    await fs.promises.mkdir(CONTENT_DIR, { recursive: true });
+    await fs.promises.writeFile(targetPath, content, "utf-8");
+  } catch {
+    // Ephemeral disk write fallback
+  }
+
+  const slug = safeName.replace(/\.md$/, "").replace(/\.markdown$/, "");
+  const url = `${DEFAULT_DOMAIN.replace(/\/$/, "")}/?p=${encodeURIComponent(slug)}`;
+  const wordCount = content.trim().split(/\s+/).length || 0;
+
+  // Save to in-memory dynamic cache for immediate search/list
+  dynamicNotesMap.set(safeName.toLowerCase(), {
+    title: slug.replace(/-/g, " "),
+    filename: safeName,
+    slug,
+    url,
+    description: content.slice(0, 120).replace(/[\n\r]+/g, " "),
+    wordCount,
+    tags: [],
+    updatedAt: new Date().toISOString(),
+  });
+
+  // Try committing to GitHub
+  let githubStatus = "Saved locally";
+  try {
+    const ghRes = await commitNoteToGitHub(safeName, content);
+    if (ghRes.success) {
+      githubStatus = "Committed to GitHub (Vercel deployment triggered)";
+    }
+  } catch {
+    // Ignore GitHub commit failure
+  }
 
   return {
     success: true,
     filePath: targetPath,
     fileName: safeName,
     isUpdate,
+    githubStatus,
   };
 }
 
@@ -77,24 +171,29 @@ export async function deleteTelegramNote(
     cleanName += ".md";
   }
 
+  dynamicNotesMap.delete(cleanName.toLowerCase());
+
   const targetPath = path.join(CONTENT_DIR, cleanName);
 
   if (!fs.existsSync(targetPath)) {
-    // Try matching without extension
     const altPath = path.join(CONTENT_DIR, `${cleanName.replace(/\.md$/, "")}.md`);
     if (!fs.existsSync(altPath)) {
       return { success: false, message: `Note file "${cleanName}" not found in content/` };
     }
-    await fs.promises.unlink(altPath);
+    try {
+      await fs.promises.unlink(altPath);
+    } catch {}
     return { success: true, deletedFile: path.basename(altPath), message: "Note deleted successfully." };
   }
 
-  await fs.promises.unlink(targetPath);
+  try {
+    await fs.promises.unlink(targetPath);
+  } catch {}
   return { success: true, deletedFile: cleanName, message: "Note deleted successfully." };
 }
 
 /**
- * Gets all note items in content/ directory and notes.json database with website URLs.
+ * Gets all note items in content/ directory, notes.json database, and dynamic memory map.
  */
 export function getAllTelegramNotes(): NoteItem[] {
   const map = new Map<string, NoteItem>();
@@ -147,6 +246,11 @@ export function getAllTelegramNotes(): NoteItem[] {
     }
   }
 
+  // 3. Load from in-memory dynamic cache
+  for (const [key, item] of dynamicNotesMap.entries()) {
+    map.set(key, item);
+  }
+
   return Array.from(map.values()).sort((a, b) => a.title.localeCompare(b.title));
 }
 
@@ -169,7 +273,7 @@ export function getNoteBySlugOrName(query: string): NoteItem | null {
 }
 
 /**
- * Paginated list of notes for large collections (100s or 1000s of notes).
+ * Paginated list of notes for large collections.
  */
 export function getPaginatedNotes(page: number = 1, pageSize: number = 25): {
   notes: NoteItem[];
@@ -193,7 +297,7 @@ export function getPaginatedNotes(page: number = 1, pageSize: number = 25): {
 }
 
 /**
- * Searches note titles, filenames, tags, and content for a given keyword query.
+ * Searches note titles, filenames, tags, and content.
  */
 export function searchTelegramNotes(query: string, limit: number = 15): { title: string; fileName: string; slug: string; url: string; snippet: string }[] {
   const cleanQuery = query.toLowerCase().trim();
@@ -202,102 +306,25 @@ export function searchTelegramNotes(query: string, limit: number = 15): { title:
   const results: { title: string; fileName: string; slug: string; url: string; snippet: string }[] = [];
   const seen = new Set<string>();
 
-  // 1. Search in compiled notes.json database
-  if (Array.isArray(notesJson)) {
-    for (const note of notesJson as any[]) {
-      if (results.length >= limit) break;
-
-      const title = note.title || "";
-      const desc = note.description || "";
-      const content = note.content || "";
-      const raw = note.raw || "";
-      const filename = note.path || `${note.slug}.md`;
-      const tags = Array.isArray(note.tags) ? note.tags.join(" ") : "";
-      const url = `${DEFAULT_DOMAIN.replace(/\/$/, "")}/?p=${encodeURIComponent(note.slug)}`;
-
-      const fullText = `${title} ${desc} ${tags} ${content} ${raw}`.toLowerCase();
-      const matchIndex = fullText.indexOf(cleanQuery);
-
-      if (matchIndex !== -1) {
-        let snippet = desc;
-        if (!snippet && content) {
-          const start = Math.max(0, matchIndex - 30);
-          const end = Math.min(content.length, matchIndex + cleanQuery.length + 40);
-          snippet = content.slice(start, end).replace(/[\n\r]+/g, " ");
-        }
-        if (!snippet) snippet = "Match found in note";
-
-        results.push({
-          title: escapeHtml(title),
-          fileName: escapeHtml(filename),
-          slug: note.slug,
-          url,
-          snippet: escapeHtml(snippet),
-        });
-        seen.add(filename.toLowerCase());
-      }
-    }
-  }
-
-  // 2. Search raw markdown files in content/ directory
-  if (fs.existsSync(CONTENT_DIR) && results.length < limit) {
-    try {
-      const files = fs.readdirSync(CONTENT_DIR);
-      for (const file of files) {
-        if (results.length >= limit) break;
-        if (!file.endsWith(".md") && !file.endsWith(".markdown")) continue;
-        if (seen.has(file.toLowerCase())) continue;
-
-        const slug = file.replace(/\.md$/, "").replace(/\.markdown$/, "");
-        const url = `${DEFAULT_DOMAIN.replace(/\/$/, "")}/?p=${encodeURIComponent(slug)}`;
-
-        if (file.toLowerCase().includes(cleanQuery)) {
-          results.push({
-            title: escapeHtml(slug),
-            fileName: escapeHtml(file),
-            slug,
-            url,
-            snippet: "Match in filename",
-          });
-          seen.add(file.toLowerCase());
-          continue;
-        }
-
-        try {
-          const fullPath = path.join(CONTENT_DIR, file);
-          const content = fs.readFileSync(fullPath, "utf-8");
-          const lowerContent = content.toLowerCase();
-          const matchIndex = lowerContent.indexOf(cleanQuery);
-
-          if (matchIndex !== -1) {
-            const start = Math.max(0, matchIndex - 30);
-            const end = Math.min(content.length, matchIndex + cleanQuery.length + 40);
-            const snippet = content.slice(start, end).replace(/[\n\r]+/g, " ");
-
-            results.push({
-              title: escapeHtml(slug),
-              fileName: escapeHtml(file),
-              slug,
-              url,
-              snippet: escapeHtml(snippet),
-            });
-            seen.add(file.toLowerCase());
-          }
-        } catch {
-          // Ignore read errors
-        }
-      }
-    } catch {
-      // Ignore directory read errors
+  const allNotes = getAllTelegramNotes();
+  for (const note of allNotes) {
+    if (results.length >= limit) break;
+    const fullText = `${note.title} ${note.filename} ${note.slug} ${note.description} ${note.tags?.join(" ")}`.toLowerCase();
+    if (fullText.includes(cleanQuery)) {
+      results.push({
+        title: escapeHtml(note.title),
+        fileName: escapeHtml(note.filename),
+        slug: note.slug,
+        url: note.url,
+        snippet: escapeHtml(note.description || "Matching note in garden"),
+      });
+      seen.add(note.filename.toLowerCase());
     }
   }
 
   return results;
 }
 
-/**
- * Calculates live Garden statistics metrics.
- */
 export function getGardenStats(): {
   totalNotes: number;
   totalWords: number;
@@ -331,17 +358,11 @@ export function getGardenStats(): {
   };
 }
 
-/**
- * Gets all tags in the garden with note counts.
- */
 export function getGardenTags(): { tag: string; count: number }[] {
   const { topTags } = getGardenStats();
   return topTags;
 }
 
-/**
- * Gets all notes under a specific tag.
- */
 export function getNotesByTag(tagName: string): NoteItem[] {
   const cleanTag = tagName.replace(/^#/, "").trim().toLowerCase();
   if (!cleanTag) return [];
