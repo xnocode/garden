@@ -77,44 +77,63 @@ async function sendMsg(
   }
 }
 
-async function editMsg(
-  token: string, chatId: number | string, msgId: number, text: string, markup?: any
-): Promise<boolean> {
-  try {
-    const body: any = {
-      chat_id: chatId,
-      message_id: msgId,
-      parse_mode: "HTML",
-      text,
-      disable_web_page_preview: true,
-    };
-    if (markup) body.reply_markup = markup;
-    const res = await tgFetch(`https://api.telegram.org/bot${token}/editMessageText`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(body),
-    });
-    const data = await res.json();
-    if (data?.ok) return true;
+async function safeEdit(
+  token: string,
+  chatId: number | string,
+  msgId: number,
+  text: string,
+  markup?: any
+): Promise<void> {
+  const body: any = {
+    chat_id: chatId,
+    message_id: msgId,
+    parse_mode: "HTML",
+    text,
+    disable_web_page_preview: true,
+  };
+  if (markup) body.reply_markup = markup;
 
-    // Retry as plain text if HTML parse fails
-    const plainBody: any = {
-      chat_id: chatId,
-      message_id: msgId,
-      text: text.replace(/<[^>]*>/g, ""),
-      disable_web_page_preview: true,
-    };
-    if (markup) plainBody.reply_markup = markup;
-    const retry = await tgFetch(`https://api.telegram.org/bot${token}/editMessageText`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(plainBody),
-    });
-    return !!(await retry.json())?.ok;
-  } catch {
-    return false;
+  for (let attempt = 0; attempt < 4; attempt++) {
+    if (attempt > 0) await delay(1200 * attempt); // backoff: 1.2s, 2.4s, 3.6s
+    try {
+      const ctrl = new AbortController();
+      const t = setTimeout(() => ctrl.abort(), 5000);
+      const res = await fetch(`https://api.telegram.org/bot${token}/editMessageText`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+        signal: ctrl.signal,
+      });
+      clearTimeout(t);
+      const data = await res.json();
+
+      if (data?.ok) return; // ✅ success
+
+      // 429 rate limit — wait retry_after then retry
+      if (data?.error_code === 429) {
+        const wait = ((data?.parameters?.retry_after) || 2) * 1000;
+        await delay(wait);
+        continue;
+      }
+
+      // "message is not modified" — treat as success
+      if (data?.description?.includes("not modified")) return;
+
+      // HTML parse error — retry with plain text
+      if (data?.error_code === 400 && data?.description?.includes("parse")) {
+        body.text = text.replace(/<[^>]*>/g, "");
+        delete body.parse_mode;
+        continue;
+      }
+
+      // Any other error — stop retrying
+      break;
+    } catch {
+      // Network/timeout error — retry
+    }
   }
 }
+
 
 function registerCommands(token: string) {
   tgFetch(`https://api.telegram.org/bot${token}/setMyCommands`, {
@@ -193,41 +212,39 @@ export async function POST(req: Request) {
 
       const safe = escapeHtml(fileName);
 
-      // ── Frame 1: Spin @ 0% ──
+      // ── STEP 1: Send initial message @ 0% ──
       const msgId = await sendMsg(token, chatId,
-        `${spin(0)} <b>Publishing Note...</b>\n\n` +
+        `⠋ <b>Publishing Note...</b>\n\n` +
         `<code>${renderProgressBar(0)}</code>\n` +
-        `<i>Connecting to Telegram...</i>\n\n` +
+        `<i>Starting upload...</i>\n\n` +
         `📄 <code>${safe}</code>`
       );
       if (!msgId) return NextResponse.json({ ok: true });
 
-      // ⏳ CRITICAL: wait for Telegram to register the message before editing
-      // Without this delay, Telegram rate-limits the edit and the bar stays stuck at 0%
-      await delay(600);
+      // Wait 700ms so Telegram registers the message before first edit
+      await delay(700);
 
       try {
-        // ── Frame 2: Spin @ 10% — Requesting file ──
-        await editMsg(token, chatId, msgId,
-          `${spin(2)} <b>Publishing Note...</b>\n\n` +
-          `<code>${renderProgressBar(10)}</code>\n` +
-          `<i>Requesting file from Telegram...</i>\n\n` +
+        // ── STEP 2: 20% — Requesting file path ──
+        await safeEdit(token, chatId, msgId,
+          `⠙ <b>Publishing Note...</b>\n\n` +
+          `<code>${renderProgressBar(20)}</code>\n` +
+          `<i>Getting file from Telegram...</i>\n\n` +
           `📄 <code>${safe}</code>`
         );
-        await delay(500);
 
         const fileRes = await tgFetch(`https://api.telegram.org/bot${token}/getFile?file_id=${doc.file_id}`);
         const fileData = await fileRes.json();
 
         if (!fileData.ok || !fileData.result?.file_path) {
-          await editMsg(token, chatId, msgId, `❌ <b>Failed</b> — Could not get file from Telegram.`);
+          await safeEdit(token, chatId, msgId, `❌ <b>Failed</b> — Could not get file from Telegram.`);
           return NextResponse.json({ ok: true });
         }
 
-        // ── Frame 3: Spin @ 25% — Downloading ──
-        await editMsg(token, chatId, msgId,
-          `${spin(4)} <b>Publishing Note...</b>\n\n` +
-          `<code>${renderProgressBar(25)}</code>\n` +
+        // ── STEP 3: 40% — Downloading content ──
+        await safeEdit(token, chatId, msgId,
+          `⠼ <b>Publishing Note...</b>\n\n` +
+          `<code>${renderProgressBar(40)}</code>\n` +
           `<i>Downloading file content...</i>\n\n` +
           `📄 <code>${safe}</code>`
         );
@@ -235,20 +252,11 @@ export async function POST(req: Request) {
         const contentRes = await tgFetch(`https://api.telegram.org/file/bot${token}/${fileData.result.file_path}`);
         const fileContent = await contentRes.text();
 
-        // ── Frame 4: Spin @ 40% — Saving ──
-        await editMsg(token, chatId, msgId,
-          `${spin(6)} <b>Publishing Note...</b>\n\n` +
-          `<code>${renderProgressBar(40)}</code>\n` +
-          `<i>Saving &amp; indexing in garden...</i>\n\n` +
-          `📄 <code>${safe}</code>`
-        );
-        await delay(250);
-
-        // ── Frame 5: Spin @ 60% — Pushing to GitHub ──
-        await editMsg(token, chatId, msgId,
-          `${spin(8)} <b>Publishing Note...</b>\n\n` +
+        // ── STEP 4: 60% — Committing to GitHub ──
+        await safeEdit(token, chatId, msgId,
+          `⠦ <b>Publishing Note...</b>\n\n` +
           `<code>${renderProgressBar(60)}</code>\n` +
-          `<i>Committing to GitHub repository...</i>\n\n` +
+          `<i>Committing to GitHub...</i>\n\n` +
           `📄 <code>${safe}</code>`
         );
 
@@ -259,29 +267,27 @@ export async function POST(req: Request) {
         const pushed = result.githubStatus?.includes("Committed to GitHub") || false;
 
         if (pushed) {
-          // ── Frame 6: Spin @ 80% — Triggering deploy ──
-          await editMsg(token, chatId, msgId,
-            `${spin(1)} <b>Publishing Note...</b>\n\n` +
+          // ── STEP 5: 80% — Deploy triggered ──
+          await safeEdit(token, chatId, msgId,
+            `⠏ <b>Publishing Note...</b>\n\n` +
             `<code>${renderProgressBar(80)}</code>\n` +
-            `<i>Triggering Vercel deployment...</i>\n\n` +
+            `<i>Vercel deployment triggered...</i>\n\n` +
             `📄 <code>${safe}</code>`
           );
-          await delay(300);
+          await delay(600);
 
-          // ── Frame 7: 100% — Final success card ──
-          const finalText =
+          // ── STEP 6: 100% — Done! ──
+          await safeEdit(token, chatId, msgId,
             `✅ <b>Published to Digital Garden!</b>\n\n` +
             `<code>${renderProgressBar(100)}</code>\n\n` +
             `📄 <b>File:</b> <code>${escapeHtml(result.fileName)}</code>\n` +
             `📊 <b>Status:</b> ${result.isUpdate ? "✏️ Updated" : "🌱 New Note"} — Live ✓\n` +
             `🔗 <b>Link:</b> <a href="${safeLiveUrl}">${safeLiveUrl}</a>\n\n` +
-            `<i>⏳ Vercel is building (~1 min). Tap below to open:</i>`;
-
-          const finalMarkup = { inline_keyboard: [[{ text: "🌐 Open Note on Website", url: rawLiveUrl }]] };
-          const edited = await editMsg(token, chatId, msgId, finalText, finalMarkup);
-          if (!edited) await sendMsg(token, chatId, finalText, finalMarkup);
+            `<i>⏳ Vercel is building (~1 min). Tap below to open:</i>`,
+            { inline_keyboard: [[{ text: "🌐 Open Note on Website", url: rawLiveUrl }]] }
+          );
         } else {
-          await editMsg(token, chatId, msgId,
+          await safeEdit(token, chatId, msgId,
             `⚠️ <b>Saved — GitHub Push Failed</b>\n\n` +
             `<code>${renderProgressBar(50)}</code>\n\n` +
             `📄 <code>${escapeHtml(result.fileName)}</code>\n\n` +
@@ -290,10 +296,13 @@ export async function POST(req: Request) {
           );
         }
       } catch (err: any) {
-        await editMsg(token, chatId, msgId, `❌ <b>Upload Failed:</b> ${escapeHtml(err?.message || "Timeout or network error")}`);
+        await safeEdit(token, chatId, msgId,
+          `❌ <b>Upload Failed:</b> ${escapeHtml(err?.message || "Timeout or network error")}`
+        );
       }
 
       return NextResponse.json({ ok: true, file: fileName });
+
     }
 
     // ═══════════════════════════════════════
@@ -376,61 +385,59 @@ export async function POST(req: Request) {
       if (!target) { await sendMsg(token, chatId, "⚠️ Usage: <code>/delete filename.md</code>"); return NextResponse.json({ ok: true }); }
       const safe = escapeHtml(target);
 
-      // ── Frame 1: Spin @ 0% ──
+      // ── STEP 1: Send initial message @ 0% ──
       const delId = await sendMsg(token, chatId,
-        `${spin(0)} <b>Deleting Note...</b>\n\n` +
+        `⠋ <b>Deleting Note...</b>\n\n` +
         `<code>${renderProgressBar(0)}</code>\n` +
         `<i>Finding note in garden...</i>\n\n` +
         `📄 <code>${safe}</code>`
       );
-
-      // ⏳ CRITICAL: wait for Telegram to register the message before editing
-      await delay(600);
-
-      if (delId) {
-        // ── Frame 2: Spin @ 40% ──
-        await editMsg(token, chatId, delId,
-          `${spin(4)} <b>Deleting Note...</b>\n\n` +
-          `<code>${renderProgressBar(40)}</code>\n` +
-          `<i>Removing from GitHub repository...</i>\n\n` +
-          `📄 <code>${safe}</code>`
-        );
-        await delay(500);
-      }
-
-      const r = await deleteTelegramNote(target);
-
-      if (delId) {
-        if (r.success) {
-          // ── Frame 3: Spin @ 80% ──
-          await editMsg(token, chatId, delId,
-            `${spin(7)} <b>Deleting Note...</b>\n\n` +
-            `<code>${renderProgressBar(80)}</code>\n` +
-            `<i>Triggering garden rebuild...</i>\n\n` +
-            `📄 <code>${safe}</code>`
-          );
-          await delay(600);
-
-          // ── Final: 100% ──
-          await editMsg(token, chatId, delId,
-            `🗑️ <b>Note Deleted!</b>\n\n` +
-            `<code>${renderProgressBar(100)}</code>\n\n` +
-            `📄 <b>File:</b> <code>${escapeHtml(r.deletedFile || target)}</code>\n` +
-            `✅ <b>Removed from GitHub &amp; garden.</b>\n\n` +
-            `<i>⏳ Vercel will rebuild in ~1 min.</i>`
-          );
-        } else {
-          await editMsg(token, chatId, delId,
-            `❌ <b>Delete Failed</b>\n\n` +
-            `<code>${renderProgressBar(0)}</code>\n\n` +
-            `📄 <code>${safe}</code>\n\n` +
-            `<b>Reason:</b> ${escapeHtml(r.message)}`
-          );
-        }
-      } else {
+      if (!delId) {
+        const r = await deleteTelegramNote(target);
         await sendMsg(token, chatId, r.success
           ? `🗑️ Deleted <code>${escapeHtml(r.deletedFile || target)}</code>`
           : `❌ ${escapeHtml(r.message)}`
+        );
+        return NextResponse.json({ ok: true });
+      }
+
+      // Wait for Telegram to register the message
+      await delay(700);
+
+      // ── STEP 2: 40% — Removing from GitHub ──
+      await safeEdit(token, chatId, delId,
+        `⠼ <b>Deleting Note...</b>\n\n` +
+        `<code>${renderProgressBar(40)}</code>\n` +
+        `<i>Removing from GitHub repository...</i>\n\n` +
+        `📄 <code>${safe}</code>`
+      );
+
+      const r = await deleteTelegramNote(target);
+
+      if (r.success) {
+        // ── STEP 3: 80% — Rebuilding ──
+        await safeEdit(token, chatId, delId,
+          `⠧ <b>Deleting Note...</b>\n\n` +
+          `<code>${renderProgressBar(80)}</code>\n` +
+          `<i>Triggering garden rebuild...</i>\n\n` +
+          `📄 <code>${safe}</code>`
+        );
+        await delay(600);
+
+        // ── STEP 4: 100% — Done ──
+        await safeEdit(token, chatId, delId,
+          `🗑️ <b>Note Deleted!</b>\n\n` +
+          `<code>${renderProgressBar(100)}</code>\n\n` +
+          `📄 <b>File:</b> <code>${escapeHtml(r.deletedFile || target)}</code>\n` +
+          `✅ <b>Removed from GitHub &amp; garden.</b>\n\n` +
+          `<i>⏳ Vercel will rebuild in ~1 min.</i>`
+        );
+      } else {
+        await safeEdit(token, chatId, delId,
+          `❌ <b>Delete Failed</b>\n\n` +
+          `<code>${renderProgressBar(0)}</code>\n\n` +
+          `📄 <code>${safe}</code>\n\n` +
+          `<b>Reason:</b> ${escapeHtml(r.message)}`
         );
       }
 
