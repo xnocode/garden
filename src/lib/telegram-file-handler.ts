@@ -1,7 +1,19 @@
 import fs from "node:fs";
 import path from "node:path";
+import notesJson from "@/data/notes.json";
 
 const CONTENT_DIR = path.join(process.cwd(), "content");
+
+/**
+ * Escapes HTML characters so Telegram's HTML parser doesn't break.
+ */
+export function escapeHtml(str: string): string {
+  if (!str) return "";
+  return str
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
+}
 
 /**
  * Ensures the target filename is safe and strictly restricted to the content directory.
@@ -70,21 +82,52 @@ export async function deleteTelegramNote(
 }
 
 /**
- * Gets all note filenames in content/ directory.
+ * Gets all note filenames in content/ directory and notes.json database.
  */
-export function getAllTelegramNotes(): string[] {
-  if (!fs.existsSync(CONTENT_DIR)) return [];
-  const files = fs.readdirSync(CONTENT_DIR);
-  return files
-    .filter((f) => f.endsWith(".md") || f.endsWith(".markdown"))
-    .sort((a, b) => a.localeCompare(b));
+export function getAllTelegramNotes(): { title: string; filename: string; slug: string }[] {
+  const map = new Map<string, { title: string; filename: string; slug: string }>();
+
+  // 1. Load from compiled notes.json
+  if (Array.isArray(notesJson)) {
+    for (const note of notesJson as any[]) {
+      const filename = note.path || `${note.slug}.md`;
+      map.set(filename.toLowerCase(), {
+        title: note.title || note.slug,
+        filename,
+        slug: note.slug,
+      });
+    }
+  }
+
+  // 2. Load from content/ directory if accessible
+  if (fs.existsSync(CONTENT_DIR)) {
+    try {
+      const files = fs.readdirSync(CONTENT_DIR);
+      for (const f of files) {
+        if (f.endsWith(".md") || f.endsWith(".markdown")) {
+          const lower = f.toLowerCase();
+          if (!map.has(lower)) {
+            map.set(lower, {
+              title: f.replace(/\.md$/, ""),
+              filename: f,
+              slug: f.replace(/\.md$/, ""),
+            });
+          }
+        }
+      }
+    } catch {
+      // Ignore filesystem read errors in serverless if missing
+    }
+  }
+
+  return Array.from(map.values()).sort((a, b) => a.title.localeCompare(b.title));
 }
 
 /**
  * Paginated list of notes for large collections (100s or 1000s of notes).
  */
 export function getPaginatedNotes(page: number = 1, pageSize: number = 30): {
-  notes: string[];
+  notes: { title: string; filename: string; slug: string }[];
   total: number;
   totalPages: number;
   page: number;
@@ -105,39 +148,92 @@ export function getPaginatedNotes(page: number = 1, pageSize: number = 30): {
 }
 
 /**
- * Searches note filenames and content for a given keyword query.
+ * Searches note titles, filenames, tags, and content for a given keyword query.
  */
-export function searchTelegramNotes(query: string, limit: number = 25): { fileName: string; snippet?: string }[] {
-  const all = getAllTelegramNotes();
+export function searchTelegramNotes(query: string, limit: number = 20): { title: string; fileName: string; snippet: string }[] {
   const cleanQuery = query.toLowerCase().trim();
   if (!cleanQuery) return [];
 
-  const results: { fileName: string; snippet?: string }[] = [];
+  const results: { title: string; fileName: string; snippet: string }[] = [];
+  const seen = new Set<string>();
 
-  for (const file of all) {
-    if (results.length >= limit) break;
+  // 1. Search in compiled notes.json database
+  if (Array.isArray(notesJson)) {
+    for (const note of notesJson as any[]) {
+      if (results.length >= limit) break;
 
-    // Check if filename matches query
-    if (file.toLowerCase().includes(cleanQuery)) {
-      results.push({ fileName: file, snippet: "Matched filename" });
-      continue;
-    }
+      const title = note.title || "";
+      const desc = note.description || "";
+      const content = note.content || "";
+      const raw = note.raw || "";
+      const filename = note.path || `${note.slug}.md`;
+      const tags = Array.isArray(note.tags) ? note.tags.join(" ") : "";
 
-    // Check file content
-    try {
-      const fullPath = path.join(CONTENT_DIR, file);
-      const content = fs.readFileSync(fullPath, "utf-8");
-      const lowerContent = content.toLowerCase();
-      const matchIndex = lowerContent.indexOf(cleanQuery);
+      const fullText = `${title} ${desc} ${tags} ${content} ${raw}`.toLowerCase();
+      const matchIndex = fullText.indexOf(cleanQuery);
 
       if (matchIndex !== -1) {
-        const start = Math.max(0, matchIndex - 30);
-        const end = Math.min(content.length, matchIndex + cleanQuery.length + 30);
-        const snippet = "..." + content.slice(start, end).replace(/\n/g, " ") + "...";
-        results.push({ fileName: file, snippet });
+        let snippet = desc;
+        if (!snippet && content) {
+          const start = Math.max(0, matchIndex - 30);
+          const end = Math.min(content.length, matchIndex + cleanQuery.length + 40);
+          snippet = content.slice(start, end).replace(/[\n\r]+/g, " ");
+        }
+        if (!snippet) snippet = "Match found in note";
+
+        results.push({
+          title: escapeHtml(title),
+          fileName: escapeHtml(filename),
+          snippet: escapeHtml(snippet),
+        });
+        seen.add(filename.toLowerCase());
+      }
+    }
+  }
+
+  // 2. Search raw markdown files in content/ directory
+  if (fs.existsSync(CONTENT_DIR) && results.length < limit) {
+    try {
+      const files = fs.readdirSync(CONTENT_DIR);
+      for (const file of files) {
+        if (results.length >= limit) break;
+        if (!file.endsWith(".md") && !file.endsWith(".markdown")) continue;
+        if (seen.has(file.toLowerCase())) continue;
+
+        if (file.toLowerCase().includes(cleanQuery)) {
+          results.push({
+            title: escapeHtml(file.replace(/\.md$/, "")),
+            fileName: escapeHtml(file),
+            snippet: "Match in filename",
+          });
+          seen.add(file.toLowerCase());
+          continue;
+        }
+
+        try {
+          const fullPath = path.join(CONTENT_DIR, file);
+          const content = fs.readFileSync(fullPath, "utf-8");
+          const lowerContent = content.toLowerCase();
+          const matchIndex = lowerContent.indexOf(cleanQuery);
+
+          if (matchIndex !== -1) {
+            const start = Math.max(0, matchIndex - 30);
+            const end = Math.min(content.length, matchIndex + cleanQuery.length + 40);
+            const snippet = content.slice(start, end).replace(/[\n\r]+/g, " ");
+
+            results.push({
+              title: escapeHtml(file.replace(/\.md$/, "")),
+              fileName: escapeHtml(file),
+              snippet: escapeHtml(snippet),
+            });
+            seen.add(file.toLowerCase());
+          }
+        } catch {
+          // Ignore read errors
+        }
       }
     } catch {
-      // Ignore read errors for individual files
+      // Ignore directory read errors
     }
   }
 

@@ -4,6 +4,7 @@ import {
   deleteTelegramNote,
   getPaginatedNotes,
   searchTelegramNotes,
+  escapeHtml,
 } from "@/lib/telegram-file-handler";
 
 async function sendTelegramReply(botToken: string, chatId: number | string, text: string) {
@@ -35,7 +36,7 @@ async function registerBotCommands(botToken: string) {
           { command: "list", description: "📚 List all notes in your garden (/list or /list 2)" },
           { command: "search", description: "🔍 Search notes by keyword (/search python)" },
           { command: "delete", description: "🗑️ Delete a note file (/delete my-note.md)" },
-          { command: "help", description: "💡 Show help & bot instructions" },
+          { command: "help", description: "💡 Show help and bot instructions" },
         ],
       }),
     });
@@ -112,7 +113,7 @@ export async function POST(req: Request) {
         await sendTelegramReply(
           botToken,
           chatId,
-          `⚠️ <b>Rejected:</b> Only <code>.md</code> (Markdown) files are accepted.\nFile <i>"${fileName}"</i> was ignored.`
+          `⚠️ <b>Rejected:</b> Only <code>.md</code> (Markdown) files are accepted.\nFile <i>"${escapeHtml(fileName)}"</i> was ignored.`
         );
         return NextResponse.json({ status: "rejected_format" }, { status: 200 });
       }
@@ -141,7 +142,7 @@ export async function POST(req: Request) {
       await sendTelegramReply(
         botToken,
         chatId,
-        `🌱 <b>Success!</b> Note <code>${result.fileName}</code> has been ${actionText} to your Garden content folder.`
+        `🌱 <b>Success!</b> Note <code>${escapeHtml(result.fileName)}</code> has been ${actionText} to your Garden content folder.`
       );
 
       return NextResponse.json({ success: true, fileName: result.fileName }, { status: 200 });
@@ -161,26 +162,26 @@ export async function POST(req: Request) {
         return NextResponse.json({ status: "bad_command" }, { status: 200 });
       }
 
-      const results = searchTelegramNotes(query, 20);
+      const results = searchTelegramNotes(query, 15);
 
       if (results.length === 0) {
         await sendTelegramReply(
           botToken,
           chatId,
-          `🔍 No notes found matching <i>"${query}"</i>.`
+          `🔍 No notes found matching <i>"${escapeHtml(query)}"</i>.`
         );
       } else {
         const formatted = results
           .map(
             (r, i) =>
-              `${i + 1}. 📄 <code>${r.fileName}</code>\n   <i>${r.snippet || "Matched"}</i>`
+              `<b>${i + 1}. ${r.title}</b> (<code>${r.fileName}</code>)\n<i>${r.snippet}</i>`
           )
           .join("\n\n");
 
         await sendTelegramReply(
           botToken,
           chatId,
-          `🔍 <b>Search Results for "${query}" (${results.length} found):</b>\n\n${formatted}`
+          `🔍 <b>Search Results for "${escapeHtml(query)}" (${results.length} found):</b>\n\n${formatted}`
         );
       }
       return NextResponse.json({ success: true }, { status: 200 });
@@ -203,10 +204,10 @@ export async function POST(req: Request) {
         await sendTelegramReply(
           botToken,
           chatId,
-          `🗑️ <b>Deleted:</b> Note <code>${delResult.deletedFile}</code> was removed from your Garden.`
+          `🗑️ <b>Deleted:</b> Note <code>${escapeHtml(delResult.deletedFile || target)}</code> was removed from your Garden.`
         );
       } else {
-        await sendTelegramReply(botToken, chatId, `❌ <b>Error:</b> ${delResult.message}`);
+        await sendTelegramReply(botToken, chatId, `❌ <b>Error:</b> ${escapeHtml(delResult.message)}`);
       }
       return NextResponse.json({ success: true }, { status: 200 });
     }
@@ -216,12 +217,15 @@ export async function POST(req: Request) {
       const pageArg = text.replace("/list", "").trim();
       const pageNum = parseInt(pageArg, 10) || 1;
 
-      const { notes, total, totalPages, page } = getPaginatedNotes(pageNum, 30);
+      const { notes, total, totalPages, page } = getPaginatedNotes(pageNum, 25);
 
       if (total === 0) {
         await sendTelegramReply(botToken, chatId, "📂 No notes found in content folder.");
       } else {
-        const noteList = notes.map((n) => `• <code>${n}</code>`).join("\n");
+        const noteList = notes
+          .map((n, idx) => `${(page - 1) * 25 + idx + 1}. <b>${escapeHtml(n.title)}</b> (<code>${escapeHtml(n.filename)}</code>)`)
+          .join("\n");
+
         const navText =
           totalPages > 1
             ? `\n\n📖 <i>Page ${page} of ${totalPages}. Send <code>/list ${page < totalPages ? page + 1 : 1}</code> to view next page.</i>`
@@ -247,7 +251,7 @@ export async function POST(req: Request) {
           `📚 <b>List All Notes:</b> <code>/list</code> or <code>/list 2</code> (paginated for 1000+ notes)\n` +
           `🗑️ <b>Delete Note:</b> <code>/delete filename.md</code>\n` +
           `💡 <b>Command Menu:</b> Type <code>/</code> to see all available commands!\n\n` +
-          `🔒 <i>Only you (@${message.from?.username || "Owner"}) can use this bot.</i>`
+          `🔒 <i>Only you (@${escapeHtml(message.from?.username || "Owner")}) can use this bot.</i>`
       );
       return NextResponse.json({ success: true }, { status: 200 });
     }
