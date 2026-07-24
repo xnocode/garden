@@ -31,6 +31,10 @@ function renderProgressBar(percent: number): string {
   return `[${"■".repeat(filled)}${"□".repeat(empty)}] ${percent}%`;
 }
 
+function delay(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
 async function tgFetch(url: string, options: any = {}) {
   const controller = new AbortController();
   const id = setTimeout(() => controller.abort(), 4000);
@@ -88,7 +92,7 @@ async function editMsg(
 
     if (data?.ok) return true;
 
-    // Retry without HTML parse_mode if Telegram rejected HTML entities
+    // Retry without HTML parse_mode if Telegram rejected HTML formatting
     const plainBody: any = {
       chat_id: chatId,
       message_id: msgId,
@@ -160,9 +164,9 @@ export async function POST(req: Request) {
       return NextResponse.json({ ok: true });
     }
 
-    // ═══════════════════════════════════════════
-    // 📄 FILE UPLOAD — Robust Editing with Fallback
-    // ═══════════════════════════════════════════
+    // ═══════════════════════════════════════════════════════════
+    // 📄 FILE UPLOAD — 4-Stage Live Animated Single Message Flow
+    // ═══════════════════════════════════════════════════════════
     if (message.document) {
       const doc = message.document;
       const fileName = doc.file_name || "untitled.md";
@@ -187,14 +191,17 @@ export async function POST(req: Request) {
 
       const safe = escapeHtml(fileName);
 
-      // ── STEP 1: Send initial progress message (20%) ──
+      // ── STAGE 1: 20% Progress (Downloading) ──
       const msgId = await sendMsg(token, chatId,
-        `⚡ <b>Uploading &amp; Syncing Note...</b>\n\n<code>${renderProgressBar(20)}</code>\n📥 Processing file &amp; pushing to GitHub...\n\n📄 ${safe}`
+        `⚡ <b>Processing &amp; Uploading Note...</b>\n\n` +
+        `<code>${renderProgressBar(20)}</code>\n` +
+        `📥 <i>Downloading file from Telegram...</i>\n\n` +
+        `📄 <code>${safe}</code>`
       );
       if (!msgId) return NextResponse.json({ ok: true });
 
-      // ── Step 2: Download file & Save + Commit to GitHub ──
       try {
+        // Download file
         const fileRes = await tgFetch(`https://api.telegram.org/bot${token}/getFile?file_id=${doc.file_id}`);
         const fileData = await fileRes.json();
 
@@ -206,41 +213,57 @@ export async function POST(req: Request) {
         const contentRes = await tgFetch(`https://api.telegram.org/file/bot${token}/${fileData.result.file_path}`);
         const fileContent = await contentRes.text();
 
+        // ── STAGE 2: 50% Progress (Saving & Indexing) ──
+        await editMsg(token, chatId, msgId,
+          `⚡ <b>Processing &amp; Uploading Note...</b>\n\n` +
+          `<code>${renderProgressBar(50)}</code>\n` +
+          `💾 <i>Saving &amp; indexing note in garden...</i>\n\n` +
+          `📄 <code>${safe}</code>`
+        );
+        await delay(400);
+
         // Save & commit to GitHub
         const result = await saveTelegramNote(fileName, fileContent);
         const slug = result.fileName.replace(/\.md$/, "").replace(/\.markdown$/, "");
         const rawLiveUrl = `https://gardenx.qzz.io/?p=${encodeURIComponent(slug)}`;
         const safeLiveUrl = escapeHtml(rawLiveUrl);
-
         const pushed = result.githubStatus?.includes("Committed to GitHub") || false;
 
-        // ── STEP 3: Edit message to Final Status (100% or Error Diagnostic) ──
-        let finalText = "";
-        let finalMarkup: any = null;
-
         if (pushed) {
-          finalText =
+          // ── STAGE 3: 80% Progress (Deploying to Web) ──
+          await editMsg(token, chatId, msgId,
+            `⚡ <b>Deploying to Digital Garden...</b>\n\n` +
+            `<code>${renderProgressBar(80)}</code>\n` +
+            `🚀 <i>Pushed to GitHub • Triggering live deployment...</i>\n\n` +
+            `📄 <code>${safe}</code>`
+          );
+          await delay(450);
+
+          // ── STAGE 4: 100% Final Verification Card ──
+          const finalText =
             `✅ <b>Published to Digital Garden!</b>\n\n` +
-            `<code>${renderProgressBar(100)}</code>\n\n` +
+            `<code>${renderProgressBar(100)}</code> • <i>Verified Live</i>\n\n` +
             `📄 <b>File:</b> <code>${escapeHtml(result.fileName)}</code>\n` +
             `📊 <b>Status:</b> ${result.isUpdate ? "Updated" : "New Note"} — Deployed ✓\n` +
-            `🌐 <b>Link:</b> <a href="${safeLiveUrl}">${safeLiveUrl}</a>\n\n` +
-            `⏳ <i>Vercel is building (~1-2 min). Tap below to view:</i>`;
-          finalMarkup = { inline_keyboard: [[{ text: "🌐 Open Note on Website", url: rawLiveUrl }]] };
+            `🌐 <b>Website Link:</b> <a href="${safeLiveUrl}">${safeLiveUrl}</a>\n\n` +
+            `⏳ <i>Vercel is compiling (~1 min). Tap below to open:</i>`;
+
+          const finalMarkup = { inline_keyboard: [[{ text: "🌐 Open Note on Website", url: rawLiveUrl }]] };
+
+          const edited = await editMsg(token, chatId, msgId, finalText, finalMarkup);
+          if (!edited) {
+            await sendMsg(token, chatId, finalText, finalMarkup);
+          }
         } else {
-          finalText =
+          // GitHub Commit Failure Diagnostic Card
+          const errText =
             `⚠️ <b>Saved locally — GitHub Commit Failed</b>\n\n` +
             `<code>${renderProgressBar(50)}</code>\n\n` +
             `📄 <code>${escapeHtml(result.fileName)}</code>\n\n` +
             `❌ <b>Error Reason:</b>\n<code>${escapeHtml(result.githubStatus || "Unknown error")}</code>\n\n` +
             `💡 <i>Check GITHUB_TOKEN environment variable on Vercel.</i>`;
-        }
 
-        const edited = await editMsg(token, chatId, msgId, finalText, finalMarkup);
-
-        // Fallback: If editMsg fails, send as new message so user always gets completion confirmation!
-        if (!edited) {
-          await sendMsg(token, chatId, finalText, finalMarkup);
+          await editMsg(token, chatId, msgId, errText);
         }
       } catch (err: any) {
         await editMsg(token, chatId, msgId, `❌ <b>Upload Failed:</b> ${escapeHtml(err?.message || "Timeout or Network Error")}`);
