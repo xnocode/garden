@@ -66,20 +66,21 @@ export async function commitNoteToGitHub(
   fileName: string,
   content: string
 ): Promise<{ success: boolean; message: string }> {
-  const token = process.env.GITHUB_TOKEN || process.env.GH_TOKEN;
+  const token = (process.env.GITHUB_TOKEN || process.env.GH_TOKEN || "").trim();
   if (!token) {
-    return { success: false, message: "No GITHUB_TOKEN configured" };
+    return { success: false, message: "No GITHUB_TOKEN environment variable found on server" };
   }
 
   const repo = process.env.NEXT_PUBLIC_GISCUS_REPO || "xnocode/garden";
   const filePath = `content/${fileName}`;
   const url = `https://api.github.com/repos/${repo}/contents/${filePath}`;
+  const authHeader = token.startsWith("github_pat_") || token.startsWith("ghp_") ? `Bearer ${token}` : `token ${token}`;
 
   try {
     let sha: string | undefined;
     const getRes = await fetch(url, {
       headers: {
-        Authorization: `Bearer ${token}`,
+        Authorization: authHeader,
         Accept: "application/vnd.github.v3+json",
         "User-Agent": "DigitalGardenBot",
       },
@@ -100,7 +101,7 @@ export async function commitNoteToGitHub(
     const putRes = await fetch(url, {
       method: "PUT",
       headers: {
-        Authorization: `Bearer ${token}`,
+        Authorization: authHeader,
         Accept: "application/vnd.github.v3+json",
         "Content-Type": "application/json",
         "User-Agent": "DigitalGardenBot",
@@ -109,13 +110,13 @@ export async function commitNoteToGitHub(
     });
 
     if (putRes.ok) {
-      return { success: true, message: "Committed to GitHub & Vercel deployment triggered" };
+      return { success: true, message: "Committed to GitHub successfully" };
     } else {
-      const errData = await putRes.json();
-      return { success: false, message: errData.message || "GitHub commit failed" };
+      const errData = await putRes.json().catch(() => ({}));
+      return { success: false, message: errData.message || `GitHub HTTP ${putRes.status}` };
     }
   } catch (err: any) {
-    return { success: false, message: err.message || "GitHub API error" };
+    return { success: false, message: err.message || "GitHub API network error" };
   }
 }
 
@@ -162,9 +163,11 @@ export async function saveTelegramNote(
     const ghRes = await commitNoteToGitHub(safeName, content);
     if (ghRes.success) {
       githubStatus = "Committed to GitHub (Vercel deployment triggered)";
+    } else {
+      githubStatus = `Failed: ${ghRes.message}`;
     }
-  } catch {
-    // Ignore GitHub commit failure
+  } catch (err: any) {
+    githubStatus = `Error: ${err?.message || "Unknown error"}`;
   }
 
   return {
