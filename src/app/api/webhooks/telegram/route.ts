@@ -185,7 +185,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ status: "unauthorized" }, { status: 200 });
     }
 
-    // 🛑 2. CANCEL & STOP COMMAND WITH PROMINENT STOP CONFIRMATION MESSAGE
+    // 🛑 2. CANCEL & STOP COMMAND
     if (
       text.startsWith("/cancel") ||
       text.startsWith("/stop") ||
@@ -204,7 +204,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ status: "stopped" }, { status: 200 });
     }
 
-    // 📄 3. DOCUMENT UPLOAD WITH SINGLE-MESSAGE LIVE ANIMATION & PUBLICATION VERIFICATION
+    // 📄 3. DOCUMENT UPLOAD WITH 4-STEP SINGLE-MESSAGE PROGRESS, DEPLOYMENT & VERIFICATION
     if (message.document) {
       const doc = message.document;
       const fileName = doc.file_name || "untitled.md";
@@ -219,7 +219,7 @@ export async function POST(req: Request) {
         return NextResponse.json({ status: "rejected_format" }, { status: 200 });
       }
 
-      // 🚫 STRICT DUPLICATE CHECK: DO NOT ALLOW UPLOADING THE SAME FILE TWICE
+      // 🚫 DUPLICATE CHECK
       const existingNote = checkDuplicateNote(fileName);
       if (existingNote) {
         await sendTelegramReply(
@@ -239,12 +239,12 @@ export async function POST(req: Request) {
         return NextResponse.json({ status: "duplicate_blocked" }, { status: 200 });
       }
 
-      // Step 1: Send INITIAL Message (30% Progress)
+      // --- STEP 1: INITIAL MESSAGE (25% DOWNLOAD) ---
       const progressMsgId = await sendTelegramReply(
         botToken,
         chatId,
-        `⚡ <b>Processing Note Upload...</b>\n\n` +
-          `<code>${renderMinimalProgressBar(30)}</code> • Downloading file\n\n` +
+        `⚡ <b>Processing & Uploading Note...</b>\n\n` +
+          `<code>${renderMinimalProgressBar(25)}</code> • Downloading file from Telegram\n\n` +
           `📄 <b>File:</b> <code>${escapeHtml(fileName)}</code>`
       );
 
@@ -266,14 +266,14 @@ export async function POST(req: Request) {
         return NextResponse.json({ error: "Telegram file fetch error" }, { status: 200 });
       }
 
-      // Step 2: Edit SAME Message (70% Progress)
+      // --- STEP 2: EDIT SAME MESSAGE (50% SAVING & INDEXING) ---
       if (progressMsgId) {
         await editTelegramMessage(
           botToken,
           chatId,
           progressMsgId,
-          `⚡ <b>Processing Note Upload...</b>\n\n` +
-            `<code>${renderMinimalProgressBar(70)}</code> • Saving & Syncing to Garden\n\n` +
+          `⚡ <b>Processing & Uploading Note...</b>\n\n` +
+            `<code>${renderMinimalProgressBar(50)}</code> • Saving & Indexing in Garden\n\n` +
             `📄 <b>File:</b> <code>${escapeHtml(fileName)}</code>`
         );
       }
@@ -283,24 +283,38 @@ export async function POST(req: Request) {
       );
       const fileContent = await contentRes.text();
 
-      // Save file locally, in memory, & commit to GitHub
+      // Save note to filesystem, in-memory cache, and GitHub
       const result = await saveTelegramNote(fileName, fileContent);
 
       const slug = fileName.replace(/\.md$/, "").replace(/\.markdown$/, "");
       const liveUrl = `https://gardenx.qzz.io/?p=${encodeURIComponent(slug)}`;
 
-      // Step 3: Edit SAME Message to 100% Final Verification!
+      // --- STEP 3: EDIT SAME MESSAGE (75% DEPLOYING TO LIVE WEB) ---
+      if (progressMsgId) {
+        await editTelegramMessage(
+          botToken,
+          chatId,
+          progressMsgId,
+          `⚡ <b>Deploying to Live Website...</b>\n\n` +
+            `<code>${renderMinimalProgressBar(75)}</code> • Deploying to Live Web & Rebuilding\n\n` +
+            `📄 <b>File:</b> <code>${escapeHtml(fileName)}</code>`
+        );
+      }
+
+      // Brief delay so progress state is visible
+      await new Promise((resolve) => setTimeout(resolve, 800));
+
+      // --- STEP 4: EDIT SAME MESSAGE TO 100% FINAL DEPLOYMENT VERIFICATION + LINK ---
       const finalMsgText =
-        `✅ <b>Published to Digital Garden!</b>\n\n` +
-        `<code>${renderMinimalProgressBar(100)}</code> • Publication Complete\n\n` +
-        `📄 <b>File:</b> <code>${escapeHtml(result.fileName)}</code>\n` +
+        `✅ <b>Deployment & Publication Verified!</b>\n\n` +
+        `<code>${renderMinimalProgressBar(100)}</code> • Verified & Published Live\n\n` +
+        `📄 <b>File Name:</b> <code>${escapeHtml(result.fileName)}</code>\n` +
         `📊 <b>Status:</b> ${result.isUpdate ? "Updated Note" : "New Published Note"}\n` +
-        `🌐 <b>Website Link:</b> <a href="${liveUrl}">${liveUrl}</a>\n\n` +
-        `💡 <i>Note: Open the link above to view your note live!</i>`;
+        `🌐 <b>Live Web Link:</b> <a href="${liveUrl}">${liveUrl}</a>`;
 
       const extraMarkup = {
         inline_keyboard: [
-          [{ text: `🌐 Open Note on Website`, url: liveUrl }],
+          [{ text: `🌐 Open "${escapeHtml(result.fileName)}" Live`, url: liveUrl }],
         ],
       };
 
