@@ -7,6 +7,7 @@ import {
   getGardenStats,
   getGardenTags,
   getNotesByTag,
+  getNoteBySlugOrName,
   escapeHtml,
 } from "@/lib/telegram-file-handler";
 
@@ -19,7 +20,7 @@ async function sendTelegramReply(botToken: string, chatId: number | string, text
         chat_id: chatId,
         parse_mode: "HTML",
         text,
-        disable_web_page_preview: true,
+        disable_web_page_preview: false,
       }),
     });
   } catch (err) {
@@ -39,6 +40,7 @@ async function registerBotCommands(botToken: string) {
         commands: [
           { command: "list", description: "📚 List notes in your garden (/list or /list 2)" },
           { command: "search", description: "🔍 Search notes by keyword (/search python)" },
+          { command: "link", description: "🔗 Get live website URL for a note (/link about)" },
           { command: "stats", description: "📊 Live garden statistics & word counts" },
           { command: "tags", description: "🏷️ Explore garden tags & topics (/tags or /tag aiml)" },
           { command: "delete", description: "🗑️ Delete a note file (/delete my-note.md)" },
@@ -156,6 +158,37 @@ export async function POST(req: Request) {
 
     // 💬 3. COMMAND HANDLING
 
+    // 🔗 LINK COMMAND: /link <note_slug_or_filename> or /url <note_slug_or_filename>
+    if (text.startsWith("/link") || text.startsWith("/url")) {
+      const target = text.replace(/^\/(link|url)/, "").trim();
+      if (!target) {
+        await sendTelegramReply(
+          botToken,
+          chatId,
+          "⚠️ <b>Usage:</b> <code>/link python-variables</code> or <code>/link about</code>"
+        );
+        return NextResponse.json({ status: "bad_command" }, { status: 200 });
+      }
+
+      const note = getNoteBySlugOrName(target);
+      if (!note) {
+        await sendTelegramReply(
+          botToken,
+          chatId,
+          `❌ Note <i>"${escapeHtml(target)}"</i> was not found in your garden.`
+        );
+      } else {
+        await sendTelegramReply(
+          botToken,
+          chatId,
+          `🔗 <b>Live Website Link for "${escapeHtml(note.title)}":</b>\n\n` +
+            `👉 <a href="${note.url}">${note.url}</a>\n\n` +
+            `📄 <b>File:</b> <code>${escapeHtml(note.filename)}</code>`
+        );
+      }
+      return NextResponse.json({ success: true }, { status: 200 });
+    }
+
     // 📊 STATS COMMAND: /stats
     if (text.startsWith("/stats")) {
       const { totalNotes, totalWords, topTags } = getGardenStats();
@@ -194,14 +227,14 @@ export async function POST(req: Request) {
         const noteList = notes
           .map(
             (n, idx) =>
-              `${idx + 1}. <a href="${n.url}"><b>${escapeHtml(n.title)}</b></a> (<code>${escapeHtml(n.filename)}</code>)`
+              `${idx + 1}. <b>${escapeHtml(n.title)}</b> (<code>${escapeHtml(n.filename)}</code>)`
           )
           .join("\n");
 
         await sendTelegramReply(
           botToken,
           chatId,
-          `🏷️ <b>Notes tagged with #${escapeHtml(tagName)} (${notes.length} notes):</b>\n\n${noteList}`
+          `🏷️ <b>Notes tagged with #${escapeHtml(tagName)} (${notes.length} notes):</b>\n\n${noteList}\n\n<i>To get website link: send <code>/link filename</code></i>`
         );
       }
       return NextResponse.json({ success: true }, { status: 200 });
@@ -250,14 +283,14 @@ export async function POST(req: Request) {
         const formatted = results
           .map(
             (r, i) =>
-              `<b>${i + 1}. <a href="${r.url}">${r.title}</a></b> (<code>${r.fileName}</code>)\n<i>${r.snippet}</i>`
+              `<b>${i + 1}. ${r.title}</b> (<code>${r.fileName}</code>)\n<i>${r.snippet}</i>`
           )
           .join("\n\n");
 
         await sendTelegramReply(
           botToken,
           chatId,
-          `🔍 <b>Search Results for "${escapeHtml(query)}" (${results.length} found):</b>\n\n${formatted}`
+          `🔍 <b>Search Results for "${escapeHtml(query)}" (${results.length} found):</b>\n\n${formatted}\n\n💡 <i>Send <code>/link filename</code> to get website link for any note!</i>`
         );
       }
       return NextResponse.json({ success: true }, { status: 200 });
@@ -301,7 +334,7 @@ export async function POST(req: Request) {
         const noteList = notes
           .map(
             (n, idx) =>
-              `${(page - 1) * 25 + idx + 1}. <a href="${n.url}"><b>${escapeHtml(n.title)}</b></a> (<code>${escapeHtml(n.filename)}</code>)`
+              `${(page - 1) * 25 + idx + 1}. <b>${escapeHtml(n.title)}</b> (<code>${escapeHtml(n.filename)}</code>)`
           )
           .join("\n");
 
@@ -313,7 +346,7 @@ export async function POST(req: Request) {
         await sendTelegramReply(
           botToken,
           chatId,
-          `📚 <b>Your Garden Notes (${total} Total Notes):</b>\n\n${noteList}${navText}`
+          `📚 <b>Your Garden Notes (${total} Total Notes):</b>\n\n${noteList}${navText}\n\n💡 <i>Send <code>/link filename</code> to get website URL for any note!</i>`
         );
       }
       return NextResponse.json({ success: true }, { status: 200 });
@@ -327,9 +360,10 @@ export async function POST(req: Request) {
         `🌱 <b>Garden Note Manager Bot</b>\n\n` +
           `📁 <b>Add Note:</b> Send or drag & drop any <code>.md</code> file here.\n` +
           `🔍 <b>Search Notes:</b> <code>/search keyword</code> (e.g. <code>/search python</code>)\n` +
+          `🔗 <b>Get Website Link:</b> <code>/link filename</code> (e.g. <code>/link about</code>)\n` +
           `📊 <b>Garden Stats:</b> <code>/stats</code>\n` +
           `🏷️ <b>Explore Tags:</b> <code>/tags</code> or <code>/tag python</code>\n` +
-          `📚 <b>List All Notes:</b> <code>/list</code> or <code>/list 2</code> (with direct website links)\n` +
+          `📚 <b>List All Notes:</b> <code>/list</code> or <code>/list 2</code>\n` +
           `🗑️ <b>Delete Note:</b> <code>/delete filename.md</code>\n` +
           `💡 <b>Command Menu:</b> Type <code>/</code> to see all available commands!\n\n` +
           `🔒 <i>Only you (@${escapeHtml(message.from?.username || "Owner")}) can use this bot.</i>`

@@ -151,6 +151,24 @@ export function getAllTelegramNotes(): NoteItem[] {
 }
 
 /**
+ * Finds a specific note by slug or filename.
+ */
+export function getNoteBySlugOrName(query: string): NoteItem | null {
+  const clean = query.trim().toLowerCase().replace(/\.md$/, "").replace(/\.markdown$/, "");
+  if (!clean) return null;
+  const all = getAllTelegramNotes();
+  return (
+    all.find(
+      (n) =>
+        n.slug.toLowerCase() === clean ||
+        n.filename.toLowerCase() === clean ||
+        n.filename.toLowerCase() === `${clean}.md` ||
+        n.title.toLowerCase() === clean
+    ) || null
+  );
+}
+
+/**
  * Paginated list of notes for large collections (100s or 1000s of notes).
  */
 export function getPaginatedNotes(page: number = 1, pageSize: number = 25): {
@@ -177,11 +195,11 @@ export function getPaginatedNotes(page: number = 1, pageSize: number = 25): {
 /**
  * Searches note titles, filenames, tags, and content for a given keyword query.
  */
-export function searchTelegramNotes(query: string, limit: number = 15): { title: string; fileName: string; url: string; snippet: string }[] {
+export function searchTelegramNotes(query: string, limit: number = 15): { title: string; fileName: string; slug: string; url: string; snippet: string }[] {
   const cleanQuery = query.toLowerCase().trim();
   if (!cleanQuery) return [];
 
-  const results: { title: string; fileName: string; url: string; snippet: string }[] = [];
+  const results: { title: string; fileName: string; slug: string; url: string; snippet: string }[] = [];
   const seen = new Set<string>();
 
   // 1. Search in compiled notes.json database
@@ -212,6 +230,7 @@ export function searchTelegramNotes(query: string, limit: number = 15): { title:
         results.push({
           title: escapeHtml(title),
           fileName: escapeHtml(filename),
+          slug: note.slug,
           url,
           snippet: escapeHtml(snippet),
         });
@@ -236,6 +255,7 @@ export function searchTelegramNotes(query: string, limit: number = 15): { title:
           results.push({
             title: escapeHtml(slug),
             fileName: escapeHtml(file),
+            slug,
             url,
             snippet: "Match in filename",
           });
@@ -257,6 +277,7 @@ export function searchTelegramNotes(query: string, limit: number = 15): { title:
             results.push({
               title: escapeHtml(slug),
               fileName: escapeHtml(file),
+              slug,
               url,
               snippet: escapeHtml(snippet),
             });
