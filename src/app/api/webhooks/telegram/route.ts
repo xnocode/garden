@@ -96,7 +96,7 @@ async function editTelegramMessage(
     });
     const data = await res.json();
     if (!data.ok) {
-      // If edit message failed, send as new reply
+      // Fallback to fresh reply if message edit fails
       await sendTelegramReply(botToken, chatId, text, extraMarkup);
     }
   } catch {
@@ -131,7 +131,6 @@ export async function POST(req: Request) {
   try {
     const update = await req.json();
 
-    // Handle both messages and callback queries
     const callbackQuery = update?.callback_query;
     const message = update?.message || update?.edited_message || callbackQuery?.message;
 
@@ -188,20 +187,23 @@ export async function POST(req: Request) {
       return NextResponse.json({ status: "unauthorized" }, { status: 200 });
     }
 
-    // 🛑 2. CANCEL & RESET COMMAND: /cancel, /stop, or "Cancel / Reset" button
+    // 🛑 2. CANCEL & STOP COMMAND WITH PROMINENT STOP CONFIRMATION MESSAGE
     if (
       text.startsWith("/cancel") ||
       text.startsWith("/stop") ||
       rawText.includes("Cancel") ||
       rawText.includes("Reset") ||
+      rawText.includes("Stop") ||
       rawText.includes("🛑")
     ) {
       await sendTelegramReply(
         botToken,
         chatId,
-        `🛑 <b>Reset Complete</b>\n\nAll active operations have been stopped. Your bot is ready for new commands.`
+        `🛑 <b>Operation Stopped & Reset Successfully</b>\n\n` +
+          `All active progress and uploads have been cancelled.\n` +
+          `Your bot is clean and ready for your next command!`
       );
-      return NextResponse.json({ status: "cancelled" }, { status: 200 });
+      return NextResponse.json({ status: "stopped" }, { status: 200 });
     }
 
     // 📄 3. DOCUMENT UPLOAD WITH MINIMAL PROGRESS & PUBLICATION VERIFICATION
