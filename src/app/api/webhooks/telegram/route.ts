@@ -24,36 +24,45 @@ async function sendTelegramReply(botToken: string, chatId: number | string, text
 export async function POST(req: Request) {
   try {
     const update = await req.json();
-    const message = update?.message;
+    const message = update?.message || update?.edited_message;
 
     if (!message) {
       return NextResponse.json({ status: "ignored" }, { status: 200 });
     }
 
     const botToken = process.env.TELEGRAM_BOT_TOKEN;
-    const authorizedChatId = process.env.TELEGRAM_CHAT_ID;
+    const rawAuthorizedId = process.env.TELEGRAM_CHAT_ID || "";
+    const authorizedChatId = rawAuthorizedId.replace(/['"]/g, "").trim();
 
     if (!botToken || !authorizedChatId) {
+      console.error("Server missing TELEGRAM_BOT_TOKEN or TELEGRAM_CHAT_ID");
       return NextResponse.json({ error: "Server credentials missing" }, { status: 200 });
     }
 
-    const senderId = message.from?.id?.toString()?.trim();
-    const authorizedChatId = (process.env.TELEGRAM_CHAT_ID || "").replace(/['"]/g, "").trim();
+    const senderId = (message.from?.id?.toString() || message.sender_chat?.id?.toString() || "").trim();
     const chatId = message.chat?.id;
+    const isPrivateChat = message.chat?.type === "private";
+
+    // Clean text and strip @bot_username for group chats (e.g. /list@gardenx_connector_bot -> /list)
+    let text = (message.text?.trim() || "").replace(/@\w+_bot/gi, "").trim();
+
+    const isCommand = text.startsWith("/");
+    const isDoc = !!message.document;
 
     // 🔒 1. OWNER-ONLY SECURITY CHECK
-    if (!senderId || !authorizedChatId || senderId !== authorizedChatId) {
+    if (!senderId || senderId !== authorizedChatId) {
       console.warn(`Unauthorized Telegram access attempt. Sender ID: "${senderId}", Authorized ID: "${authorizedChatId}"`);
-      if (chatId) {
+      
+      // In groups, only reply Access Denied if user specifically tried to run a bot command or upload a file
+      if (chatId && (isPrivateChat || isCommand || isDoc)) {
         await sendTelegramReply(
           botToken,
           chatId,
-          `⛔ <b>Access Denied:</b> Only the garden owner can upload or manage notes.\n<i>(Your ID: <code>${senderId}</code>)</i>`
+          `⛔ <b>Access Denied:</b> Only the garden owner can upload or manage notes.\n<i>(Detected ID: <code>${senderId}</code> | Expected: <code>${authorizedChatId}</code>)</i>`
         );
       }
       return NextResponse.json({ status: "unauthorized" }, { status: 200 });
     }
-
 
     // 📄 2. DOCUMENT UPLOAD HANDLING (.md FILES ONLY)
     if (message.document) {
@@ -102,8 +111,6 @@ export async function POST(req: Request) {
     }
 
     // 💬 3. COMMAND HANDLING (/delete, /list, /help)
-    const text = message.text?.trim() || "";
-
     if (text.startsWith("/delete")) {
       const target = text.replace("/delete", "").trim();
       if (!target) {
