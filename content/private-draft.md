@@ -2,6 +2,7 @@
 title: Private Draft
 description: A note intentionally left unpublished to test the draft filter.
 draft: false
+author: Ridoy
 date: 2024-08-10
 tags:
   - meta

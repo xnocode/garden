@@ -2,6 +2,7 @@
 title: "Embeds and Transclusions"
 description: "How to embed one note inside another with transclusions, pull in images, and reuse content without copy-paste."
 draft: false
+author: Ridoy
 date: 2024-08-25
 tags: [reference, embeds]
 aliases: ["Embeds", "Transclusions"]

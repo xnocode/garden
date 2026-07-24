@@ -2,6 +2,7 @@
 title: "Composing with Transclusions"
 description: "Transclusions let you compose notes from other notes — pulling in a section here, an image there, without copy-paste. A demonstration of building on what you've already written."
 draft: false
+author: Ridoy
 date: 2024-08-03
 tags: [reference, embeds, composition, garden]
 aliases: ["Transclusion Composition"]

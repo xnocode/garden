@@ -2,6 +2,7 @@
 title: "How Posting Actually Works"
 description: "A plain-English walkthrough of the environment — where notes live, what the publish command does, and how a note goes from your editor to the live website."
 draft: false
+author: Ridoy
 date: 2024-09-05
 tags: [reference, setup, guide, environment]
 ---
@@ -53,6 +54,7 @@ The file has two parts: **frontmatter** (metadata at the top) and **body** (the 
 title: "My First Note"
 description: "What this note is about."
 draft: false
+author: Ridoy
 date: 2024-09-05
 tags: [essay, personal]
 ---
@@ -191,6 +193,7 @@ You can explicitly set which note comes before/after by adding `prev` and `next`
 title: "My Essay"
 description: "Part 2 of my series."
 draft: false
+author: Ridoy
 date: 2024-09-05
 tags: [essay, series]
 prev: "My First Essay"     ← the note that comes before this one

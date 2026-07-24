@@ -2,6 +2,7 @@
 title: "The Art of Note Taking"
 description: "Principles for notes that age well — write for your future self, take positions, and revise without mercy."
 draft: false
+author: Ridoy
 date: 2024-08-23
 tags: [essay, thinking, notes]
 aliases: ["Note Taking", "Note-Taking"]

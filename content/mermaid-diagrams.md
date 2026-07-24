@@ -2,6 +2,7 @@
 title: "Mermaid Diagrams"
 description: "Client-side rendered Mermaid diagrams — flowcharts, sequences, and graphs living directly inside notes."
 draft: false
+author: Ridoy
 date: 2024-08-20
 tags: [reference, diagrams]
 aliases: ["Mermaid", "Diagrams"]

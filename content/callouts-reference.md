@@ -2,6 +2,7 @@
 title: "Callouts Reference"
 description: "A complete reference for every Obsidian callout type — note, tip, warning, quote, and the collapsible variants."
 draft: false
+author: Ridoy
 date: 2024-08-18
 tags: [reference, callouts]
 aliases: ["Callouts"]

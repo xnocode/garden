@@ -2,6 +2,7 @@
 title: "Wikilinks and Backlinks"
 description: "How wikilinks work in Obsidian-style markdown — aliases, headings, and the backlinks that make notes talk to each other."
 draft: false
+author: Ridoy
 date: 2024-08-17
 tags: [reference, wikilinks]
 aliases: ["Wikilinks", "Backlinks"]

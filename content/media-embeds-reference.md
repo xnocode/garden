@@ -2,6 +2,7 @@
 title: "Media Embeds Reference"
 description: "Test image, audio, video, PDF, and ink drawing embeds — all the media types supported by the garden."
 draft: false
+author: Ridoy
 date: 2024-09-02
 tags: [reference, media, embeds]
 ---

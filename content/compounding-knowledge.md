@@ -2,6 +2,7 @@
 title: "Compounding Knowledge"
 description: "Notes compound like interest. The value of a note is not just what it holds, but what it connects to — and those connections grow over time."
 draft: false
+author: Ridoy
 date: 2024-08-20
 tags: [essay, knowledge, thinking]
 ---

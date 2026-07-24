@@ -2,6 +2,7 @@
 title: "Setup Guide — Local + GitHub Deployment"
 description: "Step-by-step guide to run the garden locally, publish notes from the terminal, and deploy it live for free on GitHub Pages or Vercel."
 draft: false
+author: Ridoy
 date: 2024-09-04
 tags: [reference, setup, deployment, guide]
 ---
@@ -44,6 +45,7 @@ Open the `content/` folder as an Obsidian vault. Write notes with this frontmatt
 title: "My Note"
 description: "A short summary."
 draft: false
+author: Ridoy
 date: 2024-08-15
 tags: [essay, thinking]
 ---

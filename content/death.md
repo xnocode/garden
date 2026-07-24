@@ -2,6 +2,7 @@
 title: Death
 description: Death is the permanent end of life when the body can no longer function. It is a natural part of the life cycle experienced by all living beings.
 draft: false
+author: Ridoy
 date: 2026-07-09
 tags:
   - death

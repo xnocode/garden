@@ -2,6 +2,7 @@
 title: "On Wandering"
 description: "Wandering is not aimless — it's how knowledge actually grows. A defense of the non-linear path through a garden of ideas."
 draft: false
+author: Ridoy
 date: 2024-08-28
 tags: [essay, thinking, garden]
 aliases: ["Wandering"]

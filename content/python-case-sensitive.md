@@ -2,6 +2,7 @@
 title: Python Case-Sensitive
 description: Python is case-sensitive, meaning uppercase and lowercase letters are treated as different characters.
 draft: false
+author: Ridoy
 date: 2026-07-16
 tags:
   - aiml

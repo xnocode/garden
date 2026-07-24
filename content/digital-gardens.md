@@ -2,6 +2,7 @@
 title: "Digital Gardens"
 description: "What a digital garden is, how it differs from a blog, and why the cultivate-not-publish metaphor matters."
 draft: false
+author: Ridoy
 date: 2024-08-15
 tags: [essay, garden, knowledge]
 aliases: ["Digital Garden", "Garden Metaphor"]

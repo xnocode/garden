@@ -2,6 +2,7 @@
 title: "Math and LaTeX"
 description: "KaTeX-powered math support — inline equations, block formulas, matrices, and sums. The garden speaks equations."
 draft: false
+author: Ridoy
 date: 2024-08-19
 tags: [reference, math]
 aliases: ["Math", "LaTeX", "KaTeX"]

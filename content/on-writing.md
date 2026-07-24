@@ -2,6 +2,7 @@
 title: "On Writing"
 description: "An essay on writing as a practice — the resistance, the revision, and the strange relief of finishing a sentence."
 draft: false
+author: Ridoy
 date: 2024-08-27
 tags: [essay, writing]
 aliases: ["Writing"]

@@ -2,6 +2,7 @@
 title: "Contribution Graph"
 description: "A GitHub-style heatmap showing your garden activity over time, rendered from the Obsidian Contribution Graph plugin."
 draft: false
+author: Ridoy
 date: 2024-09-03
 tags: [reference, graph, visualization]
 ---

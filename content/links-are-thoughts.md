@@ -2,6 +2,7 @@
 title: "Links Are Thoughts"
 description: "A link is not a reference — it's an argument. When you connect two notes, you're saying something about how they relate. The link is the thought."
 draft: false
+author: Ridoy
 date: 2024-08-05
 tags: [essay, thinking, wikilinks, knowledge]
 aliases: ["Links as Thoughts"]

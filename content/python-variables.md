@@ -14,16 +14,16 @@ aliases:
 ---
 Variables are like containers where we can store data.
 
-| variable | data    |
-| -------- | ------- |
-| name     | Ridoy |
-| age      | 24      |
-| PI       | 3.1416  |
+| variable | data   |
+| -------- | ------ |
+| name     | Ridoy  |
+| age      | 100    |
+| PI       | 3.1416 |
 Inside memory, it stores data like this.
 
 ```python
 name = "Ridoy"
-age = 25
+age = 100
 PI = 3.1416
 
 print(name)

@@ -9,6 +9,7 @@ tags:
 prev: ""
 next: ""
 aliases:
+  - class notes
 ---
 # Lecture 01
 

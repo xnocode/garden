@@ -9,6 +9,7 @@ tags:
 prev: ""
 next: "[[software-engineering-and-system-analysis-lab-cse0613226]]"
 aliases:
+  - class notes
 ---
 ## Lecture 01
 

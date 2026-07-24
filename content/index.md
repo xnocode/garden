@@ -2,6 +2,7 @@
 title: "The Garden"
 description: "A digital garden — a quiet, growing collection of notes, essays, and half-formed thoughts. Wander freely."
 draft: false
+author: Ridoy
 date: 2024-08-15
 tags: [garden, meta]
 aliases: ["Home", "Index"]

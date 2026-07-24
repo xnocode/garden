@@ -1,0 +1,43 @@
+name: Telegram Fork & Activity Notifier
+
+on:
+  fork:
+  watch:
+    types: [started]
+  pull_request:
+    types: [opened]
+
+jobs:
+  notify-telegram:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send Telegram Notification on Repository Event
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          EVENT_NAME: ${{ github.event_name }}
+          ACTOR: ${{ github.actor }}
+          REPO_NAME: ${{ github.repository }}
+        run: |
+          if [ -z "$TELEGRAM_BOT_TOKEN" ] || [ -z "$TELEGRAM_CHAT_ID" ]; then
+            echo "Telegram credentials not configured. Skipping notification."
+            exit 0
+          fi
+
+          if [ "$EVENT_NAME" = "fork" ];  then
+            FORK_URL="${{ github.event.forkee.html_url }}"
+            MESSAGE="🚨 <b>Garden Code Copy / Fork Alert!</b>%0A%0A👤 <b>User:</b> <a href=\"https://github.com/$ACTOR\">@$ACTOR</a>%0A🍴 <b>Forked Repository:</b> <a href=\"$FORK_URL\">$FORK_URL</a>%0A📦 <b>Source:</b> $REPO_NAME%0A📅 <b>Time:</b> $(date -u)"
+          elif [ "$EVENT_NAME" = "watch" ]; then
+            MESSAGE="⭐ <b>Garden Repository Starred!</b>%0A%0A👤 <b>User:</b> <a href=\"https://github.com/$ACTOR\">@$ACTOR</a> starred <b>$REPO_NAME</b>"
+          elif [ "$EVENT_NAME" = "pull_request" ]; then
+            PR_URL="${{ github.event.pull_request.html_url }}"
+            PR_TITLE="${{ github.event.pull_request.title }}"
+            MESSAGE="🔀 <b>New Pull Request Received!</b>%0A%0A👤 <b>Author:</b> @$ACTOR%0A📝 <b>Title:</b> $PR_TITLE%0A🔗 <b>PR Link:</b> $PR_URL"
+          else
+            MESSAGE="📢 <b>Activity on $REPO_NAME</b> by @$ACTOR"
+          fi
+
+          curl -s -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
+            -d "chat_id=${TELEGRAM_CHAT_ID}" \
+            -d "parse_mode=HTML" \
+            -d "text=${MESSAGE}"

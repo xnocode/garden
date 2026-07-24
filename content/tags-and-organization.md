@@ -2,6 +2,7 @@
 title: "Tags and Organization"
 description: "How tags, nested tags, and folders work together to keep a digital garden findable without over-structuring it."
 draft: false
+author: Ridoy
 date: 2024-08-24
 tags: [reference, organization]
 aliases: ["Tags", "Organization"]

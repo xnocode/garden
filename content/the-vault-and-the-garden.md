@@ -2,6 +2,7 @@
 title: "The Vault and the Garden"
 description: "Two metaphors for personal knowledge management — the vault (secure, complete, static) and the garden (living, partial, growing). You probably need both."
 draft: false
+author: Ridoy
 date: 2024-08-08
 tags: [essay, garden, knowledge, metaphors]
 ---

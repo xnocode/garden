@@ -2,6 +2,7 @@
 title: "On Thinking"
 description: "A personal essay on what thinking actually feels like — slow, recursive, and inseparable from the act of writing."
 draft: false
+author: Ridoy
 date: 2024-08-26
 tags: [essay, thinking]
 aliases: ["Thinking"]

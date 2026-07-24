@@ -2,6 +2,7 @@
 title: "On Reading Slowly"
 description: "Slow reading is not a deficiency — it's a discipline. The point of reading a garden note isn't to finish it, it's to be changed by it."
 draft: false
+author: Ridoy
 date: 2024-08-10
 tags: [essay, reading, thinking]
 aliases: ["Slow Reading", "Reading"]

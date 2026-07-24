@@ -2,6 +2,7 @@
 title: "Zettelkasten Method"
 description: "Niklas Luhmann's note-taking system — atomic notes, unique IDs, dense links. The grammar a digital garden runs on."
 draft: false
+author: Ridoy
 date: 2024-08-21
 tags: [essay, knowledge, zettelkasten]
 aliases: ["Zettelkasten", "Luhmann Method"]
