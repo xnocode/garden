@@ -146,28 +146,32 @@ export async function saveTelegramNote(
   const url = `${DEFAULT_DOMAIN.replace(/\/$/, "")}/?p=${encodeURIComponent(slug)}`;
   const wordCount = content.trim().split(/\s+/).length || 0;
 
-  // Save to in-memory dynamic cache for immediate search/list
-  dynamicNotesMap.set(safeName.toLowerCase(), {
-    title: slug.replace(/-/g, " "),
-    filename: safeName,
-    slug,
-    url,
-    description: content.slice(0, 120).replace(/[\n\r]+/g, " "),
-    wordCount,
-    tags: [],
-    updatedAt: new Date().toISOString(),
-  });
-
   let githubStatus = "Saved locally";
+  let committed = false;
   try {
     const ghRes = await commitNoteToGitHub(safeName, content);
     if (ghRes.success) {
       githubStatus = "Committed to GitHub (Vercel deployment triggered)";
+      committed = true;
     } else {
       githubStatus = `Failed: ${ghRes.message}`;
     }
   } catch (err: any) {
     githubStatus = `Error: ${err?.message || "Unknown error"}`;
+  }
+
+  // Only add to dynamic map if committed or file exists
+  if (committed || isUpdate) {
+    dynamicNotesMap.set(safeName.toLowerCase(), {
+      title: slug.replace(/-/g, " "),
+      filename: safeName,
+      slug,
+      url,
+      description: content.slice(0, 120).replace(/[\n\r]+/g, " "),
+      wordCount,
+      tags: [],
+      updatedAt: new Date().toISOString(),
+    });
   }
 
   return {
@@ -180,7 +184,7 @@ export async function saveTelegramNote(
 }
 
 /**
- * Deletes a note file from content/ folder by filename or slug.
+ * Deletes a note file from content/ folder & dynamic memory map.
  */
 export async function deleteTelegramNote(
   nameOrSlug: string
@@ -190,25 +194,22 @@ export async function deleteTelegramNote(
     cleanName += ".md";
   }
 
-  dynamicNotesMap.delete(cleanName.toLowerCase());
-
+  const existedInMap = dynamicNotesMap.delete(cleanName.toLowerCase());
   const targetPath = path.join(CONTENT_DIR, cleanName);
 
-  if (!fs.existsSync(targetPath)) {
-    const altPath = path.join(CONTENT_DIR, `${cleanName.replace(/\.md$/, "")}.md`);
-    if (!fs.existsSync(altPath)) {
-      return { success: false, message: `Note file "${cleanName}" not found in content/` };
-    }
+  let deletedDisk = false;
+  if (fs.existsSync(targetPath)) {
     try {
-      await fs.promises.unlink(altPath);
+      await fs.promises.unlink(targetPath);
+      deletedDisk = true;
     } catch {}
-    return { success: true, deletedFile: path.basename(altPath), message: "Note deleted successfully." };
   }
 
-  try {
-    await fs.promises.unlink(targetPath);
-  } catch {}
-  return { success: true, deletedFile: cleanName, message: "Note deleted successfully." };
+  if (existedInMap || deletedDisk) {
+    return { success: true, deletedFile: cleanName, message: "Note record deleted." };
+  }
+
+  return { success: false, message: `Note file "${cleanName}" not found.` };
 }
 
 /**
