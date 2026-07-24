@@ -15,18 +15,45 @@ const MAIN_KEYBOARD = {
   keyboard: [
     [{ text: "🌐 Visit Website" }, { text: "📚 List All Notes" }],
     [{ text: "📊 Garden Stats" }, { text: "🏷️ Explore Tags" }],
-    [{ text: "🔍 Search Notes" }, { text: "💡 Help & Guide" }],
+    [{ text: "🔍 Search Notes" }, { text: "🛑 Cancel / Reset" }],
   ],
   resize_keyboard: true,
   persistent: true,
 };
+
+/**
+ * Renders a visual ASCII progress bar.
+ */
+function renderProgressBar(percent: number): string {
+  const totalBlocks = 10;
+  const filledBlocks = Math.round((percent / 100) * totalBlocks);
+  const emptyBlocks = totalBlocks - filledBlocks;
+  const bar = "█".repeat(filledBlocks) + "░".repeat(emptyBlocks);
+  return `[${bar}] ${percent}%`;
+}
+
+/**
+ * Fetch with strict timeout (5 seconds max) to prevent hanging/stuck requests.
+ */
+async function fetchWithTimeout(url: string, options: any = {}, timeoutMs: number = 5000) {
+  const controller = new AbortController();
+  const id = setTimeout(() => controller.abort(), timeoutMs);
+  try {
+    const response = await fetch(url, { ...options, signal: controller.signal });
+    clearTimeout(id);
+    return response;
+  } catch (err) {
+    clearTimeout(id);
+    throw err;
+  }
+}
 
 async function sendTelegramReply(
   botToken: string,
   chatId: number | string,
   text: string,
   extraMarkup?: any
-) {
+): Promise<number | null> {
   try {
     const body: any = {
       chat_id: chatId,
@@ -36,13 +63,43 @@ async function sendTelegramReply(
       reply_markup: extraMarkup || MAIN_KEYBOARD,
     };
 
-    await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+    const res = await fetchWithTimeout(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+    });
+    const data = await res.json();
+    return data?.result?.message_id || null;
+  } catch (err) {
+    console.error("Failed to send Telegram reply:", err);
+    return null;
+  }
+}
+
+async function editTelegramMessage(
+  botToken: string,
+  chatId: number | string,
+  messageId: number,
+  text: string,
+  extraMarkup?: any
+) {
+  try {
+    const body: any = {
+      chat_id: chatId,
+      message_id: messageId,
+      parse_mode: "HTML",
+      text,
+      disable_web_page_preview: false,
+      reply_markup: extraMarkup,
+    };
+
+    await fetchWithTimeout(`https://api.telegram.org/bot${botToken}/editMessageText`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(body),
     });
   } catch (err) {
-    console.error("Failed to send Telegram reply:", err);
+    console.error("Failed to edit Telegram message:", err);
   }
 }
 
@@ -51,7 +108,7 @@ async function sendTelegramReply(
  */
 async function registerBotCommands(botToken: string) {
   try {
-    await fetch(`https://api.telegram.org/bot${botToken}/setMyCommands`, {
+    await fetchWithTimeout(`https://api.telegram.org/bot${botToken}/setMyCommands`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -61,6 +118,7 @@ async function registerBotCommands(botToken: string) {
           { command: "link", description: "🔗 Get live website URL for a note (/link about)" },
           { command: "stats", description: "📊 Live garden statistics & word counts" },
           { command: "tags", description: "🏷️ Explore garden tags & topics (/tags or /tag aiml)" },
+          { command: "cancel", description: "🛑 Cancel/stop progress and reset bot" },
           { command: "delete", description: "🗑️ Delete a note file (/delete my-note.md)" },
           { command: "help", description: "💡 Show help and bot instructions" },
         ],
@@ -129,7 +187,17 @@ export async function POST(req: Request) {
       return NextResponse.json({ status: "unauthorized" }, { status: 200 });
     }
 
-    // 📄 2. DOCUMENT UPLOAD HANDLING (.md FILES ONLY) WITH STEP-BY-STEP PROGRESS & VERIFICATION
+    // 🛑 CANCEL / STOP COMMAND: /cancel or /stop or "Cancel / Reset" button
+    if (text.startsWith("/cancel") || text.startsWith("/stop") || rawText.includes("Cancel / Reset")) {
+      await sendTelegramReply(
+        botToken,
+        chatId,
+        `🛑 <b>Progress Cancelled & Reset!</b>\n\nAll current operations have been stopped and reset. Your bot is ready for new commands.`
+      );
+      return NextResponse.json({ status: "cancelled" }, { status: 200 });
+    }
+
+    // 📄 2. DOCUMENT UPLOAD HANDLING WITH ANIMATED PROGRESS BAR & LIVE EDITING
     if (message.document) {
       const doc = message.document;
       const fileName = doc.file_name || "untitled.md";
@@ -145,26 +213,47 @@ export async function POST(req: Request) {
         return NextResponse.json({ status: "rejected_format" }, { status: 200 });
       }
 
-      // Step 1: Progress Notification
-      await sendTelegramReply(
+      // Step 1: Initial Progress Bar Message (20%)
+      const progressMsgId = await sendTelegramReply(
         botToken,
         chatId,
-        `⏳ <b>Step 1/2: Upload Progress:</b> Downloading & processing <code>${escapeHtml(fileName)}</code>...`
+        `⏳ <b>Uploading & Processing File:</b> <code>${escapeHtml(fileName)}</code>\n\n` +
+          `<code>${renderProgressBar(20)}</code>\n` +
+          `<i>Fetching file details...</i>`
       );
 
       // Fetch file path from Telegram API
-      const fileRes = await fetch(
+      const fileRes = await fetchWithTimeout(
         `https://api.telegram.org/bot${botToken}/getFile?file_id=${doc.file_id}`
       );
       const fileData = await fileRes.json();
 
       if (!fileData.ok || !fileData.result?.file_path) {
-        await sendTelegramReply(botToken, chatId, "❌ Failed to download file from Telegram servers.");
+        if (progressMsgId) {
+          await editTelegramMessage(
+            botToken,
+            chatId,
+            progressMsgId,
+            `❌ <b>Upload Failed:</b> Could not fetch file from Telegram servers.`
+          );
+        }
         return NextResponse.json({ error: "Telegram file fetch error" }, { status: 200 });
       }
 
+      // Progress Update (60%)
+      if (progressMsgId) {
+        await editTelegramMessage(
+          botToken,
+          chatId,
+          progressMsgId,
+          `⏳ <b>Uploading & Processing File:</b> <code>${escapeHtml(fileName)}</code>\n\n` +
+            `<code>${renderProgressBar(60)}</code>\n` +
+            `<i>Saving note to Digital Garden...</i>`
+        );
+      }
+
       // Download file content
-      const contentRes = await fetch(
+      const contentRes = await fetchWithTimeout(
         `https://api.telegram.org/file/bot${botToken}/${fileData.result.file_path}`
       );
       const fileContent = await contentRes.text();
@@ -174,22 +263,27 @@ export async function POST(req: Request) {
 
       const slug = fileName.replace(/\.md$/, "").replace(/\.markdown$/, "");
       const liveUrl = `https://gardenx.qzz.io/?p=${encodeURIComponent(slug)}`;
-      const actionText = result.isUpdate ? "Updated existing note" : "New note created & published";
+      const actionText = result.isUpdate ? "Updated existing note" : "New note published";
 
-      // Step 2: Verification Notification + Live Web Button
-      await sendTelegramReply(
-        botToken,
-        chatId,
-        `✅ <b>Step 2/2: Upload & Publication Verified!</b>\n\n` +
-          `📄 <b>File Name:</b> <code>${escapeHtml(result.fileName)}</code>\n` +
-          `📊 <b>Status:</b> ${actionText}\n` +
-          `🌐 <b>Live Web Link:</b> <a href="${liveUrl}">${liveUrl}</a>`,
-        {
-          inline_keyboard: [
-            [{ text: `🌐 Open "${escapeHtml(result.fileName)}" Live`, url: liveUrl }],
-          ],
-        }
-      );
+      // Step 3: Verified Final Progress (100%)
+      const finalMsgText =
+        `✅ <b>Upload & Publication Verified!</b>\n\n` +
+        `<code>${renderProgressBar(100)}</code>\n\n` +
+        `📄 <b>File Name:</b> <code>${escapeHtml(result.fileName)}</code>\n` +
+        `📊 <b>Status:</b> ${actionText}\n` +
+        `🌐 <b>Live Link:</b> <a href="${liveUrl}">${liveUrl}</a>`;
+
+      const extraMarkup = {
+        inline_keyboard: [
+          [{ text: `🌐 Open "${escapeHtml(result.fileName)}" Live`, url: liveUrl }],
+        ],
+      };
+
+      if (progressMsgId) {
+        await editTelegramMessage(botToken, chatId, progressMsgId, finalMsgText, extraMarkup);
+      } else {
+        await sendTelegramReply(botToken, chatId, finalMsgText, extraMarkup);
+      }
 
       return NextResponse.json({ success: true, fileName: result.fileName }, { status: 200 });
     }
@@ -432,8 +526,9 @@ export async function POST(req: Request) {
           `📊 <b>Garden Stats:</b> Tap <code>📊 Garden Stats</code>\n` +
           `🏷️ <b>Explore Tags:</b> Tap <code>🏷️ Explore Tags</code>\n` +
           `📚 <b>List Notes:</b> Tap <code>📚 List All Notes</code>\n` +
+          `🛑 <b>Cancel/Reset:</b> Tap <code>🛑 Cancel / Reset</code> or send <code>/cancel</code>\n` +
           `🗑️ <b>Delete Note:</b> <code>/delete filename.md</code>\n\n` +
-          `👇 <i>Use the persistent screen keyboard buttons below!</i>`
+          `👇 <i>Use the touch screen keyboard buttons below!</i>`
       );
       return NextResponse.json({ success: true }, { status: 200 });
     }
