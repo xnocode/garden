@@ -129,7 +129,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ status: "unauthorized" }, { status: 200 });
     }
 
-    // 📄 2. DOCUMENT UPLOAD HANDLING (.md FILES ONLY)
+    // 📄 2. DOCUMENT UPLOAD HANDLING (.md FILES ONLY) WITH STEP-BY-STEP PROGRESS & VERIFICATION
     if (message.document) {
       const doc = message.document;
       const fileName = doc.file_name || "untitled.md";
@@ -144,6 +144,13 @@ export async function POST(req: Request) {
         );
         return NextResponse.json({ status: "rejected_format" }, { status: 200 });
       }
+
+      // Step 1: Progress Notification
+      await sendTelegramReply(
+        botToken,
+        chatId,
+        `⏳ <b>Step 1/2: Upload Progress:</b> Downloading & processing <code>${escapeHtml(fileName)}</code>...`
+      );
 
       // Fetch file path from Telegram API
       const fileRes = await fetch(
@@ -165,11 +172,23 @@ export async function POST(req: Request) {
       // Save file locally to content/
       const result = await saveTelegramNote(fileName, fileContent);
 
-      const actionText = result.isUpdate ? "updated" : "added";
+      const slug = fileName.replace(/\.md$/, "").replace(/\.markdown$/, "");
+      const liveUrl = `https://gardenx.qzz.io/?p=${encodeURIComponent(slug)}`;
+      const actionText = result.isUpdate ? "Updated existing note" : "New note created & published";
+
+      // Step 2: Verification Notification + Live Web Button
       await sendTelegramReply(
         botToken,
         chatId,
-        `🌱 <b>Success!</b> Note <code>${escapeHtml(result.fileName)}</code> has been ${actionText} to your Garden content folder.`
+        `✅ <b>Step 2/2: Upload & Publication Verified!</b>\n\n` +
+          `📄 <b>File Name:</b> <code>${escapeHtml(result.fileName)}</code>\n` +
+          `📊 <b>Status:</b> ${actionText}\n` +
+          `🌐 <b>Live Web Link:</b> <a href="${liveUrl}">${liveUrl}</a>`,
+        {
+          inline_keyboard: [
+            [{ text: `🌐 Open "${escapeHtml(result.fileName)}" Live`, url: liveUrl }],
+          ],
+        }
       );
 
       return NextResponse.json({ success: true, fileName: result.fileName }, { status: 200 });
