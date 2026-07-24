@@ -13,8 +13,14 @@ if (!domain) {
   process.exit(1);
 }
 
-const botToken = process.env.TELEGRAM_BOT_TOKEN || "8906745908:AAHUuVNvZUbZsRMQ64-nlIuOV_VY6UmlJxI";
+const botToken = process.env.TELEGRAM_BOT_TOKEN;
+if (!botToken) {
+  console.error("\n❌ Error: TELEGRAM_BOT_TOKEN environment variable is not set.");
+  console.log("Please set TELEGRAM_BOT_TOKEN in your .env or environment before running.\n");
+  process.exit(1);
+}
 const webhookUrl = `${domain.replace(/\/$/, "")}/api/webhooks/telegram`;
+
 
 async function registerWebhook() {
   console.log(`\n  📡 Registering Telegram Webhook to: ${webhookUrl}\n`);
