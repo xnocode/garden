@@ -33,7 +33,7 @@ function renderProgressBar(percent: number): string {
 
 async function tgFetch(url: string, options: any = {}) {
   const controller = new AbortController();
-  const id = setTimeout(() => controller.abort(), 3500);
+  const id = setTimeout(() => controller.abort(), 4000);
   try {
     const res = await fetch(url, { ...options, signal: controller.signal });
     clearTimeout(id);
@@ -85,7 +85,25 @@ async function editMsg(
       body: JSON.stringify(body),
     });
     const data = await res.json();
-    return !!data.ok;
+
+    if (data?.ok) return true;
+
+    // Retry without HTML parse_mode if Telegram rejected HTML entities
+    const plainBody: any = {
+      chat_id: chatId,
+      message_id: msgId,
+      text: text.replace(/<[^>]*>/g, ""),
+      disable_web_page_preview: true,
+    };
+    if (markup) plainBody.reply_markup = markup;
+
+    const retryRes = await tgFetch(`https://api.telegram.org/bot${token}/editMessageText`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(plainBody),
+    });
+    const retryData = await retryRes.json();
+    return !!retryData?.ok;
   } catch {
     return false;
   }
@@ -143,7 +161,7 @@ export async function POST(req: Request) {
     }
 
     // ═══════════════════════════════════════════
-    // 📄 FILE UPLOAD — Ultra-Fast Streamlined Flow
+    // 📄 FILE UPLOAD — Robust Editing with Fallback
     // ═══════════════════════════════════════════
     if (message.document) {
       const doc = message.document;
@@ -160,7 +178,7 @@ export async function POST(req: Request) {
         await sendMsg(token, chatId,
           `⚠️ <b>Duplicate — Already Exists</b>\n\n` +
           `<code>${escapeHtml(dup.filename)}</code> is already in your garden.\n` +
-          `🔗 <a href="${dup.url}">${dup.url}</a>\n\n` +
+          `🔗 <a href="${escapeHtml(dup.url)}">${escapeHtml(dup.url)}</a>\n\n` +
           `To replace: <code>/delete ${escapeHtml(dup.filename)}</code>`,
           { inline_keyboard: [[{ text: "🔗 View Existing", url: dup.url }]] }
         );
@@ -191,28 +209,38 @@ export async function POST(req: Request) {
         // Save & commit to GitHub
         const result = await saveTelegramNote(fileName, fileContent);
         const slug = result.fileName.replace(/\.md$/, "").replace(/\.markdown$/, "");
-        const liveUrl = `https://gardenx.qzz.io/?p=${encodeURIComponent(slug)}`;
+        const rawLiveUrl = `https://gardenx.qzz.io/?p=${encodeURIComponent(slug)}`;
+        const safeLiveUrl = escapeHtml(rawLiveUrl);
+
         const pushed = result.githubStatus?.includes("Committed to GitHub") || false;
 
         // ── STEP 3: Edit message to Final Status (100% or Error Diagnostic) ──
+        let finalText = "";
+        let finalMarkup: any = null;
+
         if (pushed) {
-          await editMsg(token, chatId, msgId,
+          finalText =
             `✅ <b>Published to Digital Garden!</b>\n\n` +
             `<code>${renderProgressBar(100)}</code>\n\n` +
             `📄 <b>File:</b> <code>${escapeHtml(result.fileName)}</code>\n` +
             `📊 <b>Status:</b> ${result.isUpdate ? "Updated" : "New Note"} — Deployed ✓\n` +
-            `🌐 <b>Link:</b> <a href="${liveUrl}">${liveUrl}</a>\n\n` +
-            `⏳ <i>Vercel is building (~1-2 min). Tap below to view:</i>`,
-            { inline_keyboard: [[{ text: "🌐 Open Note on Website", url: liveUrl }]] }
-          );
+            `🌐 <b>Link:</b> <a href="${safeLiveUrl}">${safeLiveUrl}</a>\n\n` +
+            `⏳ <i>Vercel is building (~1-2 min). Tap below to view:</i>`;
+          finalMarkup = { inline_keyboard: [[{ text: "🌐 Open Note on Website", url: rawLiveUrl }]] };
         } else {
-          await editMsg(token, chatId, msgId,
+          finalText =
             `⚠️ <b>Saved locally — GitHub Commit Failed</b>\n\n` +
             `<code>${renderProgressBar(50)}</code>\n\n` +
             `📄 <code>${escapeHtml(result.fileName)}</code>\n\n` +
             `❌ <b>Error Reason:</b>\n<code>${escapeHtml(result.githubStatus || "Unknown error")}</code>\n\n` +
-            `💡 <i>Check GITHUB_TOKEN environment variable on Vercel.</i>`
-          );
+            `💡 <i>Check GITHUB_TOKEN environment variable on Vercel.</i>`;
+        }
+
+        const edited = await editMsg(token, chatId, msgId, finalText, finalMarkup);
+
+        // Fallback: If editMsg fails, send as new message so user always gets completion confirmation!
+        if (!edited) {
+          await sendMsg(token, chatId, finalText, finalMarkup);
         }
       } catch (err: any) {
         await editMsg(token, chatId, msgId, `❌ <b>Upload Failed:</b> ${escapeHtml(err?.message || "Timeout or Network Error")}`);
@@ -238,10 +266,10 @@ export async function POST(req: Request) {
       if (!target) { await sendMsg(token, chatId, "⚠️ <code>/link filename</code>"); return NextResponse.json({ ok: true }); }
       const note = getNoteBySlugOrName(target);
       if (!note) {
-        await sendMsg(token, chatId, `❌ <i>"${escapeHtml(target)}"</i> not found.`);
+        await sendMsg(token, chatId, `❌ <i>"${escapeHtml(note?.title || target)}"</i> not found.`);
       } else {
         await sendMsg(token, chatId,
-          `🔗 <b>${escapeHtml(note.title)}</b>\n👉 <a href="${note.url}">${note.url}</a>`,
+          `🔗 <b>${escapeHtml(note.title)}</b>\n👉 <a href="${escapeHtml(note.url)}">${escapeHtml(note.url)}</a>`,
           { inline_keyboard: [[{ text: "🌐 Open", url: note.url }]] }
         );
       }
