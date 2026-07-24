@@ -3,6 +3,18 @@ import path from "node:path";
 import notesJson from "@/data/notes.json";
 
 const CONTENT_DIR = path.join(process.cwd(), "content");
+const DEFAULT_DOMAIN = process.env.NEXT_PUBLIC_SITE_URL || "https://gardenx.qzz.io";
+
+export interface NoteItem {
+  title: string;
+  filename: string;
+  slug: string;
+  url: string;
+  description?: string;
+  wordCount?: number;
+  tags?: string[];
+  updatedAt?: string;
+}
 
 /**
  * Escapes HTML characters so Telegram's HTML parser doesn't break.
@@ -82,19 +94,27 @@ export async function deleteTelegramNote(
 }
 
 /**
- * Gets all note filenames in content/ directory and notes.json database.
+ * Gets all note items in content/ directory and notes.json database with website URLs.
  */
-export function getAllTelegramNotes(): { title: string; filename: string; slug: string }[] {
-  const map = new Map<string, { title: string; filename: string; slug: string }>();
+export function getAllTelegramNotes(): NoteItem[] {
+  const map = new Map<string, NoteItem>();
 
   // 1. Load from compiled notes.json
   if (Array.isArray(notesJson)) {
     for (const note of notesJson as any[]) {
-      const filename = note.path || `${note.slug}.md`;
+      const slug = note.slug || "note";
+      const filename = note.path || `${slug}.md`;
+      const url = `${DEFAULT_DOMAIN.replace(/\/$/, "")}/?p=${encodeURIComponent(slug)}`;
+
       map.set(filename.toLowerCase(), {
-        title: note.title || note.slug,
+        title: note.title || slug,
         filename,
-        slug: note.slug,
+        slug,
+        url,
+        description: note.description || "",
+        wordCount: note.wordCount || 0,
+        tags: Array.isArray(note.tags) ? note.tags : [],
+        updatedAt: note.updatedAt || "",
       });
     }
   }
@@ -107,16 +127,23 @@ export function getAllTelegramNotes(): { title: string; filename: string; slug: 
         if (f.endsWith(".md") || f.endsWith(".markdown")) {
           const lower = f.toLowerCase();
           if (!map.has(lower)) {
+            const slug = f.replace(/\.md$/, "").replace(/\.markdown$/, "");
+            const url = `${DEFAULT_DOMAIN.replace(/\/$/, "")}/?p=${encodeURIComponent(slug)}`;
+
             map.set(lower, {
-              title: f.replace(/\.md$/, ""),
+              title: slug,
               filename: f,
-              slug: f.replace(/\.md$/, ""),
+              slug,
+              url,
+              description: "",
+              wordCount: 0,
+              tags: [],
             });
           }
         }
       }
     } catch {
-      // Ignore filesystem read errors in serverless if missing
+      // Ignore filesystem read errors
     }
   }
 
@@ -126,8 +153,8 @@ export function getAllTelegramNotes(): { title: string; filename: string; slug: 
 /**
  * Paginated list of notes for large collections (100s or 1000s of notes).
  */
-export function getPaginatedNotes(page: number = 1, pageSize: number = 30): {
-  notes: { title: string; filename: string; slug: string }[];
+export function getPaginatedNotes(page: number = 1, pageSize: number = 25): {
+  notes: NoteItem[];
   total: number;
   totalPages: number;
   page: number;
@@ -150,11 +177,11 @@ export function getPaginatedNotes(page: number = 1, pageSize: number = 30): {
 /**
  * Searches note titles, filenames, tags, and content for a given keyword query.
  */
-export function searchTelegramNotes(query: string, limit: number = 20): { title: string; fileName: string; snippet: string }[] {
+export function searchTelegramNotes(query: string, limit: number = 15): { title: string; fileName: string; url: string; snippet: string }[] {
   const cleanQuery = query.toLowerCase().trim();
   if (!cleanQuery) return [];
 
-  const results: { title: string; fileName: string; snippet: string }[] = [];
+  const results: { title: string; fileName: string; url: string; snippet: string }[] = [];
   const seen = new Set<string>();
 
   // 1. Search in compiled notes.json database
@@ -168,6 +195,7 @@ export function searchTelegramNotes(query: string, limit: number = 20): { title:
       const raw = note.raw || "";
       const filename = note.path || `${note.slug}.md`;
       const tags = Array.isArray(note.tags) ? note.tags.join(" ") : "";
+      const url = `${DEFAULT_DOMAIN.replace(/\/$/, "")}/?p=${encodeURIComponent(note.slug)}`;
 
       const fullText = `${title} ${desc} ${tags} ${content} ${raw}`.toLowerCase();
       const matchIndex = fullText.indexOf(cleanQuery);
@@ -184,6 +212,7 @@ export function searchTelegramNotes(query: string, limit: number = 20): { title:
         results.push({
           title: escapeHtml(title),
           fileName: escapeHtml(filename),
+          url,
           snippet: escapeHtml(snippet),
         });
         seen.add(filename.toLowerCase());
@@ -200,10 +229,14 @@ export function searchTelegramNotes(query: string, limit: number = 20): { title:
         if (!file.endsWith(".md") && !file.endsWith(".markdown")) continue;
         if (seen.has(file.toLowerCase())) continue;
 
+        const slug = file.replace(/\.md$/, "").replace(/\.markdown$/, "");
+        const url = `${DEFAULT_DOMAIN.replace(/\/$/, "")}/?p=${encodeURIComponent(slug)}`;
+
         if (file.toLowerCase().includes(cleanQuery)) {
           results.push({
-            title: escapeHtml(file.replace(/\.md$/, "")),
+            title: escapeHtml(slug),
             fileName: escapeHtml(file),
+            url,
             snippet: "Match in filename",
           });
           seen.add(file.toLowerCase());
@@ -222,8 +255,9 @@ export function searchTelegramNotes(query: string, limit: number = 20): { title:
             const snippet = content.slice(start, end).replace(/[\n\r]+/g, " ");
 
             results.push({
-              title: escapeHtml(file.replace(/\.md$/, "")),
+              title: escapeHtml(slug),
               fileName: escapeHtml(file),
+              url,
               snippet: escapeHtml(snippet),
             });
             seen.add(file.toLowerCase());
@@ -238,4 +272,62 @@ export function searchTelegramNotes(query: string, limit: number = 20): { title:
   }
 
   return results;
+}
+
+/**
+ * Calculates live Garden statistics metrics.
+ */
+export function getGardenStats(): {
+  totalNotes: number;
+  totalWords: number;
+  topTags: { tag: string; count: number }[];
+} {
+  const notes = getAllTelegramNotes();
+  const totalNotes = notes.length;
+  let totalWords = 0;
+  const tagMap = new Map<string, number>();
+
+  for (const n of notes) {
+    totalWords += n.wordCount || 0;
+    if (Array.isArray(n.tags)) {
+      for (const t of n.tags) {
+        const cleanTag = t.replace(/^#/, "").trim().toLowerCase();
+        if (cleanTag) {
+          tagMap.set(cleanTag, (tagMap.get(cleanTag) || 0) + 1);
+        }
+      }
+    }
+  }
+
+  const topTags = Array.from(tagMap.entries())
+    .map(([tag, count]) => ({ tag, count }))
+    .sort((a, b) => b.count - a.count);
+
+  return {
+    totalNotes,
+    totalWords,
+    topTags,
+  };
+}
+
+/**
+ * Gets all tags in the garden with note counts.
+ */
+export function getGardenTags(): { tag: string; count: number }[] {
+  const { topTags } = getGardenStats();
+  return topTags;
+}
+
+/**
+ * Gets all notes under a specific tag.
+ */
+export function getNotesByTag(tagName: string): NoteItem[] {
+  const cleanTag = tagName.replace(/^#/, "").trim().toLowerCase();
+  if (!cleanTag) return [];
+
+  const notes = getAllTelegramNotes();
+  return notes.filter((n) =>
+    Array.isArray(n.tags) &&
+    n.tags.some((t) => t.replace(/^#/, "").trim().toLowerCase() === cleanTag)
+  );
 }
