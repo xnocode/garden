@@ -37,21 +37,23 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Server credentials missing" }, { status: 200 });
     }
 
-    const senderId = message.from?.id?.toString();
+    const senderId = message.from?.id?.toString()?.trim();
+    const authorizedChatId = (process.env.TELEGRAM_CHAT_ID || "").replace(/['"]/g, "").trim();
     const chatId = message.chat?.id;
 
     // 🔒 1. OWNER-ONLY SECURITY CHECK
-    if (senderId !== authorizedChatId.toString()) {
-      console.warn(`Unauthorized Telegram access attempt from ID: ${senderId}`);
+    if (!senderId || !authorizedChatId || senderId !== authorizedChatId) {
+      console.warn(`Unauthorized Telegram access attempt. Sender ID: "${senderId}", Authorized ID: "${authorizedChatId}"`);
       if (chatId) {
         await sendTelegramReply(
           botToken,
           chatId,
-          "⛔ <b>Access Denied:</b> Only the garden owner can upload or manage notes."
+          `⛔ <b>Access Denied:</b> Only the garden owner can upload or manage notes.\n<i>(Your ID: <code>${senderId}</code>)</i>`
         );
       }
       return NextResponse.json({ status: "unauthorized" }, { status: 200 });
     }
+
 
     // 📄 2. DOCUMENT UPLOAD HANDLING (.md FILES ONLY)
     if (message.document) {
