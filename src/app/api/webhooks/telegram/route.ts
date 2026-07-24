@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+import { NextResponse, after } from "next/server";
 import {
   saveTelegramNote,
   deleteTelegramNote,
@@ -206,52 +206,54 @@ export async function POST(req: Request) {
       );
       if (!msgId) return NextResponse.json({ ok: true });
 
-      try {
-        // 1. Get file from Telegram
-        const fileRes = await tgFetch(`https://api.telegram.org/bot${token}/getFile?file_id=${doc.file_id}`);
-        const fileData = await fileRes.json();
+      after(async () => {
+        try {
+          // 1. Get file from Telegram
+          const fileRes = await tgFetch(`https://api.telegram.org/bot${token}/getFile?file_id=${doc.file_id}`);
+          const fileData = await fileRes.json();
 
-        if (!fileData.ok || !fileData.result?.file_path) {
+          if (!fileData.ok || !fileData.result?.file_path) {
+            await safeEdit(token, chatId, msgId,
+              `❌ <b>Failed</b>\n\n📄 <code>${safe}</code>\n\n<i>Could not get file from Telegram.</i>`
+            );
+            return;
+          }
+
+          // 2. Download content
+          const contentRes = await tgFetch(`https://api.telegram.org/file/bot${token}/${fileData.result.file_path}`);
+          const fileContent = await contentRes.text();
+
+          // 3. Save + commit to GitHub (this is the slow part)
+          const result = await saveTelegramNote(fileName, fileContent);
+          const slug = result.fileName.replace(/\.md$/, "").replace(/\.markdown$/, "");
+          const rawLiveUrl = `https://gardenx.qzz.io/?p=${encodeURIComponent(slug)}`;
+          const safeLiveUrl = escapeHtml(rawLiveUrl);
+          const pushed = result.githubStatus?.includes("Committed to GitHub") || false;
+
+          // 4. Edit the SAME message with final result
+          if (pushed) {
+            await safeEdit(token, chatId, msgId,
+              `✅ <b>Published!</b>\n\n` +
+              `📄 <code>${escapeHtml(result.fileName)}</code>\n` +
+              `📊 ${result.isUpdate ? "Updated" : "New note"} — live ✓\n` +
+              `🔗 <a href="${safeLiveUrl}">${safeLiveUrl}</a>\n\n` +
+              `<i>⏳ Building (~1 min). Tap below:</i>`,
+              { inline_keyboard: [[{ text: "🌐 Open Note", url: rawLiveUrl }]] }
+            );
+          } else {
+            await safeEdit(token, chatId, msgId,
+              `⚠️ <b>GitHub Push Failed</b>\n\n` +
+              `📄 <code>${escapeHtml(result.fileName)}</code>\n\n` +
+              `❌ <code>${escapeHtml(result.githubStatus || "Unknown error")}</code>\n\n` +
+              `<i>Check GITHUB_TOKEN on Vercel.</i>`
+            );
+          }
+        } catch (err: any) {
           await safeEdit(token, chatId, msgId,
-            `❌ <b>Failed</b>\n\n📄 <code>${safe}</code>\n\n<i>Could not get file from Telegram.</i>`
+            `❌ <b>Upload Failed</b>\n\n📄 <code>${safe}</code>\n\n<i>${escapeHtml(err?.message || "Timeout")}</i>`
           );
-          return NextResponse.json({ ok: true });
         }
-
-        // 2. Download content
-        const contentRes = await tgFetch(`https://api.telegram.org/file/bot${token}/${fileData.result.file_path}`);
-        const fileContent = await contentRes.text();
-
-        // 3. Save + commit to GitHub (this is the slow part)
-        const result = await saveTelegramNote(fileName, fileContent);
-        const slug = result.fileName.replace(/\.md$/, "").replace(/\.markdown$/, "");
-        const rawLiveUrl = `https://gardenx.qzz.io/?p=${encodeURIComponent(slug)}`;
-        const safeLiveUrl = escapeHtml(rawLiveUrl);
-        const pushed = result.githubStatus?.includes("Committed to GitHub") || false;
-
-        // 4. Edit the SAME message with final result
-        if (pushed) {
-          await safeEdit(token, chatId, msgId,
-            `✅ <b>Published!</b>\n\n` +
-            `📄 <code>${escapeHtml(result.fileName)}</code>\n` +
-            `📊 ${result.isUpdate ? "Updated" : "New note"} — live ✓\n` +
-            `🔗 <a href="${safeLiveUrl}">${safeLiveUrl}</a>\n\n` +
-            `<i>⏳ Building (~1 min). Tap below:</i>`,
-            { inline_keyboard: [[{ text: "🌐 Open Note", url: rawLiveUrl }]] }
-          );
-        } else {
-          await safeEdit(token, chatId, msgId,
-            `⚠️ <b>GitHub Push Failed</b>\n\n` +
-            `📄 <code>${escapeHtml(result.fileName)}</code>\n\n` +
-            `❌ <code>${escapeHtml(result.githubStatus || "Unknown error")}</code>\n\n` +
-            `<i>Check GITHUB_TOKEN on Vercel.</i>`
-          );
-        }
-      } catch (err: any) {
-        await safeEdit(token, chatId, msgId,
-          `❌ <b>Upload Failed</b>\n\n📄 <code>${safe}</code>\n\n<i>${escapeHtml(err?.message || "Timeout")}</i>`
-        );
-      }
+      });
 
       return NextResponse.json({ ok: true, file: fileName });
     }
@@ -349,26 +351,28 @@ export async function POST(req: Request) {
         return NextResponse.json({ ok: true });
       }
 
-      try {
-        const r = await deleteTelegramNote(target);
+      after(async () => {
+        try {
+          const r = await deleteTelegramNote(target);
 
-        if (r.success) {
+          if (r.success) {
+            await safeEdit(token, chatId, delId,
+              `🗑️ <b>Deleted!</b>\n\n` +
+              `📄 <code>${escapeHtml(r.deletedFile || target)}</code>\n` +
+              `✅ Removed from GitHub &amp; garden.\n\n` +
+              `<i>⏳ Vercel will rebuild in ~1 min.</i>`
+            );
+          } else {
+            await safeEdit(token, chatId, delId,
+              `❌ <b>Delete Failed</b>\n\n📄 <code>${safe}</code>\n\n<i>${escapeHtml(r.message)}</i>`
+            );
+          }
+        } catch (err: any) {
           await safeEdit(token, chatId, delId,
-            `🗑️ <b>Deleted!</b>\n\n` +
-            `📄 <code>${escapeHtml(r.deletedFile || target)}</code>\n` +
-            `✅ Removed from GitHub &amp; garden.\n\n` +
-            `<i>⏳ Vercel will rebuild in ~1 min.</i>`
-          );
-        } else {
-          await safeEdit(token, chatId, delId,
-            `❌ <b>Delete Failed</b>\n\n📄 <code>${safe}</code>\n\n<i>${escapeHtml(r.message)}</i>`
+            `❌ <b>Delete Failed</b>\n\n📄 <code>${safe}</code>\n\n<i>${escapeHtml(err?.message || "Timeout")}</i>`
           );
         }
-      } catch (err: any) {
-        await safeEdit(token, chatId, delId,
-          `❌ <b>Delete Failed</b>\n\n📄 <code>${safe}</code>\n\n<i>${escapeHtml(err?.message || "Timeout")}</i>`
-        );
-      }
+      });
 
       return NextResponse.json({ ok: true });
     }
