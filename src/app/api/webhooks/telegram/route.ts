@@ -28,7 +28,13 @@ function renderProgressBar(percent: number): string {
   const total = 10;
   const filled = Math.round((percent / 100) * total);
   const empty = total - filled;
-  return `[${"■".repeat(filled)}${"□".repeat(empty)}] ${percent}%`;
+  return `[${"█".repeat(filled)}${"░".repeat(empty)}] ${percent}%`;
+}
+
+const SPINNERS = ["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"];
+
+function spin(i: number): string {
+  return SPINNERS[i % SPINNERS.length];
 }
 
 function delay(ms: number): Promise<void> {
@@ -89,10 +95,9 @@ async function editMsg(
       body: JSON.stringify(body),
     });
     const data = await res.json();
-
     if (data?.ok) return true;
 
-    // Retry without HTML parse_mode if Telegram rejected HTML formatting
+    // Retry as plain text if HTML parse fails
     const plainBody: any = {
       chat_id: chatId,
       message_id: msgId,
@@ -100,14 +105,12 @@ async function editMsg(
       disable_web_page_preview: true,
     };
     if (markup) plainBody.reply_markup = markup;
-
-    const retryRes = await tgFetch(`https://api.telegram.org/bot${token}/editMessageText`, {
+    const retry = await tgFetch(`https://api.telegram.org/bot${token}/editMessageText`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(plainBody),
     });
-    const retryData = await retryRes.json();
-    return !!retryData?.ok;
+    return !!(await retry.json())?.ok;
   } catch {
     return false;
   }
@@ -164,65 +167,86 @@ export async function POST(req: Request) {
       return NextResponse.json({ ok: true });
     }
 
-    // ═══════════════════════════════════════════════════════════
-    // 📄 FILE UPLOAD — 4-Stage Live Animated Single Message Flow
-    // ═══════════════════════════════════════════════════════════
+    // ═══════════════════════════════════════════════════════════════════
+    // 📄 FILE UPLOAD — Live Animated Spinner + Growing Progress Bar
+    // ═══════════════════════════════════════════════════════════════════
     if (message.document) {
       const doc = message.document;
       const fileName = doc.file_name || "untitled.md";
 
       if (!fileName.toLowerCase().endsWith(".md") && !fileName.toLowerCase().endsWith(".markdown")) {
-        await sendMsg(token, chatId, `⚠️ Only <code>.md</code> files accepted. <i>"${escapeHtml(fileName)}"</i> rejected.`);
+        await sendMsg(token, chatId, `⚠️ Only <code>.md</code> files accepted.\n<i>"${escapeHtml(fileName)}"</i> rejected.`);
         return NextResponse.json({ ok: true });
       }
 
-      // Duplicate check
       const dup = checkDuplicateNote(fileName);
       if (dup) {
         await sendMsg(token, chatId,
-          `⚠️ <b>Duplicate — Already Exists</b>\n\n` +
-          `<code>${escapeHtml(dup.filename)}</code> is already in your garden.\n` +
+          `⚠️ <b>Already Exists</b>\n\n` +
+          `<code>${escapeHtml(dup.filename)}</code> is already published.\n` +
           `🔗 <a href="${escapeHtml(dup.url)}">${escapeHtml(dup.url)}</a>\n\n` +
-          `To replace: <code>/delete ${escapeHtml(dup.filename)}</code>`,
-          { inline_keyboard: [[{ text: "🔗 View Existing", url: dup.url }]] }
+          `To replace it: <code>/delete ${escapeHtml(dup.filename)}</code>`,
+          { inline_keyboard: [[{ text: "🔗 View Note", url: dup.url }]] }
         );
         return NextResponse.json({ ok: true });
       }
 
       const safe = escapeHtml(fileName);
 
-      // ── STAGE 1: 20% Progress (Downloading) ──
+      // ── Frame 1: Spin @ 0% ──
       const msgId = await sendMsg(token, chatId,
-        `⚡ <b>Processing &amp; Uploading Note...</b>\n\n` +
-        `<code>${renderProgressBar(20)}</code>\n` +
-        `📥 <i>Downloading file from Telegram...</i>\n\n` +
+        `${spin(0)} <b>Publishing Note...</b>\n\n` +
+        `<code>${renderProgressBar(0)}</code>\n` +
+        `<i>Connecting to Telegram...</i>\n\n` +
         `📄 <code>${safe}</code>`
       );
       if (!msgId) return NextResponse.json({ ok: true });
 
       try {
-        // Download file
+        // ── Frame 2: Spin @ 10% — Requesting file ──
+        await editMsg(token, chatId, msgId,
+          `${spin(2)} <b>Publishing Note...</b>\n\n` +
+          `<code>${renderProgressBar(10)}</code>\n` +
+          `<i>Requesting file from Telegram...</i>\n\n` +
+          `📄 <code>${safe}</code>`
+        );
+
         const fileRes = await tgFetch(`https://api.telegram.org/bot${token}/getFile?file_id=${doc.file_id}`);
         const fileData = await fileRes.json();
 
         if (!fileData.ok || !fileData.result?.file_path) {
-          await editMsg(token, chatId, msgId, `❌ <b>Upload Failed:</b> Could not get file path from Telegram.`);
+          await editMsg(token, chatId, msgId, `❌ <b>Failed</b> — Could not get file from Telegram.`);
           return NextResponse.json({ ok: true });
         }
+
+        // ── Frame 3: Spin @ 25% — Downloading ──
+        await editMsg(token, chatId, msgId,
+          `${spin(4)} <b>Publishing Note...</b>\n\n` +
+          `<code>${renderProgressBar(25)}</code>\n` +
+          `<i>Downloading file content...</i>\n\n` +
+          `📄 <code>${safe}</code>`
+        );
 
         const contentRes = await tgFetch(`https://api.telegram.org/file/bot${token}/${fileData.result.file_path}`);
         const fileContent = await contentRes.text();
 
-        // ── STAGE 2: 50% Progress (Saving & Indexing) ──
+        // ── Frame 4: Spin @ 40% — Saving ──
         await editMsg(token, chatId, msgId,
-          `⚡ <b>Processing &amp; Uploading Note...</b>\n\n` +
-          `<code>${renderProgressBar(50)}</code>\n` +
-          `💾 <i>Saving &amp; indexing note in garden...</i>\n\n` +
+          `${spin(6)} <b>Publishing Note...</b>\n\n` +
+          `<code>${renderProgressBar(40)}</code>\n` +
+          `<i>Saving &amp; indexing in garden...</i>\n\n` +
           `📄 <code>${safe}</code>`
         );
-        await delay(400);
+        await delay(250);
 
-        // Save & commit to GitHub
+        // ── Frame 5: Spin @ 60% — Pushing to GitHub ──
+        await editMsg(token, chatId, msgId,
+          `${spin(8)} <b>Publishing Note...</b>\n\n` +
+          `<code>${renderProgressBar(60)}</code>\n` +
+          `<i>Committing to GitHub repository...</i>\n\n` +
+          `📄 <code>${safe}</code>`
+        );
+
         const result = await saveTelegramNote(fileName, fileContent);
         const slug = result.fileName.replace(/\.md$/, "").replace(/\.markdown$/, "");
         const rawLiveUrl = `https://gardenx.qzz.io/?p=${encodeURIComponent(slug)}`;
@@ -230,43 +254,38 @@ export async function POST(req: Request) {
         const pushed = result.githubStatus?.includes("Committed to GitHub") || false;
 
         if (pushed) {
-          // ── STAGE 3: 80% Progress (Deploying to Web) ──
+          // ── Frame 6: Spin @ 80% — Triggering deploy ──
           await editMsg(token, chatId, msgId,
-            `⚡ <b>Deploying to Digital Garden...</b>\n\n` +
+            `${spin(1)} <b>Publishing Note...</b>\n\n` +
             `<code>${renderProgressBar(80)}</code>\n` +
-            `🚀 <i>Pushed to GitHub • Triggering live deployment...</i>\n\n` +
+            `<i>Triggering Vercel deployment...</i>\n\n` +
             `📄 <code>${safe}</code>`
           );
-          await delay(450);
+          await delay(300);
 
-          // ── STAGE 4: 100% Final Verification Card ──
+          // ── Frame 7: 100% — Final success card ──
           const finalText =
             `✅ <b>Published to Digital Garden!</b>\n\n` +
-            `<code>${renderProgressBar(100)}</code> • <i>Verified Live</i>\n\n` +
+            `<code>${renderProgressBar(100)}</code>\n\n` +
             `📄 <b>File:</b> <code>${escapeHtml(result.fileName)}</code>\n` +
-            `📊 <b>Status:</b> ${result.isUpdate ? "Updated" : "New Note"} — Deployed ✓\n` +
-            `🌐 <b>Website Link:</b> <a href="${safeLiveUrl}">${safeLiveUrl}</a>\n\n` +
-            `⏳ <i>Vercel is compiling (~1 min). Tap below to open:</i>`;
+            `📊 <b>Status:</b> ${result.isUpdate ? "✏️ Updated" : "🌱 New Note"} — Live ✓\n` +
+            `🔗 <b>Link:</b> <a href="${safeLiveUrl}">${safeLiveUrl}</a>\n\n` +
+            `<i>⏳ Vercel is building (~1 min). Tap below to open:</i>`;
 
           const finalMarkup = { inline_keyboard: [[{ text: "🌐 Open Note on Website", url: rawLiveUrl }]] };
-
           const edited = await editMsg(token, chatId, msgId, finalText, finalMarkup);
-          if (!edited) {
-            await sendMsg(token, chatId, finalText, finalMarkup);
-          }
+          if (!edited) await sendMsg(token, chatId, finalText, finalMarkup);
         } else {
-          // GitHub Commit Failure Diagnostic Card
-          const errText =
-            `⚠️ <b>Saved locally — GitHub Commit Failed</b>\n\n` +
+          await editMsg(token, chatId, msgId,
+            `⚠️ <b>Saved — GitHub Push Failed</b>\n\n` +
             `<code>${renderProgressBar(50)}</code>\n\n` +
             `📄 <code>${escapeHtml(result.fileName)}</code>\n\n` +
-            `❌ <b>Error Reason:</b>\n<code>${escapeHtml(result.githubStatus || "Unknown error")}</code>\n\n` +
-            `💡 <i>Check GITHUB_TOKEN environment variable on Vercel.</i>`;
-
-          await editMsg(token, chatId, msgId, errText);
+            `❌ <b>Reason:</b> <code>${escapeHtml(result.githubStatus || "Unknown error")}</code>\n\n` +
+            `💡 <i>Verify GITHUB_TOKEN is set in Vercel environment variables.</i>`
+          );
         }
       } catch (err: any) {
-        await editMsg(token, chatId, msgId, `❌ <b>Upload Failed:</b> ${escapeHtml(err?.message || "Timeout or Network Error")}`);
+        await editMsg(token, chatId, msgId, `❌ <b>Upload Failed:</b> ${escapeHtml(err?.message || "Timeout or network error")}`);
       }
 
       return NextResponse.json({ ok: true, file: fileName });
@@ -349,9 +368,63 @@ export async function POST(req: Request) {
 
     if (text.startsWith("/delete")) {
       const target = text.replace("/delete", "").trim();
-      if (!target) { await sendMsg(token, chatId, "⚠️ <code>/delete filename.md</code>"); return NextResponse.json({ ok: true }); }
+      if (!target) { await sendMsg(token, chatId, "⚠️ Usage: <code>/delete filename.md</code>"); return NextResponse.json({ ok: true }); }
+      const safe = escapeHtml(target);
+
+      // ── Frame 1: Spin @ 0% ──
+      const delId = await sendMsg(token, chatId,
+        `${spin(0)} <b>Deleting Note...</b>\n\n` +
+        `<code>${renderProgressBar(0)}</code>\n` +
+        `<i>Finding note in garden...</i>\n\n` +
+        `📄 <code>${safe}</code>`
+      );
+
+      if (delId) {
+        // ── Frame 2: Spin @ 40% ──
+        await editMsg(token, chatId, delId,
+          `${spin(4)} <b>Deleting Note...</b>\n\n` +
+          `<code>${renderProgressBar(40)}</code>\n` +
+          `<i>Removing from GitHub repository...</i>\n\n` +
+          `📄 <code>${safe}</code>`
+        );
+      }
+
       const r = await deleteTelegramNote(target);
-      await sendMsg(token, chatId, r.success ? `🗑️ Deleted <code>${escapeHtml(r.deletedFile || target)}</code>` : `❌ ${escapeHtml(r.message)}`);
+
+      if (delId) {
+        if (r.success) {
+          // ── Frame 3: Spin @ 80% ──
+          await editMsg(token, chatId, delId,
+            `${spin(7)} <b>Deleting Note...</b>\n\n` +
+            `<code>${renderProgressBar(80)}</code>\n` +
+            `<i>Triggering garden rebuild...</i>\n\n` +
+            `📄 <code>${safe}</code>`
+          );
+          await delay(300);
+
+          // ── Final: 100% ──
+          await editMsg(token, chatId, delId,
+            `🗑️ <b>Note Deleted!</b>\n\n` +
+            `<code>${renderProgressBar(100)}</code>\n\n` +
+            `📄 <b>File:</b> <code>${escapeHtml(r.deletedFile || target)}</code>\n` +
+            `✅ <b>Removed from GitHub &amp; garden.</b>\n\n` +
+            `<i>⏳ Vercel will rebuild in ~1 min.</i>`
+          );
+        } else {
+          await editMsg(token, chatId, delId,
+            `❌ <b>Delete Failed</b>\n\n` +
+            `<code>${renderProgressBar(0)}</code>\n\n` +
+            `📄 <code>${safe}</code>\n\n` +
+            `<b>Reason:</b> ${escapeHtml(r.message)}`
+          );
+        }
+      } else {
+        await sendMsg(token, chatId, r.success
+          ? `🗑️ Deleted <code>${escapeHtml(r.deletedFile || target)}</code>`
+          : `❌ ${escapeHtml(r.message)}`
+        );
+      }
+
       return NextResponse.json({ ok: true });
     }
 
