@@ -216,7 +216,7 @@ export async function POST(req: Request) {
       const result = await saveTelegramNote(fileName, fileContent);
       const slug = result.fileName.replace(/\.md$/, "").replace(/\.markdown$/, "");
       const liveUrl = `https://gardenx.qzz.io/?p=${encodeURIComponent(slug)}`;
-      const pushed = result.githubStatus?.includes("GitHub") || false;
+      const pushed = result.githubStatus?.includes("Committed to GitHub") || false;
 
       // ── STEP 4: Edit to 85% — deploying ──
       if (pushed) {
@@ -227,7 +227,7 @@ export async function POST(req: Request) {
         await delay(400);
       }
 
-      // ── STEP 5: Final 100% — done ──
+      // ── STEP 5: Final 100% or Error Diagnostic ──
       if (pushed) {
         await editMsg(token, chatId, msgId,
           `✅ <b>Published to Digital Garden!</b>\n\n` +
@@ -240,11 +240,11 @@ export async function POST(req: Request) {
         );
       } else {
         await editMsg(token, chatId, msgId,
-          `⚠️ <b>Saved but NOT Deployed</b>\n\n` +
+          `⚠️ <b>Saved locally — GitHub Commit Failed</b>\n\n` +
           `<code>${renderProgressBar(50)}</code>\n\n` +
           `📄 <code>${escapeHtml(result.fileName)}</code>\n\n` +
-          `❌ Could not push to GitHub.\n` +
-          `Check that <code>GITHUB_TOKEN</code> is set in Vercel env vars.`
+          `❌ <b>Error Reason:</b>\n<code>${escapeHtml(result.githubStatus || "Unknown error")}</code>\n\n` +
+          `💡 <i>Check GITHUB_TOKEN environment variable on Vercel.</i>`
         );
       }
 

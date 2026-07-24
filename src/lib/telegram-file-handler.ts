@@ -74,7 +74,7 @@ export async function commitNoteToGitHub(
   const repo = process.env.NEXT_PUBLIC_GISCUS_REPO || "xnocode/garden";
   const filePath = `content/${fileName}`;
   const url = `https://api.github.com/repos/${repo}/contents/${filePath}`;
-  const authHeader = token.startsWith("github_pat_") || token.startsWith("ghp_") ? `Bearer ${token}` : `token ${token}`;
+  const authHeader = `Bearer ${token}`;
 
   try {
     let sha: string | undefined;
@@ -83,6 +83,7 @@ export async function commitNoteToGitHub(
         Authorization: authHeader,
         Accept: "application/vnd.github.v3+json",
         "User-Agent": "DigitalGardenBot",
+        "X-GitHub-Api-Version": "2022-11-28",
       },
     });
 
@@ -105,6 +106,7 @@ export async function commitNoteToGitHub(
         Accept: "application/vnd.github.v3+json",
         "Content-Type": "application/json",
         "User-Agent": "DigitalGardenBot",
+        "X-GitHub-Api-Version": "2022-11-28",
       },
       body: JSON.stringify(putBody),
     });
@@ -113,7 +115,8 @@ export async function commitNoteToGitHub(
       return { success: true, message: "Committed to GitHub successfully" };
     } else {
       const errData = await putRes.json().catch(() => ({}));
-      return { success: false, message: errData.message || `GitHub HTTP ${putRes.status}` };
+      const reason = errData.message || `GitHub API HTTP ${putRes.status}`;
+      return { success: false, message: reason };
     }
   } catch (err: any) {
     return { success: false, message: err.message || "GitHub API network error" };
@@ -154,10 +157,10 @@ export async function saveTelegramNote(
       githubStatus = "Committed to GitHub (Vercel deployment triggered)";
       committed = true;
     } else {
-      githubStatus = `Failed: ${ghRes.message}`;
+      githubStatus = `GitHub Error: ${ghRes.message}`;
     }
   } catch (err: any) {
-    githubStatus = `Error: ${err?.message || "Unknown error"}`;
+    githubStatus = `GitHub Error: ${err?.message || "Unknown error"}`;
   }
 
   // Only add to dynamic map if committed or file exists
