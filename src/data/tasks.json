@@ -1,5 +1,5 @@
 {
-  "exportedAt": "2026-07-27T16:09:31.269Z",
+  "exportedAt": "2026-07-27T16:15:29.495Z",
   "stats": {
     "total": 3,
     "pending": 2,
@@ -15,19 +15,8 @@
       "priority": "L",
       "due": "20260725T180000Z",
       "entry": "20260727T145042Z",
-      "urgency": 12.4792,
+      "urgency": 12.4811,
       "overdue": true
-    },
-    {
-      "id": 2,
-      "description": "AI & ML",
-      "project": "self-learning",
-      "tags": [],
-      "priority": "L",
-      "due": null,
-      "entry": "20260727T145100Z",
-      "urgency": 2.8,
-      "overdue": false
     }
   ]
 }
