@@ -98,9 +98,8 @@ export default async function Page({ searchParams }: PageProps) {
     } catch {
       taskData = {
         exportedAt: new Date().toISOString(),
-        stats: { total: 0, pending: 0, completed: 0, overdue: 0 },
-        overdue: [],
-        upcoming: [],
+        stats: { total: 0, pending: 0, completed: 0 },
+        tasks: [],
       };
     }
     content = <TaskwarriorView data={taskData} />;
