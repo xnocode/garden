@@ -58,7 +58,7 @@ async function main() {
   console.log("  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
   console.log("  Step 0/5: Sync with GitHub");
   console.log("  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
-  run("git pull --rebase origin main", "Pulling latest from GitHub…");
+  run("git pull --rebase --autostash origin main", "Pulling latest from GitHub…");
 
   // Step 1: Publish
   console.log("\n  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
