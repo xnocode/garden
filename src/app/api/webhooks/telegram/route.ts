@@ -16,6 +16,10 @@ import {
 } from "@/lib/telegram-file-handler";
 import { processVoiceNoteToMarkdown } from "@/lib/telegram-voice";
 import { processYouTubeToNote } from "@/lib/telegram-youtube";
+import { processWebClipToNote } from "@/lib/telegram-clipper";
+import { processImageToNote } from "@/lib/telegram-vision";
+import { askGardenKnowledgeBase } from "@/lib/telegram-ask";
+import { processBrainDumpToNote } from "@/lib/telegram-dump";
 
 export const dynamic = "force-dynamic";
 
@@ -269,6 +273,59 @@ export async function POST(req: Request) {
     }
 
     // ═══════════════════════════════════════════════════════════════════
+    // 📸 PHOTO / IMAGE OCR — Transcribe Whiteboards/Notes to AI Markdown
+    // ═══════════════════════════════════════════════════════════════════
+    if (message.photo && message.photo.length > 0) {
+      const photoObj = message.photo[message.photo.length - 1];
+      const fileId = photoObj.file_id;
+
+      await sendMsg(token, chatId, `📸 <b>Processing photo with AI Vision...</b>\n<i>Transcribing text &amp; layout...</i>`);
+
+      after(async () => {
+        try {
+          const fileRes = await tgFetch(`https://api.telegram.org/bot${token}/getFile?file_id=${fileId}`);
+          const fileData = await fileRes.json();
+
+          if (!fileData.ok || !fileData.result?.file_path) {
+            await sendMsg(token, chatId, `❌ <b>Failed to fetch photo from Telegram.</b>`);
+            return;
+          }
+
+          const imgRes = await tgFetch(`https://api.telegram.org/file/bot${token}/${fileData.result.file_path}`);
+          const arrayBuf = await imgRes.arrayBuffer();
+          const buffer = Buffer.from(arrayBuf);
+
+          const imgNote = await processImageToNote(buffer, "image/jpeg");
+          const fileName = `${imgNote.slug}.md`;
+
+          const result = await saveTelegramNote(fileName, imgNote.markdownContent, false);
+          const rawLiveUrl = `https://gardenx.qzz.io/?p=${encodeURIComponent(imgNote.slug)}`;
+          const safeLiveUrl = escapeHtml(rawLiveUrl);
+
+          if (result.githubStatus?.includes("Committed to GitHub")) {
+            const tagStr = imgNote.tags.map((t) => `#${escapeHtml(t)}`).join(" ");
+            await sendMsg(
+              token,
+              chatId,
+              `📸 <b>Photo OCR Note Created &amp; Published!</b>\n\n` +
+              `📝 <b>${escapeHtml(imgNote.title)}</b>\n` +
+              `🏷️ ${tagStr || "#ocr"}\n` +
+              `📄 <code>${escapeHtml(fileName)}</code>\n` +
+              `🔗 <a href="${safeLiveUrl}">${safeLiveUrl}</a>`,
+              { inline_keyboard: [[{ text: "🌐 View Note", url: rawLiveUrl }]] }
+            );
+          } else {
+            await sendMsg(token, chatId, `❌ <b>Failed to publish photo note:</b> ${escapeHtml(result.githubStatus || "")}`);
+          }
+        } catch (err: any) {
+          await sendMsg(token, chatId, `❌ <b>Photo Vision Error:</b> ${escapeHtml(err.message)}`);
+        }
+      });
+
+      return NextResponse.json({ ok: true, photo: true });
+    }
+
+    // ═══════════════════════════════════════════════════════════════════
     // 🎥 YOUTUBE VIDEO — Convert Transcript to AI Summary Note
     // ═══════════════════════════════════════════════════════════════════
     if (text.startsWith("/youtube") || text.includes("youtube.com/") || text.includes("youtu.be/")) {
@@ -315,6 +372,120 @@ export async function POST(req: Request) {
       });
 
       return NextResponse.json({ ok: true, youtube: true });
+    }
+
+    // ═══════════════════════════════════════════════════════════════════
+    // 🔖 WEB CLIPPER — Article / Link to AI Markdown Summary
+    // ═══════════════════════════════════════════════════════════════════
+    if (text.startsWith("/clip") || (text.startsWith("http") && !text.includes("youtube.com") && !text.includes("youtu.be"))) {
+      let clipUrl = text.replace(/^\/clip\s*/i, "").trim();
+      if (!clipUrl && text.startsWith("http")) {
+        const urlMatch = text.match(/https?:\/\/\S+/i);
+        if (urlMatch) clipUrl = urlMatch[0];
+      }
+
+      if (clipUrl) {
+        await sendMsg(token, chatId, `🔖 <b>Clipping article &amp; generating AI summary...</b>\n<i>Please wait a few seconds...</i>`);
+
+        after(async () => {
+          try {
+            const clipNote = await processWebClipToNote(clipUrl);
+            const fileName = `${clipNote.slug}.md`;
+
+            const result = await saveTelegramNote(fileName, clipNote.markdownContent, false);
+            const rawLiveUrl = `https://gardenx.qzz.io/?p=${encodeURIComponent(clipNote.slug)}`;
+            const safeLiveUrl = escapeHtml(rawLiveUrl);
+
+            if (result.githubStatus?.includes("Committed to GitHub")) {
+              const tagStr = clipNote.tags.map((t) => `#${escapeHtml(t)}`).join(" ");
+              await sendMsg(
+                token,
+                chatId,
+                `🔖 <b>Article Clipped &amp; Published!</b>\n\n` +
+                `📝 <b>${escapeHtml(clipNote.title)}</b>\n` +
+                `🏷️ ${tagStr || "#article"}\n` +
+                `📄 <code>${escapeHtml(fileName)}</code>\n` +
+                `🔗 <a href="${safeLiveUrl}">${safeLiveUrl}</a>`,
+                { inline_keyboard: [[{ text: "🌐 View Note", url: rawLiveUrl }]] }
+              );
+            } else {
+              await sendMsg(token, chatId, `❌ <b>Failed to publish clipped note:</b> ${escapeHtml(result.githubStatus || "")}`);
+            }
+          } catch (err: any) {
+            await sendMsg(token, chatId, `❌ <b>Clipper Error:</b> ${escapeHtml(err.message)}`);
+          }
+        });
+
+        return NextResponse.json({ ok: true, clip: true });
+      }
+    }
+
+    // ═══════════════════════════════════════════════════════════════════
+    // 💬 RAW BRAIN DUMP — Organize Messy Text to Structured Note
+    // ═══════════════════════════════════════════════════════════════════
+    if (text.startsWith("/dump")) {
+      const dumpText = text.replace(/^\/dump\s*/i, "").trim();
+      if (!dumpText) {
+        await sendMsg(token, chatId, `💬 <b>Usage:</b> <code>/dump Messy thoughts go here...</code>`);
+        return NextResponse.json({ ok: true });
+      }
+
+      await sendMsg(token, chatId, `💬 <b>Organizing brain dump with AI...</b>`);
+
+      after(async () => {
+        try {
+          const dumpNote = await processBrainDumpToNote(dumpText);
+          const fileName = `${dumpNote.slug}.md`;
+
+          const result = await saveTelegramNote(fileName, dumpNote.markdownContent, false);
+          const rawLiveUrl = `https://gardenx.qzz.io/?p=${encodeURIComponent(dumpNote.slug)}`;
+          const safeLiveUrl = escapeHtml(rawLiveUrl);
+
+          if (result.githubStatus?.includes("Committed to GitHub")) {
+            const tagStr = dumpNote.tags.map((t) => `#${escapeHtml(t)}`).join(" ");
+            await sendMsg(
+              token,
+              chatId,
+              `💬 <b>Brain Dump Note Created &amp; Published!</b>\n\n` +
+              `📝 <b>${escapeHtml(dumpNote.title)}</b>\n` +
+              `🏷️ ${tagStr || "#idea"}\n` +
+              `📄 <code>${escapeHtml(fileName)}</code>\n` +
+              `🔗 <a href="${safeLiveUrl}">${safeLiveUrl}</a>`,
+              { inline_keyboard: [[{ text: "🌐 View Note", url: rawLiveUrl }]] }
+            );
+          } else {
+            await sendMsg(token, chatId, `❌ <b>Failed:</b> ${escapeHtml(result.githubStatus || "")}`);
+          }
+        } catch (err: any) {
+          await sendMsg(token, chatId, `❌ <b>Dump Error:</b> ${escapeHtml(err.message)}`);
+        }
+      });
+
+      return NextResponse.json({ ok: true, dump: true });
+    }
+
+    // ═══════════════════════════════════════════════════════════════════
+    // 🧠 ASK YOUR GARDEN — Query Personal Notes & Tasks via AI
+    // ═══════════════════════════════════════════════════════════════════
+    if (text.startsWith("/ask")) {
+      const question = text.replace(/^\/ask\s*/i, "").trim();
+      if (!question) {
+        await sendMsg(token, chatId, `🧠 <b>Usage:</b> <code>/ask What notes do I have about Python?</code>`);
+        return NextResponse.json({ ok: true });
+      }
+
+      await sendMsg(token, chatId, `🧠 <b>Searching your garden &amp; thinking...</b>`);
+
+      after(async () => {
+        try {
+          const answer = await askGardenKnowledgeBase(question);
+          await sendMsg(token, chatId, `🧠 <b>Garden AI Answer:</b>\n\n${answer}`);
+        } catch (err: any) {
+          await sendMsg(token, chatId, `❌ <b>Ask Error:</b> ${escapeHtml(err.message)}`);
+        }
+      });
+
+      return NextResponse.json({ ok: true, ask: true });
     }
 
     // ═══════════════════════════════════════
@@ -615,28 +786,29 @@ export async function POST(req: Request) {
 
     if (text.startsWith("/start") || text.startsWith("/help") || rawText.includes("Help")) {
       await sendMsg(token, chatId,
-        `💡 <b>Garden Bot — Feature &amp; Command Guide</b>\n\n` +
-        `🎙️ <b>1. AI Voice-to-Note Capturing:</b>\n` +
-        `• Send/record a <b>voice message</b> or audio file!\n` +
+        `💡 <b>Garden Bot — Complete AI &amp; Command Guide</b>\n\n` +
+        `🧠 <b>1. Ask Your Garden AI:</b>\n` +
+        `• <code>/ask What notes do I have about Python?</code>\n\n` +
+        `🎙️ <b>2. Voice-to-Note Capturing:</b>\n` +
+        `• Send/record any <b>voice message</b> or audio file!\n` +
         `• AI transcribes, titles, tags, and publishes it automatically.\n\n` +
-        `📄 <b>2. Upload or Update Notes:</b>\n` +
-        `• Send any <code>.md</code> file to publish it.\n` +
-        `• Re-uploading an existing <code>.md</code> file <b>updates</b> it live!\n\n` +
-        `📝 <b>3. Write Notes Directly:</b>\n` +
-        `<code>/note Title Of Note\nBody content goes here... #tag</code>\n\n` +
-        `📌 <b>4. Taskwarrior Tasks:</b>\n` +
+        `🎥 <b>3. YouTube Video to Note:</b>\n` +
+        `• <code>/youtube https://youtu.be/xyz</code> or paste any video link!\n\n` +
+        `🔖 <b>4. Web Article Clipper:</b>\n` +
+        `• <code>/clip https://example.com/article</code> or paste any article URL!\n\n` +
+        `📸 <b>5. Photo / Whiteboard OCR:</b>\n` +
+        `• Send a photo of handwritten notes, slides, or whiteboard!\n\n` +
+        `💬 <b>6. Raw Brain Dump:</b>\n` +
+        `• <code>/dump Messy thoughts &amp; notes go here...</code>\n\n` +
+        `📌 <b>7. Taskwarrior Tasks:</b>\n` +
         `• Add: <code>/task Buy milk due:today priority:H</code>\n` +
         `• Multi: <code>/tasks\n- Task 1 due:today\n- Task 2 due:tomorrow</code>\n` +
         `• View: <code>/mytasks</code> — See pending task list with IDs\n` +
-        `• Done: <code>/done 2</code> — Queue task #2 as complete\n\n` +
-        `📚 <b>5. Browse &amp; Manage Notes:</b>\n` +
-        `• <code>/list</code> — View all notes\n` +
-        `• <code>/search keyword</code> — Search notes\n` +
-        `• <code>/link filename</code> — Get URL for a note\n` +
-        `• <code>/delete file.md</code> — Delete a note\n` +
-        `• <code>/stats</code> — View garden stats\n` +
-        `• <code>/tags</code> — Explore tags\n\n` +
-        `👇 Use the buttons below!`
+        `• Done: <code>/done 2</code> — Mark task #2 as complete\n\n` +
+        `📚 <b>8. Manage Notes:</b>\n` +
+        `• <code>/note Title\nBody... #tag</code> — Write text note directly\n` +
+        `• <code>.md File Upload</code> — Publish or update existing note\n` +
+        `• <code>/list</code>, <code>/search</code>, <code>/stats</code>, <code>/tags</code>, <code>/delete</code>`
       );
       return NextResponse.json({ ok: true });
     }
