@@ -96,6 +96,40 @@ Return ONLY valid JSON matching this schema:
       if (whisperRes.ok) {
         const wData = await whisperRes.json();
         transcriptText = wData.text || "";
+
+        // If we got a transcript, use Groq Llama-3.3 to structure it into Title, Body, Tags
+        if (transcriptText.trim()) {
+          try {
+            const llamaRes = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+              method: "POST",
+              headers: {
+                Authorization: `Bearer ${groqKey}`,
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                model: "llama-3.3-70b-versatile",
+                response_format: { type: "json_object" },
+                messages: [
+                  {
+                    role: "system",
+                    content: `Clean up this voice transcript into a structured Markdown note. Return ONLY a valid JSON object matching: {"title": "Clear Title", "body": "Formatted body text", "tags": ["tag1", "tag2"]}`,
+                  },
+                  { role: "user", content: transcriptText },
+                ],
+              }),
+            });
+
+            if (llamaRes.ok) {
+              const lData = await llamaRes.json();
+              const content = lData?.choices?.[0]?.message?.content;
+              if (content) {
+                structuredData = JSON.parse(content);
+              }
+            }
+          } catch {
+            // Keep raw transcriptText if Llama structuring fails
+          }
+        }
       }
     } catch (err: any) {
       console.warn("Groq Whisper fallback failed:", err.message);
