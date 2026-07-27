@@ -1,22 +1,10 @@
 {
-  "exportedAt": "2026-07-27T16:16:13.207Z",
+  "exportedAt": "2026-07-27T16:17:38.839Z",
   "stats": {
     "total": 3,
-    "pending": 2,
-    "completed": 1,
-    "overdue": 1
+    "pending": 1,
+    "completed": 2,
+    "overdue": 0
   },
-  "tasks": [
-    {
-      "id": 1,
-      "description": "Learning C++",
-      "project": "self-learning",
-      "tags": [],
-      "priority": "L",
-      "due": "20260725T180000Z",
-      "entry": "20260727T145042Z",
-      "urgency": 12.4813,
-      "overdue": true
-    }
-  ]
+  "tasks": []
 }

@@ -2,7 +2,7 @@
 title: taskworrior
 description:
 author: Ridoy
-draft: false
+draft: true
 date:
 tags:
   - aiml
