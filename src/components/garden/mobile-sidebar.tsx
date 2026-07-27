@@ -7,7 +7,7 @@ import { useUIStore } from "@/lib/ui-store";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Sidebar } from "./sidebar";
 import type { ExplorerNode, NoteSummary } from "@/lib/notes";
-import { Code2 } from "lucide-react";
+import { Sprout } from "lucide-react";
 
 const NAV_ITEMS = [
   { label: "Garden", href: "/", key: "home" },
@@ -51,9 +51,9 @@ export function MobileSidebar({
       <SheetContent side="left" className="w-[300px] p-0 flex flex-col h-full bg-background border-r border-border">
         <SheetHeader className="px-6 py-4 border-b border-border flex flex-row items-center gap-2">
           <span className="inline-flex h-7 w-7 items-center justify-center rounded-md bg-garden/10 text-garden ring-1 ring-garden/30">
-            <Code2 className="h-4 w-4" />
+            <Sprout className="h-4 w-4" />
           </span>
-          <SheetTitle className="font-serif text-lg font-semibold tracking-tight text-heading">xnocode</SheetTitle>
+          <SheetTitle className="font-serif text-lg font-semibold tracking-tight text-heading">garden</SheetTitle>
         </SheetHeader>
         
         {/* Navigation items for mobile */}

@@ -30,11 +30,10 @@ const monoFont = IBM_Plex_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "xnocode — digital garden",
+  title: "Garden — a digital garden",
   description:
-    "Personal digital garden of xnocode. Notes, essays, and ideas grown in Obsidian and published with a single command.",
+    "A personal digital garden. Notes, essays, and ideas grown in Obsidian and published with a single command.",
   keywords: [
-    "xnocode",
     "digital garden",
     "obsidian",
     "second brain",
@@ -42,18 +41,18 @@ export const metadata: Metadata = {
     "zettelkasten",
     "knowledge graph",
   ],
-  authors: [{ name: "xnocode" }],
+  authors: [{ name: "Garden" }],
   icons: {
     icon: "/favicon.svg",
   },
   openGraph: {
-    title: "xnocode — digital garden",
+    title: "Garden — a digital garden",
     description: "Notes grown in Obsidian, published with a single command.",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "xnocode — digital garden",
+    title: "Garden — a digital garden",
     description: "Notes grown in Obsidian, published with a single command.",
   },
   other: {

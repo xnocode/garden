@@ -1,13 +1,13 @@
 "use client";
 
 import Link from "next/link";
-import { Search, Menu, Code2 } from "lucide-react";
+import { Search, Menu, Sprout } from "lucide-react";
 import { usePathname, useSearchParams } from "next/navigation";
 import { useUIStore } from "@/lib/ui-store";
 import { ThemeToggle } from "./theme-toggle";
 
 const NAV_ITEMS = [
-  { label: "xnocode", href: "/", key: "home" },
+  { label: "Garden", href: "/", key: "home" },
   { label: "Index", href: "/?view=index", key: "index" },
   { label: "Graph", href: "/?view=graph", key: "graph" },
   { label: "Tags", href: "/?view=tags", key: "tags" },
@@ -49,9 +49,9 @@ export function SiteHeader() {
           className="group flex items-center gap-2 font-serif text-lg font-semibold tracking-tight text-heading"
         >
           <span className="inline-flex h-7 w-7 items-center justify-center rounded-md bg-garden/10 text-garden ring-1 ring-garden/30 transition-transform group-hover:scale-105">
-            <Code2 className="h-4 w-4" />
+            <Sprout className="h-4 w-4" />
           </span>
-          <span className="hidden sm:inline">xnocode</span>
+          <span className="hidden sm:inline">garden</span>
         </Link>
 
         {/* Desktop nav */}
