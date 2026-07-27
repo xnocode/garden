@@ -457,18 +457,16 @@ export async function POST(req: Request) {
     }
 
     // ═══════════════════════════════════════════════════════════════════
-    // 🎙️ /vtask — Voice message → Taskwarrior task (explicit command)
+    // ═══════════════════════════════════════════════════════════════════
+    // 🎙️ /vtask — Set pending mode to 'task', then await next voice msg
     // ═══════════════════════════════════════════════════════════════════
     if (text.startsWith("/vtask")) {
+      pendingVoiceMode.set(chatId, "task");
       await sendMsg(token, chatId,
-        `🎙️ <b>Voice Task Mode</b>\n\n` +
-        `To create a task from voice:\n` +
-        `1️⃣ Record a voice message\n` +
-        `2️⃣ <b>Add caption</b> <code>/task</code> before sending\n\n` +
-        `This routes your voice to <b>Taskwarrior</b> instead of creating a note.\n\n` +
-        `<b>Example caption:</b> <code>/task</code>\n` +
-        `<b>Say:</b> <i>"Submit DSA assignment due tomorrow, high priority"</i>\n\n` +
-        `<i>Without the caption, voice creates a published note as usual — no conflict!</i>`
+        `🎙️ <b>Voice Task Mode — Ready!</b>\n\n` +
+        `Now send a voice message describing your task(s).\n` +
+        `<i>Gemini will transcribe it and add them to Taskwarrior automatically.</i>\n\n` +
+        `<b>Example:</b> <i>"Submit DSA assignment due tomorrow, high priority"</i>`
       );
       return NextResponse.json({ ok: true });
     }
@@ -1017,13 +1015,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ ok: true });
     }
 
-    if (pdfFile) {
-        after(async () => {
-            const res = await processPdfToNote(pdfFile);
-            await sendMsg(token, chatId, res.success ? `✅ PDF processed: ${res.title}` : `❌ PDF fail`);
-        });
-        return NextResponse.json({ ok: true });
-    }
+    // (PDF handling is done in the document handler above)
 
     if (rawText.includes("Search Notes")) {
       await sendMsg(token, chatId, `🔍 Send <code>/search keyword</code>`);
@@ -1081,9 +1073,10 @@ export async function POST(req: Request) {
         `💡 <b>Garden Bot — Complete AI &amp; Command Guide</b>\n\n` +
         `🧠 <b>1. Ask Your Garden AI:</b>\n` +
         `• <code>/ask What notes do I have about Python?</code>\n\n` +
-        `🎙️ <b>2. Voice-to-Note Capturing:</b>\n` +
-        `• Send/record any <b>voice message</b> or audio file!\n` +
-        `• AI transcribes, titles, tags, and publishes it automatically.\n\n` +
+        `🎙️ <b>2. Voice Capturing:</b>\n` +
+        `• <code>/voice</code> → then send voice → AI creates a <b>published note</b>\n` +
+        `• <code>/vtask</code> → then send voice → AI creates a <b>Taskwarrior task</b>\n` +
+        `• Or just send a voice directly — defaults to creating a note.\n\n` +
         `🎥 <b>3. YouTube Video to Note:</b>\n` +
         `• <code>/youtube https://youtu.be/xyz</code> or paste any video link!\n\n` +
         `🔖 <b>4. Web Article Clipper:</b>\n` +
