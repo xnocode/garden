@@ -384,29 +384,25 @@ export async function POST(req: Request) {
             const audioRes = await tgFetch(`https://api.telegram.org/file/bot${token}/${fileData.result.file_path}`);
             const arrayBuf = await audioRes.arrayBuffer();
             const buffer = Buffer.from(arrayBuf);
-            // Step 1: Transcribe voice
-            const voiceNote = await processVoiceNoteToMarkdown(buffer, mimeType);
-            const transcribedText = (voiceNote.title + ". " + voiceNote.markdownContent)
-              .replace(/---[\s\S]*?---/, "").replace(/[#*`]/g, "").trim().slice(0, 10000);
-            // Step 2: Use Gemini to extract structured task lines
-            const gemKey = (process.env.GEMINI_API_KEY || "").trim();
+            // Direct Audio -> Taskwarrior Task Lines via Gemini 2.0 Flash
+            const gemKey = (process.env.GEMINI_API_KEY || process.env.GOOGLE_AI_KEY || "").trim();
             const todayStr = new Date().toISOString().split("T")[0];
-            let taskLines: string[] = [transcribedText.slice(0, 200)];
+            let taskLines: string[] = [];
+
             if (gemKey) {
               try {
+                const base64Audio = buffer.toString("base64");
                 const prompt = `You are an expert task extraction AI for Taskwarrior.
-Analyze the user's spoken transcript (today's date is ${todayStr}) and extract ALL individual tasks mentioned (up to 50+).
+Listen to this voice recording (today's date is ${todayStr}) and extract ALL individual tasks mentioned (up to 50+).
 
 Rules for EACH task:
 1. Output ONE task per line in this format: <task description> due:YYYY-MM-DD priority:H/M/L
-2. Infer exact due date (due:YYYY-MM-DD) from relative time words (e.g. today, tomorrow, this Friday, next Monday, in 3 days). If no time mentioned, omit due:.
-3. Analyze urgency and tone from the audio transcript to assign priority:
+2. Infer exact due date (due:YYYY-MM-DD) from relative time words (e.g. today, tomorrow, this Friday, next Monday, in 3 days). If no due date mentioned, omit due:.
+3. Analyze urgency and tone from the audio to assign priority:
    - priority:H for urgent/critical tasks ("must do first", "urgent", "due today/tomorrow", "high priority", "asap")
    - priority:M for normal tasks ("need to do", "should complete", "regular task")
    - priority:L for low priority tasks ("whenever", "someday", "later", "low priority")
-4. Do NOT output markdown bullets, numbers, or extra text. Output ONLY one task line per item.
-
-Transcript: "${transcribedText}"`;
+4. Do NOT output markdown bullets, numbers, titles, or extra text. Output ONLY one task line per item.`;
 
                 const gemRes = await fetch(
                   `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${gemKey}`,
@@ -414,15 +410,37 @@ Transcript: "${transcribedText}"`;
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({
-                      contents: [{ parts: [{ text: prompt }] }],
+                      contents: [
+                        {
+                          parts: [
+                            { inlineData: { mimeType: mimeType || "audio/ogg", data: base64Audio } },
+                            { text: prompt },
+                          ],
+                        },
+                      ],
                       generationConfig: { temperature: 0.2, maxOutputTokens: 2048 },
                     }),
                   }
                 );
                 const gemData = await gemRes.json();
                 const parsed = gemData?.candidates?.[0]?.content?.parts?.[0]?.text?.trim();
-                if (parsed) taskLines = parsed.split("\n").map((l: string) => l.replace(/^[-*\d.\s]+/, "").trim()).filter(Boolean);
-              } catch { /* fallback: use raw transcription as single task */ }
+                if (parsed) {
+                  taskLines = parsed
+                    .split("\n")
+                    .map((l: string) => l.replace(/^[-*\d.\s]+/, "").trim())
+                    .filter(Boolean);
+                }
+              } catch (err: any) {
+                console.error("Direct Gemini voice task extraction error:", err);
+              }
+            }
+
+            // Fallback if Gemini key is missing or audio extraction returned empty
+            if (taskLines.length === 0) {
+              const voiceNote = await processVoiceNoteToMarkdown(buffer, mimeType);
+              const transcribedText = (voiceNote.title + ". " + voiceNote.markdownContent)
+                .replace(/---[\s\S]*?---/, "").replace(/[#*`]/g, "").trim();
+              taskLines = [transcribedText.slice(0, 200)];
             }
             const res = await addPendingTasksToGitHub(taskLines);
             if (res.success) {
