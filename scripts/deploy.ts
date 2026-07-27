@@ -87,6 +87,8 @@ async function main() {
   console.log("\n  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
   console.log("  Step 5/5: Push to GitHub (triggers Vercel deploy)");
   console.log("  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+  // Pull first to avoid "rejected: fetch first" when Telegram queued tasks via GitHub API
+  run("git pull --rebase origin main", "Syncing with remote…");
   const pushOk = run("git push", "Pushing to GitHub…");
   if (!pushOk) {
     console.error("\n  ✗ Push failed. Check your git remote and auth.\n");
