@@ -86,8 +86,24 @@ export default async function Page({ searchParams }: PageProps) {
     content = <ColophonView noteCount={noteCount} stats={stats} />;
     mainWidthClass = "max-w-3xl";
   } else if (view === "tasks") {
-    content = <TaskwarriorView />;
-    mainWidthClass = "max-w-4xl";
+    const fs = await import("fs/promises");
+    const path = await import("path");
+    let taskData;
+    try {
+      const raw = await fs.readFile(
+        path.join(process.cwd(), "src/data/tasks.json"),
+        "utf8"
+      );
+      taskData = JSON.parse(raw);
+    } catch {
+      taskData = {
+        exportedAt: new Date().toISOString(),
+        stats: { total: 0, pending: 0, completed: 0 },
+        tasks: [],
+      };
+    }
+    content = <TaskwarriorView data={taskData} />;
+    mainWidthClass = "max-w-3xl";
   } else if (q) {
     const results = await searchNotes(q);
     content = <SearchView q={q} results={results} />;

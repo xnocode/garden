@@ -63,23 +63,29 @@ async function main() {
     process.exit(1);
   }
 
-  // Step 2: Git add
+  // Step 2: Export Taskwarrior snapshot
   console.log("\n  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
-  console.log("  Step 2/4: Stage changes");
+  console.log("  Step 2/5: Export Taskwarrior data");
+  console.log("  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+  run("bun run scripts/export-tasks.ts", "Snapshotting tasks…");
+
+  // Step 3: Git add
+  console.log("\n  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+  console.log("  Step 3/5: Stage changes");
   console.log("  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
   run("git add -A", "Staging files…");
 
-  // Step 3: Git commit
+  // Step 4: Git commit
   console.log("\n  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
-  console.log("  Step 3/4: Commit");
+  console.log("  Step 4/5: Commit");
   console.log("  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
   const timestamp = new Date().toISOString().replace("T", " ").slice(0, 16);
   const message = customMessage || `deploy: ${timestamp}`;
   run(`git commit -m "${message.replace(/"/g, '\\"')}"`, `Committing: "${message}"`);
 
-  // Step 4: Git push
+  // Step 5: Git push
   console.log("\n  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
-  console.log("  Step 4/4: Push to GitHub (triggers Vercel deploy)");
+  console.log("  Step 5/5: Push to GitHub (triggers Vercel deploy)");
   console.log("  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
   const pushOk = run("git push", "Pushing to GitHub…");
   if (!pushOk) {

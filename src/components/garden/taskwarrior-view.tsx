@@ -1,50 +1,41 @@
-"use client";
-
-import { useState, useEffect, useCallback } from "react";
 import {
   ListChecks,
   CheckCircle2,
   Circle,
   Clock,
   FolderKanban,
-  Tag,
-  AlertTriangle,
   ArrowUpCircle,
   ArrowRightCircle,
   ArrowDownCircle,
-  RefreshCw,
-  Loader2,
   CalendarDays,
   Flame,
+  Target,
+  TrendingUp,
 } from "lucide-react";
 
-interface TaskwarriorTask {
+interface TaskData {
   id: number;
-  uuid: string;
   description: string;
-  status: "pending" | "completed" | "deleted" | "recurring" | "waiting";
-  project?: string;
-  tags?: string[];
-  priority?: "H" | "M" | "L";
-  due?: string;
-  entry?: string;
-  end?: string;
-  modified?: string;
-  urgency?: number;
-  scheduled?: string;
-  [key: string]: unknown;
+  project: string | null;
+  tags: string[];
+  priority: string | null;
+  due: string | null;
+  entry: string | null;
+  urgency: number;
 }
 
-interface TaskStats {
-  pending: number;
-  completed: number;
-  projects: number;
-  tags: number;
+interface TaskSnapshot {
+  exportedAt: string;
+  stats: {
+    total: number;
+    pending: number;
+    completed: number;
+  };
+  tasks: TaskData[];
 }
 
-function formatTWDate(dateStr?: string): string | null {
+function formatTWDate(dateStr?: string | null): string | null {
   if (!dateStr) return null;
-  // Taskwarrior dates: "20240507T120000Z" format
   const match = dateStr.match(
     /^(\d{4})(\d{2})(\d{2})T(\d{2})(\d{2})(\d{2})Z$/
   );
@@ -54,11 +45,10 @@ function formatTWDate(dateStr?: string): string | null {
   return date.toLocaleDateString("en-US", {
     month: "short",
     day: "numeric",
-    year: "numeric",
   });
 }
 
-function relativeTime(dateStr?: string): string | null {
+function relativeDay(dateStr?: string | null): string | null {
   if (!dateStr) return null;
   const match = dateStr.match(
     /^(\d{4})(\d{2})(\d{2})T(\d{2})(\d{2})(\d{2})Z$/
@@ -67,403 +57,255 @@ function relativeTime(dateStr?: string): string | null {
   const [, y, mo, d, h, mi, s] = match;
   const date = new Date(`${y}-${mo}-${d}T${h}:${mi}:${s}Z`);
   const now = new Date();
-  const diffMs = date.getTime() - now.getTime();
-  const diffDays = Math.round(diffMs / (1000 * 60 * 60 * 24));
+  const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const diffMs = date.getTime() - todayStart.getTime();
+  const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
 
-  if (diffDays < -1) return `${Math.abs(diffDays)}d overdue`;
-  if (diffDays === -1) return "yesterday";
+  if (diffDays < 0) return "overdue";
   if (diffDays === 0) return "today";
   if (diffDays === 1) return "tomorrow";
-  if (diffDays <= 7) return `in ${diffDays}d`;
-  if (diffDays <= 30) return `in ${Math.round(diffDays / 7)}w`;
-  return `in ${Math.round(diffDays / 30)}mo`;
+  return `in ${diffDays}d`;
 }
 
-function PriorityBadge({ priority }: { priority?: string }) {
+function PriorityBadge({ priority }: { priority?: string | null }) {
   if (!priority) return null;
-  const config = {
+  const config: Record<string, { icon: typeof ArrowUpCircle; label: string; className: string }> = {
     H: {
       icon: ArrowUpCircle,
       label: "High",
-      className:
-        "bg-red-500/10 text-red-400 border-red-500/30",
+      className: "bg-red-500/15 text-red-400 border-red-500/25",
     },
     M: {
       icon: ArrowRightCircle,
       label: "Medium",
-      className:
-        "bg-amber-500/10 text-amber-400 border-amber-500/30",
+      className: "bg-amber-500/15 text-amber-400 border-amber-500/25",
     },
     L: {
       icon: ArrowDownCircle,
       label: "Low",
-      className:
-        "bg-blue-500/10 text-blue-400 border-blue-500/30",
+      className: "bg-blue-500/15 text-blue-400 border-blue-500/25",
     },
-  }[priority];
-  if (!config) return null;
-  const Icon = config.icon;
+  };
+  const c = config[priority];
+  if (!c) return null;
+  const Icon = c.icon;
   return (
     <span
-      className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[10px] font-medium ${config.className}`}
+      className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[10px] font-medium ${c.className}`}
     >
       <Icon className="h-3 w-3" />
-      {config.label}
+      {c.label}
     </span>
   );
 }
 
-function DueBadge({ due }: { due?: string }) {
-  if (!due) return null;
-  const rel = relativeTime(due);
-  const isOverdue = rel?.includes("overdue");
+function TaskCard({ task }: { task: TaskData }) {
+  const rel = relativeDay(task.due);
+  const isOverdue = rel === "overdue";
   const isToday = rel === "today";
-  const isSoon = rel === "tomorrow" || rel?.startsWith("in 1") || rel?.startsWith("in 2");
+
   return (
-    <span
-      className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[10px] font-medium ${
+    <div
+      className={`group relative overflow-hidden rounded-xl border p-4 transition-all ${
         isOverdue
-          ? "border-red-500/40 bg-red-500/10 text-red-400"
+          ? "border-red-500/30 bg-red-500/5"
           : isToday
-          ? "border-amber-500/40 bg-amber-500/10 text-amber-400"
-          : isSoon
-          ? "border-yellow-500/30 bg-yellow-500/10 text-yellow-400"
-          : "border-border bg-surface/60 text-muted-foreground"
+          ? "border-amber-500/20 bg-amber-500/5"
+          : "border-border bg-surface/30 hover:border-garden/30"
       }`}
     >
-      <CalendarDays className="h-3 w-3" />
-      {rel}
-    </span>
-  );
-}
+      {/* Subtle left accent bar */}
+      <div
+        className={`absolute left-0 top-0 h-full w-0.5 ${
+          isOverdue
+            ? "bg-red-500/60"
+            : isToday
+            ? "bg-amber-400/60"
+            : "bg-garden/30"
+        }`}
+      />
 
-function TaskRow({ task }: { task: TaskwarriorTask }) {
-  return (
-    <div className="group flex items-start gap-3 rounded-lg border border-border bg-surface/30 p-4 transition-all hover:border-garden/40 hover:bg-surface/60">
-      <div className="mt-0.5 flex-shrink-0">
-        <Circle className="h-4 w-4 text-muted-foreground/50 transition-colors group-hover:text-garden" />
-      </div>
-      <div className="min-w-0 flex-1">
-        <div className="flex flex-wrap items-center gap-2">
-          <span className="font-medium text-foreground">
-            {task.description}
-          </span>
-          <PriorityBadge priority={task.priority} />
-          <DueBadge due={task.due} />
+      <div className="flex items-start gap-3 pl-2">
+        <div className="mt-0.5 flex-shrink-0">
+          <Circle
+            className={`h-[14px] w-[14px] ${
+              isOverdue
+                ? "text-red-400/60"
+                : isToday
+                ? "text-amber-400/60"
+                : "text-muted-foreground/30"
+            }`}
+          />
         </div>
-        <div className="mt-1.5 flex flex-wrap items-center gap-2 text-[11px] text-muted-foreground">
-          {task.project && (
-            <span className="inline-flex items-center gap-1 rounded-md bg-garden/8 px-1.5 py-0.5 font-mono text-garden/80">
-              <FolderKanban className="h-3 w-3" />
-              {task.project}
+        <div className="min-w-0 flex-1">
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="text-[15px] font-medium text-foreground">
+              {task.description}
             </span>
-          )}
-          {task.tags?.map((tag) => (
-            <span
-              key={tag}
-              className="inline-flex items-center gap-0.5 font-mono text-muted-foreground/70"
-            >
-              <Tag className="h-2.5 w-2.5" />
-              {tag}
-            </span>
-          ))}
-          {task.urgency !== undefined && (
-            <span className="inline-flex items-center gap-1 text-muted-foreground/50">
-              <Flame className="h-3 w-3" />
-              {task.urgency.toFixed(1)}
-            </span>
-          )}
-          {task.entry && (
-            <span className="text-muted-foreground/40">
-              added {formatTWDate(task.entry)}
-            </span>
-          )}
+            <PriorityBadge priority={task.priority} />
+          </div>
+          <div className="mt-2 flex flex-wrap items-center gap-3 text-[11px]">
+            {task.project && (
+              <span className="inline-flex items-center gap-1 rounded-md bg-garden/8 px-1.5 py-0.5 font-mono text-garden/70">
+                <FolderKanban className="h-3 w-3" />
+                {task.project}
+              </span>
+            )}
+            {rel && (
+              <span
+                className={`inline-flex items-center gap-1 ${
+                  isOverdue
+                    ? "text-red-400"
+                    : isToday
+                    ? "text-amber-400"
+                    : "text-muted-foreground/60"
+                }`}
+              >
+                <CalendarDays className="h-3 w-3" />
+                {isOverdue ? "Overdue" : isToday ? "Due today" : `Due ${rel}`}
+              </span>
+            )}
+            {task.urgency > 0 && (
+              <span className="inline-flex items-center gap-1 text-muted-foreground/40">
+                <Flame className="h-3 w-3" />
+                {task.urgency.toFixed(1)}
+              </span>
+            )}
+          </div>
         </div>
       </div>
     </div>
   );
 }
 
-export function TaskwarriorView() {
-  const [tasks, setTasks] = useState<TaskwarriorTask[]>([]);
-  const [stats, setStats] = useState<TaskStats>({
-    pending: 0,
-    completed: 0,
-    projects: 0,
-    tags: 0,
-  });
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [lastRefresh, setLastRefresh] = useState<Date | null>(null);
-  const [filter, setFilter] = useState<"all" | "high" | "project">("all");
-  const [selectedProject, setSelectedProject] = useState<string | null>(null);
-
-  const fetchTasks = useCallback(async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const res = await fetch("/api/tasks");
-      const data = await res.json();
-      if (data.error) {
-        setError(data.error);
-      }
-      setTasks(data.tasks || []);
-      setStats(
-        data.stats || { pending: 0, completed: 0, projects: 0, tags: 0 }
-      );
-      setLastRefresh(new Date());
-    } catch (e) {
-      setError((e as Error).message);
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    fetchTasks();
-    // Auto-refresh every 30 seconds
-    const interval = setInterval(fetchTasks, 30_000);
-    return () => clearInterval(interval);
-  }, [fetchTasks]);
-
-  // Derive projects from tasks
-  const projects = [
-    ...new Set(tasks.map((t) => t.project).filter(Boolean)),
-  ] as string[];
-
-  // Filter tasks
-  let displayed = tasks;
-  if (filter === "high") {
-    displayed = tasks.filter((t) => t.priority === "H");
-  } else if (filter === "project" && selectedProject) {
-    displayed = tasks.filter((t) => t.project === selectedProject);
-  }
-
-  // Sort by urgency (highest first)
-  displayed = [...displayed].sort(
-    (a, b) => (b.urgency || 0) - (a.urgency || 0)
-  );
-
+export function TaskwarriorView({ data }: { data: TaskSnapshot }) {
+  const { stats, tasks, exportedAt } = data;
   const completionRate =
-    stats.pending + stats.completed > 0
-      ? Math.round(
-          (stats.completed / (stats.pending + stats.completed)) * 100
-        )
-      : 0;
+    stats.total > 0 ? Math.round((stats.completed / stats.total) * 100) : 0;
+
+  const exportDate = new Date(exportedAt);
+  const formattedDate = exportDate.toLocaleDateString("en-US", {
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+  });
 
   return (
-    <div className="garden-fade-in mx-auto max-w-4xl">
+    <div className="garden-fade-in mx-auto max-w-3xl">
       {/* Header */}
-      <header className="mb-8 border-b border-border pb-6">
+      <header className="mb-10 border-b border-border pb-6">
         <h1 className="flex items-center gap-3 font-serif text-3xl font-semibold text-heading">
-          <ListChecks className="h-7 w-7 text-garden" />
+          <span className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-garden/10 text-garden ring-1 ring-garden/30">
+            <ListChecks className="h-5 w-5" />
+          </span>
           Taskwarrior
         </h1>
-        <p className="mt-2 text-muted-foreground">
-          Live task progress from{" "}
-          <span className="font-mono text-foreground">taskwarrior</span> — what
-          I&apos;m working on right now.
+        <p className="mt-3 text-muted-foreground leading-relaxed">
+          A snapshot of what I&apos;m working on — showing today and tomorrow&apos;s
+          tasks. Updated each time the garden is deployed.
         </p>
       </header>
 
-      {/* Stats Grid */}
-      <div className="mb-8 grid grid-cols-2 gap-3 sm:grid-cols-4">
-        <div className="rounded-xl border border-border bg-surface/30 p-4 text-center transition-colors hover:border-garden/30">
+      {/* Stats — 3 cards */}
+      <div className="mb-10 grid grid-cols-3 gap-3">
+        {/* Total */}
+        <div className="rounded-xl border border-border bg-surface/30 p-5 text-center transition-colors hover:border-garden/20">
           <div className="flex items-center justify-center gap-2">
-            <Circle className="h-4 w-4 text-amber-400" />
-            <span className="font-serif text-2xl font-semibold text-heading">
-              {stats.pending}
+            <Target className="h-4 w-4 text-blue-400/70" />
+            <span className="font-serif text-3xl font-bold text-heading">
+              {stats.total}
             </span>
           </div>
-          <div className="mt-1 text-[10px] uppercase tracking-wider text-muted-foreground">
-            pending
+          <div className="mt-1.5 text-[10px] uppercase tracking-widest text-muted-foreground/60">
+            total tasks
           </div>
         </div>
-        <div className="rounded-xl border border-border bg-surface/30 p-4 text-center transition-colors hover:border-garden/30">
+
+        {/* Completed */}
+        <div className="rounded-xl border border-border bg-surface/30 p-5 text-center transition-colors hover:border-green-500/20">
           <div className="flex items-center justify-center gap-2">
-            <CheckCircle2 className="h-4 w-4 text-green-400" />
-            <span className="font-serif text-2xl font-semibold text-heading">
+            <CheckCircle2 className="h-4 w-4 text-green-400/70" />
+            <span className="font-serif text-3xl font-bold text-heading">
               {stats.completed}
             </span>
           </div>
-          <div className="mt-1 text-[10px] uppercase tracking-wider text-muted-foreground">
+          <div className="mt-1.5 text-[10px] uppercase tracking-widest text-muted-foreground/60">
             completed
           </div>
         </div>
-        <div className="rounded-xl border border-border bg-surface/30 p-4 text-center transition-colors hover:border-garden/30">
+
+        {/* Remaining */}
+        <div className="rounded-xl border border-border bg-surface/30 p-5 text-center transition-colors hover:border-amber-500/20">
           <div className="flex items-center justify-center gap-2">
-            <FolderKanban className="h-4 w-4 text-blue-400" />
-            <span className="font-serif text-2xl font-semibold text-heading">
-              {stats.projects}
+            <Circle className="h-4 w-4 text-amber-400/70" />
+            <span className="font-serif text-3xl font-bold text-heading">
+              {stats.pending}
             </span>
           </div>
-          <div className="mt-1 text-[10px] uppercase tracking-wider text-muted-foreground">
-            projects
-          </div>
-        </div>
-        <div className="rounded-xl border border-border bg-surface/30 p-4 text-center transition-colors hover:border-garden/30">
-          <div className="flex items-center justify-center gap-2">
-            <Tag className="h-4 w-4 text-purple-400" />
-            <span className="font-serif text-2xl font-semibold text-heading">
-              {stats.tags}
-            </span>
-          </div>
-          <div className="mt-1 text-[10px] uppercase tracking-wider text-muted-foreground">
-            tags
+          <div className="mt-1.5 text-[10px] uppercase tracking-widest text-muted-foreground/60">
+            remaining
           </div>
         </div>
       </div>
 
-      {/* Completion progress bar */}
-      {(stats.pending > 0 || stats.completed > 0) && (
-        <div className="mb-8 rounded-xl border border-border bg-surface/30 p-4">
-          <div className="mb-2 flex items-center justify-between text-sm">
-            <span className="text-muted-foreground">Overall progress</span>
-            <span className="font-mono text-foreground">{completionRate}%</span>
+      {/* Progress bar */}
+      {stats.total > 0 && (
+        <div className="mb-10 rounded-xl border border-border bg-surface/20 p-5">
+          <div className="mb-3 flex items-center justify-between">
+            <span className="flex items-center gap-2 text-sm text-muted-foreground">
+              <TrendingUp className="h-4 w-4 text-garden/60" />
+              Progress
+            </span>
+            <span className="font-mono text-sm font-medium text-foreground">
+              {completionRate}%
+            </span>
           </div>
-          <div className="h-2 overflow-hidden rounded-full bg-surface-2">
+          <div className="h-2.5 overflow-hidden rounded-full bg-surface-2">
             <div
-              className="h-full rounded-full bg-gradient-to-r from-garden to-green-400 transition-all duration-700"
+              className="h-full rounded-full bg-gradient-to-r from-garden/80 to-green-400/80 transition-all duration-700"
               style={{ width: `${completionRate}%` }}
             />
           </div>
-          <div className="mt-2 flex items-center justify-between text-[11px] text-muted-foreground/60">
-            <span>
-              {stats.completed} done · {stats.pending} remaining
-            </span>
-            <span>
-              {stats.pending + stats.completed} total
-            </span>
+          <div className="mt-2.5 text-[11px] text-muted-foreground/50">
+            {stats.completed} of {stats.total} tasks completed
           </div>
         </div>
       )}
 
-      {/* Toolbar */}
-      <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
-        <div className="flex flex-wrap items-center gap-2">
-          <button
-            onClick={() => {
-              setFilter("all");
-              setSelectedProject(null);
-            }}
-            className={`rounded-md border px-3 py-1.5 text-xs font-medium transition-all ${
-              filter === "all"
-                ? "border-garden/50 bg-garden/10 text-garden"
-                : "border-border bg-surface/30 text-muted-foreground hover:border-garden/30 hover:text-foreground"
-            }`}
-          >
-            All tasks
-          </button>
-          <button
-            onClick={() => setFilter("high")}
-            className={`rounded-md border px-3 py-1.5 text-xs font-medium transition-all ${
-              filter === "high"
-                ? "border-red-500/50 bg-red-500/10 text-red-400"
-                : "border-border bg-surface/30 text-muted-foreground hover:border-red-500/30 hover:text-foreground"
-            }`}
-          >
-            <span className="flex items-center gap-1">
-              <ArrowUpCircle className="h-3 w-3" />
-              High priority
+      {/* Task list — only today/tomorrow */}
+      {tasks.length > 0 ? (
+        <section>
+          <div className="mb-4 flex items-center gap-3">
+            <h2 className="font-serif text-lg font-semibold text-heading">
+              Upcoming
+            </h2>
+            <span className="h-px flex-1 bg-border" />
+            <span className="font-mono text-[10px] text-muted-foreground/50">
+              {tasks.length} {tasks.length === 1 ? "task" : "tasks"}
             </span>
-          </button>
-          {projects.length > 0 && (
-            <select
-              value={filter === "project" ? (selectedProject || "") : ""}
-              onChange={(e) => {
-                if (e.target.value) {
-                  setFilter("project");
-                  setSelectedProject(e.target.value);
-                } else {
-                  setFilter("all");
-                  setSelectedProject(null);
-                }
-              }}
-              className="rounded-md border border-border bg-surface/30 px-3 py-1.5 text-xs text-muted-foreground transition-all hover:border-garden/30 focus:border-garden/50 focus:outline-none"
-            >
-              <option value="">Filter by project…</option>
-              {projects.map((p) => (
-                <option key={p} value={p}>
-                  {p}
-                </option>
-              ))}
-            </select>
-          )}
-        </div>
-
-        <button
-          onClick={fetchTasks}
-          disabled={loading}
-          className="inline-flex items-center gap-1.5 rounded-md border border-border bg-surface/30 px-3 py-1.5 text-xs text-muted-foreground transition-all hover:border-garden/30 hover:text-foreground disabled:opacity-50"
-        >
-          {loading ? (
-            <Loader2 className="h-3 w-3 animate-spin" />
-          ) : (
-            <RefreshCw className="h-3 w-3" />
-          )}
-          Refresh
-        </button>
-      </div>
-
-      {/* Error state */}
-      {error && (
-        <div className="mb-4 rounded-lg border border-amber-500/30 bg-amber-500/10 p-4 text-sm text-amber-400">
-          <div className="flex items-start gap-2">
-            <AlertTriangle className="mt-0.5 h-4 w-4 flex-shrink-0" />
-            <div>
-              <p className="font-medium">Could not fetch tasks</p>
-              <p className="mt-1 text-amber-400/70">{error}</p>
-              <p className="mt-2 text-amber-400/50 text-xs">
-                Make sure Taskwarrior is installed in WSL and <code className="rounded bg-amber-500/10 px-1">wsl task</code> works from PowerShell.
-              </p>
-            </div>
           </div>
-        </div>
-      )}
-
-      {/* Loading state */}
-      {loading && tasks.length === 0 && (
-        <div className="flex flex-col items-center justify-center rounded-xl border border-border bg-surface/20 py-16">
-          <Loader2 className="h-8 w-8 animate-spin text-garden/50" />
-          <p className="mt-4 text-sm text-muted-foreground">
-            Fetching tasks from taskwarrior…
+          <div className="space-y-2">
+            {tasks.map((task) => (
+              <TaskCard key={task.id} task={task} />
+            ))}
+          </div>
+        </section>
+      ) : (
+        <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-border bg-surface/10 py-16 text-center">
+          <CheckCircle2 className="h-10 w-10 text-green-400/30" />
+          <p className="mt-4 font-serif text-lg text-heading">All clear</p>
+          <p className="mt-1 text-sm text-muted-foreground/60">
+            No tasks due today or tomorrow.
           </p>
-        </div>
-      )}
-
-      {/* Empty state */}
-      {!loading && !error && displayed.length === 0 && (
-        <div className="flex flex-col items-center justify-center rounded-xl border border-border bg-surface/20 py-16 text-center">
-          <CheckCircle2 className="h-12 w-12 text-green-400/40" />
-          <p className="mt-4 font-serif text-lg text-heading">
-            {filter !== "all" ? "No matching tasks" : "All clear!"}
-          </p>
-          <p className="mt-1 text-sm text-muted-foreground">
-            {filter !== "all"
-              ? "Try changing the filter."
-              : "No pending tasks right now. Time to add some!"}
-          </p>
-        </div>
-      )}
-
-      {/* Task list */}
-      {displayed.length > 0 && (
-        <div className="space-y-2">
-          {displayed.map((task) => (
-            <TaskRow key={task.uuid} task={task} />
-          ))}
         </div>
       )}
 
       {/* Footer */}
-      <div className="mt-6 flex items-center justify-between border-t border-border pt-4 text-[11px] text-muted-foreground/50">
-        <span className="flex items-center gap-1">
-          <Clock className="h-3 w-3" />
-          {lastRefresh
-            ? `Last updated ${lastRefresh.toLocaleTimeString()}`
-            : "Loading…"}
-        </span>
-        <span>Auto-refreshes every 30s</span>
+      <div className="mt-8 flex items-center justify-center gap-1.5 text-[11px] text-muted-foreground/40">
+        <Clock className="h-3 w-3" />
+        <span>Last updated {formattedDate}</span>
       </div>
     </div>
   );
