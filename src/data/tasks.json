@@ -1,10 +1,10 @@
 {
-  "exportedAt": "2026-07-27T16:03:11.722Z",
+  "exportedAt": "2026-07-27T16:09:31.269Z",
   "stats": {
     "total": 3,
     "pending": 2,
     "completed": 1,
-    "overdue": 0
+    "overdue": 1
   },
   "tasks": [
     {
@@ -13,10 +13,10 @@
       "project": "self-learning",
       "tags": [],
       "priority": "L",
-      "due": null,
+      "due": "20260725T180000Z",
       "entry": "20260727T145042Z",
-      "urgency": 2.8,
-      "overdue": false
+      "urgency": 12.4792,
+      "overdue": true
     },
     {
       "id": 2,
