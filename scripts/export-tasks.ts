@@ -7,7 +7,7 @@
  */
 
 import { execSync } from "node:child_process";
-import { writeFileSync, mkdirSync } from "node:fs";
+import { readFileSync, writeFileSync, mkdirSync, existsSync } from "node:fs";
 import { resolve } from "node:path";
 
 interface RawTask {
@@ -73,7 +73,29 @@ function parseTaskOutput(raw: string): RawTask[] {
 }
 
 async function main() {
-  console.log("  ▸ Exporting Taskwarrior snapshot…");
+  console.log("  ▸ Snapshotting Taskwarrior data…");
+
+  // 1. Process any pending tasks sent via Telegram
+  const pendingFile = resolve(import.meta.dir, "..", "src", "data", "pending-tasks.json");
+  if (existsSync(pendingFile)) {
+    try {
+      const content = readFileSync(pendingFile, "utf8");
+      const items: { raw: string; addedAt: string }[] = JSON.parse(content);
+      if (Array.isArray(items) && items.length > 0) {
+        console.log(`    ▸ Importing ${items.length} pending task(s) from Telegram into WSL Taskwarrior…`);
+        for (const item of items) {
+          if (!item.raw) continue;
+          const escaped = item.raw.replace(/'/g, "'\\''");
+          runCmd(`wsl -- bash -c "task add '${escaped}' 2>/dev/null"`);
+          console.log(`      ✓ Added to WSL: "${item.raw}"`);
+        }
+        // Clear queue after importing
+        writeFileSync(pendingFile, "[]\n", "utf8");
+      }
+    } catch (e: any) {
+      console.warn("    ⚠️ Failed to process pending Telegram tasks:", e.message);
+    }
+  }
 
   const pendingRaw = runCmd(
     'wsl -- bash -c "task rc.json.array=on status:pending export 2>/dev/null"'

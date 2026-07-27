@@ -10,6 +10,7 @@ import {
   getNoteBySlugOrName,
   checkDuplicateNote,
   escapeHtml,
+  addPendingTasksToGitHub,
 } from "@/lib/telegram-file-handler";
 
 export const dynamic = "force-dynamic";
@@ -73,6 +74,7 @@ function registerCommands(token: string) {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       commands: [
+        { command: "task", description: "📌 Add task(s) to Taskwarrior" },
         { command: "list", description: "📚 List notes" },
         { command: "search", description: "🔍 Search notes" },
         { command: "link", description: "🔗 Get website URL" },
@@ -249,6 +251,54 @@ export async function POST(req: Request) {
         const list = tags.map((t) => `• <b>#${escapeHtml(t.tag)}</b> (${t.count})`).join("\n");
         await sendMsg(token, chatId, `🏷️ <b>Tags (${tags.length}):</b>\n\n${list}`);
       }
+      return NextResponse.json({ ok: true });
+    }
+
+    if (text.startsWith("/task") || text.startsWith("/tasks")) {
+      const payload = text.replace(/^\/tasks?/, "").trim();
+      if (!payload) {
+        await sendMsg(
+          token,
+          chatId,
+          `📌 <b>Taskwarrior Usage:</b>\n\n` +
+          `• Single: <code>/task Buy milk due:today priority:H</code>\n\n` +
+          `• Multiple:\n` +
+          `<code>/tasks\n` +
+          `- Buy groceries due:today\n` +
+          `- Study C++ project:self-learning\n` +
+          `- Submit report due:tomorrow</code>`
+        );
+        return NextResponse.json({ ok: true });
+      }
+
+      const lines = payload
+        .split("\n")
+        .map((l) => l.replace(/^[-*•\d\.\s]+/, "").trim())
+        .filter(Boolean);
+
+      if (!lines.length) {
+        await sendMsg(token, chatId, "⚠️ No valid task descriptions found.");
+        return NextResponse.json({ ok: true });
+      }
+
+      after(async () => {
+        try {
+          const res = await addPendingTasksToGitHub(lines);
+          if (res.success) {
+            const taskList = lines.map((t, i) => `${i + 1}. <code>${escapeHtml(t)}</code>`).join("\n");
+            await sendMsg(
+              token,
+              chatId,
+              `📌 <b>Queued ${res.count} Task(s) for WSL Taskwarrior!</b>\n\n${taskList}\n\n<i>Next <code>bun run deploy</code> on laptop will import these into your WSL Taskwarrior & update website live!</i>`
+            );
+          } else {
+            await sendMsg(token, chatId, `❌ <b>Task Queue Failed:</b> ${escapeHtml(res.message)}`);
+          }
+        } catch (err: any) {
+          await sendMsg(token, chatId, `❌ <b>Error:</b> ${escapeHtml(err.message)}`);
+        }
+      });
+
       return NextResponse.json({ ok: true });
     }
 

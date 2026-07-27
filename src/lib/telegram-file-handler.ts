@@ -579,3 +579,87 @@ export async function getNotesByTag(tagName: string): Promise<NoteItem[]> {
     n.tags.some((t) => t.replace(/^#/, "").trim().toLowerCase() === cleanTag)
   );
 }
+
+export interface PendingTaskItem {
+  raw: string;
+  addedAt: string;
+}
+
+export async function addPendingTasksToGitHub(
+  taskStrings: string[]
+): Promise<{ success: boolean; count: number; message: string }> {
+  const token = (process.env.GITHUB_TOKEN || process.env.GH_TOKEN || "").trim();
+  if (!token) {
+    return { success: false, count: 0, message: "No GITHUB_TOKEN configured" };
+  }
+
+  const repo = process.env.NEXT_PUBLIC_GISCUS_REPO || "xnocode/garden";
+  const filePath = "src/data/pending-tasks.json";
+  const url = `https://api.github.com/repos/${repo}/contents/${filePath}`;
+  const authHeader = token.startsWith("github_pat_") || token.startsWith("ghp_") ? `Bearer ${token}` : `token ${token}`;
+
+  try {
+    let sha: string | undefined;
+    let existingTasks: PendingTaskItem[] = [];
+
+    try {
+      const getRes = await fetch(url, {
+        headers: {
+          Authorization: authHeader,
+          Accept: "application/vnd.github.v3+json",
+          "User-Agent": "DigitalGardenBot",
+        },
+      });
+      if (getRes.ok) {
+        const data = await getRes.json();
+        sha = data.sha;
+        const decoded = Buffer.from(data.content, "base64").toString("utf-8");
+        existingTasks = JSON.parse(decoded);
+      }
+    } catch {
+      // file might not exist yet
+    }
+
+    const newItems: PendingTaskItem[] = taskStrings
+      .map((t) => t.trim())
+      .filter(Boolean)
+      .map((t) => ({
+        raw: t,
+        addedAt: new Date().toISOString(),
+      }));
+
+    if (newItems.length === 0) {
+      return { success: false, count: 0, message: "No valid task descriptions provided" };
+    }
+
+    const updatedTasks = [...existingTasks, ...newItems];
+    const content = JSON.stringify(updatedTasks, null, 2);
+    const base64Content = Buffer.from(content).toString("base64");
+
+    const putBody: any = {
+      message: `add ${newItems.length} task(s) via Telegram [skip ci]`,
+      content: base64Content,
+    };
+    if (sha) putBody.sha = sha;
+
+    const putRes = await fetch(url, {
+      method: "PUT",
+      headers: {
+        Authorization: authHeader,
+        Accept: "application/vnd.github.v3+json",
+        "Content-Type": "application/json",
+        "User-Agent": "DigitalGardenBot",
+      },
+      body: JSON.stringify(putBody),
+    });
+
+    if (putRes.ok) {
+      return { success: true, count: newItems.length, message: "Queued for WSL Taskwarrior" };
+    } else {
+      const errData = await putRes.json().catch(() => ({}));
+      return { success: false, count: 0, message: errData.message || `GitHub HTTP ${putRes.status}` };
+    }
+  } catch (err: any) {
+    return { success: false, count: 0, message: err.message || "Failed to queue tasks" };
+  }
+}
