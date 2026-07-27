@@ -103,7 +103,30 @@ function buildTaskAddArgs(raw: string): string {
 async function main() {
   console.log("  ▸ Snapshotting Taskwarrior data…");
 
-  // 1. Process any pending tasks sent via Telegram
+  // 1a. Mark tasks done that were queued via Telegram /done command
+  const pendingDoneFile = resolve(import.meta.dir, "..", "src", "data", "pending-done.json");
+  if (existsSync(pendingDoneFile)) {
+    try {
+      const raw = readFileSync(pendingDoneFile, "utf8");
+      const ids: number[] = JSON.parse(raw);
+      if (Array.isArray(ids) && ids.length > 0) {
+        console.log(`    ▸ Marking ${ids.length} task(s) done from Telegram /done queue…`);
+        for (const id of ids) {
+          const out = runCmd(`wsl -- bash -c "task rc.confirmation=off ${id} done 2>/dev/null"`);
+          if (out.includes("Completed") || out.includes("completed")) {
+            console.log(`      ✓ Marked done: task #${id}`);
+          } else {
+            console.log(`      ⚠ Task #${id} may already be done or ID shifted`);
+          }
+        }
+        writeFileSync(pendingDoneFile, "[]\n", "utf8");
+      }
+    } catch (e: any) {
+      console.warn("    ⚠️ Failed to process pending-done tasks:", e.message);
+    }
+  }
+
+  // 1b. Process any pending tasks sent via Telegram /task command
   const pendingFile = resolve(import.meta.dir, "..", "src", "data", "pending-tasks.json");
   if (existsSync(pendingFile)) {
     try {

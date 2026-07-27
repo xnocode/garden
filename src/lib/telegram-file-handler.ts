@@ -663,3 +663,120 @@ export async function addPendingTasksToGitHub(
     return { success: false, count: 0, message: err.message || "Failed to queue tasks" };
   }
 }
+
+// ─── Task snapshot reader ───────────────────────────────────────────────────
+
+export interface SnapshotTask {
+  id: number;
+  description: string;
+  project: string | null;
+  tags: string[];
+  priority: string | null;
+  due: string | null;
+  urgency: number;
+  overdue: boolean;
+}
+
+export interface TaskSnapshot {
+  exportedAt: string;
+  stats: { total: number; pending: number; completed: number; overdue: number };
+  tasks: SnapshotTask[];
+}
+
+/**
+ * Read the latest tasks.json snapshot from GitHub.
+ * This reflects tasks as of the last `bun run deploy`.
+ */
+export async function getTasksFromGitHub(): Promise<TaskSnapshot | null> {
+  const token = (process.env.GITHUB_TOKEN || process.env.GH_TOKEN || "").trim();
+  const repo = process.env.NEXT_PUBLIC_GISCUS_REPO || "xnocode/garden";
+  const url = `https://api.github.com/repos/${repo}/contents/src/data/tasks.json`;
+  const authHeader = token.startsWith("github_pat_") || token.startsWith("ghp_")
+    ? `Bearer ${token}` : `token ${token}`;
+
+  try {
+    const res = await fetch(url, {
+      headers: {
+        Authorization: authHeader,
+        Accept: "application/vnd.github.v3+json",
+        "User-Agent": "DigitalGardenBot",
+      },
+    });
+    if (!res.ok) return null;
+    const data = await res.json();
+    const decoded = Buffer.from(data.content, "base64").toString("utf-8");
+    return JSON.parse(decoded) as TaskSnapshot;
+  } catch {
+    return null;
+  }
+}
+
+// ─── Pending-done queue ─────────────────────────────────────────────────────
+
+/**
+ * Queue task IDs to be marked done on next `bun run deploy`.
+ * Writes/appends to src/data/pending-done.json on GitHub.
+ */
+export async function addPendingDoneToGitHub(
+  taskIds: number[]
+): Promise<{ success: boolean; count: number; message: string }> {
+  const token = (process.env.GITHUB_TOKEN || process.env.GH_TOKEN || "").trim();
+  if (!token) return { success: false, count: 0, message: "No GITHUB_TOKEN configured" };
+
+  const repo = process.env.NEXT_PUBLIC_GISCUS_REPO || "xnocode/garden";
+  const filePath = "src/data/pending-done.json";
+  const url = `https://api.github.com/repos/${repo}/contents/${filePath}`;
+  const authHeader = token.startsWith("github_pat_") || token.startsWith("ghp_")
+    ? `Bearer ${token}` : `token ${token}`;
+
+  try {
+    let sha: string | undefined;
+    let existingIds: number[] = [];
+
+    try {
+      const getRes = await fetch(url, {
+        headers: {
+          Authorization: authHeader,
+          Accept: "application/vnd.github.v3+json",
+          "User-Agent": "DigitalGardenBot",
+        },
+      });
+      if (getRes.ok) {
+        const data = await getRes.json();
+        sha = data.sha;
+        const decoded = Buffer.from(data.content, "base64").toString("utf-8");
+        existingIds = JSON.parse(decoded);
+      }
+    } catch { /* file may not exist yet */ }
+
+    const updatedIds = [...new Set([...existingIds, ...taskIds])];
+    const content = JSON.stringify(updatedIds, null, 2);
+    const base64Content = Buffer.from(content).toString("base64");
+
+    const putBody: any = {
+      message: `mark ${taskIds.length} task(s) done via Telegram [skip ci]`,
+      content: base64Content,
+    };
+    if (sha) putBody.sha = sha;
+
+    const putRes = await fetch(url, {
+      method: "PUT",
+      headers: {
+        Authorization: authHeader,
+        Accept: "application/vnd.github.v3+json",
+        "Content-Type": "application/json",
+        "User-Agent": "DigitalGardenBot",
+      },
+      body: JSON.stringify(putBody),
+    });
+
+    if (putRes.ok) {
+      return { success: true, count: taskIds.length, message: "Queued for next deploy" };
+    } else {
+      const errData = await putRes.json().catch(() => ({}));
+      return { success: false, count: 0, message: errData.message || `GitHub HTTP ${putRes.status}` };
+    }
+  } catch (err: any) {
+    return { success: false, count: 0, message: err.message || "Failed to queue done" };
+  }
+}

@@ -11,6 +11,8 @@ import {
   checkDuplicateNote,
   escapeHtml,
   addPendingTasksToGitHub,
+  getTasksFromGitHub,
+  addPendingDoneToGitHub,
 } from "@/lib/telegram-file-handler";
 
 export const dynamic = "force-dynamic";
@@ -19,8 +21,9 @@ const MAIN_KEYBOARD = {
   keyboard: [
     [{ text: "🌐 Visit Website" }, { text: "📚 List Notes" }],
     [{ text: "📝 New Note" }, { text: "📌 Add Tasks" }],
-    [{ text: "📊 Garden Stats" }, { text: "🏷️ Explore Tags" }],
-    [{ text: "🔍 Search Notes" }, { text: "💡 Help & Commands" }],
+    [{ text: "📋 My Tasks" }, { text: "📊 Garden Stats" }],
+    [{ text: "🏷️ Explore Tags" }, { text: "🔍 Search Notes" }],
+    [{ text: "💡 Help & Commands" }],
   ],
   resize_keyboard: true,
   persistent: true,
@@ -75,16 +78,18 @@ function registerCommands(token: string) {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       commands: [
-        { command: "note", description: "Create a text note directly" },
-        { command: "task", description: "Add task(s) to Taskwarrior" },
-        { command: "list", description: "List published notes" },
-        { command: "search", description: "Search notes" },
-        { command: "link", description: "Get website URL for note" },
-        { command: "stats", description: "Garden statistics" },
-        { command: "tags", description: "Explore tags" },
-        { command: "delete", description: "Delete a note" },
-        { command: "cancel", description: "Cancel operation" },
-        { command: "help", description: "Full help guide" },
+        { command: "note", description: "📝 Create a text note directly" },
+        { command: "task", description: "📌 Add task(s) to Taskwarrior" },
+        { command: "mytasks", description: "📋 View your pending task list" },
+        { command: "done", description: "✅ Mark a task as done by ID" },
+        { command: "list", description: "📚 List published notes" },
+        { command: "search", description: "🔍 Search notes" },
+        { command: "link", description: "🔗 Get website URL for note" },
+        { command: "stats", description: "📊 Garden statistics" },
+        { command: "tags", description: "🏷️ Explore tags" },
+        { command: "delete", description: "🗑️ Delete a note" },
+        { command: "cancel", description: "🛑 Cancel operation" },
+        { command: "help", description: "💡 Full help guide" },
       ],
     }),
   }).catch(() => {});
@@ -248,6 +253,34 @@ export async function POST(req: Request) {
       return NextResponse.json({ ok: true });
     }
 
+    // ─── /mytasks — Show pending task list ───────────────────────────────────
+    if (text.startsWith("/mytasks") || rawText.includes("My Tasks") || rawText.includes("📋")) {
+      const snapshot = await getTasksFromGitHub();
+      if (!snapshot || snapshot.tasks.length === 0) {
+        await sendMsg(
+          token, chatId,
+          `📋 <b>No visible tasks</b> (nothing due today/tomorrow).\n\n` +
+          `<i>Use <code>/task Buy milk due:today</code> to add tasks, then run <code>bun run deploy</code> to sync.</i>`
+        );
+      } else {
+        const ago = Math.round((Date.now() - new Date(snapshot.exportedAt).getTime()) / 60000);
+        const agoStr = ago < 60 ? `${ago}m ago` : `${Math.round(ago / 60)}h ago`;
+        const lines = snapshot.tasks.map((t) => {
+          const pri = t.priority ? ` [<b>${t.priority}</b>]` : "";
+          const flag = t.overdue ? " ⚠️" : "";
+          const due = t.due ? `\n   📅 <i>${t.due.slice(0, 8).replace(/(\d{4})(\d{2})(\d{2})/, "$1-$2-$3")}</i>` : "";
+          return `<code>${t.id}</code> ${escapeHtml(t.description)}${pri}${flag}${due}`;
+        });
+        await sendMsg(
+          token, chatId,
+          `📋 <b>Tasks (${snapshot.tasks.length} visible, synced ${agoStr}):</b>\n\n` +
+          lines.join("\n\n") +
+          `\n\n<i>Mark done: <code>/done 2</code></i>`
+        );
+      }
+      return NextResponse.json({ ok: true });
+    }
+
     if (text.startsWith("/task") || text.startsWith("/tasks") || rawText.includes("Add Tasks")) {
       const payload = text.replace(/^\/(tasks?|Add Tasks)/i, "").trim();
       if (!payload || rawText.includes("Add Tasks")) {
@@ -287,6 +320,40 @@ export async function POST(req: Request) {
             );
           } else {
             await sendMsg(token, chatId, `❌ <b>Task Queue Failed:</b> ${escapeHtml(res.message)}`);
+          }
+        } catch (err: any) {
+          await sendMsg(token, chatId, `❌ <b>Error:</b> ${escapeHtml(err.message)}`);
+        }
+      });
+
+      return NextResponse.json({ ok: true });
+    }
+
+    // ─── /done — Mark a task as done by ID ───────────────────────────────────
+    if (text.startsWith("/done")) {
+      const idStr = text.replace("/done", "").trim();
+      const id = parseInt(idStr, 10);
+      if (!idStr || isNaN(id) || id < 1) {
+        await sendMsg(
+          token, chatId,
+          `⚠️ Usage: <code>/done 2</code>\n\n<i>Use <code>/mytasks</code> to see task IDs first.</i>`
+        );
+        return NextResponse.json({ ok: true });
+      }
+
+      await sendMsg(token, chatId, `⏳ Queuing task #${id} as done…`);
+
+      after(async () => {
+        try {
+          const res = await addPendingDoneToGitHub([id]);
+          if (res.success) {
+            await sendMsg(
+              token, chatId,
+              `✅ <b>Task #${id} queued as done!</b>\n\n` +
+              `<i>Next <code>bun run deploy</code> will mark it complete in WSL Taskwarrior \& update the website.</i>`
+            );
+          } else {
+            await sendMsg(token, chatId, `❌ <b>Failed:</b> ${escapeHtml(res.message)}`);
           }
         } catch (err: any) {
           await sendMsg(token, chatId, `❌ <b>Error:</b> ${escapeHtml(err.message)}`);
@@ -416,11 +483,10 @@ export async function POST(req: Request) {
         `📝 <b>2. Write Notes Directly:</b>\n` +
         `<code>/note Title Of Note\nBody content goes here... #tag</code>\n\n` +
         `📌 <b>3. Taskwarrior Tasks:</b>\n` +
-        `• Single: <code>/task Buy milk due:today priority:H</code>\n` +
-        `• Multiple:\n` +
-        `<code>/tasks\n` +
-        `- Buy groceries due:today\n` +
-        `- Study C++ project:self-learning</code>\n\n` +
+        `• Add: <code>/task Buy milk due:today priority:H</code>\n` +
+        `• Multi: <code>/tasks\n- Task 1 due:today\n- Task 2 due:tomorrow</code>\n` +
+        `• View: <code>/mytasks</code> — See pending task list with IDs\n` +
+        `• Done: <code>/done 2</code> — Queue task #2 as complete\n\n` +
         `📚 <b>4. Browse &amp; Manage Notes:</b>\n` +
         `• <code>/list</code> — View all notes\n` +
         `• <code>/search keyword</code> — Search notes\n` +
