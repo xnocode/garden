@@ -97,10 +97,14 @@ function registerCommands(token: string) {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       commands: [
+        { command: "ask", description: "🧠 Ask AI about your notes & tasks" },
+        { command: "youtube", description: "🎥 Convert YouTube video to AI note" },
+        { command: "clip", description: "🔖 Clip web article link to AI note" },
+        { command: "dump", description: "💬 Organize raw messy text to AI note" },
         { command: "note", description: "📝 Create a text note directly" },
         { command: "task", description: "📌 Add task(s) to Taskwarrior" },
         { command: "mytasks", description: "📋 View your pending task list" },
-        { command: "done", description: "✅ Mark a task as done by ID" },
+        { command: "done", description: "✅ Mark a task as done by number" },
         { command: "list", description: "📚 List published notes" },
         { command: "search", description: "🔍 Search notes" },
         { command: "link", description: "🔗 Get website URL for note" },
