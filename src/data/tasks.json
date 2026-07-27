@@ -1,23 +1,13 @@
 {
-  "exportedAt": "2026-07-27T15:49:29.225Z",
+  "exportedAt": "2026-07-27T15:54:26.628Z",
   "stats": {
     "total": 3,
-    "pending": 3,
-    "completed": 0
+    "pending": 2,
+    "completed": 1
   },
   "tasks": [
     {
       "id": 1,
-      "description": "Make Task List",
-      "project": "task",
-      "tags": [],
-      "priority": "M",
-      "due": "20260726T180000Z",
-      "entry": "20260727T143218Z",
-      "urgency": 14.1157
-    },
-    {
-      "id": 2,
       "description": "Learning C++",
       "project": "self-learning",
       "tags": [],
@@ -27,7 +17,7 @@
       "urgency": 2.8
     },
     {
-      "id": 3,
+      "id": 2,
       "description": "AI & ML",
       "project": "self-learning",
       "tags": [],

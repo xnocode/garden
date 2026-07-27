@@ -88,77 +88,86 @@ export function TaskwarriorView({ data }: { data: TaskSnapshot }) {
 
   return (
     <div className="garden-fade-in mx-auto max-w-4xl">
-      {/* Header */}
-      <header className="mb-8 border-b border-border pb-6">
-        <h1 className="flex items-center gap-3 font-serif text-3xl font-semibold text-heading">
-          <span className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-garden/10 text-garden ring-1 ring-garden/30">
-            <ListChecks className="h-5 w-5" />
-          </span>
-          Taskwarrior
-        </h1>
-        <p className="mt-3 text-muted-foreground leading-relaxed">
-          A snapshot of my current tasks — updated each time the garden is
-          deployed.
-        </p>
-      </header>
+      {/* ── Hero panel ── */}
+      <div className="mb-8 overflow-hidden rounded-2xl border border-border bg-gradient-to-b from-surface/50 to-surface/20">
+        {/* Top section with title + progress ring */}
+        <div className="flex flex-col items-center gap-6 px-6 pt-8 pb-6 sm:flex-row sm:items-start sm:gap-8 sm:px-8">
+          {/* Progress ring */}
+          <div className="relative flex-shrink-0">
+            <svg width="120" height="120" viewBox="0 0 120 120" className="drop-shadow-sm">
+              {/* Background ring */}
+              <circle
+                cx="60" cy="60" r="50"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="6"
+                className="text-surface-2"
+              />
+              {/* Progress arc */}
+              <circle
+                cx="60" cy="60" r="50"
+                fill="none"
+                stroke="url(#progress-gradient)"
+                strokeWidth="6"
+                strokeLinecap="round"
+                strokeDasharray={`${completionRate * 3.14} ${314 - completionRate * 3.14}`}
+                transform="rotate(-90 60 60)"
+                className="transition-all duration-1000"
+              />
+              <defs>
+                <linearGradient id="progress-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stopColor="var(--garden)" />
+                  <stop offset="100%" stopColor="#4ade80" />
+                </linearGradient>
+              </defs>
+            </svg>
+            {/* Center text */}
+            <div className="absolute inset-0 flex flex-col items-center justify-center">
+              <span className="font-mono text-2xl font-bold text-heading">{completionRate}%</span>
+              <span className="text-[9px] uppercase tracking-widest text-muted-foreground/50">done</span>
+            </div>
+          </div>
 
-      {/* Stats row */}
-      <div className="mb-8 grid grid-cols-3 gap-3">
-        <div className="rounded-lg border border-border bg-surface/30 p-4 text-center">
-          <div className="flex items-center justify-center gap-2">
-            <Target className="h-4 w-4 text-garden/60" />
-            <span className="font-mono text-2xl font-bold text-heading">
-              {stats.total}
-            </span>
-          </div>
-          <div className="mt-1 text-[10px] uppercase tracking-widest text-muted-foreground/60">
-            total
+          {/* Title + description */}
+          <div className="flex-1 text-center sm:text-left">
+            <h1 className="flex items-center justify-center gap-3 font-serif text-3xl font-semibold text-heading sm:justify-start">
+              <ListChecks className="h-6 w-6 text-garden" />
+              Taskwarrior
+            </h1>
+            <p className="mt-2 text-sm text-muted-foreground/70 leading-relaxed">
+              A snapshot of what I&apos;m working on — powered by{" "}
+              <span className="font-mono text-foreground/60">taskwarrior</span>.
+              Updated each deploy.
+            </p>
+            {/* Inline stats */}
+            <div className="mt-4 flex items-center justify-center gap-6 sm:justify-start">
+              <div className="flex items-center gap-2">
+                <span className="h-2 w-2 rounded-full bg-garden/60" />
+                <span className="font-mono text-lg font-bold text-heading">{stats.total}</span>
+                <span className="text-[10px] uppercase tracking-wider text-muted-foreground/40">total</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="h-2 w-2 rounded-full bg-green-400/60" />
+                <span className="font-mono text-lg font-bold text-heading">{stats.completed}</span>
+                <span className="text-[10px] uppercase tracking-wider text-muted-foreground/40">done</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="h-2 w-2 rounded-full bg-amber-400/60" />
+                <span className="font-mono text-lg font-bold text-heading">{stats.pending}</span>
+                <span className="text-[10px] uppercase tracking-wider text-muted-foreground/40">left</span>
+              </div>
+            </div>
           </div>
         </div>
-        <div className="rounded-lg border border-border bg-surface/30 p-4 text-center">
-          <div className="flex items-center justify-center gap-2">
-            <CheckCircle2 className="h-4 w-4 text-green-400/60" />
-            <span className="font-mono text-2xl font-bold text-heading">
-              {stats.completed}
-            </span>
-          </div>
-          <div className="mt-1 text-[10px] uppercase tracking-widest text-muted-foreground/60">
-            completed
-          </div>
-        </div>
-        <div className="rounded-lg border border-border bg-surface/30 p-4 text-center">
-          <div className="flex items-center justify-center gap-2">
-            <Circle className="h-4 w-4 text-amber-400/60" />
-            <span className="font-mono text-2xl font-bold text-heading">
-              {stats.pending}
-            </span>
-          </div>
-          <div className="mt-1 text-[10px] uppercase tracking-widest text-muted-foreground/60">
-            remaining
-          </div>
+
+        {/* Bottom progress bar */}
+        <div className="h-1 bg-surface-2">
+          <div
+            className="h-full bg-gradient-to-r from-garden/50 to-green-400/50 transition-all duration-700"
+            style={{ width: `${completionRate}%` }}
+          />
         </div>
       </div>
-
-      {/* Progress */}
-      {stats.total > 0 && (
-        <div className="mb-8 rounded-lg border border-border bg-surface/20 p-4">
-          <div className="mb-2 flex items-center justify-between">
-            <span className="flex items-center gap-2 text-xs text-muted-foreground">
-              <TrendingUp className="h-3.5 w-3.5 text-garden/50" />
-              Progress
-            </span>
-            <span className="font-mono text-xs text-foreground">
-              {completionRate}%
-            </span>
-          </div>
-          <div className="h-1.5 overflow-hidden rounded-full bg-surface-2">
-            <div
-              className="h-full rounded-full bg-garden/70"
-              style={{ width: `${completionRate}%` }}
-            />
-          </div>
-        </div>
-      )}
 
       {/* ── Taskwarrior table ── */}
       {tasks.length > 0 ? (
