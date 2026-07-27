@@ -86,7 +86,14 @@ async function main() {
   console.log("\n  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
   console.log("  Step 4/5: Commit");
   console.log("  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
-  const timestamp = new Date().toISOString().replace("T", " ").slice(0, 16);
+  const timestamp = new Intl.DateTimeFormat("sv-SE", {
+    timeZone: "Asia/Dhaka",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+  }).format(new Date()).replace(" ", " ");
   const message = customMessage || `deploy: ${timestamp}`;
   run(`git commit -m "${message.replace(/"/g, '\\"')}"`, `Committing: "${message}"`);
 
