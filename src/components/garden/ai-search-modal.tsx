@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { Sparkles, Search, X, Loader2, ArrowRight, BookOpen, Copy, Check, RotateCcw } from "lucide-react";
-import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { Sparkles, Search, X, Loader2, ArrowRight, BookOpen, Copy, Check, RotateCcw, ExternalLink } from "lucide-react";
 
 const SUGGESTED_PROMPTS = [
   "What python notes are available?",
@@ -11,7 +11,7 @@ const SUGGESTED_PROMPTS = [
   "How does posting work in this garden?",
 ];
 
-function renderFormattedMarkdown(text: string, onClose: () => void) {
+function renderFormattedMarkdown(text: string, onNavigate: (urlOrSlug: string) => void) {
   const parts: (string | JSX.Element)[] = [];
   const regex = /\[([^\]]+)\]\(([^)]+)\)/g;
   let lastIndex = 0;
@@ -24,15 +24,19 @@ function renderFormattedMarkdown(text: string, onClose: () => void) {
     const label = match[1];
     const url = match[2];
 
+    const slugMatch = url.match(/[?&]p=([^&]+)/);
+    const target = slugMatch ? slugMatch[1] : url;
+
     parts.push(
-      <Link
+      <button
         key={match.index}
-        href={url}
-        onClick={onClose}
-        className="inline-flex items-center gap-1 text-garden underline underline-offset-4 font-semibold hover:text-garden/80 transition-colors"
+        type="button"
+        onClick={() => onNavigate(target)}
+        className="inline-flex items-center gap-0.5 text-garden underline underline-offset-4 font-semibold hover:text-garden/80 transition-colors cursor-pointer text-left"
       >
         <span>{label}</span>
-      </Link>
+        <ExternalLink className="h-3 w-3 inline" />
+      </button>
     );
 
     lastIndex = regex.lastIndex;
@@ -46,6 +50,7 @@ function renderFormattedMarkdown(text: string, onClose: () => void) {
 }
 
 export function AISearchModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
+  const router = useRouter();
   const [query, setQuery] = useState("");
   const [loading, setLoading] = useState(false);
   const [answer, setAnswer] = useState<string | null>(null);
@@ -54,6 +59,12 @@ export function AISearchModal({ isOpen, onClose }: { isOpen: boolean; onClose: (
   const [copied, setCopied] = useState(false);
 
   if (!isOpen) return null;
+
+  function handleNavigate(urlOrSlug: string) {
+    onClose();
+    const href = urlOrSlug.startsWith("/") ? urlOrSlug : `/?p=${encodeURIComponent(urlOrSlug)}`;
+    router.push(href);
+  }
 
   async function handleSearch(searchQuery: string) {
     const q = searchQuery.trim();
@@ -123,7 +134,7 @@ export function AISearchModal({ isOpen, onClose }: { isOpen: boolean; onClose: (
         </div>
 
         {/* Form & Input Section */}
-        <div className="p-6">
+        <div className="p-6 max-h-[80vh] overflow-y-auto">
           <form
             onSubmit={(e) => {
               e.preventDefault();
@@ -218,26 +229,26 @@ export function AISearchModal({ isOpen, onClose }: { isOpen: boolean; onClose: (
               </div>
 
               <div className="prose prose-invert prose-sm max-w-none font-sans leading-relaxed text-foreground/90 whitespace-pre-line">
-                {renderFormattedMarkdown(answer, onClose)}
+                {renderFormattedMarkdown(answer, handleNavigate)}
               </div>
 
               {/* Source Note Badges */}
               {sources.length > 0 && (
                 <div className="mt-6 border-t border-border/60 pt-4">
                   <span className="text-[11px] font-mono uppercase tracking-wider text-muted-foreground/60">
-                    Source Notes Found:
+                    Click to Open Full Source Notes:
                   </span>
                   <div className="mt-2.5 flex flex-wrap gap-2">
                     {sources.map((s) => (
-                      <Link
+                      <button
                         key={s.slug}
-                        href={`/?p=${s.slug}`}
-                        onClick={onClose}
-                        className="inline-flex items-center gap-1.5 rounded-lg border border-garden/30 bg-garden/10 px-3 py-1.5 text-xs font-medium text-garden hover:bg-garden/20 transition-all"
+                        onClick={() => handleNavigate(s.slug)}
+                        className="inline-flex items-center gap-1.5 rounded-lg border border-garden/30 bg-garden/10 px-3 py-1.5 text-xs font-medium text-garden hover:bg-garden/20 transition-all cursor-pointer"
                       >
                         <BookOpen className="h-3.5 w-3.5" />
                         <span>{s.title}</span>
-                      </Link>
+                        <ExternalLink className="h-3 w-3 ml-0.5" />
+                      </button>
                     ))}
                   </div>
                 </div>
