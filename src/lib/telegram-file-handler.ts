@@ -668,6 +668,7 @@ export async function addPendingTasksToGitHub(
 
 export interface SnapshotTask {
   id: number;
+  uuid: string;          // stable — never shifts when tasks complete
   description: string;
   project: string | null;
   tags: string[];
@@ -718,7 +719,7 @@ export async function getTasksFromGitHub(): Promise<TaskSnapshot | null> {
  * Writes/appends to src/data/pending-done.json on GitHub.
  */
 export async function addPendingDoneToGitHub(
-  taskIds: number[]
+  taskUuids: string[]
 ): Promise<{ success: boolean; count: number; message: string }> {
   const token = (process.env.GITHUB_TOKEN || process.env.GH_TOKEN || "").trim();
   if (!token) return { success: false, count: 0, message: "No GITHUB_TOKEN configured" };
@@ -731,7 +732,7 @@ export async function addPendingDoneToGitHub(
 
   try {
     let sha: string | undefined;
-    let existingIds: number[] = [];
+    let existingUuids: string[] = [];
 
     try {
       const getRes = await fetch(url, {
@@ -745,16 +746,16 @@ export async function addPendingDoneToGitHub(
         const data = await getRes.json();
         sha = data.sha;
         const decoded = Buffer.from(data.content, "base64").toString("utf-8");
-        existingIds = JSON.parse(decoded);
+        existingUuids = JSON.parse(decoded);
       }
     } catch { /* file may not exist yet */ }
 
-    const updatedIds = [...new Set([...existingIds, ...taskIds])];
-    const content = JSON.stringify(updatedIds, null, 2);
+    const updatedUuids = [...new Set([...existingUuids, ...taskUuids])];
+    const content = JSON.stringify(updatedUuids, null, 2);
     const base64Content = Buffer.from(content).toString("base64");
 
     const putBody: any = {
-      message: `mark ${taskIds.length} task(s) done via Telegram [skip ci]`,
+      message: `mark ${taskUuids.length} task(s) done via Telegram [skip ci]`,
       content: base64Content,
     };
     if (sha) putBody.sha = sha;

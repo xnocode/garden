@@ -108,15 +108,18 @@ async function main() {
   if (existsSync(pendingDoneFile)) {
     try {
       const raw = readFileSync(pendingDoneFile, "utf8");
-      const ids: number[] = JSON.parse(raw);
-      if (Array.isArray(ids) && ids.length > 0) {
-        console.log(`    ▸ Marking ${ids.length} task(s) done from Telegram /done queue…`);
-        for (const id of ids) {
-          const out = runCmd(`wsl -- bash -c "task rc.confirmation=off ${id} done 2>/dev/null"`);
+      const uuids: string[] = JSON.parse(raw);
+      if (Array.isArray(uuids) && uuids.length > 0) {
+        console.log(`    ▸ Marking ${uuids.length} task(s) done from Telegram /done queue…`);
+        for (const uuid of uuids) {
+          // UUID is stable — never shifts when other tasks complete
+          const out = runCmd(`wsl -- bash -c "task rc.confirmation=off uuid:${uuid} done 2>/dev/null"`);
           if (out.includes("Completed") || out.includes("completed")) {
-            console.log(`      ✓ Marked done: task #${id}`);
+            console.log(`      ✓ Marked done: ${uuid.slice(0, 8)}…`);
+          } else if (out.includes("No matches") || out.includes("No tasks")) {
+            console.log(`      ⚠ Already done or not found: ${uuid.slice(0, 8)}…`);
           } else {
-            console.log(`      ⚠ Task #${id} may already be done or ID shifted`);
+            console.log(`      ⚠ Unexpected result for ${uuid.slice(0, 8)}…`);
           }
         }
         writeFileSync(pendingDoneFile, "[]\n", "utf8");
@@ -165,6 +168,7 @@ async function main() {
 
   const mapTask = (t: RawTask, overdue: boolean) => ({
     id: t.id,
+    uuid: t.uuid,          // stable identifier — never shifts
     description: t.description,
     project: t.project || null,
     tags: t.tags || [],

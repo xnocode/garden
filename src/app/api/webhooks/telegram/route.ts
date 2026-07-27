@@ -265,17 +265,18 @@ export async function POST(req: Request) {
       } else {
         const ago = Math.round((Date.now() - new Date(snapshot.exportedAt).getTime()) / 60000);
         const agoStr = ago < 60 ? `${ago}m ago` : `${Math.round(ago / 60)}h ago`;
-        const lines = snapshot.tasks.map((t) => {
+        // Display 1-based position — /done maps position → UUID internally
+        const lines = snapshot.tasks.map((t, i) => {
           const pri = t.priority ? ` [<b>${t.priority}</b>]` : "";
           const flag = t.overdue ? " ⚠️" : "";
           const due = t.due ? `\n   📅 <i>${t.due.slice(0, 8).replace(/(\d{4})(\d{2})(\d{2})/, "$1-$2-$3")}</i>` : "";
-          return `<code>${t.id}</code> ${escapeHtml(t.description)}${pri}${flag}${due}`;
+          return `<b>${i + 1}.</b> ${escapeHtml(t.description)}${pri}${flag}${due}`;
         });
         await sendMsg(
           token, chatId,
           `📋 <b>Tasks (${snapshot.tasks.length} visible, synced ${agoStr}):</b>\n\n` +
           lines.join("\n\n") +
-          `\n\n<i>Mark done: <code>/done 2</code></i>`
+          `\n\n<i>Mark done: <code>/done 1</code> (use the number above)</i>`
         );
       }
       return NextResponse.json({ ok: true });
@@ -329,28 +330,43 @@ export async function POST(req: Request) {
       return NextResponse.json({ ok: true });
     }
 
-    // ─── /done — Mark a task as done by ID ───────────────────────────────────
+    // ─── /done — Mark a task as done by position number ───────────────────────
     if (text.startsWith("/done")) {
-      const idStr = text.replace("/done", "").trim();
-      const id = parseInt(idStr, 10);
-      if (!idStr || isNaN(id) || id < 1) {
+      const numStr = text.replace("/done", "").trim();
+      const pos = parseInt(numStr, 10);
+      if (!numStr || isNaN(pos) || pos < 1) {
         await sendMsg(
           token, chatId,
-          `⚠️ Usage: <code>/done 2</code>\n\n<i>Use <code>/mytasks</code> to see task IDs first.</i>`
+          `⚠️ Usage: <code>/done 1</code>\n\n<i>Use <code>/mytasks</code> to see the numbered list first.</i>`
         );
         return NextResponse.json({ ok: true });
       }
 
-      await sendMsg(token, chatId, `⏳ Queuing task #${id} as done…`);
+      // Resolve position → UUID from the snapshot
+      const snapshot = await getTasksFromGitHub();
+      const task = snapshot?.tasks[pos - 1];
+      if (!task) {
+        const total = snapshot?.tasks.length ?? 0;
+        await sendMsg(
+          token, chatId,
+          `❌ Task #${pos} not found in last snapshot (${total} visible task${total !== 1 ? "s" : ""}).\n\n` +
+          `<i>Run <code>/mytasks</code> to see current IDs, or <code>bun run deploy</code> to refresh.</i>`
+        );
+        return NextResponse.json({ ok: true });
+      }
+
+      await sendMsg(token, chatId, `⏳ Queuing <b>${escapeHtml(task.description)}</b> as done…`);
 
       after(async () => {
         try {
-          const res = await addPendingDoneToGitHub([id]);
+          // Queue UUID — never shifts even if other tasks complete in WSL
+          const res = await addPendingDoneToGitHub([task.uuid]);
           if (res.success) {
             await sendMsg(
               token, chatId,
-              `✅ <b>Task #${id} queued as done!</b>\n\n` +
-              `<i>Next <code>bun run deploy</code> will mark it complete in WSL Taskwarrior \& update the website.</i>`
+              `✅ <b>"${escapeHtml(task.description)}" queued as done!</b>\n\n` +
+              `<i>Next <code>bun run deploy</code> will mark it complete in WSL Taskwarrior \& update the website.\n` +
+              `(Safe to queue again — duplicates are ignored automatically.)</i>`
             );
           } else {
             await sendMsg(token, chatId, `❌ <b>Failed:</b> ${escapeHtml(res.message)}`);
