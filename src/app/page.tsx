@@ -98,12 +98,13 @@ export default async function Page({ searchParams }: PageProps) {
     } catch {
       taskData = {
         exportedAt: new Date().toISOString(),
-        stats: { total: 0, pending: 0, completed: 0 },
-        tasks: [],
+        stats: { total: 0, pending: 0, completed: 0, overdue: 0 },
+        overdue: [],
+        upcoming: [],
       };
     }
     content = <TaskwarriorView data={taskData} />;
-    mainWidthClass = "max-w-3xl";
+    mainWidthClass = "max-w-4xl";
   } else if (q) {
     const results = await searchNotes(q);
     content = <SearchView q={q} results={results} />;
