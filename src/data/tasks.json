@@ -1,10 +1,22 @@
 {
-  "exportedAt": "2026-07-27T16:17:38.839Z",
+  "exportedAt": "2026-07-27T16:19:44.082Z",
   "stats": {
     "total": 3,
     "pending": 1,
     "completed": 2,
     "overdue": 0
   },
-  "tasks": []
+  "tasks": [
+    {
+      "id": 1,
+      "description": "AI & ML",
+      "project": "self-learning",
+      "tags": [],
+      "priority": "L",
+      "due": "20260727T180000Z",
+      "entry": "20260727T145100Z",
+      "urgency": 11.5682,
+      "overdue": false
+    }
+  ]
 }
