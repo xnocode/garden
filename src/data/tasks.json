@@ -1,35 +1,10 @@
 {
-  "exportedAt": "2026-07-27T18:11:22.503Z",
+  "exportedAt": "2026-07-27T18:13:19.162Z",
   "stats": {
     "total": 14,
-    "pending": 2,
-    "completed": 12,
+    "pending": 0,
+    "completed": 14,
     "overdue": 0
   },
-  "tasks": [
-    {
-      "id": 1,
-      "uuid": "43d38af8-fd24-4e60-a826-d4774017f4e3",
-      "description": "test again",
-      "project": null,
-      "tags": [],
-      "priority": null,
-      "due": "20260727T180000Z",
-      "entry": "20260727T180245Z",
-      "urgency": 8.80361,
-      "overdue": false
-    },
-    {
-      "id": 2,
-      "uuid": "7f019e96-ec9d-4b8c-b3b2-08f26af3f099",
-      "description": "test more",
-      "project": null,
-      "tags": [],
-      "priority": null,
-      "due": "20260727T180000Z",
-      "entry": "20260727T180941Z",
-      "urgency": 8.80361,
-      "overdue": false
-    }
-  ]
+  "tasks": []
 }
