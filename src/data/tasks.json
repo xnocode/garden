@@ -1,35 +1,10 @@
 {
-  "exportedAt": "2026-07-27T22:43:00.084Z",
+  "exportedAt": "2026-07-27T22:43:30.604Z",
   "stats": {
     "total": 25,
-    "pending": 11,
-    "completed": 14,
+    "pending": 0,
+    "completed": 25,
     "overdue": 0
   },
-  "tasks": [
-    {
-      "id": 10,
-      "uuid": "c4a11ed2-e81d-41b4-9651-2161fedb0433",
-      "description": "Learn Python",
-      "project": null,
-      "tags": [],
-      "priority": "H",
-      "due": "20260727T180000Z",
-      "entry": "20260727T224259Z",
-      "urgency": 14.8898,
-      "overdue": false
-    },
-    {
-      "id": 11,
-      "uuid": "0db92138-3f36-4c96-8101-b9ffadb43be7",
-      "description": "Learn C++",
-      "project": null,
-      "tags": [],
-      "priority": "L",
-      "due": "20260728T180000Z",
-      "entry": "20260727T224259Z",
-      "urgency": 10.2327,
-      "overdue": false
-    }
-  ]
+  "tasks": []
 }
