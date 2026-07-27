@@ -4,10 +4,11 @@
  */
 
 import { NextResponse } from "next/server";
-import fs from "fs";
-import path from "path";
+import { listNotes, getNoteBySlug } from "@/lib/notes";
 
-// Simple in-memory IP rate limiter (10 requests per IP per hour)
+export const dynamic = "force-dynamic";
+
+// Simple in-memory IP rate limiter (15 requests per IP per hour)
 const ipCache = new Map<string, { count: number; resetTime: number }>();
 
 function isRateLimited(ip: string): boolean {
@@ -17,17 +18,9 @@ function isRateLimited(ip: string): boolean {
     ipCache.set(ip, { count: 1, resetTime: now + 3600 * 1000 });
     return false;
   }
-  if (entry.count >= 10) return true;
+  if (entry.count >= 15) return true;
   entry.count++;
   return false;
-}
-
-interface NoteIndex {
-  slug: string;
-  title: string;
-  description: string | null;
-  tags: string[];
-  path: string;
 }
 
 export async function POST(req: Request) {
@@ -35,7 +28,7 @@ export async function POST(req: Request) {
     const ip = req.headers.get("x-forwarded-for")?.split(",")[0] || "127.0.0.1";
     if (isRateLimited(ip)) {
       return NextResponse.json(
-        { error: "Rate limit reached (10 questions per hour). Please try again later!" },
+        { error: "Rate limit reached (15 questions per hour). Please try again later!" },
         { status: 429 }
       );
     }
@@ -45,58 +38,66 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Query string is required." }, { status: 400 });
     }
 
-    // 1. Read published search index
-    const indexPath = path.join(process.cwd(), "src", "data", "search-index.json");
-    let notes: NoteIndex[] = [];
-    if (fs.existsSync(indexPath)) {
-      const raw = fs.readFileSync(indexPath, "utf-8");
-      const parsed = JSON.parse(raw);
-      notes = parsed.notes || [];
-    }
+    // 1. Fetch all published notes from garden notes engine
+    const allNotes = await listNotes();
 
-    // 2. Simple keyword filter to get top matching note titles
-    const qLower = query.toLowerCase();
-    const keywords = qLower.split(/\s+/).filter((w) => w.length > 2);
+    // Clean query keywords (strip punctuation like ?)
+    const qClean = query.toLowerCase().replace(/[^a-z0-9\s]/g, "");
+    const keywords = qClean.split(/\s+/).filter((w) => w.length > 1);
 
-    const scoredNotes = notes.map((note) => {
+    // 2. Score notes by relevance
+    const scoredNotes = allNotes.map((note) => {
       let score = 0;
       const tLower = note.title.toLowerCase();
+      const sLower = note.slug.toLowerCase();
       const dLower = (note.description || "").toLowerCase();
       const tagsStr = note.tags.join(" ").toLowerCase();
 
       for (const kw of keywords) {
-        if (tLower.includes(kw)) score += 5;
-        if (dLower.includes(kw)) score += 2;
-        if (tagsStr.includes(kw)) score += 3;
+        if (tLower.includes(kw)) score += 10;
+        if (sLower.includes(kw)) score += 8;
+        if (tagsStr.includes(kw)) score += 6;
+        if (dLower.includes(kw)) score += 3;
       }
       return { note, score };
     });
 
+    // Sort by score descending
     scoredNotes.sort((a, b) => b.score - a.score);
-    const topNotes = scoredNotes.slice(0, 6).map((s) => s.note);
 
-    const contextText = topNotes
-      .map(
-        (n) =>
-          `Title: "${n.title}"\nURL: https://gardenx.qzz.io/?p=${n.slug}\nTags: ${n.tags.join(", ")}\nSummary: ${n.description || "Digital garden note"}`
-      )
-      .join("\n\n");
+    // Take top 6 notes (or top 6 default if no score matches)
+    let topMatching = scoredNotes.filter((s) => s.score > 0).slice(0, 6).map((s) => s.note);
+    if (topMatching.length === 0) {
+      topMatching = allNotes.slice(0, 6);
+    }
 
-    // 3. Dedicated website visitor keys (prioritizes WEBSITE_GROQ_KEY & WEBSITE_GEMINI_KEY)
+    // Load full contents for top 3 matching notes so AI has exact details
+    const contextBlocks: string[] = [];
+    for (const note of topMatching.slice(0, 5)) {
+      const fullNote = await getNoteBySlug(note.slug);
+      const excerpt = fullNote?.content ? fullNote.content.slice(0, 1500) : note.description || "";
+      contextBlocks.push(
+        `Note Title: "${note.title}"\nSlug/URL: https://gardenx.qzz.io/?p=${note.slug}\nTags: ${note.tags.join(", ")}\nContent:\n${excerpt}`
+      );
+    }
+
+    const contextText = contextBlocks.join("\n\n---\n\n");
+
+    // 3. AI keys (prioritizes WEBSITE_GROQ_KEY & WEBSITE_GEMINI_KEY)
     const groqKey = (process.env.WEBSITE_GROQ_KEY || process.env.GROQ_API_KEY || "").trim();
     const geminiKey = (process.env.WEBSITE_GEMINI_KEY || process.env.GEMINI_API_KEY || "").trim();
 
     let aiAnswer = "";
 
     const systemPrompt = `You are the AI Search Assistant for Ridoy's Digital Garden ("xnocode").
-Answer the user's search query concisely and accurately based on the provided digital garden notes.
+Answer the user's search query accurately using the provided notes from the garden.
 Rules:
 - Be concise, engaging, and direct.
-- Always include markdown links to matching notes using format: [Note Title](/?p=slug).
-- If context is found, summarize key insights from the notes.
+- Highlight key facts and concepts found in the notes.
+- Include markdown links to the notes using format: [Note Title](/?p=slug).
 - Use standard Markdown formatting.`;
 
-    const userPrompt = `Context Notes from Garden:\n${contextText || "No direct matching notes found."}\n\nUser Question: ${query}`;
+    const userPrompt = `Garden Notes Context:\n${contextText}\n\nUser Search Query: ${query}`;
 
     // Try Groq Llama-3.3 70B
     if (groqKey) {
@@ -151,13 +152,13 @@ Rules:
     }
 
     if (!aiAnswer) {
-      aiAnswer = `Found **${topNotes.length} notes** matching "${query}":\n\n` +
-        topNotes.map((n) => `• [${n.title}](/?p=${n.slug})`).join("\n");
+      aiAnswer = `Found **${topMatching.length} notes** matching "${query}":\n\n` +
+        topMatching.map((n) => `• [${n.title}](/?p=${n.slug})`).join("\n");
     }
 
     return NextResponse.json({
       answer: aiAnswer,
-      sources: topNotes.map((n) => ({ title: n.title, slug: n.slug })),
+      sources: topMatching.map((n) => ({ title: n.title, slug: n.slug })),
     });
   } catch (err: any) {
     return NextResponse.json({ error: err.message }, { status: 500 });
