@@ -1,8 +1,8 @@
 {
-  "exportedAt": "2026-07-27T18:08:32.640Z",
+  "exportedAt": "2026-07-27T18:09:41.560Z",
   "stats": {
-    "total": 13,
-    "pending": 1,
+    "total": 14,
+    "pending": 2,
     "completed": 12,
     "overdue": 0
   },
@@ -16,7 +16,19 @@
       "priority": null,
       "due": "20260727T180000Z",
       "entry": "20260727T180245Z",
-      "urgency": 8.8027,
+      "urgency": 8.80307,
+      "overdue": false
+    },
+    {
+      "id": 2,
+      "uuid": "7f019e96-ec9d-4b8c-b3b2-08f26af3f099",
+      "description": "test more",
+      "project": null,
+      "tags": [],
+      "priority": null,
+      "due": "20260727T180000Z",
+      "entry": "20260727T180941Z",
+      "urgency": 8.80307,
       "overdue": false
     }
   ]
