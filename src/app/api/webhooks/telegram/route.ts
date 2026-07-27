@@ -38,6 +38,8 @@ const MAIN_KEYBOARD = {
 };
 
 const recentMediaGroups = new Set<string>();
+// Session state: tracks whether the next voice from a chat should be a note or task
+const pendingVoiceMode = new Map<number | string, "note" | "task">();
 
 function delay(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -101,6 +103,8 @@ function registerCommands(token: string) {
       commands: [
         { command: "ask", description: "🧠 Ask AI about your notes & tasks" },
         { command: "digest", description: "☀️ Morning digest: tasks + notes + AI tip" },
+        { command: "voice", description: "🎙️ Send voice → AI creates a published note" },
+        { command: "vtask", description: "🎙️ Send voice → AI adds to Taskwarrior tasks" },
         { command: "youtube", description: "🎥 Convert YouTube video to AI note" },
         { command: "clip", description: "🔖 Clip web article link to AI note" },
         { command: "dump", description: "💬 Organize raw messy text to AI note" },
@@ -108,7 +112,6 @@ function registerCommands(token: string) {
         { command: "note", description: "✏️ Create a text note directly" },
         { command: "ocr", description: "📚 Send image file as note via AI OCR" },
         { command: "task", description: "📌 Add task(s) to Taskwarrior" },
-        { command: "vtask", description: "🎙️ Voice message → Taskwarrior task" },
         { command: "mytasks", description: "📋 View your pending task list" },
         { command: "done", description: "✅ Mark a task as done by number" },
         { command: "list", description: "📚 List published notes" },
@@ -314,17 +317,44 @@ export async function POST(req: Request) {
     }
 
     // ═══════════════════════════════════════════════════════════════════
-    // 🎙️ VOICE NOTE — Transcribe & Convert to AI Note OR Taskwarrior Task
-    // No conflict: plain voice → note | voice + caption /task → Taskwarrior
+    // 🎥 /voice — Set pending mode to 'note', prompt user to send voice
+    // ═══════════════════════════════════════════════════════════════════
+    if (text.startsWith("/voice")) {
+      pendingVoiceMode.set(chatId, "note");
+      await sendMsg(token, chatId,
+        `🎙️ <b>Ready! Send your voice message now.</b>\n\n` +
+        `<i>AI will transcribe it and create a published note automatically.</i>`
+      );
+      return NextResponse.json({ ok: true });
+    }
+
+    // ═══════════════════════════════════════════════════════════════════
+    // 🎙️ /vtask — Set pending mode to 'task', prompt user to send voice
+    // ═══════════════════════════════════════════════════════════════════
+    if (text.startsWith("/vtask")) {
+      pendingVoiceMode.set(chatId, "task");
+      await sendMsg(token, chatId,
+        `🎙️ <b>Voice Task Mode — Ready!</b>\n\n` +
+        `Now send a voice message describing your task(s).\n` +
+        `<i>Gemini will transcribe it and add them to Taskwarrior automatically.</i>\n\n` +
+        `<b>Example:</b> <i>"Submit DSA assignment due tomorrow, high priority"</i>`
+      );
+      return NextResponse.json({ ok: true });
+    }
+
+    // ═══════════════════════════════════════════════════════════════════
+    // 🎙️ VOICE — Route based on pending mode set by /voice or /vtask
+    // Default (no prior command): creates a note (backward compatible)
     // ═══════════════════════════════════════════════════════════════════
     if (message.voice || message.audio) {
+      const voiceMode = pendingVoiceMode.get(chatId) || "note";
+      pendingVoiceMode.delete(chatId); // consume the mode — one-shot
       const voiceObj = message.voice || message.audio;
       const fileId = voiceObj.file_id;
       const mimeType = voiceObj.mime_type || "audio/ogg";
-      const voiceCaption = (message.caption || "").trim().toLowerCase();
-      const isVoiceTask = voiceCaption.startsWith("/task") || voiceCaption.startsWith("/vtask");
 
-      if (isVoiceTask) {
+
+      if (voiceMode === "task") {
         // 📌 VOICE → TASK: transcribe then extract structured Taskwarrior tasks
         await sendMsg(token, chatId, `🎙️ <b>Transcribing voice for task creation...</b>`);
         after(async () => {
@@ -379,7 +409,7 @@ export async function POST(req: Request) {
         return NextResponse.json({ ok: true, voiceTask: true });
       }
 
-      // 📝 Default: plain voice → note (existing behaviour, zero conflict)
+      // 📝 VOICE → NOTE (default or after /voice command)
       await sendMsg(token, chatId, `🎙️ <b>Transcribing voice note with AI...</b>\n<i>Please wait a few seconds...</i>`);
 
       after(async () => {
