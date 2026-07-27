@@ -82,9 +82,9 @@ export async function POST(req: Request) {
       )
       .join("\n\n");
 
-    // 3. AI keys (uses GROQ_API_KEY or WEBSITE_AI_KEY or GEMINI_API_KEY)
-    const groqKey = (process.env.GROQ_API_KEY || process.env.WEBSITE_GROQ_KEY || "").trim();
-    const geminiKey = (process.env.GEMINI_API_KEY || process.env.GOOGLE_AI_KEY || "").trim();
+    // 3. Dedicated website visitor keys (prioritizes WEBSITE_GROQ_KEY & WEBSITE_GEMINI_KEY)
+    const groqKey = (process.env.WEBSITE_GROQ_KEY || process.env.GROQ_API_KEY || "").trim();
+    const geminiKey = (process.env.WEBSITE_GEMINI_KEY || process.env.GEMINI_API_KEY || "").trim();
 
     let aiAnswer = "";
 
