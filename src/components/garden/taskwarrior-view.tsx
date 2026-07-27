@@ -9,6 +9,7 @@ interface TaskData {
   due: string | null;
   entry: string | null;
   urgency: number;
+  overdue?: boolean;
 }
 
 interface TaskSnapshot {
@@ -17,6 +18,7 @@ interface TaskSnapshot {
     total: number;
     pending: number;
     completed: number;
+    overdue?: number;
   };
   tasks: TaskData[];
 }
@@ -153,6 +155,12 @@ export function TaskwarriorView({ data }: { data: TaskSnapshot }) {
                 <span className="font-semibold text-amber-400">{stats.pending}</span>
                 remaining
               </span>
+              {(stats.overdue ?? 0) > 0 && (
+                <span className="inline-flex items-center gap-1.5 rounded-full border border-red-500/30 bg-red-500/10 px-2.5 py-1 font-mono text-[11px] text-muted-foreground">
+                  <span className="font-semibold text-red-400">{stats.overdue}</span>
+                  missed
+                </span>
+              )}
             </div>
           </div>
         </div>
@@ -199,12 +207,18 @@ export function TaskwarriorView({ data }: { data: TaskSnapshot }) {
               {tasks.map((task, i) => (
                 <tr
                   key={task.id}
-                  className={`border-b border-border/50 transition-colors hover:bg-surface/30 ${
-                    i % 2 === 0 ? "bg-transparent" : "bg-surface/10"
+                  className={`border-b transition-colors ${
+                    task.overdue
+                      ? "border-red-500/20 bg-red-500/5 hover:bg-red-500/10"
+                      : `border-border/50 hover:bg-surface/30 ${i % 2 === 0 ? "bg-transparent" : "bg-surface/10"}`
                   }`}
                 >
-                  <td className="whitespace-nowrap px-4 py-2.5 text-foreground/80">
-                    {task.id}
+                  <td className={`whitespace-nowrap px-4 py-2.5 ${ task.overdue ? "text-red-400/70" : "text-foreground/80" }`}>
+                    {task.overdue ? (
+                      <span className="flex items-center gap-1">
+                        <span className="text-red-400">!</span>{task.id}
+                      </span>
+                    ) : task.id}
                   </td>
                   <td className="whitespace-nowrap px-4 py-2.5 text-muted-foreground">
                     {calcAge(task.entry)}
@@ -219,11 +233,18 @@ export function TaskwarriorView({ data }: { data: TaskSnapshot }) {
                   <td className="whitespace-nowrap px-4 py-2.5 text-garden">
                     {task.project || ""}
                   </td>
-                  <td className="whitespace-nowrap px-4 py-2.5 text-amber-300/80">
+                  <td className={`whitespace-nowrap px-4 py-2.5 ${ task.overdue ? "text-red-400 font-semibold" : "text-amber-300/80" }`}>
                     {formatDueDate(task.due)}
                   </td>
                   <td className="px-4 py-2.5 text-foreground">
-                    {task.description}
+                    <span className="flex items-center gap-2">
+                      {task.overdue && (
+                        <span className="inline-flex items-center rounded border border-red-500/30 bg-red-500/10 px-1 py-0.5 text-[9px] font-bold uppercase tracking-wider text-red-400">
+                          MISSED
+                        </span>
+                      )}
+                      {task.description}
+                    </span>
                   </td>
                   <td
                     className={`whitespace-nowrap px-4 py-2.5 text-right font-semibold ${urgencyColor(

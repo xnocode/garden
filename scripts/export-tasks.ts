@@ -32,6 +32,15 @@ function parseTWDate(dateStr: string): Date | null {
   return new Date(`${m[1]}-${m[2]}-${m[3]}T${m[4]}:${m[5]}:${m[6]}Z`);
 }
 
+function isOverdue(dateStr?: string): boolean {
+  if (!dateStr) return false;
+  const d = parseTWDate(dateStr);
+  if (!d) return false;
+  const now = new Date();
+  const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  return d < todayStart;
+}
+
 function isTodayOrTomorrow(dateStr?: string): boolean {
   if (!dateStr) return false;
   const d = parseTWDate(dateStr);
@@ -76,21 +85,30 @@ async function main() {
   );
   const completedTasks = parseTaskOutput(completedRaw);
 
-  // Filter: today/tomorrow tasks + tasks with no due date
+  // Categorize pending tasks
+  const overdueTasks = pendingTasks.filter((t) => isOverdue(t.due));
   const todayTomorrow = pendingTasks.filter((t) => isTodayOrTomorrow(t.due));
   const noDueTasks = pendingTasks.filter((t) => !t.due);
-  const visibleTasks = [...todayTomorrow, ...noDueTasks]
-    .sort((a, b) => (b.urgency || 0) - (a.urgency || 0))
-    .map((t) => ({
-      id: t.id,
-      description: t.description,
-      project: t.project || null,
-      tags: t.tags || [],
-      priority: t.priority || null,
-      due: t.due || null,
-      entry: t.entry || null,
-      urgency: t.urgency ?? 0,
-    }));
+
+  // All visible: overdue first (they're most urgent), then today/tomorrow, then no-due
+  // Within each group sorted by urgency score descending
+  const mapTask = (t: RawTask, overdue: boolean) => ({
+    id: t.id,
+    description: t.description,
+    project: t.project || null,
+    tags: t.tags || [],
+    priority: t.priority || null,
+    due: t.due || null,
+    entry: t.entry || null,
+    urgency: t.urgency ?? 0,
+    overdue,
+  });
+
+  const visibleTasks = [
+    ...overdueTasks.sort((a, b) => (b.urgency || 0) - (a.urgency || 0)).map((t) => mapTask(t, true)),
+    ...todayTomorrow.sort((a, b) => (b.urgency || 0) - (a.urgency || 0)).map((t) => mapTask(t, false)),
+    ...noDueTasks.sort((a, b) => (b.urgency || 0) - (a.urgency || 0)).map((t) => mapTask(t, false)),
+  ];
 
   const snapshot = {
     exportedAt: new Date().toISOString(),
@@ -98,6 +116,7 @@ async function main() {
       total: pendingTasks.length + completedTasks.length,
       pending: pendingTasks.length,
       completed: completedTasks.length,
+      overdue: overdueTasks.length,
     },
     tasks: visibleTasks,
   };
@@ -108,7 +127,7 @@ async function main() {
   writeFileSync(outPath, JSON.stringify(snapshot, null, 2), "utf8");
 
   console.log(
-    `    ✓ ${visibleTasks.length} visible task(s), ` +
+    `    ✓ ${visibleTasks.length} visible task(s) (${overdueTasks.length} overdue), ` +
       `${pendingTasks.length} pending, ${completedTasks.length} completed`
   );
 }

@@ -1,9 +1,10 @@
 {
-  "exportedAt": "2026-07-27T15:57:46.645Z",
+  "exportedAt": "2026-07-27T16:03:11.722Z",
   "stats": {
     "total": 3,
     "pending": 2,
-    "completed": 1
+    "completed": 1,
+    "overdue": 0
   },
   "tasks": [
     {
@@ -14,7 +15,8 @@
       "priority": "L",
       "due": null,
       "entry": "20260727T145042Z",
-      "urgency": 2.8
+      "urgency": 2.8,
+      "overdue": false
     },
     {
       "id": 2,
@@ -24,7 +26,8 @@
       "priority": "L",
       "due": null,
       "entry": "20260727T145100Z",
-      "urgency": 2.8
+      "urgency": 2.8,
+      "overdue": false
     }
   ]
 }
