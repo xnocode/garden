@@ -47,7 +47,7 @@ ${n.tags
 <?xml-stylesheet href="/rss-style.xsl" type="text/xsl"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>garden — a digital garden</title>
+    <title>xnocode — digital garden</title>
     <link>${siteUrl}</link>
     <description>Notes grown in Obsidian, published with a single command.</description>
     <language>en-us</language>

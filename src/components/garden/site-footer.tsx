@@ -4,7 +4,7 @@
  */
 
 import Link from "next/link";
-import { Sprout, Rss, Network, BookMarked, Github } from "lucide-react";
+import { Code2, Rss, Network, BookMarked, Github } from "lucide-react";
 
 export function SiteFooter({ noteCount }: { noteCount: number }) {
   const year = new Date().getFullYear();
@@ -12,9 +12,9 @@ export function SiteFooter({ noteCount }: { noteCount: number }) {
     <footer className="mt-auto border-t border-border bg-surface/30">
       <div className="mx-auto flex max-w-[1600px] flex-col gap-4 px-4 py-6 sm:flex-row sm:items-center sm:justify-between sm:px-6">
         <div className="flex items-center gap-2 text-sm text-muted-foreground">
-          <Sprout className="h-4 w-4 text-garden" />
+          <Code2 className="h-4 w-4 text-garden" />
           <span>
-            a digital garden —{" "}
+            xnocode —{" "}
             <span className="text-foreground font-medium">{noteCount}</span>{" "}
             notes growing
           </span>
