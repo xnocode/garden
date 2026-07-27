@@ -72,6 +72,19 @@ async function sendMsg(
 }
 
 
+function formatTWDueDate(dateStr: string | null): string {
+  if (!dateStr) return "";
+  const m = dateStr.match(/^(\d{4})(\d{2})(\d{2})T(\d{2})(\d{2})(\d{2})Z$/);
+  if (!m) return "";
+  const d = new Date(Date.UTC(+m[1], +m[2] - 1, +m[3], +m[4], +m[5], +m[6]));
+  return new Intl.DateTimeFormat("en-CA", {
+    timeZone: "Asia/Dhaka",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).format(d);
+}
+
 function registerCommands(token: string) {
   tgFetch(`https://api.telegram.org/bot${token}/setMyCommands`, {
     method: "POST",
@@ -269,7 +282,8 @@ export async function POST(req: Request) {
         const lines = snapshot.tasks.map((t, i) => {
           const pri = t.priority ? ` [<b>${t.priority}</b>]` : "";
           const flag = t.overdue ? " ⚠️" : "";
-          const due = t.due ? `\n   📅 <i>${t.due.slice(0, 8).replace(/(\d{4})(\d{2})(\d{2})/, "$1-$2-$3")}</i>` : "";
+          const formattedDue = formatTWDueDate(t.due);
+          const due = formattedDue ? `\n   📅 <i>${formattedDue}</i>` : "";
           return `<b>${i + 1}.</b> ${escapeHtml(t.description)}${pri}${flag}${due}`;
         });
         await sendMsg(
