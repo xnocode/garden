@@ -11,6 +11,40 @@ const SUGGESTED_PROMPTS = [
   "How does posting work in this garden?",
 ];
 
+function renderFormattedMarkdown(text: string, onClose: () => void) {
+  const parts: (string | JSX.Element)[] = [];
+  const regex = /\[([^\]]+)\]\(([^)]+)\)/g;
+  let lastIndex = 0;
+  let match;
+
+  while ((match = regex.exec(text)) !== null) {
+    if (match.index > lastIndex) {
+      parts.push(text.substring(lastIndex, match.index));
+    }
+    const label = match[1];
+    const url = match[2];
+
+    parts.push(
+      <Link
+        key={match.index}
+        href={url}
+        onClick={onClose}
+        className="inline-flex items-center gap-0.5 text-garden underline underline-offset-4 font-semibold hover:text-garden/80"
+      >
+        {label}
+      </Link>
+    );
+
+    lastIndex = regex.lastIndex;
+  }
+
+  if (lastIndex < text.length) {
+    parts.push(text.substring(lastIndex));
+  }
+
+  return parts;
+}
+
 export function AISearchModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
   const [query, setQuery] = useState("");
   const [loading, setLoading] = useState(false);
@@ -167,7 +201,7 @@ export function AISearchModal({ isOpen, onClose }: { isOpen: boolean; onClose: (
               </div>
 
               <div className="prose prose-invert prose-sm max-w-none font-sans leading-relaxed text-foreground/90 whitespace-pre-line">
-                {answer}
+                {renderFormattedMarkdown(answer, onClose)}
               </div>
 
               {/* Source Note Badges */}
