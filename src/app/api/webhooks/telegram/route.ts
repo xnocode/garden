@@ -47,7 +47,7 @@ function delay(ms: number): Promise<void> {
 
 async function tgFetch(url: string, options: any = {}) {
   const controller = new AbortController();
-  const id = setTimeout(() => controller.abort(), 2500); // 2.5s timeout is plenty
+  const id = setTimeout(() => controller.abort(), 10000); // 10s timeout
   try {
     const res = await fetch(url, { ...options, signal: controller.signal });
     clearTimeout(id);
@@ -139,15 +139,18 @@ export async function POST(req: Request) {
     const authIds = rawIds.replace(/['"]/g, "").split(",").map((s: string) => s.trim()).filter(Boolean);
     if (!token || authIds.length === 0) return NextResponse.json({ ok: true });
 
+    // Register commands in Telegram menu asynchronously
+    registerCommands(token);
+
     const senderId = (cbq?.from?.id?.toString() || message.from?.id?.toString() || message.sender_chat?.id?.toString() || "").trim();
-    const chatId = message.chat?.id;
+    const chatId = message.chat?.id ? message.chat.id.toString() : "";
     const rawText = (message.text?.trim() || cbq?.data || "").trim();
     const text = rawText.replace(/@\w+_bot/gi, "").trim();
 
-    // Auth check — IDs come exclusively from TELEGRAM_CHAT_ID env var (never hardcoded)
-    const isAuth = senderId && authIds.includes(senderId);
+    // Auth check — allows senderId or chatId matching
+    const isAuth = (senderId && authIds.includes(senderId)) || (chatId && authIds.includes(chatId));
     if (!isAuth) {
-      if (chatId) await sendMsg(token, chatId, `⛔ <b>Access Denied</b>\n<i>ID: <code>${senderId}</code></i>`);
+      if (chatId) await sendMsg(token, chatId, `⛔ <b>Access Denied</b>\n<i>ID: <code>${senderId || chatId}</code></i>`);
       return NextResponse.json({ ok: true });
     }
 
