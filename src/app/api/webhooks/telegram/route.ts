@@ -126,8 +126,8 @@ export async function POST(req: Request) {
     const rawText = (message.text?.trim() || cbq?.data || "").trim();
     const text = rawText.replace(/@\w+_bot/gi, "").trim();
 
-    // Auth check
-    const isAuth = senderId && (authIds.includes(senderId) || authIds.includes("6437330606") || authIds.includes("1087968824"));
+    // Auth check — IDs come exclusively from TELEGRAM_CHAT_ID env var (never hardcoded)
+    const isAuth = senderId && authIds.includes(senderId);
     if (!isAuth) {
       if (chatId) await sendMsg(token, chatId, `⛔ <b>Access Denied</b>\n<i>ID: <code>${senderId}</code></i>`);
       return NextResponse.json({ ok: true });
