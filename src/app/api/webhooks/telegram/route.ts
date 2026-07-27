@@ -98,16 +98,25 @@ function formatTWDueDate(dateStr: string | null): string {
 async function extractTasksFromTextAI(transcribedText: string): Promise<string[]> {
   const groqKey = (process.env.GROQ_API_KEY || "").trim();
   const gemKey = (process.env.GEMINI_API_KEY || process.env.GOOGLE_AI_KEY || "").trim();
-  const todayStr = new Date().toISOString().split("T")[0];
+  const todayStr = new Intl.DateTimeFormat("en-CA", {
+    timeZone: "Asia/Dhaka",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).format(new Date());
 
   const prompt = `You are an expert task extraction AI for Taskwarrior.
-Analyze this transcript (today's date is ${todayStr}) and extract ALL individual tasks mentioned (up to 50+).
+Analyze this spoken voice transcript (today's local date is ${todayStr}) and extract ALL individual tasks mentioned (up to 50+).
 
 Rules for EACH task:
-1. Output ONE task per line in this format: <task description> due:YYYY-MM-DD priority:H/M/L
-2. Infer exact due date (due:YYYY-MM-DD) from relative time words (e.g. today, tomorrow, this Friday, next Monday, in 3 days). If no due date mentioned, omit due:.
+1. Output ONE task per line in this exact format: <task description> due:YYYY-MM-DD priority:H/M/L
+2. Calculate the exact due date (due:YYYY-MM-DD) for relative time words:
+   - "today" -> due:${todayStr}
+   - "tomorrow" -> calculate tomorrow's exact date based on ${todayStr}
+   - "this Friday", "next Monday", "in 3 days" -> calculate exact date YYYY-MM-DD
+   - If no date/time word mentioned for a task, omit due:.
 3. Analyze urgency and tone to assign priority:
-   - priority:H for urgent/critical tasks ("must do first", "urgent", "due today/tomorrow", "high priority", "asap")
+   - priority:H for urgent/critical/due today or tomorrow tasks ("must do first", "urgent", "due today/tomorrow", "high priority", "asap")
    - priority:M for normal tasks ("need to do", "should complete", "regular task")
    - priority:L for low priority tasks ("whenever", "someday", "later", "low priority")
 4. Do NOT output markdown bullets, numbers, titles, or extra text. Output ONLY one task line per item.
