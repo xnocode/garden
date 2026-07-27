@@ -15,6 +15,7 @@ import {
   addPendingDoneToGitHub,
 } from "@/lib/telegram-file-handler";
 import { processVoiceNoteToMarkdown } from "@/lib/telegram-voice";
+import { processYouTubeToNote } from "@/lib/telegram-youtube";
 
 export const dynamic = "force-dynamic";
 
@@ -265,6 +266,55 @@ export async function POST(req: Request) {
       });
 
       return NextResponse.json({ ok: true, voice: true });
+    }
+
+    // ═══════════════════════════════════════════════════════════════════
+    // 🎥 YOUTUBE VIDEO — Convert Transcript to AI Summary Note
+    // ═══════════════════════════════════════════════════════════════════
+    if (text.startsWith("/youtube") || text.includes("youtube.com/") || text.includes("youtu.be/")) {
+      let ytUrl = text.replace(/^\/youtube\s*/i, "").trim();
+      if (!ytUrl && (text.includes("youtube.com") || text.includes("youtu.be"))) {
+        const urlMatch = text.match(/https?:\/\/(www\.)?(youtube\.com|youtu\.be)\/\S+/i);
+        if (urlMatch) ytUrl = urlMatch[0];
+      }
+
+      if (!ytUrl) {
+        await sendMsg(token, chatId, `🎥 <b>Usage:</b> <code>/youtube https://youtu.be/xyz</code>`);
+        return NextResponse.json({ ok: true });
+      }
+
+      await sendMsg(token, chatId, `🎥 <b>Fetching YouTube transcript &amp; generating AI summary...</b>\n<i>Please wait a few seconds...</i>`);
+
+      after(async () => {
+        try {
+          const ytNote = await processYouTubeToNote(ytUrl);
+          const fileName = `${ytNote.slug}.md`;
+
+          const result = await saveTelegramNote(fileName, ytNote.markdownContent, false);
+          const rawLiveUrl = `https://gardenx.qzz.io/?p=${encodeURIComponent(ytNote.slug)}`;
+          const safeLiveUrl = escapeHtml(rawLiveUrl);
+
+          if (result.githubStatus?.includes("Committed to GitHub")) {
+            const tagStr = ytNote.tags.map((t) => `#${escapeHtml(t)}`).join(" ");
+            await sendMsg(
+              token,
+              chatId,
+              `🎥 <b>YouTube Note Created &amp; Published!</b>\n\n` +
+              `📝 <b>${escapeHtml(ytNote.title)}</b>\n` +
+              `🏷️ ${tagStr || "#youtube"}\n` +
+              `📄 <code>${escapeHtml(fileName)}</code>\n` +
+              `🔗 <a href="${safeLiveUrl}">${safeLiveUrl}</a>`,
+              { inline_keyboard: [[{ text: "🌐 View Note", url: rawLiveUrl }]] }
+            );
+          } else {
+            await sendMsg(token, chatId, `❌ <b>Failed to publish YouTube note:</b> ${escapeHtml(result.githubStatus || "")}`);
+          }
+        } catch (err: any) {
+          await sendMsg(token, chatId, `❌ <b>YouTube Error:</b> ${escapeHtml(err.message)}`);
+        }
+      });
+
+      return NextResponse.json({ ok: true, youtube: true });
     }
 
     // ═══════════════════════════════════════
