@@ -139,23 +139,20 @@ export function TaskwarriorView({ data }: { data: TaskSnapshot }) {
               <span className="font-mono text-foreground/60">taskwarrior</span>.
               Updated each deploy.
             </p>
-            {/* Inline stats */}
-            <div className="mt-4 flex items-center justify-center gap-6 sm:justify-start">
-              <div className="flex items-center gap-2">
-                <span className="h-2 w-2 rounded-full bg-garden/60" />
-                <span className="font-mono text-lg font-bold text-heading">{stats.total}</span>
-                <span className="text-[10px] uppercase tracking-wider text-muted-foreground/40">total</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="h-2 w-2 rounded-full bg-green-400/60" />
-                <span className="font-mono text-lg font-bold text-heading">{stats.completed}</span>
-                <span className="text-[10px] uppercase tracking-wider text-muted-foreground/40">done</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="h-2 w-2 rounded-full bg-amber-400/60" />
-                <span className="font-mono text-lg font-bold text-heading">{stats.pending}</span>
-                <span className="text-[10px] uppercase tracking-wider text-muted-foreground/40">left</span>
-              </div>
+            {/* Inline stats — match site pill badge style */}
+            <div className="mt-4 flex flex-wrap items-center justify-center gap-2 sm:justify-start">
+              <span className="inline-flex items-center gap-1.5 rounded-full border border-border bg-surface px-2.5 py-1 font-mono text-[11px] text-muted-foreground">
+                <span className="font-semibold text-heading">{stats.total}</span>
+                total
+              </span>
+              <span className="inline-flex items-center gap-1.5 rounded-full border border-border bg-surface px-2.5 py-1 font-mono text-[11px] text-muted-foreground">
+                <span className="font-semibold text-green-400">{stats.completed}</span>
+                completed
+              </span>
+              <span className="inline-flex items-center gap-1.5 rounded-full border border-border bg-surface px-2.5 py-1 font-mono text-[11px] text-muted-foreground">
+                <span className="font-semibold text-amber-400">{stats.pending}</span>
+                remaining
+              </span>
             </div>
           </div>
         </div>
