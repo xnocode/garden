@@ -53,9 +53,16 @@ async function main() {
 
   console.log("\n  🚀  Digital Garden — Deploy to Live\n");
 
-  // Step 1: Publish
+  // Step 0: Sync with remote FIRST so any Telegram-queued tasks in pending-tasks.json
+  // (written to GitHub via API) are on disk before export-tasks.ts reads them.
   console.log("  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
-  console.log("  Step 1/4: Publish notes");
+  console.log("  Step 0/5: Sync with GitHub");
+  console.log("  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+  run("git pull --rebase origin main", "Pulling latest from GitHub…");
+
+  // Step 1: Publish
+  console.log("\n  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+  console.log("  Step 1/5: Publish notes");
   console.log("  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
   const publishOk = run("bun run publish", "Rendering notes to JSON…");
   if (!publishOk) {
@@ -83,12 +90,10 @@ async function main() {
   const message = customMessage || `deploy: ${timestamp}`;
   run(`git commit -m "${message.replace(/"/g, '\\"')}"`, `Committing: "${message}"`);
 
-  // Step 5: Git push
+  // Step 5: Git push (no pull needed — we already synced at Step 0)
   console.log("\n  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
   console.log("  Step 5/5: Push to GitHub (triggers Vercel deploy)");
   console.log("  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
-  // Pull first to avoid "rejected: fetch first" when Telegram queued tasks via GitHub API
-  run("git pull --rebase origin main", "Syncing with remote…");
   const pushOk = run("git push", "Pushing to GitHub…");
   if (!pushOk) {
     console.error("\n  ✗ Push failed. Check your git remote and auth.\n");
