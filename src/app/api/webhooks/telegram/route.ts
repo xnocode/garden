@@ -107,8 +107,6 @@ export async function POST(req: Request) {
     const rawText = (message.text?.trim() || cbq?.data || "").trim();
     const text = rawText.replace(/@\w+_bot/gi, "").trim();
 
-    registerCommands(token);
-
     // Auth check
     const isAuth = senderId && (authIds.includes(senderId) || authIds.includes("6437330606") || authIds.includes("1087968824"));
     if (!isAuth) {
