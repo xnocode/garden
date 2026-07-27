@@ -72,13 +72,15 @@ function parseTaskOutput(raw: string): RawTask[] {
   }
 }
 
-/** Known Taskwarrior modifier prefixes and tag syntax */
-const TW_MODIFIER_RE = /^(due:|priority:|project:|tag:|tags:|until:|wait:|recur:|scheduled:|depends:|+\S+|-\S+)\S*/i;
+/** Taskwarrior modifier prefixes (e.g. due:today, priority:H) */
+const TW_MODIFIER_PREFIX_RE = /^(due:|priority:|project:|tag:|tags:|until:|wait:|recur:|scheduled:|depends:)\S*/i;
+/** Taskwarrior virtual tag syntax: +tag or -tag */
+const TW_TAG_RE = /^[+-]\S+$/;
 
 /**
- * Split a raw task string like "Buy groceries due:today priority:H"
+ * Split a raw task string like "Buy groceries due:today priority:H +work"
  * into a quoted description + separate modifier tokens so Taskwarrior
- * parses them correctly.
+ * parses them correctly instead of stuffing everything into the description.
  */
 function buildTaskAddArgs(raw: string): string {
   const tokens = raw.trim().split(/\s+/);
@@ -86,7 +88,7 @@ function buildTaskAddArgs(raw: string): string {
   const descWords: string[] = [];
 
   for (const token of tokens) {
-    if (TW_MODIFIER_RE.test(token) || /^\+\S+$/.test(token)) {
+    if (TW_MODIFIER_PREFIX_RE.test(token) || TW_TAG_RE.test(token)) {
       modifiers.push(token);
     } else {
       descWords.push(token);

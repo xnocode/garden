@@ -1,10 +1,44 @@
 {
-  "exportedAt": "2026-07-27T17:19:57.728Z",
+  "exportedAt": "2026-07-27T17:23:58.971Z",
   "stats": {
-    "total": 5,
-    "pending": 2,
+    "total": 6,
+    "pending": 3,
     "completed": 3,
     "overdue": 0
   },
-  "tasks": []
+  "tasks": [
+    {
+      "id": 1,
+      "description": "Buy groceries",
+      "project": null,
+      "tags": [],
+      "priority": "L",
+      "due": "20260726T180000Z",
+      "entry": "20260727T172233Z",
+      "urgency": 11.0457,
+      "overdue": false
+    },
+    {
+      "id": 2,
+      "description": "Study C++",
+      "project": null,
+      "tags": [],
+      "priority": null,
+      "due": "20260727T180000Z",
+      "entry": "20260727T172233Z",
+      "urgency": 8.78856,
+      "overdue": false
+    },
+    {
+      "id": 3,
+      "description": "Go to Market",
+      "project": null,
+      "tags": [],
+      "priority": null,
+      "due": "20260727T180000Z",
+      "entry": "20260727T172341Z",
+      "urgency": 8.78856,
+      "overdue": false
+    }
+  ]
 }
