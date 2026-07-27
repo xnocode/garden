@@ -1,6 +1,6 @@
 /**
  * api/ai-search/route.ts — Website AI Search Assistant.
- * Uses Groq Llama-3.3 70B / Gemini with IP rate limiting and key isolation.
+ * Uses Groq Llama-3.3 70B / Gemini with full-text content search, IP rate limiting and key isolation.
  */
 
 import { NextResponse } from "next/server";
@@ -8,7 +8,7 @@ import { listNotes, getNote } from "@/lib/notes";
 
 export const dynamic = "force-dynamic";
 
-// Simple in-memory IP rate limiter (15 requests per IP per hour)
+// In-memory IP rate limiter (15 requests per IP per hour)
 const ipCache = new Map<string, { count: number; resetTime: number }>();
 
 function isRateLimited(ip: string): boolean {
@@ -38,52 +38,52 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Query string is required." }, { status: 400 });
     }
 
-    // 1. Fetch all published notes from garden notes engine
+    // 1. Fetch all published notes
     const allNotes = await listNotes();
 
-    // Clean query keywords (strip punctuation like ?)
+    // Clean query keywords
     const qClean = query.toLowerCase().replace(/[^a-z0-9\s]/g, "");
     const keywords = qClean.split(/\s+/).filter((w) => w.length > 1);
 
-    // 2. Score notes by relevance
-    const scoredNotes = allNotes.map((note) => {
-      let score = 0;
-      const tLower = note.title.toLowerCase();
-      const sLower = note.slug.toLowerCase();
-      const dLower = (note.description || "").toLowerCase();
-      const tagsStr = note.tags.join(" ").toLowerCase();
+    // 2. Score notes with full-text search across Title, Tags, Description & Content
+    const scoredNotes = await Promise.all(
+      allNotes.map(async (summary) => {
+        let score = 0;
+        const fullNote = await getNote(summary.slug);
+        const contentStr = (fullNote?.content || "").toLowerCase();
+        const tLower = summary.title.toLowerCase();
+        const sLower = summary.slug.toLowerCase();
+        const dLower = (summary.description || "").toLowerCase();
+        const tagsStr = summary.tags.join(" ").toLowerCase();
 
-      for (const kw of keywords) {
-        if (tLower.includes(kw)) score += 10;
-        if (sLower.includes(kw)) score += 8;
-        if (tagsStr.includes(kw)) score += 6;
-        if (dLower.includes(kw)) score += 3;
-      }
-      return { note, score };
-    });
+        for (const kw of keywords) {
+          if (tLower.includes(kw)) score += 15;
+          if (sLower.includes(kw)) score += 12;
+          if (tagsStr.includes(kw)) score += 10;
+          if (dLower.includes(kw)) score += 5;
+          if (contentStr.includes(kw)) score += 3;
+        }
+        return { summary, content: fullNote?.content || summary.description || "", score };
+      })
+    );
 
     // Sort by score descending
     scoredNotes.sort((a, b) => b.score - a.score);
 
-    // Take top 6 notes (or top 6 default if no score matches)
-    let topMatching = scoredNotes.filter((s) => s.score > 0).slice(0, 6).map((s) => s.note);
+    // Take top 5 notes with matching scores
+    let topMatching = scoredNotes.filter((s) => s.score > 0).slice(0, 5);
     if (topMatching.length === 0) {
-      topMatching = allNotes.slice(0, 6);
+      topMatching = scoredNotes.slice(0, 5);
     }
 
-    // Load full contents for top 5 matching notes so AI has exact details
-    const contextBlocks: string[] = [];
-    for (const note of topMatching.slice(0, 5)) {
-      const fullNote = await getNote(note.slug);
-      const excerpt = fullNote?.content ? fullNote.content.slice(0, 1500) : note.description || "";
-      contextBlocks.push(
-        `Note Title: "${note.title}"\nSlug/URL: https://gardenx.qzz.io/?p=${note.slug}\nTags: ${note.tags.join(", ")}\nContent:\n${excerpt}`
-      );
-    }
+    const contextBlocks = topMatching.map(
+      (item) =>
+        `Note Title: "${item.summary.title}"\nSlug/URL: https://gardenx.qzz.io/?p=${item.summary.slug}\nTags: ${item.summary.tags.join(", ")}\nContent Excerpt:\n${item.content.slice(0, 1800)}`
+    );
 
     const contextText = contextBlocks.join("\n\n---\n\n");
 
-    // 3. AI keys (prioritizes WEBSITE_GROQ_KEY & WEBSITE_GEMINI_KEY)
+    // 3. Dedicated website visitor keys (prioritizes WEBSITE_GROQ_KEY & WEBSITE_GEMINI_KEY)
     const groqKey = (process.env.WEBSITE_GROQ_KEY || process.env.GROQ_API_KEY || "").trim();
     const geminiKey = (process.env.WEBSITE_GEMINI_KEY || process.env.GEMINI_API_KEY || "").trim();
 
@@ -95,7 +95,7 @@ Rules:
 - Be concise, engaging, and direct.
 - Highlight key facts and concepts found in the notes.
 - Include markdown links to the notes using format: [Note Title](/?p=slug).
-- Use standard Markdown formatting.`;
+- Use clean Markdown formatting with clear bullet points where helpful.`;
 
     const userPrompt = `Garden Notes Context:\n${contextText}\n\nUser Search Query: ${query}`;
 
@@ -115,7 +115,7 @@ Rules:
               { role: "user", content: userPrompt },
             ],
             temperature: 0.3,
-            max_tokens: 800,
+            max_tokens: 900,
           }),
         });
 
@@ -153,12 +153,12 @@ Rules:
 
     if (!aiAnswer) {
       aiAnswer = `Found **${topMatching.length} notes** matching "${query}":\n\n` +
-        topMatching.map((n) => `• [${n.title}](/?p=${n.slug})`).join("\n");
+        topMatching.map((n) => `• [${n.summary.title}](/?p=${n.summary.slug})`).join("\n");
     }
 
     return NextResponse.json({
       answer: aiAnswer,
-      sources: topMatching.map((n) => ({ title: n.title, slug: n.slug })),
+      sources: topMatching.map((n) => ({ title: n.summary.title, slug: n.summary.slug, tags: n.summary.tags })),
     });
   } catch (err: any) {
     return NextResponse.json({ error: err.message }, { status: 500 });
