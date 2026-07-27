@@ -387,20 +387,35 @@ export async function POST(req: Request) {
             // Step 1: Transcribe voice
             const voiceNote = await processVoiceNoteToMarkdown(buffer, mimeType);
             const transcribedText = (voiceNote.title + ". " + voiceNote.markdownContent)
-              .replace(/---[\s\S]*?---/, "").replace(/[#*`]/g, "").trim().slice(0, 2000);
+              .replace(/---[\s\S]*?---/, "").replace(/[#*`]/g, "").trim().slice(0, 10000);
             // Step 2: Use Gemini to extract structured task lines
             const gemKey = (process.env.GEMINI_API_KEY || "").trim();
+            const todayStr = new Date().toISOString().split("T")[0];
             let taskLines: string[] = [transcribedText.slice(0, 200)];
             if (gemKey) {
               try {
+                const prompt = `You are an expert task extraction AI for Taskwarrior.
+Analyze the user's spoken transcript (today's date is ${todayStr}) and extract ALL individual tasks mentioned (up to 50+).
+
+Rules for EACH task:
+1. Output ONE task per line in this format: <task description> due:YYYY-MM-DD priority:H/M/L
+2. Infer exact due date (due:YYYY-MM-DD) from relative time words (e.g. today, tomorrow, this Friday, next Monday, in 3 days). If no time mentioned, omit due:.
+3. Analyze urgency and tone from the audio transcript to assign priority:
+   - priority:H for urgent/critical tasks ("must do first", "urgent", "due today/tomorrow", "high priority", "asap")
+   - priority:M for normal tasks ("need to do", "should complete", "regular task")
+   - priority:L for low priority tasks ("whenever", "someday", "later", "low priority")
+4. Do NOT output markdown bullets, numbers, or extra text. Output ONLY one task line per item.
+
+Transcript: "${transcribedText}"`;
+
                 const gemRes = await fetch(
                   `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${gemKey}`,
                   {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({
-                      contents: [{ parts: [{ text: `Extract individual Taskwarrior tasks from this voice transcript. Output ONE task per line. Include due:YYYY-MM-DD and priority:H/M/L only if clearly mentioned. Transcript: "${transcribedText}"` }] }],
-                      generationConfig: { temperature: 0.2, maxOutputTokens: 256 },
+                      contents: [{ parts: [{ text: prompt }] }],
+                      generationConfig: { temperature: 0.2, maxOutputTokens: 2048 },
                     }),
                   }
                 );
