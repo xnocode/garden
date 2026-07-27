@@ -30,6 +30,7 @@ import {
   ColophonView,
   NotFoundView,
 } from "@/components/garden/views";
+import { TaskwarriorView } from "@/components/garden/taskwarrior-view";
 
 export const dynamic = "force-dynamic";
 
@@ -84,6 +85,9 @@ export default async function Page({ searchParams }: PageProps) {
     const stats = await getStats();
     content = <ColophonView noteCount={noteCount} stats={stats} />;
     mainWidthClass = "max-w-3xl";
+  } else if (view === "tasks") {
+    content = <TaskwarriorView />;
+    mainWidthClass = "max-w-4xl";
   } else if (q) {
     const results = await searchNotes(q);
     content = <SearchView q={q} results={results} />;
