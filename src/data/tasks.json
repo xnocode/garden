@@ -1,8 +1,8 @@
 {
-  "exportedAt": "2026-07-27T17:30:59.310Z",
+  "exportedAt": "2026-07-27T17:33:29.340Z",
   "stats": {
-    "total": 9,
-    "pending": 6,
+    "total": 12,
+    "pending": 9,
     "completed": 3,
     "overdue": 0
   },
@@ -15,7 +15,7 @@
       "priority": "L",
       "due": "20260726T180000Z",
       "entry": "20260727T172233Z",
-      "urgency": 11.0479,
+      "urgency": 11.0487,
       "overdue": false
     },
     {
@@ -26,7 +26,7 @@
       "priority": null,
       "due": "20260727T180000Z",
       "entry": "20260727T172233Z",
-      "urgency": 8.79079,
+      "urgency": 8.79158,
       "overdue": false
     },
     {
@@ -37,7 +37,7 @@
       "priority": null,
       "due": "20260727T180000Z",
       "entry": "20260727T172341Z",
-      "urgency": 8.79079,
+      "urgency": 8.79158,
       "overdue": false
     },
     {
@@ -48,7 +48,7 @@
       "priority": null,
       "due": "20260727T180000Z",
       "entry": "20260727T173058Z",
-      "urgency": 8.79079,
+      "urgency": 8.79158,
       "overdue": false
     },
     {
@@ -59,7 +59,7 @@
       "priority": null,
       "due": "20260727T180000Z",
       "entry": "20260727T173058Z",
-      "urgency": 8.79079,
+      "urgency": 8.79158,
       "overdue": false
     },
     {
@@ -70,7 +70,40 @@
       "priority": null,
       "due": "20260727T180000Z",
       "entry": "20260727T173058Z",
-      "urgency": 8.79079,
+      "urgency": 8.79158,
+      "overdue": false
+    },
+    {
+      "id": 7,
+      "description": "Test Multiple Tasks 4",
+      "project": null,
+      "tags": [],
+      "priority": null,
+      "due": "20260727T180000Z",
+      "entry": "20260727T173328Z",
+      "urgency": 8.79158,
+      "overdue": false
+    },
+    {
+      "id": 8,
+      "description": "Test Multiple Tasks 3",
+      "project": null,
+      "tags": [],
+      "priority": null,
+      "due": "20260727T180000Z",
+      "entry": "20260727T173328Z",
+      "urgency": 8.79158,
+      "overdue": false
+    },
+    {
+      "id": 9,
+      "description": "Test 5",
+      "project": null,
+      "tags": [],
+      "priority": null,
+      "due": "20260727T180000Z",
+      "entry": "20260727T173328Z",
+      "urgency": 8.79158,
       "overdue": false
     }
   ]
