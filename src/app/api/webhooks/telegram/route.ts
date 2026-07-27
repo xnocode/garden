@@ -387,7 +387,7 @@ export async function POST(req: Request) {
             // Step 1: Transcribe voice
             const voiceNote = await processVoiceNoteToMarkdown(buffer, mimeType);
             const transcribedText = (voiceNote.title + ". " + voiceNote.markdownContent)
-              .replace(/---[\s\S]*?---/, "").replace(/[#*`]/g, "").trim().slice(0, 500);
+              .replace(/---[\s\S]*?---/, "").replace(/[#*`]/g, "").trim().slice(0, 2000);
             // Step 2: Use Gemini to extract structured task lines
             const gemKey = (process.env.GEMINI_API_KEY || "").trim();
             let taskLines: string[] = [transcribedText.slice(0, 200)];
