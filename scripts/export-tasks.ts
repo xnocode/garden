@@ -72,6 +72,32 @@ function parseTaskOutput(raw: string): RawTask[] {
   }
 }
 
+/** Known Taskwarrior modifier prefixes and tag syntax */
+const TW_MODIFIER_RE = /^(due:|priority:|project:|tag:|tags:|until:|wait:|recur:|scheduled:|depends:|+\S+|-\S+)\S*/i;
+
+/**
+ * Split a raw task string like "Buy groceries due:today priority:H"
+ * into a quoted description + separate modifier tokens so Taskwarrior
+ * parses them correctly.
+ */
+function buildTaskAddArgs(raw: string): string {
+  const tokens = raw.trim().split(/\s+/);
+  const modifiers: string[] = [];
+  const descWords: string[] = [];
+
+  for (const token of tokens) {
+    if (TW_MODIFIER_RE.test(token) || /^\+\S+$/.test(token)) {
+      modifiers.push(token);
+    } else {
+      descWords.push(token);
+    }
+  }
+
+  const desc = descWords.join(" ").replace(/'/g, "'\\''");
+  const mods = modifiers.map((m) => m.replace(/'/g, "'\\''")).join(" ");
+  return `'${desc}' ${mods}`.trim();
+}
+
 async function main() {
   console.log("  ▸ Snapshotting Taskwarrior data…");
 
@@ -85,8 +111,8 @@ async function main() {
         console.log(`    ▸ Importing ${items.length} pending task(s) from Telegram into WSL Taskwarrior…`);
         for (const item of items) {
           if (!item.raw) continue;
-          const escaped = item.raw.replace(/'/g, "'\\''");
-          runCmd(`wsl -- bash -c "task add '${escaped}' 2>/dev/null"`);
+          const args = buildTaskAddArgs(item.raw);
+          runCmd(`wsl -- bash -c "task add ${args} 2>/dev/null"`);
           console.log(`      ✓ Added to WSL: "${item.raw}"`);
         }
         // Clear queue after importing
