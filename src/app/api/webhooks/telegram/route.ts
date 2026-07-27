@@ -14,6 +14,7 @@ import {
   getTasksFromGitHub,
   addPendingDoneToGitHub,
 } from "@/lib/telegram-file-handler";
+import { processVoiceNoteToMarkdown } from "@/lib/telegram-voice";
 
 export const dynamic = "force-dynamic";
 
@@ -206,6 +207,64 @@ export async function POST(req: Request) {
       });
 
       return NextResponse.json({ ok: true, file: fileName });
+    }
+
+    // ═══════════════════════════════════════════════════════════════════
+    // 🎙️ VOICE NOTE — Transcribe & Convert to AI Structured Note
+    // ═══════════════════════════════════════════════════════════════════
+    if (message.voice || message.audio) {
+      const voiceObj = message.voice || message.audio;
+      const fileId = voiceObj.file_id;
+      const mimeType = voiceObj.mime_type || "audio/ogg";
+
+      await sendMsg(token, chatId, `🎙️ <b>Transcribing voice note with AI...</b>\n<i>Please wait a few seconds...</i>`);
+
+      after(async () => {
+        try {
+          // 1. Get file path from Telegram API
+          const fileRes = await tgFetch(`https://api.telegram.org/bot${token}/getFile?file_id=${fileId}`);
+          const fileData = await fileRes.json();
+
+          if (!fileData.ok || !fileData.result?.file_path) {
+            await sendMsg(token, chatId, `❌ <b>Failed to fetch voice recording from Telegram.</b>`);
+            return;
+          }
+
+          // 2. Download audio content as Buffer
+          const audioRes = await tgFetch(`https://api.telegram.org/file/bot${token}/${fileData.result.file_path}`);
+          const arrayBuf = await audioRes.arrayBuffer();
+          const buffer = Buffer.from(arrayBuf);
+
+          // 3. Process with AI (Gemini 2.0 Flash / Groq)
+          const voiceNote = await processVoiceNoteToMarkdown(buffer, mimeType);
+          const fileName = `${voiceNote.slug}.md`;
+
+          // 4. Save + commit note to GitHub
+          const result = await saveTelegramNote(fileName, voiceNote.markdownContent, false);
+          const rawLiveUrl = `https://gardenx.qzz.io/?p=${encodeURIComponent(voiceNote.slug)}`;
+          const safeLiveUrl = escapeHtml(rawLiveUrl);
+
+          if (result.githubStatus?.includes("Committed to GitHub")) {
+            const tagStr = voiceNote.tags.map((t) => `#${escapeHtml(t)}`).join(" ");
+            await sendMsg(
+              token,
+              chatId,
+              `🎙️ <b>Voice Note Created &amp; Published!</b>\n\n` +
+              `📝 <b>${escapeHtml(voiceNote.title)}</b>\n` +
+              `🏷️ ${tagStr || "#voice-note"}\n` +
+              `📄 <code>${escapeHtml(fileName)}</code>\n` +
+              `🔗 <a href="${safeLiveUrl}">${safeLiveUrl}</a>`,
+              { inline_keyboard: [[{ text: "🌐 View Note", url: rawLiveUrl }]] }
+            );
+          } else {
+            await sendMsg(token, chatId, `❌ <b>Failed to publish voice note:</b> ${escapeHtml(result.githubStatus || "")}`);
+          }
+        } catch (err: any) {
+          await sendMsg(token, chatId, `❌ <b>Voice Note Error:</b> ${escapeHtml(err.message)}`);
+        }
+      });
+
+      return NextResponse.json({ ok: true, voice: true });
     }
 
     // ═══════════════════════════════════════
@@ -507,17 +566,20 @@ export async function POST(req: Request) {
     if (text.startsWith("/start") || text.startsWith("/help") || rawText.includes("Help")) {
       await sendMsg(token, chatId,
         `💡 <b>Garden Bot — Feature &amp; Command Guide</b>\n\n` +
-        `📄 <b>1. Upload or Update Notes:</b>\n` +
+        `🎙️ <b>1. AI Voice-to-Note Capturing:</b>\n` +
+        `• Send/record a <b>voice message</b> or audio file!\n` +
+        `• AI transcribes, titles, tags, and publishes it automatically.\n\n` +
+        `📄 <b>2. Upload or Update Notes:</b>\n` +
         `• Send any <code>.md</code> file to publish it.\n` +
         `• Re-uploading an existing <code>.md</code> file <b>updates</b> it live!\n\n` +
-        `📝 <b>2. Write Notes Directly:</b>\n` +
+        `📝 <b>3. Write Notes Directly:</b>\n` +
         `<code>/note Title Of Note\nBody content goes here... #tag</code>\n\n` +
-        `📌 <b>3. Taskwarrior Tasks:</b>\n` +
+        `📌 <b>4. Taskwarrior Tasks:</b>\n` +
         `• Add: <code>/task Buy milk due:today priority:H</code>\n` +
         `• Multi: <code>/tasks\n- Task 1 due:today\n- Task 2 due:tomorrow</code>\n` +
         `• View: <code>/mytasks</code> — See pending task list with IDs\n` +
         `• Done: <code>/done 2</code> — Queue task #2 as complete\n\n` +
-        `📚 <b>4. Browse &amp; Manage Notes:</b>\n` +
+        `📚 <b>5. Browse &amp; Manage Notes:</b>\n` +
         `• <code>/list</code> — View all notes\n` +
         `• <code>/search keyword</code> — Search notes\n` +
         `• <code>/link filename</code> — Get URL for a note\n` +
