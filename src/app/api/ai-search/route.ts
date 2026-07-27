@@ -4,7 +4,7 @@
  */
 
 import { NextResponse } from "next/server";
-import { listNotes, getNoteBySlug } from "@/lib/notes";
+import { listNotes, getNote } from "@/lib/notes";
 
 export const dynamic = "force-dynamic";
 
@@ -71,10 +71,10 @@ export async function POST(req: Request) {
       topMatching = allNotes.slice(0, 6);
     }
 
-    // Load full contents for top 3 matching notes so AI has exact details
+    // Load full contents for top 5 matching notes so AI has exact details
     const contextBlocks: string[] = [];
     for (const note of topMatching.slice(0, 5)) {
-      const fullNote = await getNoteBySlug(note.slug);
+      const fullNote = await getNote(note.slug);
       const excerpt = fullNote?.content ? fullNote.content.slice(0, 1500) : note.description || "";
       contextBlocks.push(
         `Note Title: "${note.title}"\nSlug/URL: https://gardenx.qzz.io/?p=${note.slug}\nTags: ${note.tags.join(", ")}\nContent:\n${excerpt}`
