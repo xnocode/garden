@@ -328,11 +328,14 @@ export async function POST(req: Request) {
     // ═══════════════════════════════════════════════════════════════════
     // 🎥 /voice — Set pending mode to 'note', prompt user to send voice
     // ═══════════════════════════════════════════════════════════════════
+    // 🎥 /voice — Set pending mode to 'note', prompt user to send voice
+    // ═══════════════════════════════════════════════════════════════════
     if (text.startsWith("/voice")) {
       pendingVoiceMode.set(chatId, "note");
       await sendMsg(token, chatId,
         `🎙️ <b>Ready! Send your voice message now.</b>\n\n` +
-        `<i>AI will transcribe it and create a published note automatically.</i>`
+        `<i>AI will transcribe it and create a published note automatically.</i>`,
+        { force_reply: true, selective: true }
       );
       return NextResponse.json({ ok: true });
     }
@@ -346,24 +349,28 @@ export async function POST(req: Request) {
         `🎙️ <b>Voice Task Mode — Ready!</b>\n\n` +
         `Now send a voice message describing your task(s).\n` +
         `<i>Gemini will transcribe it and add them to Taskwarrior automatically.</i>\n\n` +
-        `<b>Example:</b> <i>"Submit DSA assignment due tomorrow, high priority"</i>`
+        `<b>Example:</b> <i>"Submit DSA assignment due tomorrow, high priority"</i>`,
+        { force_reply: true, selective: true }
       );
       return NextResponse.json({ ok: true });
     }
 
     // ═══════════════════════════════════════════════════════════════════
-    // 🎙️ VOICE — Route based on pending mode set by /voice or /vtask
-    // Default (no prior command): creates a note (backward compatible)
+    // 🎙️ VOICE — Route based on /vtask prompt reply, pending mode, or caption
+    // Default (no prior command/reply): creates a note (backward compatible)
     // ═══════════════════════════════════════════════════════════════════
     if (message.voice || message.audio) {
-      const voiceMode = pendingVoiceMode.get(chatId) || "note";
-      pendingVoiceMode.delete(chatId); // consume the mode — one-shot
+      const replyText = (message.reply_to_message?.text || "").toLowerCase();
+      const isTaskReply = replyText.includes("voice task mode") || replyText.includes("taskwarrior");
+      const voiceCaption = (message.caption || "").trim().toLowerCase();
+      const isVoiceTask = pendingVoiceMode.get(chatId) === "task" || isTaskReply || voiceCaption.includes("/task") || voiceCaption.includes("/vtask");
+      pendingVoiceMode.delete(chatId);
+
       const voiceObj = message.voice || message.audio;
       const fileId = voiceObj.file_id;
       const mimeType = voiceObj.mime_type || "audio/ogg";
 
-
-      if (voiceMode === "task") {
+      if (isVoiceTask) {
         // 📌 VOICE → TASK: transcribe then extract structured Taskwarrior tasks
         await sendMsg(token, chatId, `🎙️ <b>Transcribing voice for task creation...</b>`);
         after(async () => {
@@ -463,21 +470,6 @@ export async function POST(req: Request) {
       });
 
       return NextResponse.json({ ok: true, voice: true });
-    }
-
-    // ═══════════════════════════════════════════════════════════════════
-    // ═══════════════════════════════════════════════════════════════════
-    // 🎙️ /vtask — Set pending mode to 'task', then await next voice msg
-    // ═══════════════════════════════════════════════════════════════════
-    if (text.startsWith("/vtask")) {
-      pendingVoiceMode.set(chatId, "task");
-      await sendMsg(token, chatId,
-        `🎙️ <b>Voice Task Mode — Ready!</b>\n\n` +
-        `Now send a voice message describing your task(s).\n` +
-        `<i>Gemini will transcribe it and add them to Taskwarrior automatically.</i>\n\n` +
-        `<b>Example:</b> <i>"Submit DSA assignment due tomorrow, high priority"</i>`
-      );
-      return NextResponse.json({ ok: true });
     }
 
     // ═══════════════════════════════════════════════════════════════════
