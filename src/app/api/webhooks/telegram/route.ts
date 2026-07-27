@@ -20,6 +20,8 @@ import { processWebClipToNote } from "@/lib/telegram-clipper";
 import { processImageToNote } from "@/lib/telegram-vision";
 import { askGardenKnowledgeBase } from "@/lib/telegram-ask";
 import { processBrainDumpToNote } from "@/lib/telegram-dump";
+import { processPdfToNote } from "@/lib/telegram-pdf";
+import { getMorningDigest } from "@/lib/telegram-digest";
 
 export const dynamic = "force-dynamic";
 
@@ -98,11 +100,15 @@ function registerCommands(token: string) {
     body: JSON.stringify({
       commands: [
         { command: "ask", description: "🧠 Ask AI about your notes & tasks" },
+        { command: "digest", description: "☀️ Morning digest: tasks + notes + AI tip" },
         { command: "youtube", description: "🎥 Convert YouTube video to AI note" },
         { command: "clip", description: "🔖 Clip web article link to AI note" },
         { command: "dump", description: "💬 Organize raw messy text to AI note" },
-        { command: "note", description: "📝 Create a text note directly" },
+        { command: "append", description: "📝 Append text to an existing note" },
+        { command: "note", description: "✏️ Create a text note directly" },
+        { command: "ocr", description: "📚 Send image file as note via AI OCR" },
         { command: "task", description: "📌 Add task(s) to Taskwarrior" },
+        { command: "vtask", description: "🎙️ Voice message → Taskwarrior task" },
         { command: "mytasks", description: "📋 View your pending task list" },
         { command: "done", description: "✅ Mark a task as done by number" },
         { command: "list", description: "📚 List published notes" },
@@ -153,10 +159,99 @@ export async function POST(req: Request) {
     // ═══════════════════════════════════════════════════════════════════
     if (message.document) {
       const doc = message.document;
-      const fileName = doc.file_name || "untitled.md";
+      const fileName = doc.file_name || "untitled";
+      const lowerName = fileName.toLowerCase();
+      const caption = (message.caption || "").trim().toLowerCase();
 
-      if (!fileName.toLowerCase().endsWith(".md") && !fileName.toLowerCase().endsWith(".markdown")) {
-        await sendMsg(token, chatId, `⚠️ Only <code>.md</code> files accepted.\n<i>"${escapeHtml(fileName)}"</i> rejected.`);
+      // ═══════════════════════════════════════════════════════════════════
+      // 📄 PDF TO NOTE — Send any PDF → AI structures it into a Markdown note
+      // ═══════════════════════════════════════════════════════════════════
+      if (lowerName.endsWith(".pdf")) {
+        await sendMsg(token, chatId, `📄 <b>Processing PDF with AI...</b>\n<i>Extracting text & structuring into note...</i>`);
+        after(async () => {
+          try {
+            const fileRes = await tgFetch(`https://api.telegram.org/bot${token}/getFile?file_id=${doc.file_id}`);
+            const fileData = await fileRes.json();
+            if (!fileData.ok || !fileData.result?.file_path) {
+              await sendMsg(token, chatId, `❌ <b>Failed to fetch PDF from Telegram.</b>`);
+              return;
+            }
+            const pdfRes = await tgFetch(`https://api.telegram.org/file/bot${token}/${fileData.result.file_path}`);
+            const arrayBuf = await pdfRes.arrayBuffer();
+            const buffer = Buffer.from(arrayBuf);
+            const pdfNote = await processPdfToNote(buffer, fileName);
+            const noteFileName = `${pdfNote.slug}.md`;
+            const result = await saveTelegramNote(noteFileName, pdfNote.markdownContent, false);
+            const rawLiveUrl = `https://gardenx.qzz.io/?p=${encodeURIComponent(pdfNote.slug)}`;
+            const safeLiveUrl = escapeHtml(rawLiveUrl);
+            if (result.githubStatus?.includes("Committed to GitHub")) {
+              const tagStr = pdfNote.tags.map((t) => `#${escapeHtml(t)}`).join(" ");
+              await sendMsg(
+                token, chatId,
+                `📄 <b>PDF Note Created & Published!</b>\n\n` +
+                `📝 <b>${escapeHtml(pdfNote.title)}</b>\n` +
+                `🏷️ ${tagStr || "#pdf"}\n` +
+                `📄 <code>${escapeHtml(noteFileName)}</code>\n` +
+                `🔗 <a href="${safeLiveUrl}">${safeLiveUrl}</a>`,
+                { inline_keyboard: [[{ text: "🌐 View Note", url: rawLiveUrl }]] }
+              );
+            } else {
+              await sendMsg(token, chatId, `❌ <b>Failed to publish PDF note:</b> ${escapeHtml(result.githubStatus || "")}`);
+            }
+          } catch (err: any) {
+            await sendMsg(token, chatId, `❌ <b>PDF Error:</b> ${escapeHtml(err.message)}`);
+          }
+        });
+        return NextResponse.json({ ok: true, pdf: true });
+      }
+
+      // ═══════════════════════════════════════════════════════════════════
+      // 📚 /ocr — Send image document file → AI extracts text as note
+      // ═══════════════════════════════════════════════════════════════════
+      const imageExts = [".jpg", ".jpeg", ".png", ".webp", ".heic", ".gif", ".bmp"];
+      const isImageDoc = imageExts.some((ext) => lowerName.endsWith(ext));
+      if (isImageDoc || caption.startsWith("/ocr") || text.startsWith("/ocr")) {
+        await sendMsg(token, chatId, `📚 <b>Running AI OCR on image file...</b>\n<i>Extracting & structuring text...</i>`);
+        after(async () => {
+          try {
+            const fileRes = await tgFetch(`https://api.telegram.org/bot${token}/getFile?file_id=${doc.file_id}`);
+            const fileData = await fileRes.json();
+            if (!fileData.ok || !fileData.result?.file_path) {
+              await sendMsg(token, chatId, `❌ <b>Failed to fetch image from Telegram.</b>`);
+              return;
+            }
+            const imgRes = await tgFetch(`https://api.telegram.org/file/bot${token}/${fileData.result.file_path}`);
+            const arrayBuf = await imgRes.arrayBuffer();
+            const buffer = Buffer.from(arrayBuf);
+            const mime = doc.mime_type || "image/jpeg";
+            const imgNote = await processImageToNote(buffer, mime);
+            const noteFileName = `${imgNote.slug}.md`;
+            const result = await saveTelegramNote(noteFileName, imgNote.markdownContent, false);
+            const rawLiveUrl = `https://gardenx.qzz.io/?p=${encodeURIComponent(imgNote.slug)}`;
+            const safeLiveUrl = escapeHtml(rawLiveUrl);
+            if (result.githubStatus?.includes("Committed to GitHub")) {
+              const tagStr = imgNote.tags.map((t) => `#${escapeHtml(t)}`).join(" ");
+              await sendMsg(
+                token, chatId,
+                `📚 <b>OCR Note Created & Published!</b>\n\n` +
+                `📝 <b>${escapeHtml(imgNote.title)}</b>\n` +
+                `🏷️ ${tagStr || "#ocr"}\n` +
+                `📄 <code>${escapeHtml(noteFileName)}</code>\n` +
+                `🔗 <a href="${safeLiveUrl}">${safeLiveUrl}</a>`,
+                { inline_keyboard: [[{ text: "🌐 View Note", url: rawLiveUrl }]] }
+              );
+            } else {
+              await sendMsg(token, chatId, `❌ <b>Failed to publish OCR note:</b> ${escapeHtml(result.githubStatus || "")}`);
+            }
+          } catch (err: any) {
+            await sendMsg(token, chatId, `❌ <b>OCR Error:</b> ${escapeHtml(err.message)}`);
+          }
+        });
+        return NextResponse.json({ ok: true, ocr: true });
+      }
+
+      if (!lowerName.endsWith(".md") && !lowerName.endsWith(".markdown")) {
+        await sendMsg(token, chatId, `⚠️ Only <code>.md</code> or <code>.pdf</code> files accepted.\n<i>"${escapeHtml(fileName)}"</i> rejected.`);
         return NextResponse.json({ ok: true });
       }
 
@@ -219,18 +314,76 @@ export async function POST(req: Request) {
     }
 
     // ═══════════════════════════════════════════════════════════════════
-    // 🎙️ VOICE NOTE — Transcribe & Convert to AI Structured Note
+    // 🎙️ VOICE NOTE — Transcribe & Convert to AI Note OR Taskwarrior Task
+    // No conflict: plain voice → note | voice + caption /task → Taskwarrior
     // ═══════════════════════════════════════════════════════════════════
     if (message.voice || message.audio) {
       const voiceObj = message.voice || message.audio;
       const fileId = voiceObj.file_id;
       const mimeType = voiceObj.mime_type || "audio/ogg";
+      const voiceCaption = (message.caption || "").trim().toLowerCase();
+      const isVoiceTask = voiceCaption.startsWith("/task") || voiceCaption.startsWith("/vtask");
 
+      if (isVoiceTask) {
+        // 📌 VOICE → TASK: transcribe then extract structured Taskwarrior tasks
+        await sendMsg(token, chatId, `🎙️ <b>Transcribing voice for task creation...</b>`);
+        after(async () => {
+          try {
+            const fileRes = await tgFetch(`https://api.telegram.org/bot${token}/getFile?file_id=${fileId}`);
+            const fileData = await fileRes.json();
+            if (!fileData.ok || !fileData.result?.file_path) {
+              await sendMsg(token, chatId, `❌ <b>Failed to fetch voice from Telegram.</b>`);
+              return;
+            }
+            const audioRes = await tgFetch(`https://api.telegram.org/file/bot${token}/${fileData.result.file_path}`);
+            const arrayBuf = await audioRes.arrayBuffer();
+            const buffer = Buffer.from(arrayBuf);
+            // Step 1: Transcribe voice
+            const voiceNote = await processVoiceNoteToMarkdown(buffer, mimeType);
+            const transcribedText = (voiceNote.title + ". " + voiceNote.markdownContent)
+              .replace(/---[\s\S]*?---/, "").replace(/[#*`]/g, "").trim().slice(0, 500);
+            // Step 2: Use Gemini to extract structured task lines
+            const gemKey = (process.env.GEMINI_API_KEY || "").trim();
+            let taskLines: string[] = [transcribedText.slice(0, 200)];
+            if (gemKey) {
+              try {
+                const gemRes = await fetch(
+                  `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${gemKey}`,
+                  {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                      contents: [{ parts: [{ text: `Extract individual Taskwarrior tasks from this voice transcript. Output ONE task per line. Include due:YYYY-MM-DD and priority:H/M/L only if clearly mentioned. Transcript: "${transcribedText}"` }] }],
+                      generationConfig: { temperature: 0.2, maxOutputTokens: 256 },
+                    }),
+                  }
+                );
+                const gemData = await gemRes.json();
+                const parsed = gemData?.candidates?.[0]?.content?.parts?.[0]?.text?.trim();
+                if (parsed) taskLines = parsed.split("\n").map((l: string) => l.replace(/^[-*\d.\s]+/, "").trim()).filter(Boolean);
+              } catch { /* fallback: use raw transcription as single task */ }
+            }
+            const res = await addPendingTasksToGitHub(taskLines);
+            if (res.success) {
+              const taskList = taskLines.map((t, i) => `${i + 1}. <code>${escapeHtml(t)}</code>`).join("\n");
+              await sendMsg(token, chatId,
+                `📌 <b>Voice Task(s) Queued (${res.count})!</b>\n\n${taskList}\n\n<i>Next <code>bun run deploy</code> imports into Taskwarrior!</i>`
+              );
+            } else {
+              await sendMsg(token, chatId, `❌ <b>Task Queue Failed:</b> ${escapeHtml(res.message)}`);
+            }
+          } catch (err: any) {
+            await sendMsg(token, chatId, `❌ <b>Voice Task Error:</b> ${escapeHtml(err.message)}`);
+          }
+        });
+        return NextResponse.json({ ok: true, voiceTask: true });
+      }
+
+      // 📝 Default: plain voice → note (existing behaviour, zero conflict)
       await sendMsg(token, chatId, `🎙️ <b>Transcribing voice note with AI...</b>\n<i>Please wait a few seconds...</i>`);
 
       after(async () => {
         try {
-          // 1. Get file path from Telegram API
           const fileRes = await tgFetch(`https://api.telegram.org/bot${token}/getFile?file_id=${fileId}`);
           const fileData = await fileRes.json();
 
@@ -239,16 +392,13 @@ export async function POST(req: Request) {
             return;
           }
 
-          // 2. Download audio content as Buffer
           const audioRes = await tgFetch(`https://api.telegram.org/file/bot${token}/${fileData.result.file_path}`);
           const arrayBuf = await audioRes.arrayBuffer();
           const buffer = Buffer.from(arrayBuf);
 
-          // 3. Process with AI (Gemini 2.0 Flash / Groq)
           const voiceNote = await processVoiceNoteToMarkdown(buffer, mimeType);
           const fileName = `${voiceNote.slug}.md`;
 
-          // 4. Save + commit note to GitHub
           const result = await saveTelegramNote(fileName, voiceNote.markdownContent, false);
           const rawLiveUrl = `https://gardenx.qzz.io/?p=${encodeURIComponent(voiceNote.slug)}`;
           const safeLiveUrl = escapeHtml(rawLiveUrl);
@@ -274,6 +424,23 @@ export async function POST(req: Request) {
       });
 
       return NextResponse.json({ ok: true, voice: true });
+    }
+
+    // ═══════════════════════════════════════════════════════════════════
+    // 🎙️ /vtask — Voice message → Taskwarrior task (explicit command)
+    // ═══════════════════════════════════════════════════════════════════
+    if (text.startsWith("/vtask")) {
+      await sendMsg(token, chatId,
+        `🎙️ <b>Voice Task Mode</b>\n\n` +
+        `To create a task from voice:\n` +
+        `1️⃣ Record a voice message\n` +
+        `2️⃣ <b>Add caption</b> <code>/task</code> before sending\n\n` +
+        `This routes your voice to <b>Taskwarrior</b> instead of creating a note.\n\n` +
+        `<b>Example caption:</b> <code>/task</code>\n` +
+        `<b>Say:</b> <i>"Submit DSA assignment due tomorrow, high priority"</i>\n\n` +
+        `<i>Without the caption, voice creates a published note as usual — no conflict!</i>`
+      );
+      return NextResponse.json({ ok: true });
     }
 
     // ═══════════════════════════════════════════════════════════════════
@@ -466,6 +633,89 @@ export async function POST(req: Request) {
       });
 
       return NextResponse.json({ ok: true, dump: true });
+    }
+
+    // ═══════════════════════════════════════════════════════════════════
+    // ☀️ /digest — Morning task & notes digest with AI focus suggestion
+    // ═══════════════════════════════════════════════════════════════════
+    if (text.startsWith("/digest")) {
+      await sendMsg(token, chatId, `☀️ <b>Generating your morning digest...</b>`);
+      after(async () => {
+        try {
+          const digest = await getMorningDigest();
+          await sendMsg(token, chatId, digest);
+        } catch (err: any) {
+          await sendMsg(token, chatId, `❌ <b>Digest Error:</b> ${escapeHtml(err.message)}`);
+        }
+      });
+      return NextResponse.json({ ok: true, digest: true });
+    }
+
+    // ═══════════════════════════════════════════════════════════════════
+    // 📝 /append — Append text to an existing published note
+    // ═══════════════════════════════════════════════════════════════════
+    if (text.startsWith("/append")) {
+      const payload = text.replace(/^\/append\s*/i, "").trim();
+      if (!payload) {
+        await sendMsg(token, chatId,
+          `📝 <b>Usage:</b> <code>/append note-slug New text to add at the bottom</code>\n\n` +
+          `Example:\n<code>/append python-variables - Tuples are immutable unlike lists</code>\n\n` +
+          `<i>Use /search to find the slug of the note you want to append to.</i>`
+        );
+        return NextResponse.json({ ok: true });
+      }
+
+      // Split: first word is the slug, rest is the text to append
+      const [rawSlug, ...textParts] = payload.split(" ");
+      const appendText = textParts.join(" ").trim();
+      if (!rawSlug || !appendText) {
+        await sendMsg(token, chatId, `⚠️ Usage: <code>/append note-slug Text to append</code>`);
+        return NextResponse.json({ ok: true });
+      }
+
+      const slug = rawSlug.replace(/\.md$/, "");
+      after(async () => {
+        try {
+          const { getNoteBySlugOrName, commitNoteToGitHub, escapeHtml: esc } = await import("@/lib/telegram-file-handler");
+          const note = await getNoteBySlugOrName(slug);
+          if (!note) {
+            await sendMsg(token, chatId, `❌ Note <code>${escapeHtml(slug)}</code> not found. Use /search to find the correct slug.`);
+            return;
+          }
+
+          // Fetch current content from GitHub
+          const repo = process.env.NEXT_PUBLIC_GISCUS_REPO || "xnocode/garden";
+          const ghToken = (process.env.GITHUB_TOKEN || process.env.GH_TOKEN || "").trim();
+          const filePath = `content/${slug}.md`;
+          const apiUrl = `https://api.github.com/repos/${repo}/contents/${filePath}`;
+          const authHeader = ghToken.startsWith("github_pat_") || ghToken.startsWith("ghp_") ? `Bearer ${ghToken}` : `token ${ghToken}`;
+
+          const ghRes = await fetch(apiUrl, { headers: { Authorization: authHeader, Accept: "application/vnd.github.v3+json" } });
+          if (!ghRes.ok) {
+            await sendMsg(token, chatId, `❌ Could not fetch note from GitHub (${ghRes.status}).`);
+            return;
+          }
+          const ghData = await ghRes.json();
+          const existingContent = Buffer.from(ghData.content.replace(/\n/g, ""), "base64").toString("utf-8");
+          const today = new Date().toISOString().split("T")[0];
+          const newContent = existingContent.trimEnd() + `\n\n<!-- appended ${today} -->\n${appendText}\n`;
+
+          const result = await commitNoteToGitHub(`${slug}.md`, newContent, false);
+          if (result.success) {
+            await sendMsg(token, chatId,
+              `📝 <b>Appended to ${escapeHtml(note.title)}!</b>\n\n` +
+              `<i>"${escapeHtml(appendText.slice(0, 120))}"</i>\n\n` +
+              `🔗 <a href="${escapeHtml(note.url)}">${escapeHtml(note.url)}</a>`,
+              { inline_keyboard: [[{ text: "🌐 View Note", url: note.url }]] }
+            );
+          } else {
+            await sendMsg(token, chatId, `❌ Failed to append: ${escapeHtml(result.message)}`);
+          }
+        } catch (err: any) {
+          await sendMsg(token, chatId, `❌ <b>Append Error:</b> ${escapeHtml(err.message)}`);
+        }
+      });
+      return NextResponse.json({ ok: true });
     }
 
     // ═══════════════════════════════════════════════════════════════════
@@ -735,6 +985,14 @@ export async function POST(req: Request) {
       });
 
       return NextResponse.json({ ok: true });
+    }
+
+    if (pdfFile) {
+        after(async () => {
+            const res = await processPdfToNote(pdfFile);
+            await sendMsg(token, chatId, res.success ? `✅ PDF processed: ${res.title}` : `❌ PDF fail`);
+        });
+        return NextResponse.json({ ok: true });
     }
 
     if (rawText.includes("Search Notes")) {
