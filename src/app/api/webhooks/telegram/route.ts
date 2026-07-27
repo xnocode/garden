@@ -17,9 +17,10 @@ export const dynamic = "force-dynamic";
 
 const MAIN_KEYBOARD = {
   keyboard: [
-    [{ text: "🌐 Visit Website" }, { text: "📚 List All Notes" }],
+    [{ text: "🌐 Visit Website" }, { text: "📚 List Notes" }],
+    [{ text: "📝 New Note" }, { text: "📌 Add Tasks" }],
     [{ text: "📊 Garden Stats" }, { text: "🏷️ Explore Tags" }],
-    [{ text: "🔍 Search Notes" }, { text: "🛑 Cancel / Reset" }],
+    [{ text: "🔍 Search Notes" }, { text: "💡 Help & Commands" }],
   ],
   resize_keyboard: true,
   persistent: true,
@@ -74,15 +75,16 @@ function registerCommands(token: string) {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       commands: [
+        { command: "note", description: "📝 Create a text note directly" },
         { command: "task", description: "📌 Add task(s) to Taskwarrior" },
-        { command: "list", description: "📚 List notes" },
+        { command: "list", description: "📚 List published notes" },
         { command: "search", description: "🔍 Search notes" },
-        { command: "link", description: "🔗 Get website URL" },
+        { command: "link", description: "🔗 Get website URL for note" },
         { command: "stats", description: "📊 Garden statistics" },
         { command: "tags", description: "🏷️ Explore tags" },
-        { command: "cancel", description: "🛑 Cancel/reset" },
         { command: "delete", description: "🗑️ Delete a note" },
-        { command: "help", description: "💡 Help" },
+        { command: "cancel", description: "🛑 Cancel/reset operation" },
+        { command: "help", description: "💡 Full help & command guide" },
       ],
     }),
   }).catch(() => {});
@@ -121,7 +123,7 @@ export async function POST(req: Request) {
     }
 
     // ═══════════════════════════════════════════════════════════════════
-    // 📄 FILE UPLOAD — Live Animated Spinner + Growing Progress Bar
+    // 📄 FILE UPLOAD — Upload new or Update existing .md note
     // ═══════════════════════════════════════════════════════════════════
     if (message.document) {
       const doc = message.document;
@@ -133,17 +135,7 @@ export async function POST(req: Request) {
       }
 
       const dup = await checkDuplicateNote(fileName);
-      if (dup) {
-        await sendMsg(token, chatId,
-          `⚠️ <b>Already Exists</b>\n\n` +
-          `<code>${escapeHtml(dup.filename)}</code> is already published.\n` +
-          `🔗 <a href="${escapeHtml(dup.url)}">${escapeHtml(dup.url)}</a>\n\n` +
-          `To replace it: <code>/delete ${escapeHtml(dup.filename)}</code>`,
-          { inline_keyboard: [[{ text: "🔗 View Note", url: dup.url }]] }
-        );
-        return NextResponse.json({ ok: true });
-      }
-
+      const isUpdate = Boolean(dup);
       const safe = escapeHtml(fileName);
 
       after(async () => {
@@ -175,21 +167,25 @@ export async function POST(req: Request) {
             }
           }
 
-          // 3. Save + commit to GitHub
+          // 3. Save + commit to GitHub (overwrites existing file if update)
           const result = await saveTelegramNote(fileName, fileContent, skipCi);
           const slug = result.fileName.replace(/\.md$/, "").replace(/\.markdown$/, "");
           const rawLiveUrl = `https://gardenx.qzz.io/?p=${encodeURIComponent(slug)}`;
           const safeLiveUrl = escapeHtml(rawLiveUrl);
           const pushed = result.githubStatus?.includes("Committed to GitHub") || false;
 
-          // 4. Send final result direct confirmation message
+          // 4. Send direct result confirmation message
           if (pushed) {
-            await sendMsg(token, chatId, `✅ <b>Published!</b>`);
+            const statusMsg = isUpdate ? `📝 <b>Updated Note!</b>` : `✅ <b>Published Note!</b>`;
+            await sendMsg(token, chatId,
+              `${statusMsg}\n\n📄 <code>${safe}</code>\n🔗 <a href="${safeLiveUrl}">${safeLiveUrl}</a>`,
+              { inline_keyboard: [[{ text: "🌐 View Note", url: rawLiveUrl }]] }
+            );
           } else {
-            await sendMsg(token, chatId, `❌ <b>Failed!</b>`);
+            await sendMsg(token, chatId, `❌ <b>Failed!</b> ${escapeHtml(result.githubStatus || "")}`);
           }
         } catch (err: any) {
-          await sendMsg(token, chatId, `❌ <b>Failed!</b>`);
+          await sendMsg(token, chatId, `❌ <b>Failed:</b> ${escapeHtml(err.message)}`);
         }
       });
 
@@ -254,9 +250,9 @@ export async function POST(req: Request) {
       return NextResponse.json({ ok: true });
     }
 
-    if (text.startsWith("/task") || text.startsWith("/tasks")) {
-      const payload = text.replace(/^\/tasks?/, "").trim();
-      if (!payload) {
+    if (text.startsWith("/task") || text.startsWith("/tasks") || rawText.includes("Add Tasks")) {
+      const payload = text.replace(/^\/(tasks?|Add Tasks)/i, "").trim();
+      if (!payload || rawText.includes("Add Tasks")) {
         await sendMsg(
           token,
           chatId,
@@ -302,6 +298,66 @@ export async function POST(req: Request) {
       return NextResponse.json({ ok: true });
     }
 
+    // ✍️ Direct Text Note Creation: /note or /write
+    if (text.startsWith("/note") || text.startsWith("/write") || rawText.includes("New Note")) {
+      const payload = text.replace(/^\/(note|write)/i, "").trim();
+      if (!payload || rawText.includes("New Note")) {
+        await sendMsg(
+          token,
+          chatId,
+          `📝 <b>Create Note Usage:</b>\n\n` +
+          `Send <code>/note Title Of Note</code> followed by content on new lines:\n\n` +
+          `<code>/note Building a Second Brain\n` +
+          `Here is the body text of your note...\n` +
+          `#productivity #learning</code>`
+        );
+        return NextResponse.json({ ok: true });
+      }
+
+      const lines = payload.split("\n");
+      const title = lines[0].replace(/^#+\s*/, "").replace(/^title:\s*/i, "").trim();
+      const bodyLines = lines.slice(1);
+      const bodyText = bodyLines.join("\n").trim();
+      const today = new Date().toISOString().split("T")[0];
+
+      const slug = title
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/^-|-$/g, "") || "untitled-note";
+      const fileName = `${slug}.md`;
+
+      let fullContent = "";
+      if (bodyText.startsWith("---")) {
+        fullContent = bodyText;
+      } else {
+        fullContent = `---\ntitle: "${title.replace(/"/g, '\\"')}"\ndraft: false\nauthor: Ridoy\ndate: ${today}\ntags:\n  - telegram\n---\n\n${bodyText}\n`;
+      }
+
+      after(async () => {
+        try {
+          const result = await saveTelegramNote(fileName, fullContent, false);
+          const rawLiveUrl = `https://gardenx.qzz.io/?p=${encodeURIComponent(slug)}`;
+          const safeLiveUrl = escapeHtml(rawLiveUrl);
+          if (result.githubStatus?.includes("Committed to GitHub")) {
+            await sendMsg(
+              token,
+              chatId,
+              `✅ <b>Note Created &amp; Published!</b>\n\n` +
+              `📄 <code>${escapeHtml(fileName)}</code>\n` +
+              `🔗 <a href="${safeLiveUrl}">${safeLiveUrl}</a>`,
+              { inline_keyboard: [[{ text: "🌐 View Note", url: rawLiveUrl }]] }
+            );
+          } else {
+            await sendMsg(token, chatId, `❌ <b>Failed to publish note:</b> ${escapeHtml(result.githubStatus || "")}`);
+          }
+        } catch (err: any) {
+          await sendMsg(token, chatId, `❌ <b>Failed:</b> ${escapeHtml(err.message)}`);
+        }
+      });
+
+      return NextResponse.json({ ok: true });
+    }
+
     if (rawText.includes("Search Notes")) {
       await sendMsg(token, chatId, `🔍 Send <code>/search keyword</code>`);
       return NextResponse.json({ ok: true });
@@ -341,7 +397,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ ok: true });
     }
 
-    if (text.startsWith("/list") || rawText.includes("List All Notes")) {
+    if (text.startsWith("/list") || rawText.includes("List Notes") || rawText.includes("List All Notes")) {
       const pg = parseInt(text.replace("/list", "").trim(), 10) || 1;
       const { notes, total, totalPages, page } = await getPaginatedNotes(pg, 25);
       if (!total) { await sendMsg(token, chatId, "📂 No notes."); }
@@ -355,7 +411,26 @@ export async function POST(req: Request) {
 
     if (text.startsWith("/start") || text.startsWith("/help") || rawText.includes("Help")) {
       await sendMsg(token, chatId,
-        `🌱 <b>Garden Bot</b>\n\n📁 Send any <code>.md</code> file to publish\n🔍 <code>/search keyword</code>\n🔗 <code>/link filename</code>\n🗑️ <code>/delete file.md</code>\n\n👇 Use buttons below!`
+        `💡 <b>Garden Bot — Feature &amp; Command Guide</b>\n\n` +
+        `📄 <b>1. Upload or Update Notes:</b>\n` +
+        `• Send any <code>.md</code> file to publish it.\n` +
+        `• Re-uploading an existing <code>.md</code> file <b>updates</b> it live!\n\n` +
+        `📝 <b>2. Write Notes Directly:</b>\n` +
+        `<code>/note Title Of Note\nBody content goes here... #tag</code>\n\n` +
+        `📌 <b>3. Taskwarrior Tasks:</b>\n` +
+        `• Single: <code>/task Buy milk due:today priority:H</code>\n` +
+        `• Multiple:\n` +
+        `<code>/tasks\n` +
+        `- Buy groceries due:today\n` +
+        `- Study C++ project:self-learning</code>\n\n` +
+        `📚 <b>4. Browse &amp; Manage Notes:</b>\n` +
+        `• <code>/list</code> — View all notes\n` +
+        `• <code>/search keyword</code> — Search notes\n` +
+        `• <code>/link filename</code> — Get URL for a note\n` +
+        `• <code>/delete file.md</code> — Delete a note\n` +
+        `• <code>/stats</code> — View garden stats\n` +
+        `• <code>/tags</code> — Explore tags\n\n` +
+        `👇 Use the buttons below!`
       );
       return NextResponse.json({ ok: true });
     }
