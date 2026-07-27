@@ -96,34 +96,40 @@ function formatTWDueDate(dateStr: string | null): string {
 }
 
 function registerCommands(token: string) {
+  const commands = [
+    { command: "ask", description: "🧠 Ask AI about your notes & tasks" },
+    { command: "digest", description: "☀️ Morning digest: tasks + notes + AI tip" },
+    { command: "voice", description: "🎙️ Send voice → AI creates a published note" },
+    { command: "vtask", description: "🎙️ Send voice → AI adds to Taskwarrior tasks" },
+    { command: "youtube", description: "🎥 Convert YouTube video to AI note" },
+    { command: "clip", description: "🔖 Clip web article link to AI note" },
+    { command: "dump", description: "💬 Organize raw messy text to AI note" },
+    { command: "append", description: "📝 Append text to an existing note" },
+    { command: "note", description: "✏️ Create a text note directly" },
+    { command: "ocr", description: "📚 Send image file as note via AI OCR" },
+    { command: "task", description: "📌 Add task(s) to Taskwarrior" },
+    { command: "mytasks", description: "📋 View your pending task list" },
+    { command: "done", description: "✅ Mark a task as done by number" },
+    { command: "list", description: "📚 List published notes" },
+    { command: "search", description: "🔍 Search notes" },
+    { command: "link", description: "🔗 Get website URL for note" },
+    { command: "stats", description: "📊 Garden statistics" },
+    { command: "tags", description: "🏷️ Explore tags" },
+    { command: "delete", description: "🗑️ Delete a note" },
+    { command: "cancel", description: "🛑 Cancel operation" },
+    { command: "help", description: "💡 Full help guide" },
+  ];
+
   tgFetch(`https://api.telegram.org/bot${token}/setMyCommands`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      commands: [
-        { command: "ask", description: "🧠 Ask AI about your notes & tasks" },
-        { command: "digest", description: "☀️ Morning digest: tasks + notes + AI tip" },
-        { command: "voice", description: "🎙️ Send voice → AI creates a published note" },
-        { command: "vtask", description: "🎙️ Send voice → AI adds to Taskwarrior tasks" },
-        { command: "youtube", description: "🎥 Convert YouTube video to AI note" },
-        { command: "clip", description: "🔖 Clip web article link to AI note" },
-        { command: "dump", description: "💬 Organize raw messy text to AI note" },
-        { command: "append", description: "📝 Append text to an existing note" },
-        { command: "note", description: "✏️ Create a text note directly" },
-        { command: "ocr", description: "📚 Send image file as note via AI OCR" },
-        { command: "task", description: "📌 Add task(s) to Taskwarrior" },
-        { command: "mytasks", description: "📋 View your pending task list" },
-        { command: "done", description: "✅ Mark a task as done by number" },
-        { command: "list", description: "📚 List published notes" },
-        { command: "search", description: "🔍 Search notes" },
-        { command: "link", description: "🔗 Get website URL for note" },
-        { command: "stats", description: "📊 Garden statistics" },
-        { command: "tags", description: "🏷️ Explore tags" },
-        { command: "delete", description: "🗑️ Delete a note" },
-        { command: "cancel", description: "🛑 Cancel operation" },
-        { command: "help", description: "💡 Full help guide" },
-      ],
-    }),
+    body: JSON.stringify({ commands }),
+  }).catch(() => {});
+
+  tgFetch(`https://api.telegram.org/bot${token}/setMyCommands`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ commands, scope: { type: "all_private_chats" } }),
   }).catch(() => {});
 }
 
