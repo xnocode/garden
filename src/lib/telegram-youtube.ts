@@ -110,7 +110,7 @@ export async function processYouTubeToNote(youtubeUrl: string): Promise<YouTubeN
   }
 
   const hasTranscript = Boolean(fullTranscript);
-  const truncatedTranscript = hasTranscript ? fullTranscript.slice(0, 50000) : "";
+  const truncatedTranscript = hasTranscript ? fullTranscript.slice(0, 120000) : "";
 
   const geminiKey = (process.env.GEMINI_API_KEY || process.env.GOOGLE_AI_KEY || "").trim();
   const groqKey = (process.env.GROQ_API_KEY || "").trim();
@@ -121,15 +121,18 @@ export async function processYouTubeToNote(youtubeUrl: string): Promise<YouTubeN
     ? `You are an expert educator and technical note-taker. 
 The user wants to LEARN THE SKILL or CONCEPT in this video ("${videoTitle}" by ${channelName}) WITHOUT HAVING TO WATCH THE VIDEO.
 
-Your goal is to write a comprehensive, self-contained educational Markdown study note that teaches the topic completely.
+CRITICAL REQUIREMENT ON LENGTH & DEPTH:
+- Do NOT briefly summarize or skip details.
+- Match the length and depth of your note to the complexity of the video. If the video is long or covers multiple topics, write an exhaustive, deep-dive, fully comprehensive study guide covering EVERY concept, sub-topic, formula, code example, and practical technique explained by the creator.
+- Ensure the reader clears ALL concepts taught in the video and masters the skill completely just by reading this note.
 
 Structuring Guidelines:
 1. "title": A clear, educational, descriptive title.
-2. "body": Write a rich, detailed, self-contained Markdown guide with sections:
+2. "body": Write an extensive, self-contained Markdown guide with rich sections:
    - ## 💡 Core Concept & Big Picture (What it is, why it matters, main goal)
-   - ## 📘 Step-by-Step Breakdown & Detailed Guide (Explain every technique, method, formula, code snippet, or concept mentioned in full detail so the reader masters the skill directly from the note)
+   - ## 📘 Complete Concept Breakdown & Deep Dive (Cover EVERY topic, section, formula, code snippet, or mechanism mentioned in the video in full detail)
    - ## 🔑 Key Takeaways & Pro Tips (Crucial principles, gotchas, or advice from the creator)
-   - ## ⚡ Actionable Summary & How to Apply (Quick steps to practice or implement immediately)
+   - ## ⚡ Actionable Summary & Practice Guide (Step-by-step implementation guide)
 3. "tags": 2 to 4 relevant single-word lowercase tags.
 
 Return ONLY valid JSON matching this schema:
@@ -142,7 +145,7 @@ Return ONLY valid JSON matching this schema:
 Transcript:
 ${truncatedTranscript}`
     : `You are an expert educator. Create a comprehensive educational study guide for the topic covered in the YouTube video titled "${videoTitle}" by ${channelName}.
-The goal is to teach the concept clearly so the reader understands it completely without watching the video.
+The goal is to teach the concept clearly so the reader understands it completely without watching the video. Provide an extensive deep dive covering key principles, mechanisms, and practical steps.
 
 Structure:
 - ## 💡 Core Concept & Overview
@@ -169,6 +172,7 @@ Return ONLY valid JSON matching this schema:
             generationConfig: {
               responseMimeType: "application/json",
               temperature: 0.3,
+              maxOutputTokens: 8192,
             },
           }),
         }
@@ -197,6 +201,7 @@ Return ONLY valid JSON matching this schema:
         },
         body: JSON.stringify({
           model: "llama-3.3-70b-versatile",
+          max_tokens: 8000,
           response_format: { type: "json_object" },
           messages: [
             {
