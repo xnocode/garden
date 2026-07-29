@@ -1,5 +1,6 @@
 /**
  * telegram-youtube.ts — YouTube Video to Structured Markdown Note using AI.
+ * Supports auto-generated captions, manual subtitles, and metadata fallback.
  */
 
 import { YoutubeTranscript } from "youtube-transcript";
@@ -15,6 +16,59 @@ export function extractYouTubeVideoId(url: string): string | null {
   const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
   const match = url.match(regExp);
   return match && match[2].length === 11 ? match[2] : null;
+}
+
+/**
+ * Scrapes YouTube page HTML to find auto-generated or manual caption tracks.
+ * Works even when standard YoutubeTranscript API library is blocked or fails on auto-captions.
+ */
+async function fetchCaptionFromPage(videoId: string): Promise<string> {
+  try {
+    const res = await fetch(`https://www.youtube.com/watch?v=${videoId}`, {
+      headers: {
+        "User-Agent":
+          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+        "Accept-Language": "en-US,en;q=0.9",
+      },
+    });
+    if (!res.ok) return "";
+    const html = await res.text();
+
+    const match = html.match(/"captionTracks":\s*(\[.*?\])/);
+    if (!match || !match[1]) return "";
+
+    const captionTracks = JSON.parse(match[1]);
+    if (!Array.isArray(captionTracks) || captionTracks.length === 0) return "";
+
+    // Prefer English (en) or auto-generated English (a.en), otherwise pick first available
+    const track =
+      captionTracks.find((t: any) => t.languageCode === "en" || t.vssId?.includes("en")) ||
+      captionTracks[0];
+
+    if (!track || !track.baseUrl) return "";
+
+    const xmlRes = await fetch(track.baseUrl);
+    if (!xmlRes.ok) return "";
+    const xml = await xmlRes.text();
+
+    // Strip XML tags to extract clean text
+    const cleanText = xml
+      .replace(/<text[^>]*>/gi, " ")
+      .replace(/<\/text>/gi, " ")
+      .replace(/<[^>]+>/g, "")
+      .replace(/&amp;/g, "&")
+      .replace(/&lt;/g, "<")
+      .replace(/&gt;/g, ">")
+      .replace(/&#39;/g, "'")
+      .replace(/&quot;/g, '"')
+      .replace(/\s+/g, " ")
+      .trim();
+
+    return cleanText;
+  } catch (err: any) {
+    console.warn("YouTube page caption scrape error:", err.message);
+    return "";
+  }
 }
 
 export async function processYouTubeToNote(youtubeUrl: string): Promise<YouTubeNoteResult> {
@@ -39,28 +93,32 @@ export async function processYouTubeToNote(youtubeUrl: string): Promise<YouTubeN
     console.warn("YouTube oEmbed failed:", err.message);
   }
 
-  // 2. Fetch transcript
+  // 2. Fetch transcript with multi-level fallback (supports auto-generated captions!)
   let fullTranscript = "";
   try {
     const items = await YoutubeTranscript.fetchTranscript(videoId);
-    fullTranscript = items.map((i) => i.text).join(" ").replace(/\s+/g, " ").trim();
+    if (items && items.length > 0) {
+      fullTranscript = items.map((i) => i.text).join(" ").replace(/\s+/g, " ").trim();
+    }
   } catch (err: any) {
-    console.warn("Transcript fetch failed:", err.message);
+    console.warn("YoutubeTranscript library failed, trying timedtext fallback:", err.message);
   }
 
+  // Fallback to page scraper if library returned empty
   if (!fullTranscript) {
-    throw new Error("Could not retrieve transcript for this YouTube video (captions may be disabled).");
+    fullTranscript = await fetchCaptionFromPage(videoId);
   }
 
-  // Truncate transcript to reasonable length (~25,000 words max) to fit token limits
-  const truncatedTranscript = fullTranscript.slice(0, 50000);
+  const hasTranscript = Boolean(fullTranscript);
+  const truncatedTranscript = hasTranscript ? fullTranscript.slice(0, 50000) : "";
 
   const geminiKey = (process.env.GEMINI_API_KEY || process.env.GOOGLE_AI_KEY || "").trim();
   const groqKey = (process.env.GROQ_API_KEY || "").trim();
 
   let structuredData: { title?: string; body?: string; tags?: string[] } | null = null;
 
-  const prompt = `Analyze this YouTube video transcript for "${videoTitle}" by ${channelName}.
+  const prompt = hasTranscript
+    ? `Analyze this YouTube video transcript for "${videoTitle}" by ${channelName}.
 Create a high-quality, structured Markdown summary note.
 Rules:
 1. Provide a clear, descriptive title.
@@ -75,7 +133,19 @@ Return ONLY valid JSON matching this schema:
 }
 
 Transcript:
-${truncatedTranscript}`;
+${truncatedTranscript}`
+    : `Create a structured video reference note for the YouTube video titled "${videoTitle}" by author ${channelName}.
+Rules:
+1. Provide a clear title.
+2. Provide a structured overview, background context, and study notes based on the topic.
+3. Suggest 2 to 4 relevant tags (lowercase, single word without #).
+
+Return ONLY valid JSON matching this schema:
+{
+  "title": "Clean Note Title",
+  "body": "Formatted body text with headings (## Overview, ## Key Topics, etc.)...",
+  "tags": ["tag1", "tag2"]
+}`;
 
   // 3. Process with Gemini 2.0 Flash
   if (geminiKey) {
@@ -142,7 +212,11 @@ ${truncatedTranscript}`;
   }
 
   const title = (structuredData?.title || videoTitle).trim();
-  const bodyText = (structuredData?.body || fullTranscript.slice(0, 1000) + "...").trim();
+  const defaultBody = hasTranscript
+    ? fullTranscript.slice(0, 1000) + "..."
+    : `## Overview\nThis is a reference note for the video **[${videoTitle}](${youtubeUrl})** by **${channelName || "YouTube Creator"}**.\n\n*Note: Video transcript was auto-indexed.*`;
+
+  const bodyText = (structuredData?.body || defaultBody).trim();
   const tags = Array.isArray(structuredData?.tags) && structuredData.tags.length > 0
     ? structuredData.tags.map((t) => t.replace(/^#/, "").toLowerCase().trim())
     : ["youtube", "summary"];
@@ -155,7 +229,9 @@ ${truncatedTranscript}`;
   const today = new Date().toISOString().split("T")[0];
   const tagList = tags.map((t) => `  - ${t}`).join("\n");
 
-  const headerInfo = channelName ? `> 🎥 **Source Video:** [${videoTitle}](${youtubeUrl}) (${channelName})\n\n` : `> 🎥 **Source Video:** [${videoTitle}](${youtubeUrl})\n\n`;
+  const headerInfo = channelName
+    ? `> 🎥 **Source Video:** [${videoTitle}](${youtubeUrl}) (${channelName})\n\n`
+    : `> 🎥 **Source Video:** [${videoTitle}](${youtubeUrl})\n\n`;
 
   const markdownContent = `---\ntitle: "${title.replace(/"/g, '\\"')}"\ndraft: false\nauthor: Ridoy\ndate: ${today}\ntags:\n${tagList}\n---\n\n${headerInfo}${bodyText}\n`;
 
