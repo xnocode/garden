@@ -1,42 +1,30 @@
 [
   {
-    "version": "v0.6.0",
+    "version": "v0.7.0",
     "date": "2026-07-29",
     "title": "Voice Notes & PDF Import",
     "badge": "FEATURE",
     "category": "feature",
     "changes": [
-      "Send audio voice messages on Telegram to auto-generate Markdown notes",
+      "Send audio voice messages via Telegram to auto-generate Markdown notes",
       "Import PDF study documents and convert them into organized notes",
       "Added Photo OCR note converter for textbooks and handwritten notes"
     ]
   },
   {
-    "version": "v0.5.1",
-    "date": "2026-07-26",
-    "title": "Security & System Updates",
-    "badge": "SECURITY",
-    "category": "security",
+    "version": "v0.6.0",
+    "date": "2026-07-24",
+    "title": "Telegram Bot Integration",
+    "badge": "BOT",
+    "category": "feature",
     "changes": [
-      "Webhook signature validation for external service integrations",
-      "Added public release notes and feature changelog page",
-      "Performance optimizations for serverless note rendering"
+      "Remote note management via Telegram (/list, /search, /tag, /stats)",
+      "Upload .md note files directly via Telegram with automated publishing",
+      "Live step-by-step progress status notifications"
     ]
   },
   {
     "version": "v0.5.0",
-    "date": "2026-07-24",
-    "title": "Telegram Note Sync",
-    "badge": "BOT",
-    "category": "feature",
-    "changes": [
-      "Upload .md note files directly via Telegram to publish automatically",
-      "Search and manage notes remotely using Telegram commands (/list, /search, /stats)",
-      "Added live progress updates and build status notifications"
-    ]
-  },
-  {
-    "version": "v0.4.0",
     "date": "2026-07-16",
     "title": "Discussion & Comments",
     "badge": "COMMUNITY",
@@ -44,25 +32,13 @@
     "changes": [
       "Added Giscus discussion thread under every published note",
       "Integrated responsive ad layout components for mobile & desktop",
-      "Fixed timezone date formatting for note publication dates"
+      "Enhanced search index & date formatting improvements"
     ]
   },
   {
-    "version": "v0.3.0",
+    "version": "v0.4.0",
     "date": "2026-07-08",
-    "title": "Interactive Graph & Task Tracking",
-    "badge": "GRAPH",
-    "category": "feature",
-    "changes": [
-      "Interactive 2D Knowledge Graph view to explore note connections",
-      "Taskwarrior task management integration synced with local setup",
-      "Added inline #tag filter pages and tag cloud navigation"
-    ]
-  },
-  {
-    "version": "v0.2.0",
-    "date": "2026-07-02",
-    "title": "AI Search & Code Runner",
+    "title": "Interactive Code Runner & AI Search",
     "badge": "AI",
     "category": "ai",
     "changes": [
@@ -71,14 +47,39 @@
     ]
   },
   {
-    "version": "v0.1.0",
+    "version": "v0.3.0",
     "date": "2026-06-29",
-    "title": "Garden Launch",
+    "title": "GitHub Open Source Launch & 2D Graph",
     "badge": "LAUNCH",
     "category": "core",
     "changes": [
-      "Initial release of the xnocode Digital Garden",
-      "Obsidian-flavored Markdown rendering with Wikilinks, Transclusions, and KaTeX math"
+      "Open sourced Digital Garden platform on GitHub",
+      "Interactive 2D Knowledge Graph visualization for note connections",
+      "Taskwarrior task management integration synced with local setup"
+    ]
+  },
+  {
+    "version": "v0.2.0",
+    "date": "2026-06-24",
+    "title": "Next.js Web Engine Migration",
+    "badge": "WEB",
+    "category": "core",
+    "changes": [
+      "Migrated Obsidian vault into a custom Next.js web application",
+      "Implemented Obsidian-flavored Wikilinks, Transclusions, and KaTeX math engine",
+      "Added dark/light theme switcher and responsive reading layout"
+    ]
+  },
+  {
+    "version": "v0.1.0",
+    "date": "2026-06-10",
+    "title": "Initial Local Vault & Note Architecture",
+    "badge": "FOUNDATION",
+    "category": "core",
+    "changes": [
+      "Initial creation of the Digital Garden knowledge base structure",
+      "Established Zettelkasten note organization, tags hierarchy, and linking conventions",
+      "Local vault setup for university study notes and personal essays"
     ]
   }
 ]

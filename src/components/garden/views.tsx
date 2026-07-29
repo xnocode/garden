@@ -378,6 +378,10 @@ $ bun run dev              # preview at localhost:3000`}</code>
           shown in the sidebar.
         </li>
         <li>
+          <strong>Release History</strong> — view feature updates and release logs at{" "}
+          <Link href="/?view=changelog" className="text-garden underline font-medium">Changelog</Link>.
+        </li>
+        <li>
           <strong>Related notes</strong> — shared tags + 2-hop link analysis.
         </li>
         <li>
