@@ -47,15 +47,25 @@ async function fetchCaptionFromPage(videoId: string): Promise<string> {
 
     if (!track || !track.baseUrl) return "";
 
-    const xmlRes = await fetch(track.baseUrl);
+    const trackUrl = new URL(track.baseUrl);
+    if (trackUrl.protocol !== "https:") return "";
+
+    const xmlRes = await fetch(trackUrl.toString());
     if (!xmlRes.ok) return "";
     const xml = await xmlRes.text();
 
-    // Strip XML tags to extract clean text
-    const cleanText = xml
+    // Iteratively strip XML/HTML tags safely
+    let cleanText = xml
       .replace(/<text[^>]*>/gi, " ")
-      .replace(/<\/text>/gi, " ")
-      .replace(/<[^>]+>/g, "")
+      .replace(/<\/text>/gi, " ");
+
+    let prev = "";
+    while (cleanText !== prev) {
+      prev = cleanText;
+      cleanText = cleanText.replace(/<[^>]+>/g, " ");
+    }
+
+    cleanText = cleanText
       .replace(/&amp;/g, "&")
       .replace(/&lt;/g, "<")
       .replace(/&gt;/g, ">")

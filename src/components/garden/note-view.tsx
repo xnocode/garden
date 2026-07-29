@@ -41,7 +41,13 @@ function stripLeadingH1(html: string, title: string): string {
   const trimmed = html.trimStart();
   const m = trimmed.match(/^<h1[^>]*>([\s\S]*?)<\/h1>/i);
   if (!m) return html;
-  const innerText = m[1].replace(/<[^>]+>/g, "").trim();
+  let innerText = m[1];
+  let prev = "";
+  while (innerText !== prev) {
+    prev = innerText;
+    innerText = innerText.replace(/<[^>]+>/g, "");
+  }
+  innerText = innerText.trim();
   // Only strip if it matches the title (case-insensitive) or is short
   if (
     innerText.toLowerCase() === title.toLowerCase() ||

@@ -20,6 +20,17 @@ export interface NoteItem {
 const dynamicNotesMap = new Map<string, NoteItem>();
 
 /**
+ * Validates and normalizes URL for secure server-side fetching (SSRF protection).
+ */
+export function validateSecureUrl(rawUrl: string): string {
+  const parsed = new URL(rawUrl);
+  if (parsed.protocol !== "https:" && parsed.protocol !== "http:") {
+    throw new Error("Invalid URL protocol");
+  }
+  return parsed.toString();
+}
+
+/**
  * Escapes HTML characters so Telegram's HTML parser doesn't break.
  */
 export function escapeHtml(str: string): string {
@@ -84,7 +95,7 @@ export async function commitNoteToGitHub(
     const getController = new AbortController();
     const getId = setTimeout(() => getController.abort(), 2000);
     try {
-      const getRes = await fetch(url, {
+      const getRes = await fetch(validateSecureUrl(url), {
         signal: getController.signal,
         headers: {
           Authorization: authHeader,
@@ -117,7 +128,7 @@ export async function commitNoteToGitHub(
     const putController = new AbortController();
     const putId = setTimeout(() => putController.abort(), 2500);
 
-    const putRes = await fetch(url, {
+    const putRes = await fetch(validateSecureUrl(url), {
       method: "PUT",
       signal: putController.signal,
       headers: {
@@ -165,7 +176,7 @@ export async function deleteNoteFromGitHub(
     // 1. GET file SHA (2.0s timeout)
     const getController = new AbortController();
     const getId = setTimeout(() => getController.abort(), 2000);
-    const getRes = await fetch(url, {
+    const getRes = await fetch(validateSecureUrl(url), {
       signal: getController.signal,
       headers: {
         Authorization: authHeader,
@@ -186,7 +197,7 @@ export async function deleteNoteFromGitHub(
     const delController = new AbortController();
     const delId = setTimeout(() => delController.abort(), 2500);
 
-    const delRes = await fetch(url, {
+    const delRes = await fetch(validateSecureUrl(url), {
       method: "DELETE",
       signal: delController.signal,
       headers: {

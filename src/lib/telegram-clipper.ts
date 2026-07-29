@@ -9,7 +9,13 @@ interface ClipperResult {
   tags: string[];
 }
 
-export async function processWebClipToNote(url: string): Promise<ClipperResult> {
+export async function processWebClipToNote(rawUrl: string): Promise<ClipperResult> {
+  const parsedUrl = new URL(rawUrl);
+  if (parsedUrl.protocol !== "http:" && parsedUrl.protocol !== "https:") {
+    throw new Error("Invalid web URL protocol.");
+  }
+  const url = parsedUrl.toString();
+
   // 1. Fetch web page HTML
   const res = await fetch(url, {
     headers: {
@@ -28,19 +34,29 @@ export async function processWebClipToNote(url: string): Promise<ClipperResult> 
   const titleMatch = html.match(/<title[^>]*>(.*?)<\/title>/i);
   const rawTitle = titleMatch ? titleMatch[1].replace(/\s+/g, " ").trim() : "Saved Article";
 
-  // Clean HTML to extract text
-  const cleanText = html
-    .replace(/<script\b[^<]*>[\s\S]*?<\/script>/gi, "")
-    .replace(/<style\b[^<]*>[\s\S]*?<\/style>/gi, "")
-    .replace(/<svg\b[^<]*>[\s\S]*?<\/svg>/gi, "")
-    .replace(/<header\b[^<]*>[\s\S]*?<\/header>/gi, "")
-    .replace(/<footer\b[^<]*>[\s\S]*?<\/footer>/gi, "")
-    .replace(/<nav\b[^<]*>[\s\S]*?<\/nav>/gi, "")
-    .replace(/<[^>]+>/g, " ")
+  // Clean HTML blocks safely
+  let textContent = html
+    .replace(/<script[\s\S]*?<\/script>/gi, " ")
+    .replace(/<style[\s\S]*?<\/style>/gi, " ")
+    .replace(/<svg[\s\S]*?<\/svg>/gi, " ")
+    .replace(/<header[\s\S]*?<\/header>/gi, " ")
+    .replace(/<footer[\s\S]*?<\/footer>/gi, " ")
+    .replace(/<nav[\s\S]*?<\/nav>/gi, " ");
+
+  // Iteratively strip HTML tags until none remain
+  let prevText = "";
+  while (textContent !== prevText) {
+    prevText = textContent;
+    textContent = textContent.replace(/<[^>]+>/g, " ");
+  }
+
+  const cleanText = textContent
     .replace(/&nbsp;/g, " ")
     .replace(/&amp;/g, "&")
     .replace(/&quot;/g, '"')
     .replace(/&#39;/g, "'")
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">")
     .replace(/\s+/g, " ")
     .trim();
 

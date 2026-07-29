@@ -16,8 +16,14 @@ export function extractToc(html: string): TocItem[] {
   while ((m = regex.exec(html)) !== null) {
     const level = parseInt(m[1], 10);
     const id = m[2];
-    // Strip inner tags (e.g. the heading-anchor <a>#</a>) for display text
-    const text = m[3].replace(/<[^>]+>/g, "").replace(/#$/, "").trim();
+    // Iteratively strip inner HTML tags safely
+    let text = m[3];
+    let prev = "";
+    while (text !== prev) {
+      prev = text;
+      text = text.replace(/<[^>]+>/g, "");
+    }
+    text = text.replace(/#$/, "").trim();
     if (id && text) items.push({ id, text, level });
   }
   return items;

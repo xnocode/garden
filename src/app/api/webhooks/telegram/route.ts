@@ -772,7 +772,7 @@ export async function POST(req: Request) {
       const slug = rawSlug.replace(/\.md$/, "");
       after(async () => {
         try {
-          const { getNoteBySlugOrName, commitNoteToGitHub, escapeHtml: esc } = await import("@/lib/telegram-file-handler");
+          const { getNoteBySlugOrName, commitNoteToGitHub, escapeHtml: esc, validateSecureUrl: valUrl } = await import("@/lib/telegram-file-handler");
           const note = await getNoteBySlugOrName(slug);
           if (!note) {
             await sendMsg(token, chatId, `❌ Note <code>${escapeHtml(slug)}</code> not found. Use /search to find the correct slug.`);
@@ -786,7 +786,7 @@ export async function POST(req: Request) {
           const apiUrl = `https://api.github.com/repos/${repo}/contents/${filePath}`;
           const authHeader = ghToken.startsWith("github_pat_") || ghToken.startsWith("ghp_") ? `Bearer ${ghToken}` : `token ${ghToken}`;
 
-          const ghRes = await fetch(apiUrl, { headers: { Authorization: authHeader, Accept: "application/vnd.github.v3+json" } });
+          const ghRes = await fetch(valUrl(apiUrl), { headers: { Authorization: authHeader, Accept: "application/vnd.github.v3+json" } });
           if (!ghRes.ok) {
             await sendMsg(token, chatId, `❌ Could not fetch note from GitHub (${ghRes.status}).`);
             return;
