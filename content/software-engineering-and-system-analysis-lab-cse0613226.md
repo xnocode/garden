@@ -70,7 +70,7 @@ A project has three main parts:
 	- Find out if a similar product already exists. 
 	- If a similar product exists, we have to decide:
 	    - What new features our product will have.
-	    - What is the difference between their product and our product.
+	    - How our product differs from theirs.
 2. Technical Feasibility
 	- Before selecting our project, we have to check the technology.
 	- Check whether the required technology already exists.
@@ -115,8 +115,8 @@ Week 3 -> 05-08-2026
 	- List the main features and functions of the system.
 6. System Requirements
 	- List the software requirements.
-    - List the hardware requirements (if needed).
-    - Mention any other requirements needed to run the system.
+	- List the hardware requirements (if needed).
+	- Mention any other requirements needed to run the system.
 7. SWOT Analysis
 	- Strengths
 	- Weaknesses
