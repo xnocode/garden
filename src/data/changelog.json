@@ -1,39 +1,54 @@
 [
   {
-    "version": "v0.3.0",
+    "version": "v0.4.0",
     "date": "2026-07-29",
-    "title": "Voice Notes, PDF Conversion & Security Hardening",
+    "title": "Voice Notes, PDF Conversion, Security & Feature Changelog",
     "badge": "NEW",
     "category": "feature",
     "changes": [
-      "Added Telegram Voice Note processing (audio to structured Markdown notes)",
+      "Added Telegram Voice Note processing (audio messages to structured Markdown notes)",
       "Added PDF to Markdown note conversion using Gemini 2.0 API",
       "Added Photo OCR note generator via Telegram",
       "Implemented HMAC SHA-256 signature verification for GitHub Webhooks",
-      "Added Feature Changelog with Telegram /release command integration"
+      "Added Official Website Feature Changelog with Telegram /release command integration"
+    ]
+  },
+  {
+    "version": "v0.3.0",
+    "date": "2026-07-24",
+    "title": "Telegram Bot Integration & Remote Note Management",
+    "badge": "BOT",
+    "category": "feature",
+    "changes": [
+      "Full Telegram bot note management (/list, /search, /tag, /stats, /link)",
+      "Upload .md note files directly from Telegram with automated GitHub commits",
+      "Dynamic note cache with live 4-step deployment progress animations",
+      "Authorized multi-user access control and group chat support"
     ]
   },
   {
     "version": "v0.2.0",
-    "date": "2026-06-15",
-    "title": "AI Search Assistant & Interactive Code Runner",
-    "badge": "AI",
-    "category": "ai",
+    "date": "2026-07-16",
+    "title": "Giscus Comments System & AdSense Integration",
+    "badge": "COMMUNITY",
+    "category": "ui",
     "changes": [
-      "AI Search Assistant to query across all digital garden notes using Gemini & Llama 3.3",
-      "Interactive Code Runner to execute Python, JS, C++, Go code directly in note blocks via Judge0 CE"
+      "Added Giscus discussion comments section with custom garden dark/light theme",
+      "Integrated Google AdSense ad placements (auto, in-article, in-feed, display formats)",
+      "Refined command palette search and fixed client-side hydration timezone formatting"
     ]
   },
   {
     "version": "v0.1.0",
-    "date": "2026-05-01",
-    "title": "Core Digital Garden Engine & Taskwarrior Sync",
-    "badge": "CORE",
+    "date": "2026-06-29",
+    "title": "Initial Digital Garden Launch",
+    "badge": "LAUNCH",
     "category": "core",
     "changes": [
-      "Obsidian-flavored Markdown rendering with Wikilinks, Callouts, & KaTeX Math",
+      "Launched xnocode Digital Garden core platform",
+      "Obsidian-flavored Markdown rendering engine (Wikilinks, Transclusions, KaTeX Math, Callouts)",
       "2D Interactive Knowledge Graph visualization",
-      "Live Taskwarrior task management synced via GitHub & Telegram"
+      "Live Taskwarrior task management synced via GitHub & local CLI"
     ]
   }
 ]
