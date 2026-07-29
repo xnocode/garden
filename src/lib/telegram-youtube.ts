@@ -54,23 +54,21 @@ async function fetchCaptionFromPage(videoId: string): Promise<string> {
     if (!xmlRes.ok) return "";
     const xml = await xmlRes.text();
 
-    // Iteratively strip XML/HTML tags safely
     let cleanText = xml
       .replace(/<text[^>]*>/gi, " ")
-      .replace(/<\/text>/gi, " ");
-
-    let prev = "";
-    while (cleanText !== prev) {
-      prev = cleanText;
-      cleanText = cleanText.replace(/<[^>]+>/g, " ");
-    }
+      .replace(/<\/text>/gi, " ")
+      .replace(/<[\s\S]*?>/g, " ");
 
     cleanText = cleanText
-      .replace(/&amp;/g, "&")
-      .replace(/&lt;/g, "<")
-      .replace(/&gt;/g, ">")
-      .replace(/&#39;/g, "'")
-      .replace(/&quot;/g, '"')
+      .replace(/&(?:amp|lt|gt|quot|#39|nbsp);/g, (m) => {
+        if (m === "&amp;") return "&";
+        if (m === "&lt;") return "<";
+        if (m === "&gt;") return ">";
+        if (m === "&quot;") return '"';
+        if (m === "&#39;") return "'";
+        if (m === "&nbsp;") return " ";
+        return m;
+      })
       .replace(/\s+/g, " ")
       .trim();
 
@@ -257,7 +255,8 @@ Return ONLY valid JSON matching this schema:
     ? `> 🎥 **Source Video:** [${videoTitle}](${youtubeUrl}) (${channelName})\n\n`
     : `> 🎥 **Source Video:** [${videoTitle}](${youtubeUrl})\n\n`;
 
-  const markdownContent = `---\ntitle: "${title.replace(/"/g, '\\"')}"\ndraft: false\nauthor: Ridoy\ndate: ${today}\ntags:\n${tagList}\n---\n\n${headerInfo}${bodyText}\n`;
+  const safeTitle = title.replace(/\\/g, "\\\\").replace(/"/g, '\\"');
+  const markdownContent = `---\ntitle: "${safeTitle}"\ndraft: false\nauthor: Ridoy\ndate: ${today}\ntags:\n${tagList}\n---\n\n${headerInfo}${bodyText}\n`;
 
   return {
     title,

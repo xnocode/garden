@@ -783,10 +783,12 @@ export async function POST(req: Request) {
           const repo = process.env.NEXT_PUBLIC_GISCUS_REPO || "xnocode/garden";
           const ghToken = (process.env.GITHUB_TOKEN || process.env.GH_TOKEN || "").trim();
           const filePath = `content/${slug}.md`;
-          const apiUrl = `https://api.github.com/repos/${repo}/contents/${filePath}`;
+          const targetUrl = new URL(`https://api.github.com/repos/${repo}/contents/${filePath}`);
+          if (targetUrl.hostname !== "api.github.com" || targetUrl.protocol !== "https:") return;
+          const apiUrl = targetUrl.href;
           const authHeader = ghToken.startsWith("github_pat_") || ghToken.startsWith("ghp_") ? `Bearer ${ghToken}` : `token ${ghToken}`;
 
-          const ghRes = await fetch(valUrl(apiUrl), { headers: { Authorization: authHeader, Accept: "application/vnd.github.v3+json" } });
+          const ghRes = await fetch(apiUrl, { headers: { Authorization: authHeader, Accept: "application/vnd.github.v3+json" } });
           if (!ghRes.ok) {
             await sendMsg(token, chatId, `❌ Could not fetch note from GitHub (${ghRes.status}).`);
             return;

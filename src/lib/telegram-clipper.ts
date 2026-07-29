@@ -14,7 +14,7 @@ export async function processWebClipToNote(rawUrl: string): Promise<ClipperResul
   if (parsedUrl.protocol !== "http:" && parsedUrl.protocol !== "https:") {
     throw new Error("Invalid web URL protocol.");
   }
-  const url = parsedUrl.toString();
+  const url = parsedUrl.href;
 
   // 1. Fetch web page HTML
   const res = await fetch(url, {
@@ -35,7 +35,7 @@ export async function processWebClipToNote(rawUrl: string): Promise<ClipperResul
   const rawTitle = titleMatch ? titleMatch[1].replace(/\s+/g, " ").trim() : "Saved Article";
 
   // Clean HTML blocks safely
-  let textContent = html
+  const textWithoutBlocks = html
     .replace(/<script[\s\S]*?<\/script>/gi, " ")
     .replace(/<style[\s\S]*?<\/style>/gi, " ")
     .replace(/<svg[\s\S]*?<\/svg>/gi, " ")
@@ -43,20 +43,19 @@ export async function processWebClipToNote(rawUrl: string): Promise<ClipperResul
     .replace(/<footer[\s\S]*?<\/footer>/gi, " ")
     .replace(/<nav[\s\S]*?<\/nav>/gi, " ");
 
-  // Iteratively strip HTML tags until none remain
-  let prevText = "";
-  while (textContent !== prevText) {
-    prevText = textContent;
-    textContent = textContent.replace(/<[^>]+>/g, " ");
-  }
+  const textWithoutTags = textWithoutBlocks.replace(/<[\s\S]*?>/g, " ");
 
-  const cleanText = textContent
-    .replace(/&nbsp;/g, " ")
-    .replace(/&amp;/g, "&")
-    .replace(/&quot;/g, '"')
-    .replace(/&#39;/g, "'")
-    .replace(/&lt;/g, "<")
-    .replace(/&gt;/g, ">")
+  // Single pass entity unescaping to prevent double-escaping CodeQL alert
+  const cleanText = textWithoutTags
+    .replace(/&(?:amp|lt|gt|quot|#39|nbsp);/g, (m) => {
+      if (m === "&amp;") return "&";
+      if (m === "&lt;") return "<";
+      if (m === "&gt;") return ">";
+      if (m === "&quot;") return '"';
+      if (m === "&#39;") return "'";
+      if (m === "&nbsp;") return " ";
+      return m;
+    })
     .replace(/\s+/g, " ")
     .trim();
 
@@ -169,7 +168,8 @@ ${truncatedText}`;
   const tagList = tags.map((t) => `  - ${t}`).join("\n");
   const sourceHeader = `> 🔖 **Clipped Article:** [${rawTitle}](${url})\n\n`;
 
-  const markdownContent = `---\ntitle: "${title.replace(/"/g, '\\"')}"\ndraft: false\nauthor: Ridoy\ndate: ${today}\ntags:\n${tagList}\n---\n\n${sourceHeader}${bodyText}\n`;
+  const safeTitle = title.replace(/\\/g, "\\\\").replace(/"/g, '\\"');
+  const markdownContent = `---\ntitle: "${safeTitle}"\ndraft: false\nauthor: Ridoy\ndate: ${today}\ntags:\n${tagList}\n---\n\n${sourceHeader}${bodyText}\n`;
 
   return {
     title,

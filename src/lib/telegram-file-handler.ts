@@ -85,7 +85,11 @@ export async function commitNoteToGitHub(
 
   const repo = process.env.NEXT_PUBLIC_GISCUS_REPO || "xnocode/garden";
   const filePath = `content/${fileName}`;
-  const url = `https://api.github.com/repos/${repo}/contents/${filePath}`;
+  const targetUrl = new URL(`https://api.github.com/repos/${repo}/contents/${filePath}`);
+  if (targetUrl.hostname !== "api.github.com" || targetUrl.protocol !== "https:") {
+    return { success: false, message: "Invalid target URL" };
+  }
+  const apiUrl = targetUrl.href;
   const authHeader = token.startsWith("github_pat_") || token.startsWith("ghp_") ? `Bearer ${token}` : `token ${token}`;
 
   try {
@@ -95,7 +99,7 @@ export async function commitNoteToGitHub(
     const getController = new AbortController();
     const getId = setTimeout(() => getController.abort(), 2000);
     try {
-      const getRes = await fetch(validateSecureUrl(url), {
+      const getRes = await fetch(apiUrl, {
         signal: getController.signal,
         headers: {
           Authorization: authHeader,
@@ -128,7 +132,7 @@ export async function commitNoteToGitHub(
     const putController = new AbortController();
     const putId = setTimeout(() => putController.abort(), 2500);
 
-    const putRes = await fetch(validateSecureUrl(url), {
+    const putRes = await fetch(apiUrl, {
       method: "PUT",
       signal: putController.signal,
       headers: {
@@ -169,14 +173,18 @@ export async function deleteNoteFromGitHub(
 
   const repo = process.env.NEXT_PUBLIC_GISCUS_REPO || "xnocode/garden";
   const filePath = `content/${fileName}`;
-  const url = `https://api.github.com/repos/${repo}/contents/${filePath}`;
+  const delTargetUrl = new URL(`https://api.github.com/repos/${repo}/contents/${filePath}`);
+  if (delTargetUrl.hostname !== "api.github.com" || delTargetUrl.protocol !== "https:") {
+    return { success: false, message: "Invalid delete target URL" };
+  }
+  const delApiUrl = delTargetUrl.href;
   const authHeader = token.startsWith("github_pat_") || token.startsWith("ghp_") ? `Bearer ${token}` : `token ${token}`;
 
   try {
     // 1. GET file SHA (2.0s timeout)
     const getController = new AbortController();
     const getId = setTimeout(() => getController.abort(), 2000);
-    const getRes = await fetch(validateSecureUrl(url), {
+    const getRes = await fetch(delApiUrl, {
       signal: getController.signal,
       headers: {
         Authorization: authHeader,
@@ -197,7 +205,7 @@ export async function deleteNoteFromGitHub(
     const delController = new AbortController();
     const delId = setTimeout(() => delController.abort(), 2500);
 
-    const delRes = await fetch(validateSecureUrl(url), {
+    const delRes = await fetch(delApiUrl, {
       method: "DELETE",
       signal: delController.signal,
       headers: {
@@ -345,13 +353,14 @@ async function getGitHubContents(): Promise<string[]> {
   const token = (process.env.GITHUB_TOKEN || process.env.GH_TOKEN || "").trim();
   if (!token) return [];
   const repo = process.env.NEXT_PUBLIC_GISCUS_REPO || "xnocode/garden";
-  const url = `https://api.github.com/repos/${repo}/contents/content`;
+  const ghUrl = new URL(`https://api.github.com/repos/${repo}/contents/content`);
+  if (ghUrl.hostname !== "api.github.com" || ghUrl.protocol !== "https:") return [];
   const authHeader = token.startsWith("github_pat_") || token.startsWith("ghp_") ? `Bearer ${token}` : `token ${token}`;
 
   try {
     const controller = new AbortController();
     const id = setTimeout(() => controller.abort(), 2000);
-    const res = await fetch(url, {
+    const res = await fetch(ghUrl.href, {
       signal: controller.signal,
       headers: {
         Authorization: authHeader,
@@ -606,7 +615,11 @@ export async function addPendingTasksToGitHub(
 
   const repo = process.env.NEXT_PUBLIC_GISCUS_REPO || "xnocode/garden";
   const filePath = "src/data/pending-tasks.json";
-  const url = `https://api.github.com/repos/${repo}/contents/${filePath}`;
+  const taskTargetUrl = new URL(`https://api.github.com/repos/${repo}/contents/${filePath}`);
+  if (taskTargetUrl.hostname !== "api.github.com" || taskTargetUrl.protocol !== "https:") {
+    return { success: false, count: 0, message: "Invalid URL" };
+  }
+  const taskApiUrl = taskTargetUrl.href;
   const authHeader = token.startsWith("github_pat_") || token.startsWith("ghp_") ? `Bearer ${token}` : `token ${token}`;
 
   try {
@@ -614,7 +627,7 @@ export async function addPendingTasksToGitHub(
     let existingTasks: PendingTaskItem[] = [];
 
     try {
-      const getRes = await fetch(url, {
+      const getRes = await fetch(taskApiUrl, {
         headers: {
           Authorization: authHeader,
           Accept: "application/vnd.github.v3+json",
@@ -653,7 +666,7 @@ export async function addPendingTasksToGitHub(
     };
     if (sha) putBody.sha = sha;
 
-    const putRes = await fetch(url, {
+    const putRes = await fetch(taskApiUrl, {
       method: "PUT",
       headers: {
         Authorization: authHeader,
@@ -702,12 +715,13 @@ export interface TaskSnapshot {
 export async function getTasksFromGitHub(): Promise<TaskSnapshot | null> {
   const token = (process.env.GITHUB_TOKEN || process.env.GH_TOKEN || "").trim();
   const repo = process.env.NEXT_PUBLIC_GISCUS_REPO || "xnocode/garden";
-  const url = `https://api.github.com/repos/${repo}/contents/src/data/tasks.json`;
+  const tasksUrl = new URL(`https://api.github.com/repos/${repo}/contents/src/data/tasks.json`);
+  if (tasksUrl.hostname !== "api.github.com" || tasksUrl.protocol !== "https:") return null;
   const authHeader = token.startsWith("github_pat_") || token.startsWith("ghp_")
     ? `Bearer ${token}` : `token ${token}`;
 
   try {
-    const res = await fetch(url, {
+    const res = await fetch(tasksUrl.href, {
       headers: {
         Authorization: authHeader,
         Accept: "application/vnd.github.v3+json",
@@ -737,7 +751,11 @@ export async function addPendingDoneToGitHub(
 
   const repo = process.env.NEXT_PUBLIC_GISCUS_REPO || "xnocode/garden";
   const filePath = "src/data/pending-done.json";
-  const url = `https://api.github.com/repos/${repo}/contents/${filePath}`;
+  const doneTargetUrl = new URL(`https://api.github.com/repos/${repo}/contents/${filePath}`);
+  if (doneTargetUrl.hostname !== "api.github.com" || doneTargetUrl.protocol !== "https:") {
+    return { success: false, count: 0, message: "Invalid URL" };
+  }
+  const doneApiUrl = doneTargetUrl.href;
   const authHeader = token.startsWith("github_pat_") || token.startsWith("ghp_")
     ? `Bearer ${token}` : `token ${token}`;
 
@@ -746,7 +764,7 @@ export async function addPendingDoneToGitHub(
     let existingUuids: string[] = [];
 
     try {
-      const getRes = await fetch(url, {
+      const getRes = await fetch(doneApiUrl, {
         headers: {
           Authorization: authHeader,
           Accept: "application/vnd.github.v3+json",
@@ -771,7 +789,7 @@ export async function addPendingDoneToGitHub(
     };
     if (sha) putBody.sha = sha;
 
-    const putRes = await fetch(url, {
+    const putRes = await fetch(doneApiUrl, {
       method: "PUT",
       headers: {
         Authorization: authHeader,
@@ -808,7 +826,11 @@ export async function addChangelogEntryToGitHub(entry: {
 
   const repo = process.env.NEXT_PUBLIC_GISCUS_REPO || "xnocode/garden";
   const filePath = "src/data/changelog.json";
-  const url = `https://api.github.com/repos/${repo}/contents/${filePath}`;
+  const clTargetUrl = new URL(`https://api.github.com/repos/${repo}/contents/${filePath}`);
+  if (clTargetUrl.hostname !== "api.github.com" || clTargetUrl.protocol !== "https:") {
+    return { success: false, message: "Invalid URL" };
+  }
+  const clApiUrl = clTargetUrl.href;
   const authHeader = token.startsWith("github_pat_") || token.startsWith("ghp_")
     ? `Bearer ${token}` : `token ${token}`;
 
@@ -817,7 +839,7 @@ export async function addChangelogEntryToGitHub(entry: {
     let existingEntries: any[] = [];
 
     try {
-      const getRes = await fetch(url, {
+      const getRes = await fetch(clApiUrl, {
         headers: {
           Authorization: authHeader,
           Accept: "application/vnd.github.v3+json",
@@ -852,7 +874,7 @@ export async function addChangelogEntryToGitHub(entry: {
     };
     if (sha) putBody.sha = sha;
 
-    const putRes = await fetch(url, {
+    const putRes = await fetch(clApiUrl, {
       method: "PUT",
       headers: {
         Authorization: authHeader,

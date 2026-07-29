@@ -90,7 +90,8 @@ Return ONLY valid JSON matching this schema:
   const today = new Date().toISOString().split("T")[0];
   const tagList = tags.map((t: string) => `  - ${t}`).join("\n");
 
-  const markdownContent = `---\ntitle: "${title.replace(/"/g, '\\"')}"\ndraft: false\nauthor: Ridoy\ndate: ${today}\ntags:\n${tagList}\n---\n\n${bodyText}\n`;
+  const safeTitle = title.replace(/\\/g, "\\\\").replace(/"/g, '\\"');
+  const markdownContent = `---\ntitle: "${safeTitle}"\ndraft: false\nauthor: Ridoy\ndate: ${today}\ntags:\n${tagList}\n---\n\n${bodyText}\n`;
 
   return {
     title,
