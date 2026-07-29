@@ -1,20 +1,20 @@
 [
   {
-    "version": "v0.4.0",
+    "version": "v0.5.0",
     "date": "2026-07-29",
-    "title": "Voice Notes, PDF Conversion, Security & Feature Changelog",
+    "title": "Voice Notes, PDF Conversion & Security Hardening",
     "badge": "NEW",
     "category": "feature",
     "changes": [
-      "Added Telegram Voice Note processing (audio messages to structured Markdown notes)",
+      "Added Telegram Voice Note processing (audio to structured Markdown notes)",
       "Added PDF to Markdown note conversion using Gemini 2.0 API",
       "Added Photo OCR note generator via Telegram",
-      "Implemented HMAC SHA-256 signature verification for GitHub Webhooks",
-      "Added Official Website Feature Changelog with Telegram /release command integration"
+      "Enhanced security for repository event notifications",
+      "Added Official Website Feature Changelog"
     ]
   },
   {
-    "version": "v0.3.0",
+    "version": "v0.4.0",
     "date": "2026-07-24",
     "title": "Telegram Bot Integration & Remote Note Management",
     "badge": "BOT",
@@ -22,12 +22,11 @@
     "changes": [
       "Full Telegram bot note management (/list, /search, /tag, /stats, /link)",
       "Upload .md note files directly from Telegram with automated GitHub commits",
-      "Dynamic note cache with live 4-step deployment progress animations",
-      "Authorized multi-user access control and group chat support"
+      "Dynamic note cache with live progress status notifications"
     ]
   },
   {
-    "version": "v0.2.0",
+    "version": "v0.3.0",
     "date": "2026-07-16",
     "title": "Giscus Comments System & AdSense Integration",
     "badge": "COMMUNITY",
@@ -35,7 +34,19 @@
     "changes": [
       "Added Giscus discussion comments section with custom garden dark/light theme",
       "Integrated Google AdSense ad placements (auto, in-article, in-feed, display formats)",
-      "Refined command palette search and fixed client-side hydration timezone formatting"
+      "Refined command palette search indexing and timezone date formatting"
+    ]
+  },
+  {
+    "version": "v0.2.0",
+    "date": "2026-07-06",
+    "title": "Interactive Knowledge Graph & Taskwarrior Sync",
+    "badge": "GRAPH",
+    "category": "feature",
+    "changes": [
+      "2D Interactive Knowledge Graph visualization for explore note links",
+      "Live Taskwarrior task management synced via GitHub & local CLI",
+      "Added tag filter system and custom callouts styling"
     ]
   },
   {
@@ -46,9 +57,8 @@
     "category": "core",
     "changes": [
       "Launched xnocode Digital Garden core platform",
-      "Obsidian-flavored Markdown rendering engine (Wikilinks, Transclusions, KaTeX Math, Callouts)",
-      "2D Interactive Knowledge Graph visualization",
-      "Live Taskwarrior task management synced via GitHub & local CLI"
+      "Obsidian-flavored Markdown rendering engine (Wikilinks, Transclusions, KaTeX Math)",
+      "Fast static site generation with serverless Vercel optimization"
     ]
   }
 ]
