@@ -23,6 +23,7 @@ import { AdBanner } from "../../ads/AdBanner";
 import type { NoteDetail } from "@/lib/notes";
 import { TableOfContents, extractToc } from "./table-of-contents";
 import { Backlinks } from "./backlinks";
+import { AudioPlayer } from "./audio-player";
 import { RelatedNotes } from "./related-notes";
 import { useRecordVisit } from "./reading-history";
 import { CodeBlockRunner } from "./code-block-runner";
@@ -489,6 +490,9 @@ export function NoteView({ note }: { note: NoteDetail }) {
             <span className="hidden sm:inline">Print</span>
           </button>
         </div>
+
+        {/* Listen to Note Audio Player */}
+        <AudioPlayer text={note.content} title={note.title} />
       </header>
 
       {/* Content */}
