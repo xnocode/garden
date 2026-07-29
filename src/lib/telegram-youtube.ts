@@ -118,32 +118,41 @@ export async function processYouTubeToNote(youtubeUrl: string): Promise<YouTubeN
   let structuredData: { title?: string; body?: string; tags?: string[] } | null = null;
 
   const prompt = hasTranscript
-    ? `Analyze this YouTube video transcript for "${videoTitle}" by ${channelName}.
-Create a high-quality, structured Markdown summary note.
-Rules:
-1. Provide a clear, descriptive title.
-2. Structure the note with key takeaways, main points, and key details.
-3. Suggest 2 to 4 relevant tags (lowercase, single word without #).
+    ? `You are an expert educator and technical note-taker. 
+The user wants to LEARN THE SKILL or CONCEPT in this video ("${videoTitle}" by ${channelName}) WITHOUT HAVING TO WATCH THE VIDEO.
+
+Your goal is to write a comprehensive, self-contained educational Markdown study note that teaches the topic completely.
+
+Structuring Guidelines:
+1. "title": A clear, educational, descriptive title.
+2. "body": Write a rich, detailed, self-contained Markdown guide with sections:
+   - ## 💡 Core Concept & Big Picture (What it is, why it matters, main goal)
+   - ## 📘 Step-by-Step Breakdown & Detailed Guide (Explain every technique, method, formula, code snippet, or concept mentioned in full detail so the reader masters the skill directly from the note)
+   - ## 🔑 Key Takeaways & Pro Tips (Crucial principles, gotchas, or advice from the creator)
+   - ## ⚡ Actionable Summary & How to Apply (Quick steps to practice or implement immediately)
+3. "tags": 2 to 4 relevant single-word lowercase tags.
 
 Return ONLY valid JSON matching this schema:
 {
-  "title": "Clean Note Title",
-  "body": "Formatted body text with headings (## Key Takeaways, ## Summary, etc.)...",
+  "title": "Educational Note Title",
+  "body": "Markdown text with headings...",
   "tags": ["tag1", "tag2"]
 }
 
 Transcript:
 ${truncatedTranscript}`
-    : `Create a structured video reference note for the YouTube video titled "${videoTitle}" by author ${channelName}.
-Rules:
-1. Provide a clear title.
-2. Provide a structured overview, background context, and study notes based on the topic.
-3. Suggest 2 to 4 relevant tags (lowercase, single word without #).
+    : `You are an expert educator. Create a comprehensive educational study guide for the topic covered in the YouTube video titled "${videoTitle}" by ${channelName}.
+The goal is to teach the concept clearly so the reader understands it completely without watching the video.
+
+Structure:
+- ## 💡 Core Concept & Overview
+- ## 📘 Key Principles & Deep Dive
+- ## ⚡ Practical Application & Summary
 
 Return ONLY valid JSON matching this schema:
 {
-  "title": "Clean Note Title",
-  "body": "Formatted body text with headings (## Overview, ## Key Topics, etc.)...",
+  "title": "Educational Note Title",
+  "body": "Markdown text with headings...",
   "tags": ["tag1", "tag2"]
 }`;
 
