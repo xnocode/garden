@@ -13,6 +13,7 @@ import {
   addPendingTasksToGitHub,
   getTasksFromGitHub,
   addPendingDoneToGitHub,
+  addChangelogEntryToGitHub,
 } from "@/lib/telegram-file-handler";
 import { processVoiceNoteToMarkdown } from "@/lib/telegram-voice";
 import { processYouTubeToNote } from "@/lib/telegram-youtube";
@@ -860,6 +861,53 @@ export async function POST(req: Request) {
           `🔗 <b>${escapeHtml(note.title)}</b>\n👉 <a href="${escapeHtml(note.url)}">${escapeHtml(note.url)}</a>`,
           { inline_keyboard: [[{ text: "🌐 Open", url: note.url }]] }
         );
+      }
+      return NextResponse.json({ ok: true });
+    }
+
+    if (text.startsWith("/release")) {
+      const rawPayload = text.replace(/^\/release/, "").trim();
+      if (!rawPayload) {
+        await sendMsg(
+          token,
+          chatId,
+          `⚠️ <b>Usage:</b>\n<code>/release Title | Change 1 | Change 2</code>\n\n<b>Example:</b>\n<code>/release v0.4.0 \| Added Dark Theme Customizer \| Custom color picker for notes</code>`
+        );
+        return NextResponse.json({ ok: true });
+      }
+
+      const parts = rawPayload.split("|").map((s) => s.trim()).filter(Boolean);
+      let version = "";
+      let title = "";
+      let changes: string[] = [];
+
+      if (parts[0]?.startsWith("v") && parts[0]?.includes(".")) {
+        version = parts[0];
+        title = parts[1] || "Website Feature Update";
+        changes = parts.slice(2);
+      } else {
+        title = parts[0];
+        changes = parts.slice(1);
+      }
+
+      if (changes.length === 0) {
+        changes = [title];
+      }
+
+      const res = await addChangelogEntryToGitHub({
+        version,
+        title,
+        changes,
+      });
+
+      if (res.success) {
+        await sendMsg(
+          token,
+          chatId,
+          `🚀 <b>Release Published!</b>\n\n📌 <b>Title:</b> ${escapeHtml(title)}\n📝 <b>Changes:</b> ${changes.length}\n\n<i>${escapeHtml(res.message)}</i>`
+        );
+      } else {
+        await sendMsg(token, chatId, `❌ <b>Failed to publish release:</b> ${escapeHtml(res.message)}`);
       }
       return NextResponse.json({ ok: true });
     }

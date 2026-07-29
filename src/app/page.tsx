@@ -31,6 +31,7 @@ import {
   NotFoundView,
 } from "@/components/garden/views";
 import { TaskwarriorView } from "@/components/garden/taskwarrior-view";
+import { ChangelogView } from "@/components/garden/changelog-view";
 
 export const dynamic = "force-dynamic";
 
@@ -103,6 +104,21 @@ export default async function Page({ searchParams }: PageProps) {
       };
     }
     content = <TaskwarriorView data={taskData} />;
+    mainWidthClass = "max-w-4xl";
+  } else if (view === "changelog") {
+    const fs = await import("fs/promises");
+    const path = await import("path");
+    let entries = [];
+    try {
+      const raw = await fs.readFile(
+        path.join(process.cwd(), "src/data/changelog.json"),
+        "utf8"
+      );
+      entries = JSON.parse(raw);
+    } catch {
+      entries = [];
+    }
+    content = <ChangelogView entries={entries} />;
     mainWidthClass = "max-w-4xl";
   } else if (q) {
     const results = await searchNotes(q);

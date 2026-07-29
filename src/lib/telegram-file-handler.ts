@@ -781,3 +781,84 @@ export async function addPendingDoneToGitHub(
     return { success: false, count: 0, message: err.message || "Failed to queue done" };
   }
 }
+
+/**
+ * Appends a new feature release entry to src/data/changelog.json in GitHub repo.
+ */
+export async function addChangelogEntryToGitHub(entry: {
+  version: string;
+  title: string;
+  badge?: string;
+  category?: string;
+  changes: string[];
+}): Promise<{ success: boolean; message: string }> {
+  const token = (process.env.GITHUB_TOKEN || process.env.GH_TOKEN || "").trim();
+  if (!token) return { success: false, message: "No GITHUB_TOKEN configured" };
+
+  const repo = process.env.NEXT_PUBLIC_GISCUS_REPO || "xnocode/garden";
+  const filePath = "src/data/changelog.json";
+  const url = `https://api.github.com/repos/${repo}/contents/${filePath}`;
+  const authHeader = token.startsWith("github_pat_") || token.startsWith("ghp_")
+    ? `Bearer ${token}` : `token ${token}`;
+
+  try {
+    let sha: string | undefined;
+    let existingEntries: any[] = [];
+
+    try {
+      const getRes = await fetch(url, {
+        headers: {
+          Authorization: authHeader,
+          Accept: "application/vnd.github.v3+json",
+          "User-Agent": "DigitalGardenBot",
+        },
+      });
+      if (getRes.ok) {
+        const data = await getRes.json();
+        sha = data.sha;
+        const decoded = Buffer.from(data.content, "base64").toString("utf-8");
+        existingEntries = JSON.parse(decoded);
+      }
+    } catch {}
+
+    const today = new Date().toISOString().split("T")[0];
+    const newEntry = {
+      version: entry.version || `v0.${existingEntries.length + 1}.0`,
+      date: today,
+      title: entry.title,
+      badge: entry.badge || "NEW",
+      category: entry.category || "feature",
+      changes: entry.changes,
+    };
+
+    const updated = [newEntry, ...existingEntries];
+    const content = JSON.stringify(updated, null, 2);
+    const base64Content = Buffer.from(content).toString("base64");
+
+    const putBody: any = {
+      message: `release: ${newEntry.version} - ${entry.title}`,
+      content: base64Content,
+    };
+    if (sha) putBody.sha = sha;
+
+    const putRes = await fetch(url, {
+      method: "PUT",
+      headers: {
+        Authorization: authHeader,
+        Accept: "application/vnd.github.v3+json",
+        "Content-Type": "application/json",
+        "User-Agent": "DigitalGardenBot",
+      },
+      body: JSON.stringify(putBody),
+    });
+
+    if (putRes.ok) {
+      return { success: true, message: `Published release ${newEntry.version} to website!` };
+    } else {
+      const errData = await putRes.json().catch(() => ({}));
+      return { success: false, message: errData.message || `GitHub HTTP ${putRes.status}` };
+    }
+  } catch (err: any) {
+    return { success: false, message: err.message || "Failed to publish release" };
+  }
+}

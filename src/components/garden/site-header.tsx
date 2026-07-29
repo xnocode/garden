@@ -15,6 +15,7 @@ const NAV_ITEMS = [
   { label: "Tags", href: "/?view=tags", key: "tags" },
   { label: "About", href: "/?p=about", key: "about" },
   { label: "Taskwarrior", href: "/?view=tasks", key: "tasks" },
+  { label: "Changelog", href: "/?view=changelog", key: "changelog" },
 ];
 
 function useActiveKey(): string {

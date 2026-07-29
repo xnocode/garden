@@ -35,6 +35,12 @@ export function SiteFooter({ noteCount }: { noteCount: number }) {
             <span className="hidden sm:inline">graph</span>
           </Link>
           <Link
+            href="/?view=changelog"
+            className="hover:text-foreground transition-colors"
+          >
+            changelog
+          </Link>
+          <Link
             href="/?view=colophon"
             className="hover:text-foreground transition-colors"
           >
