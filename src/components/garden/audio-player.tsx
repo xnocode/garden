@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { Play, Pause, Square, Volume2, Gauge } from "lucide-react";
+import { Play, Pause, Square, Volume2 } from "lucide-react";
 
 interface AudioPlayerProps {
   text: string;
@@ -26,22 +26,47 @@ export function AudioPlayer({ text, title }: AudioPlayerProps) {
     }
   }, []);
 
-  // Clean Markdown syntax for natural audio reading
+  // Natural text cleaner — removes markdown symbols, code blocks, raw URLs for human-like flow
   const cleanMarkdown = (raw: string): string => {
     return raw
       .replace(/---[\s\S]*?---/, "") // Strip frontmatter
-      .replace(/#+\s+/g, "") // Strip headings
-      .replace(/\[([^\]]+)\]\([^)]+\)/g, "$1") // Links -> link text
-      .replace(/!\[\[[^\]]+\]\]|\[\[[^\]]+\]\]/g, "") // Strip wikilinks/embeds
-      .replace(/`{3}[\s\S]*?`{3}/g, "Code block omitted.") // Strip code blocks
+      .replace(/```[\s\S]*?```/g, "") // Strip code blocks
+      .replace(/#+\s+/g, "") // Strip heading hashes
+      .replace(/\[([^\]]+)\]\([^)]+\)/g, "$1") // Markdown links -> link text
+      .replace(/https?:\/\/\S+/g, "") // Strip raw URLs
+      .replace(/!\[\[[^\]]+\]\]|\[\[([^\]|]+)(?:\|[^\]]+)?\]\]/g, "$1") // Wikilinks
       .replace(/`([^`]+)`/g, "$1") // Inline code
-      .replace(/[*_~=]/g, "") // Formatting chars
+      .replace(/[*_~=]/g, "") // Formatting characters
       .replace(/<[^>]+>/g, "") // HTML tags
-      .replace(/\n+/g, " ") // Clean linebreaks
+      .replace(/[-*]\s+/g, ". ") // List items -> pauses
+      .replace(/\s+/g, " ") // Extra spaces
       .trim();
   };
 
-  // Stop speech when component unmounts or text changes
+  // Select the highest quality natural human voice available
+  const getBestVoice = (synth: SpeechSynthesis): SpeechSynthesisVoice | null => {
+    const voices = synth.getVoices();
+    if (!voices.length) return null;
+
+    // Prioritize natural / neural / premium English voices
+    const naturalVoice = voices.find(
+      (v) =>
+        v.lang.startsWith("en") &&
+        (v.name.includes("Natural") ||
+          v.name.includes("Google") ||
+          v.name.includes("Neural") ||
+          v.name.includes("Samantha") ||
+          v.name.includes("Alex") ||
+          v.name.includes("Karen") ||
+          v.name.includes("Daniel"))
+    );
+
+    if (naturalVoice) return naturalVoice;
+
+    // Fallback to any English voice
+    return voices.find((v) => v.lang.startsWith("en")) || voices[0] || null;
+  };
+
   useEffect(() => {
     return () => {
       if (typeof window !== "undefined" && "speechSynthesis" in window) {
@@ -50,33 +75,16 @@ export function AudioPlayer({ text, title }: AudioPlayerProps) {
     };
   }, [text]);
 
-  const handlePlayPause = () => {
-    if (!isSupported) return;
-
+  const startPlayback = (plainText: string, rate: number) => {
     const synth = window.speechSynthesis;
-
-    // If currently paused -> resume
-    if (isPlaying && isPaused) {
-      synth.resume();
-      setIsPaused(false);
-      return;
-    }
-
-    // If currently playing -> pause
-    if (isPlaying && !isPaused) {
-      synth.pause();
-      setIsPaused(true);
-      return;
-    }
-
-    // Start fresh playback
-    synth.cancel(); // Stop any ongoing speech
-    const plainText = `${title}. ${cleanMarkdown(text)}`;
-    cleanTextRef.current = plainText;
+    synth.cancel();
 
     const utterance = new SpeechSynthesisUtterance(plainText);
-    utterance.rate = SPEEDS[speedIndex];
-    utteranceRef.current = utterance;
+    utterance.rate = rate;
+    utterance.pitch = 1.0;
+
+    const voice = getBestVoice(synth);
+    if (voice) utterance.voice = voice;
 
     utterance.onboundary = (event) => {
       if (event.name === "word" && plainText.length > 0) {
@@ -88,8 +96,7 @@ export function AudioPlayer({ text, title }: AudioPlayerProps) {
     utterance.onend = () => {
       setIsPlaying(false);
       setIsPaused(false);
-      setProgress(100);
-      setTimeout(() => setProgress(0), 1000);
+      setProgress(0);
     };
 
     utterance.onerror = () => {
@@ -98,9 +105,31 @@ export function AudioPlayer({ text, title }: AudioPlayerProps) {
       setProgress(0);
     };
 
+    utteranceRef.current = utterance;
     synth.speak(utterance);
     setIsPlaying(true);
     setIsPaused(false);
+  };
+
+  const handlePlayPause = () => {
+    if (!isSupported) return;
+    const synth = window.speechSynthesis;
+
+    if (isPlaying && isPaused) {
+      synth.resume();
+      setIsPaused(false);
+      return;
+    }
+
+    if (isPlaying && !isPaused) {
+      synth.pause();
+      setIsPaused(true);
+      return;
+    }
+
+    const plainText = `${title}. ${cleanMarkdown(text)}`;
+    cleanTextRef.current = plainText;
+    startPlayback(plainText, SPEEDS[speedIndex]);
   };
 
   const handleStop = () => {
@@ -116,88 +145,64 @@ export function AudioPlayer({ text, title }: AudioPlayerProps) {
     setSpeedIndex(nextIdx);
     const newSpeed = SPEEDS[nextIdx];
 
-    if (isPlaying && utteranceRef.current) {
-      // Re-apply speed during active playback
-      window.speechSynthesis.cancel();
-      const plainText = cleanTextRef.current;
-      const utterance = new SpeechSynthesisUtterance(plainText);
-      utterance.rate = newSpeed;
-      utteranceRef.current = utterance;
-
-      utterance.onend = () => {
-        setIsPlaying(false);
-        setIsPaused(false);
-        setProgress(0);
-      };
-
-      window.speechSynthesis.speak(utterance);
-      setIsPaused(false);
+    if (isPlaying) {
+      startPlayback(cleanTextRef.current, newSpeed);
     }
   };
 
   if (!isSupported) return null;
 
   return (
-    <div className="not-prose my-4 rounded-xl border border-border/80 bg-surface/40 p-3.5 shadow-sm backdrop-blur-md transition-all hover:border-garden/30">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <div className="flex items-center gap-2.5">
-          <button
-            type="button"
-            onClick={handlePlayPause}
-            className="inline-flex h-9 w-9 items-center justify-center rounded-lg bg-garden text-background font-medium shadow-sm transition-transform hover:scale-105 active:scale-95"
-            aria-label={isPlaying && !isPaused ? "Pause audio" : "Listen to note"}
-            title={isPlaying && !isPaused ? "Pause audio" : "Listen to note"}
-          >
-            {isPlaying && !isPaused ? (
-              <Pause className="h-4 w-4 fill-current" />
-            ) : (
-              <Play className="h-4 w-4 fill-current ml-0.5" />
-            )}
-          </button>
+    <div className="inline-flex items-center gap-1">
+      {/* Compact Play / Pause Button */}
+      <button
+        type="button"
+        onClick={handlePlayPause}
+        className={`inline-flex items-center gap-1.5 rounded-md border border-border px-2.5 py-1.5 text-xs font-medium transition-all ${
+          isPlaying
+            ? "border-garden/50 bg-garden/10 text-garden"
+            : "bg-surface/50 text-muted-foreground hover:border-garden/40 hover:text-foreground"
+        }`}
+        title={isPlaying && !isPaused ? "Pause narration" : "Listen to note"}
+        aria-label="Listen to note narration"
+      >
+        {isPlaying && !isPaused ? (
+          <Pause className="h-3.5 w-3.5 text-garden fill-garden" />
+        ) : (
+          <Play className="h-3.5 w-3.5 text-garden fill-garden" />
+        )}
+        <span>
+          {isPlaying
+            ? isPaused
+              ? "Paused"
+              : `${progress}%`
+            : "Listen"}
+        </span>
+      </button>
 
-          {isPlaying && (
-            <button
-              type="button"
-              onClick={handleStop}
-              className="inline-flex h-8 w-8 items-center justify-center rounded-md border border-border text-muted-foreground transition-colors hover:bg-surface hover:text-foreground"
-              aria-label="Stop audio"
-              title="Stop audio"
-            >
-              <Square className="h-3.5 w-3.5 fill-current" />
-            </button>
-          )}
+      {/* Stop button when active */}
+      {isPlaying && (
+        <button
+          type="button"
+          onClick={handleStop}
+          className="inline-flex h-7 w-7 items-center justify-center rounded-md border border-border bg-surface/50 text-muted-foreground hover:border-red-500/40 hover:text-red-400"
+          title="Stop audio"
+          aria-label="Stop audio"
+        >
+          <Square className="h-3 w-3 fill-current" />
+        </button>
+      )}
 
-          <div className="flex flex-col">
-            <span className="flex items-center gap-1.5 font-medium text-xs text-foreground">
-              <Volume2 className={`h-3.5 w-3.5 text-garden ${isPlaying && !isPaused ? "animate-pulse" : ""}`} />
-              <span>{isPlaying ? (isPaused ? "Paused" : "Listening...") : "Listen to Note"}</span>
-            </span>
-            <span className="text-[11px] text-muted-foreground">
-              {isPlaying ? `${progress}% completed` : "Audio narration"}
-            </span>
-          </div>
-        </div>
-
-        {/* Speed toggle */}
+      {/* Compact Speed Toggle when playing */}
+      {isPlaying && (
         <button
           type="button"
           onClick={toggleSpeed}
-          className="inline-flex items-center gap-1 rounded-md border border-border/60 bg-background/50 px-2 py-1 font-mono text-xs font-semibold text-muted-foreground transition-colors hover:border-garden/40 hover:text-garden"
-          title="Change playback speed"
+          className="inline-flex items-center rounded-md border border-border/60 bg-background/50 px-1.5 py-1 font-mono text-[10px] font-semibold text-muted-foreground hover:border-garden/40 hover:text-garden"
+          title="Playback speed"
         >
-          <Gauge className="h-3 w-3" />
-          <span>{SPEEDS[speedIndex]}x</span>
+          {SPEEDS[speedIndex]}x
         </button>
-      </div>
-
-      {/* Progress Bar */}
-      {isPlaying && (
-        <div className="mt-2.5 h-1.5 w-full overflow-hidden rounded-full bg-border/40">
-          <div
-            className="h-full bg-garden transition-all duration-300 ease-out"
-            style={{ width: `${progress}%` }}
-          />
-        </div>
       )}
     </div>
   );

@@ -489,10 +489,8 @@ export function NoteView({ note }: { note: NoteDetail }) {
             <Printer className="h-3.5 w-3.5" />
             <span className="hidden sm:inline">Print</span>
           </button>
+          <AudioPlayer text={note.content} title={note.title} />
         </div>
-
-        {/* Listen to Note Audio Player */}
-        <AudioPlayer text={note.content} title={note.title} />
       </header>
 
       {/* Content */}
