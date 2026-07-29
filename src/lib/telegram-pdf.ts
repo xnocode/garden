@@ -41,7 +41,7 @@ export async function processPdfToNote(buffer: Buffer, originalFileName: string)
         "X-Goog-Upload-Header-Content-Length": String(buffer.byteLength),
         "X-Goog-Upload-Header-Content-Type": "application/pdf",
       },
-      body: buffer,
+      body: new Uint8Array(buffer),
     }
   );
 

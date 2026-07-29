@@ -31,7 +31,7 @@ export const AdBanner: React.FC<AdBannerProps> = ({
   format = 'auto',
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
-  const insRef = useRef<HTMLInsElement>(null);
+  const insRef = useRef<HTMLModElement>(null);
   const [isVisible, setIsVisible] = useState(false);
   const [adStatus, setAdStatus] = useState<AdStatus>('pending');
 
@@ -77,9 +77,9 @@ export const AdBanner: React.FC<AdBannerProps> = ({
   const isFilled = adStatus === 'filled';
 
   // Build <ins> props based on format
-  const insProps: React.HTMLAttributes<HTMLElement> & Record<string, string | undefined> = {
+  const insProps: any = {
     className: 'adsbygoogle',
-    style: { display: 'block', textAlign: 'center', width: '100%' } as React.CSSProperties,
+    style: { display: 'block', textAlign: 'center', width: '100%' },
     'data-ad-client': CLIENT_ID,
     'data-ad-slot': slotId,
   };

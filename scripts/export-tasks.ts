@@ -104,7 +104,7 @@ async function main() {
   console.log("  ▸ Snapshotting Taskwarrior data…");
 
   // 1a. Mark tasks done that were queued via Telegram /done command
-  const pendingDoneFile = resolve(import.meta.dir, "..", "src", "data", "pending-done.json");
+  const pendingDoneFile = resolve((import.meta as any).dir, "..", "src", "data", "pending-done.json");
   if (existsSync(pendingDoneFile)) {
     try {
       const raw = readFileSync(pendingDoneFile, "utf8");
@@ -130,7 +130,7 @@ async function main() {
   }
 
   // 1b. Process any pending tasks sent via Telegram /task command
-  const pendingFile = resolve(import.meta.dir, "..", "src", "data", "pending-tasks.json");
+  const pendingFile = resolve((import.meta as any).dir, "..", "src", "data", "pending-tasks.json");
   if (existsSync(pendingFile)) {
     try {
       const content = readFileSync(pendingFile, "utf8");
@@ -196,7 +196,7 @@ async function main() {
     tasks: visibleTasks,
   };
 
-  const outDir = resolve(import.meta.dir, "..", "src", "data");
+  const outDir = resolve((import.meta as any).dir, "..", "src", "data");
   mkdirSync(outDir, { recursive: true });
   const outPath = resolve(outDir, "tasks.json");
   writeFileSync(outPath, JSON.stringify(snapshot, null, 2), "utf8");
@@ -209,7 +209,7 @@ async function main() {
 
 main().catch((e) => {
   console.error("  ✗ Task export failed:", e.message);
-  const outDir = resolve(import.meta.dir, "..", "src", "data");
+  const outDir = resolve((import.meta as any).dir, "..", "src", "data");
   mkdirSync(outDir, { recursive: true });
   writeFileSync(
     resolve(outDir, "tasks.json"),

@@ -258,7 +258,7 @@ export function NoteView({ note }: { note: NoteDetail }) {
       calloutHandlers.forEach((fn) => fn());
       copyHandlers.forEach((fn) => fn());
       headingHandlers.forEach((fn) => fn());
-      mermaidCleanup?.();
+      if (typeof mermaidCleanup === "function") (mermaidCleanup as () => void)();
     };
   }, [html, note.slug]);
 

@@ -82,7 +82,7 @@ Return ONLY valid JSON matching this schema:
   if (!structuredData && groqKey) {
     try {
       const formData = new FormData();
-      const blob = new Blob([audioBuffer], { type: mimeType || "audio/ogg" });
+      const blob = new Blob([new Uint8Array(audioBuffer)], { type: mimeType || "audio/ogg" });
       formData.append("file", blob, "voice.ogg");
       formData.append("model", "whisper-large-v3-turbo");
       formData.append("response_format", "json");

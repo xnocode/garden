@@ -854,7 +854,7 @@ export async function POST(req: Request) {
       if (!target) { await sendMsg(token, chatId, "⚠️ <code>/link filename</code>"); return NextResponse.json({ ok: true }); }
       const note = await getNoteBySlugOrName(target);
       if (!note) {
-        await sendMsg(token, chatId, `❌ <i>"${escapeHtml(note?.title || target)}"</i> not found.`);
+        await sendMsg(token, chatId, `❌ <i>"${escapeHtml(target)}"</i> not found.`);
       } else {
         await sendMsg(token, chatId,
           `🔗 <b>${escapeHtml(note.title)}</b>\n👉 <a href="${escapeHtml(note.url)}">${escapeHtml(note.url)}</a>`,

@@ -36,8 +36,8 @@ export async function getMorningDigest(): Promise<string> {
   const sevenDaysAgo = Date.now() - 7 * 24 * 60 * 60 * 1000;
   const recentNotes = notes
     .filter((n) => {
-      if (!n.date) return false;
-      return new Date(n.date).getTime() > sevenDaysAgo;
+      if (!n.publishDate) return false;
+      return new Date(n.publishDate).getTime() > sevenDaysAgo;
     })
     .slice(0, 8);
 

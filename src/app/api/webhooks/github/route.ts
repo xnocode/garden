@@ -1,9 +1,38 @@
 import { NextResponse } from "next/server";
+import { createHmac, timingSafeEqual } from "crypto";
+
+/**
+ * Verifies the GitHub webhook HMAC-SHA256 signature.
+ * Requires GITHUB_WEBHOOK_SECRET env var to be set in GitHub Webhook settings.
+ * If the secret is not configured, verification is skipped (backward compatible).
+ */
+async function verifyGitHubSignature(req: Request, rawBody: string): Promise<boolean> {
+  const secret = process.env.GITHUB_WEBHOOK_SECRET;
+  if (!secret) return true; // Skip verification if secret not configured
+
+  const signature = req.headers.get("x-hub-signature-256");
+  if (!signature) return false;
+
+  const expected = "sha256=" + createHmac("sha256", secret).update(rawBody).digest("hex");
+  try {
+    return timingSafeEqual(Buffer.from(signature), Buffer.from(expected));
+  } catch {
+    return false;
+  }
+}
 
 export async function POST(req: Request) {
   try {
+    const rawBody = await req.text();
+
+    // Verify GitHub signature (prevents spoofed webhook events)
+    const isValid = await verifyGitHubSignature(req, rawBody);
+    if (!isValid) {
+      return NextResponse.json({ error: "Invalid signature" }, { status: 401 });
+    }
+
     const event = req.headers.get("x-github-event");
-    const payload = await req.json();
+    const payload = JSON.parse(rawBody);
 
     const botToken = process.env.TELEGRAM_BOT_TOKEN;
     const chatId = process.env.TELEGRAM_CHAT_ID;

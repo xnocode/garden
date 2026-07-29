@@ -772,7 +772,7 @@ export async function addPendingDoneToGitHub(
     });
 
     if (putRes.ok) {
-      return { success: true, count: taskIds.length, message: "Queued for next deploy" };
+      return { success: true, count: taskUuids.length, message: "Queued for next deploy" };
     } else {
       const errData = await putRes.json().catch(() => ({}));
       return { success: false, count: 0, message: errData.message || `GitHub HTTP ${putRes.status}` };

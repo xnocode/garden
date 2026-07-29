@@ -318,7 +318,7 @@ export function remarkObsidianLinks(ctx: RenderContext, links: WikiLinkTarget[])
             alt,
             width,
             height,
-          } as EmbedNode);
+          } as any);
         } else {
           const target: WikiLinkTarget = {
             original: targetStr,
@@ -336,7 +336,7 @@ export function remarkObsidianLinks(ctx: RenderContext, links: WikiLinkTarget[])
             type: "wikiLink",
             target,
             display,
-          } as WikiLinkNode);
+          } as any);
         }
         last = m.index + m[0].length;
       }
@@ -344,8 +344,8 @@ export function remarkObsidianLinks(ctx: RenderContext, links: WikiLinkTarget[])
       if (last < value.length) {
         segments.push({ type: "text", value: value.slice(last) });
       }
-      if (parent && index !== null) {
-        parent.children.splice(index, 1, ...segments);
+      if (parent && typeof index === "number") {
+        parent.children.splice(index, 1, ...(segments as any));
       }
     });
   };
@@ -372,7 +372,7 @@ export function remarkHighlightsAndComments() {
           segments.push({
             type: "highlight",
             children: [{ type: "text", value: m[2] }],
-          } as HighlightNode);
+          } as any);
         }
         last = m.index + m[0].length;
       }
@@ -380,8 +380,8 @@ export function remarkHighlightsAndComments() {
       if (last < value.length) {
         segments.push({ type: "text", value: value.slice(last) });
       }
-      if (parent && index !== null) {
-        parent.children.splice(index, 1, ...segments);
+      if (parent && typeof index === "number") {
+        parent.children.splice(index, 1, ...(segments as any));
       }
     });
   };
@@ -409,15 +409,15 @@ export function remarkInlineTags(tags: string[]) {
           });
         }
         tags.push(tag);
-        segments.push({ type: "tagLink", tag } as TagNode);
+        segments.push({ type: "tagLink", tag } as any);
         last = m.index + pre.length + 1 + tag.length;
       }
       if (segments.length === 0) return;
       if (last < value.length) {
         segments.push({ type: "text", value: value.slice(last) });
       }
-      if (parent && index !== null) {
-        parent.children.splice(index, 1, ...segments);
+      if (parent && typeof index === "number") {
+        parent.children.splice(index, 1, ...(segments as any));
       }
     });
   };
@@ -432,7 +432,7 @@ export function remarkUrlPreviews() {
     // First, remove any autolink <a> nodes created by GFM that point to
     // external URLs — we'll replace them with our own linkPreview nodes.
     visit(tree, "link", (node: any, index, parent) => {
-      if (!parent || index === null) return;
+      if (!parent || typeof index !== "number") return;
       const url = node.url as string;
       if (!url || !/^https?:\/\//i.test(url)) return;
       // Check if this is an autolink (no text children, or text == url)
@@ -598,8 +598,8 @@ export function remarkUrlPreviews() {
       if (last < value.length) {
         segments.push({ type: "text", value: value.slice(last) });
       }
-      if (parent && index !== null) {
-        parent.children.splice(index, 1, ...segments);
+      if (parent && typeof index === "number") {
+        parent.children.splice(index, 1, ...(segments as any));
       }
     });
   };
@@ -944,7 +944,7 @@ function extractBlock(html: string, blockId: string): string | null {
 // Rehype plugin: Shiki syntax highlighting + mermaid passthrough
 // ----------------------------------------------------------------------------
 
-let _highlighterPromise: Promise<ReturnType<typeof createHighlighter>> | null =
+let _highlighterPromise: ReturnType<typeof createHighlighter> | null =
   null;
 
 const SHIKI_LANGS = [
@@ -1002,7 +1002,7 @@ export function rehypeShiki() {
     const replacements: { index: number; parent: Element; node: Element }[] =
       [];
     visit(tree, "element", (node: Element, index, parent) => {
-      if (node.tagName !== "pre" || !parent || index === null) return;
+      if (node.tagName !== "pre" || !parent || typeof index !== "number") return;
       const codeEl = node.children?.find(
         (c): c is Element => c.type === "element" && c.tagName === "code"
       );
@@ -1022,7 +1022,7 @@ export function rehypeShiki() {
           properties: { className: ["mermaid"] },
           children: [{ type: "text", value: rawText }],
         };
-        replacements.push({ index, parent, node: div });
+        replacements.push({ index, parent: parent as Element, node: div });
         return;
       }
 
@@ -1104,7 +1104,7 @@ export function rehypeShiki() {
           };
         }
       }
-      replacements.push({ index, parent, node: preEl });
+      replacements.push({ index, parent: parent as Element, node: preEl });
     });
     for (const r of replacements) {
       r.parent.children[r.index] = r.node;
@@ -1252,7 +1252,7 @@ export function rehypeCallouts() {
         children: [titleEl, contentEl],
       };
 
-      if (parent && index !== null) {
+      if (parent && typeof index === "number") {
         parent.children[index] = callout;
       }
     });
@@ -1286,7 +1286,7 @@ export function rehypeObsidianInk() {
       langClass: string;
     }> = [];
     visit(tree, "element", (node: Element, index, parent) => {
-      if (node.tagName !== "pre" || !parent || index === null) return;
+      if (node.tagName !== "pre" || !parent || typeof index !== "number") return;
       const codeEl = node.children?.find(
         (c): c is Element => c.type === "element" && c.tagName === "code"
       );
@@ -1297,7 +1297,7 @@ export function rehypeObsidianInk() {
           c === "language-handdrawn-ink" || c === "language-handwritten-ink"
       );
       if (!langClass) return;
-      replacements.push({ index, parent, node, langClass });
+      replacements.push({ index, parent: parent as Element, node, langClass });
     });
     for (const r of replacements) {
       const codeEl = r.node.children?.find(
@@ -1463,12 +1463,12 @@ export function rehypeFixBrokenImages() {
       if (IMAGE_EXT.test(src)) return;
       // It's a broken image — check for embed or link preview
       // We need to also find the grandparent to be able to hoist a block element out of <p>
-      replacements.push({ index, parent: parent as Element, node, grandParent: null, parentIndex: null });
+      replacements.push({ index: index as number, parent: parent as Element, node, grandParent: null, parentIndex: null });
     });
     // Second pass: find grandparents for any parent <p> nodes
     visit(tree, "element", (node: Element, index, parent) => {
       for (const r of replacements) {
-        if (r.parent === node && node.tagName === "p" && index !== null && parent) {
+        if (r.parent === node && node.tagName === "p" && typeof index === "number" && parent) {
           r.grandParent = parent as Element;
           r.parentIndex = index;
         }
@@ -1620,12 +1620,12 @@ export function rehypeContributionGraph() {
   return (tree: HastRoot) => {
     const replacements: Array<{ index: number; parent: Element; node: Element; }> = [];
     visit(tree, "element", (node: Element, index, parent) => {
-      if (node.tagName !== "pre" || !parent || index === null) return;
+      if (node.tagName !== "pre" || !parent || typeof index !== "number") return;
       const codeEl = node.children?.find((c): c is Element => c.type === "element" && c.tagName === "code");
       if (!codeEl) return;
       const cls = (codeEl.properties?.className as string[] | undefined) ?? [];
       if (!cls.includes("language-contributionGraph")) return;
-      replacements.push({ index, parent, node });
+      replacements.push({ index, parent: parent as Element, node });
     });
     for (const r of replacements) {
       const codeEl = r.node.children?.find((c): c is Element => c.type === "element" && c.tagName === "code");
@@ -1815,9 +1815,9 @@ export async function renderMarkdown(
     .use(remarkHighlightsAndComments)
     .use(remarkInlineTags, tags)
     .use(remarkUrlPreviews)
-    .use(remarkRehype, {
+    .use(remarkRehype as any, {
       allowDangerousHtml: true,
-      handlers,
+      handlers: handlers as any,
     })
     .use(rehypeRaw)
     .use(rehypeKatex)

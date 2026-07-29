@@ -15,7 +15,7 @@ export async function askGardenKnowledgeBase(question: string): Promise<string> 
   if (searchResults.length > 0) {
     contextBlocks.push("--- GARDEN NOTES ---");
     for (const note of searchResults.slice(0, 5)) {
-      contextBlocks.push(`Title: ${note.title}\nContent:\n${note.content.slice(0, 1500)}`);
+      contextBlocks.push(`Title: ${note.title}\nContent:\n${note.snippet.slice(0, 1500)}`);
     }
   }
 

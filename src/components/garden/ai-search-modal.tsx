@@ -12,7 +12,7 @@ const SUGGESTED_PROMPTS = [
 ];
 
 function renderFormattedMarkdown(text: string, onNavigate: (urlOrSlug: string) => void) {
-  const parts: (string | JSX.Element)[] = [];
+  const parts: (string | React.ReactNode)[] = [];
   const regex = /\[([^\]]+)\]\(([^)]+)\)/g;
   let lastIndex = 0;
   let match;

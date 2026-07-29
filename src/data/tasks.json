@@ -1,94 +1,46 @@
 {
-  "exportedAt": "2026-07-29T10:52:42.829Z",
+  "exportedAt": "2026-07-29T14:23:26.965Z",
   "stats": {
     "total": 46,
-    "pending": 21,
-    "completed": 25,
+    "pending": 17,
+    "completed": 29,
     "overdue": 0
   },
   "tasks": [
     {
-      "id": 1,
-      "uuid": "7ee06881-27d7-43d7-b2c1-bdea9b726b94",
-      "description": "Software Engineering and System Analysis Lab (8:00 AM - 11:00 AM)",
-      "project": "university",
-      "tags": [],
-      "priority": "H",
-      "due": "20260728T180000Z",
-      "entry": "20260728T194056Z",
-      "urgency": 16.1215,
-      "overdue": false
-    },
-    {
-      "id": 2,
-      "uuid": "33a5906a-b325-4563-bdb5-9b9bfaf521c2",
-      "description": "Data Communication (11:00 AM - 12:00 PM)",
-      "project": "university",
-      "tags": [],
-      "priority": "H",
-      "due": "20260728T180000Z",
-      "entry": "20260728T194056Z",
-      "urgency": 16.1215,
-      "overdue": false
-    },
-    {
-      "id": 3,
-      "uuid": "d1e58928-0270-4264-bcab-811745d8b950",
-      "description": "Numerical Methods and Analysis (1:00 PM - 2:00 PM)",
-      "project": "university",
-      "tags": [],
-      "priority": "H",
-      "due": "20260728T180000Z",
-      "entry": "20260728T194056Z",
-      "urgency": 16.1215,
-      "overdue": false
-    },
-    {
-      "id": 4,
-      "uuid": "2c1ee60d-2126-48e2-84b7-4839f1f3cddb",
-      "description": "Software Engineering and System Analysis (2:00 PM - 4:00 PM)",
-      "project": "university",
-      "tags": [],
-      "priority": "H",
-      "due": "20260728T180000Z",
-      "entry": "20260728T194056Z",
-      "urgency": 16.1215,
-      "overdue": false
-    },
-    {
-      "id": 19,
+      "id": 15,
       "uuid": "5d98dd21-ba11-4864-827b-b5ad6fd681f8",
       "description": "Attend Data Communication (9:00 AM - 10:00 AM)",
       "project": "university",
       "tags": [],
-      "priority": "H",
+      "priority": "M",
       "due": "20260729T180000Z",
       "entry": "20260728T194716Z",
-      "urgency": 15.6644,
+      "urgency": 13.6312,
       "overdue": false
     },
     {
-      "id": 20,
+      "id": 16,
       "uuid": "3bb48768-4620-43cf-94c4-640bf2e7af95",
       "description": "Attend Numerical Methods and Analysis (10:10 AM - 11:00 AM)",
       "project": "university",
       "tags": [],
-      "priority": "H",
+      "priority": "M",
       "due": "20260729T180000Z",
       "entry": "20260728T194716Z",
-      "urgency": 15.6644,
+      "urgency": 13.6312,
       "overdue": false
     },
     {
-      "id": 21,
+      "id": 17,
       "uuid": "c7d3c5cb-991a-4fff-82d1-fc940c36a397",
       "description": "Attend Internet Programming Lab (12:00 PM - 2:00 PM)",
       "project": "university",
       "tags": [],
-      "priority": "H",
+      "priority": "M",
       "due": "20260729T180000Z",
       "entry": "20260728T194716Z",
-      "urgency": 15.6644,
+      "urgency": 13.6312,
       "overdue": false
     }
   ]

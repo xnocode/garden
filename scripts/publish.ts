@@ -79,6 +79,13 @@ interface ParsedFile {
   nextSlug?: string | null;
 }
 
+export interface RenderedNote extends ParsedFile {
+  html: string;
+  links: WikiLinkTarget[];
+  inlineTags: string[];
+  wordCount: number;
+}
+
 // ----------------------------------------------------------------------------
 // File walking
 // ----------------------------------------------------------------------------
@@ -276,13 +283,6 @@ async function publish() {
     urlPreviews = await fetchUrlPreviews(Array.from(allUrls));
   }
   ctx.urlPreviews = urlPreviews;
-
-  interface RenderedNote extends ParsedFile {
-    html: string;
-    links: WikiLinkTarget[];
-    inlineTags: string[];
-    wordCount: number;
-  }
 
   // --- Pass 1: render all notes without transclusion inlining ---
   // This produces the base HTML bodies we'll inline in pass 2.
