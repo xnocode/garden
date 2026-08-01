@@ -1,5 +1,5 @@
 {
-  "exportedAt": "2026-08-01T16:57:50.937Z",
+  "exportedAt": "2026-08-01T18:15:35.941Z",
   "stats": {
     "total": 46,
     "pending": 14,
@@ -16,7 +16,7 @@
       "priority": "M",
       "due": "20260801T180000Z",
       "entry": "20260728T194714Z",
-      "urgency": 13.6969,
+      "urgency": 13.7216,
       "overdue": false
     },
     {
@@ -28,7 +28,7 @@
       "priority": "M",
       "due": "20260801T180000Z",
       "entry": "20260728T194714Z",
-      "urgency": 13.6969,
+      "urgency": 13.7216,
       "overdue": false
     },
     {
@@ -40,7 +40,55 @@
       "priority": "M",
       "due": "20260801T180000Z",
       "entry": "20260728T194714Z",
-      "urgency": 13.6969,
+      "urgency": 13.7216,
+      "overdue": false
+    },
+    {
+      "id": 4,
+      "uuid": "b711eb20-a587-4cf6-aeb5-fd5755250712",
+      "description": "Attend Complex Variables, Fourier Analysis and Laplace Transform (8:00 AM - 10:00 AM)",
+      "project": "university",
+      "tags": [],
+      "priority": "M",
+      "due": "20260802T180000Z",
+      "entry": "20260728T194714Z",
+      "urgency": 13.2644,
+      "overdue": false
+    },
+    {
+      "id": 5,
+      "uuid": "c4db624f-a84d-46dd-bd02-24350a292570",
+      "description": "Attend Data Structures and Algorithms II (11:00 AM - 12:00 PM)",
+      "project": "university",
+      "tags": [],
+      "priority": "M",
+      "due": "20260802T180000Z",
+      "entry": "20260728T194714Z",
+      "urgency": 13.2644,
+      "overdue": false
+    },
+    {
+      "id": 6,
+      "uuid": "dfed1f02-ae54-4941-96b8-65da6b14bc4a",
+      "description": "Attend Software Engineering and System Analysis (12:00 PM - 1:00 PM)",
+      "project": "university",
+      "tags": [],
+      "priority": "M",
+      "due": "20260802T180000Z",
+      "entry": "20260728T194714Z",
+      "urgency": 13.2644,
+      "overdue": false
+    },
+    {
+      "id": 7,
+      "uuid": "43f21d9c-1fa6-4495-a9e8-5f626765b077",
+      "description": "Attend Data Structures and Algorithms II Lab (1:00 PM - 4:00 PM)",
+      "project": "university",
+      "tags": [],
+      "priority": "M",
+      "due": "20260802T180000Z",
+      "entry": "20260728T194715Z",
+      "urgency": 13.2644,
       "overdue": false
     }
   ]
