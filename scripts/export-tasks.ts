@@ -164,7 +164,8 @@ async function main() {
   // Categorize pending tasks
   const overdueTasks = pendingTasks.filter((t) => isOverdue(t.due));
   const todayTomorrow = pendingTasks.filter((t) => isTodayOrTomorrow(t.due));
-  // Tasks with no due date or future due dates are NOT shown publicly
+  const noDueDateTasks = pendingTasks.filter((t) => !t.due);
+  const futureTasks = pendingTasks.filter((t) => t.due && !isOverdue(t.due) && !isTodayOrTomorrow(t.due));
 
   const mapTask = (t: RawTask, overdue: boolean) => ({
     id: t.id,
@@ -179,10 +180,12 @@ async function main() {
     overdue,
   });
 
-  // Sort order: overdue first (by urgency), then today/tomorrow (by urgency)
+  // Sort order: overdue first, then today/tomorrow, then no due date, then future tasks
   const visibleTasks = [
     ...overdueTasks.sort((a, b) => (b.urgency || 0) - (a.urgency || 0)).map((t) => mapTask(t, true)),
     ...todayTomorrow.sort((a, b) => (b.urgency || 0) - (a.urgency || 0)).map((t) => mapTask(t, false)),
+    ...noDueDateTasks.sort((a, b) => (b.urgency || 0) - (a.urgency || 0)).map((t) => mapTask(t, false)),
+    ...futureTasks.sort((a, b) => (b.urgency || 0) - (a.urgency || 0)).map((t) => mapTask(t, false)),
   ];
 
   const snapshot = {

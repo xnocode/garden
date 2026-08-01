@@ -1,5 +1,5 @@
 {
-  "exportedAt": "2026-08-01T18:20:34.147Z",
+  "exportedAt": "2026-08-01T18:24:45.321Z",
   "stats": {
     "total": 46,
     "pending": 14,
@@ -16,7 +16,7 @@
       "priority": "M",
       "due": "20260801T180000Z",
       "entry": "20260728T194714Z",
-      "urgency": 13.7232,
+      "urgency": 13.7245,
       "overdue": false
     },
     {
@@ -28,7 +28,7 @@
       "priority": "M",
       "due": "20260801T180000Z",
       "entry": "20260728T194714Z",
-      "urgency": 13.7232,
+      "urgency": 13.7245,
       "overdue": false
     },
     {
@@ -40,7 +40,7 @@
       "priority": "M",
       "due": "20260801T180000Z",
       "entry": "20260728T194714Z",
-      "urgency": 13.7232,
+      "urgency": 13.7245,
       "overdue": false
     },
     {
@@ -52,7 +52,7 @@
       "priority": "M",
       "due": "20260802T180000Z",
       "entry": "20260728T194714Z",
-      "urgency": 13.266,
+      "urgency": 13.2674,
       "overdue": false
     },
     {
@@ -64,7 +64,7 @@
       "priority": "M",
       "due": "20260802T180000Z",
       "entry": "20260728T194714Z",
-      "urgency": 13.266,
+      "urgency": 13.2674,
       "overdue": false
     },
     {
@@ -76,7 +76,7 @@
       "priority": "M",
       "due": "20260802T180000Z",
       "entry": "20260728T194714Z",
-      "urgency": 13.266,
+      "urgency": 13.2674,
       "overdue": false
     },
     {
@@ -88,7 +88,91 @@
       "priority": "M",
       "due": "20260802T180000Z",
       "entry": "20260728T194715Z",
-      "urgency": 13.266,
+      "urgency": 13.2674,
+      "overdue": false
+    },
+    {
+      "id": 8,
+      "uuid": "df9ec732-600f-437a-b49d-1e961042d671",
+      "description": "Attend Software Engineering and System Analysis Lab (8:00 AM - 11:00 AM)",
+      "project": "university",
+      "tags": [],
+      "priority": "M",
+      "due": "20260804T180000Z",
+      "entry": "20260728T194715Z",
+      "urgency": 12.3531,
+      "overdue": false
+    },
+    {
+      "id": 9,
+      "uuid": "4b920a8a-64bc-4ffe-b9e8-999aee862884",
+      "description": "Attend Data Communication (11:00 AM - 12:00 PM)",
+      "project": "university",
+      "tags": [],
+      "priority": "M",
+      "due": "20260804T180000Z",
+      "entry": "20260728T194715Z",
+      "urgency": 12.3531,
+      "overdue": false
+    },
+    {
+      "id": 10,
+      "uuid": "e71777e8-d72d-4294-a99f-b89cdf60af12",
+      "description": "Attend Numerical Methods and Analysis (1:00 PM - 2:00 PM)",
+      "project": "university",
+      "tags": [],
+      "priority": "M",
+      "due": "20260804T180000Z",
+      "entry": "20260728T194715Z",
+      "urgency": 12.3531,
+      "overdue": false
+    },
+    {
+      "id": 11,
+      "uuid": "aad647ac-ca3e-4eed-aa93-6ffcfb206607",
+      "description": "Attend Software Engineering and System Analysis (2:00 PM - 4:00 PM)",
+      "project": "university",
+      "tags": [],
+      "priority": "M",
+      "due": "20260804T180000Z",
+      "entry": "20260728T194715Z",
+      "urgency": 12.3531,
+      "overdue": false
+    },
+    {
+      "id": 12,
+      "uuid": "efd4e97b-02e0-4475-89b4-c5b2e0a3bb24",
+      "description": "Attend Data Communication (9:00 AM - 10:00 AM)",
+      "project": "university",
+      "tags": [],
+      "priority": "M",
+      "due": "20260805T180000Z",
+      "entry": "20260728T194715Z",
+      "urgency": 11.8959,
+      "overdue": false
+    },
+    {
+      "id": 13,
+      "uuid": "6c35a2d4-6a83-4350-a2ba-ae89583a2415",
+      "description": "Attend Numerical Methods and Analysis (10:10 AM - 11:00 AM)",
+      "project": "university",
+      "tags": [],
+      "priority": "M",
+      "due": "20260805T180000Z",
+      "entry": "20260728T194715Z",
+      "urgency": 11.8959,
+      "overdue": false
+    },
+    {
+      "id": 14,
+      "uuid": "2b418580-ade3-4913-9148-317ab265b2f4",
+      "description": "Attend Internet Programming Lab (12:00 PM - 2:00 PM)",
+      "project": "university",
+      "tags": [],
+      "priority": "M",
+      "due": "20260805T180000Z",
+      "entry": "20260728T194716Z",
+      "urgency": 11.8959,
       "overdue": false
     }
   ]
