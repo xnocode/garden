@@ -989,11 +989,38 @@ export async function POST(req: Request) {
     if (text.startsWith("/list") || rawText.includes("List Notes") || rawText.includes("List All Notes")) {
       const pg = parseInt(text.replace("/list", "").trim(), 10) || 1;
       const { notes, total, totalPages, page } = await getPaginatedNotes(pg, 25);
-      if (!total) { await sendMsg(token, chatId, "📂 No notes."); }
-      else {
-        const list = notes.map((n, i) => `${(page - 1) * 25 + i + 1}. <b>${escapeHtml(n.title)}</b> (<code>${escapeHtml(n.filename)}</code>)`).join("\n");
-        const nav = totalPages > 1 ? `\n\n📖 Page ${page}/${totalPages}. <code>/list ${page < totalPages ? page + 1 : 1}</code>` : "";
-        await sendMsg(token, chatId, `📚 <b>Notes (${total}):</b>\n\n${list}${nav}`);
+      const taskSnapshot = await getTasksFromGitHub();
+      const tasks = taskSnapshot?.tasks || [];
+
+      let taskSection = "";
+      let inlineKeyboard: any[] = [];
+
+      if (tasks.length > 0) {
+        const taskLines = tasks.map((t, i) => {
+          const pri = t.priority ? ` [<b>${t.priority}</b>]` : "";
+          const flag = t.overdue ? " ⚠️" : "";
+          const formattedDue = formatTWDueDate(t.due);
+          const due = formattedDue ? ` (📅 <i>${formattedDue}</i>)` : "";
+          return `${i + 1}. <code>${escapeHtml(t.description)}</code>${pri}${flag}${due}`;
+        }).join("\n");
+        taskSection = `📌 <b>Pending Tasks (${tasks.length}):</b>\n${taskLines}\n\n`;
+
+        inlineKeyboard = tasks.map((t, i) => [
+          { text: `✅ Complete ${i + 1}: ${t.description.slice(0, 28)}`, callback_data: `done_${i + 1}` }
+        ]);
+      }
+
+      if (!total && !tasks.length) {
+        await sendMsg(token, chatId, "📂 No notes or tasks found.");
+      } else {
+        const noteList = notes.map((n, i) => `${(page - 1) * 25 + i + 1}. <b>${escapeHtml(n.title)}</b> (<code>${escapeHtml(n.filename)}</code>)`).join("\n");
+        const nav = totalPages > 1 ? `\n\n📖 Note Page ${page}/${totalPages}. <code>/list ${page < totalPages ? page + 1 : 1}</code>` : "";
+
+        await sendMsg(
+          token, chatId,
+          `${taskSection}📚 <b>Published Notes (${total}):</b>\n\n${noteList}${nav}`,
+          inlineKeyboard.length > 0 ? { inline_keyboard: inlineKeyboard } : undefined
+        );
       }
       return NextResponse.json({ ok: true });
     }
