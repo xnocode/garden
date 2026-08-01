@@ -1,46 +1,46 @@
 {
-  "exportedAt": "2026-07-29T19:27:35.808Z",
+  "exportedAt": "2026-08-01T16:39:15.482Z",
   "stats": {
     "total": 46,
-    "pending": 17,
-    "completed": 29,
+    "pending": 14,
+    "completed": 32,
     "overdue": 0
   },
   "tasks": [
     {
-      "id": 15,
-      "uuid": "5d98dd21-ba11-4864-827b-b5ad6fd681f8",
-      "description": "Attend Data Communication (9:00 AM - 10:00 AM)",
+      "id": 1,
+      "uuid": "6205d262-6656-4af8-96c1-9d05ff13c0d2",
+      "description": "Attend Data Structures and Algorithms II (10:10 AM - 12:00 PM)",
       "project": "university",
       "tags": [],
       "priority": "M",
-      "due": "20260729T180000Z",
-      "entry": "20260728T194716Z",
-      "urgency": 13.7278,
+      "due": "20260801T180000Z",
+      "entry": "20260728T194714Z",
+      "urgency": 13.691,
       "overdue": false
     },
     {
-      "id": 16,
-      "uuid": "3bb48768-4620-43cf-94c4-640bf2e7af95",
-      "description": "Attend Numerical Methods and Analysis (10:10 AM - 11:00 AM)",
+      "id": 2,
+      "uuid": "9fa2a0e6-91c6-4df5-a485-daa98c5da0c2",
+      "description": "Attend Numerical Methods and Analysis (12:10 PM - 2:00 PM)",
       "project": "university",
       "tags": [],
       "priority": "M",
-      "due": "20260729T180000Z",
-      "entry": "20260728T194716Z",
-      "urgency": 13.7278,
+      "due": "20260801T180000Z",
+      "entry": "20260728T194714Z",
+      "urgency": 13.691,
       "overdue": false
     },
     {
-      "id": 17,
-      "uuid": "c7d3c5cb-991a-4fff-82d1-fc940c36a397",
-      "description": "Attend Internet Programming Lab (12:00 PM - 2:00 PM)",
+      "id": 3,
+      "uuid": "4b1f9f70-5315-484e-a82b-a354d2f51ca4",
+      "description": "Attend Complex Variables, Fourier Analysis and Laplace Transform (2:10 PM - 3:00 PM)",
       "project": "university",
       "tags": [],
       "priority": "M",
-      "due": "20260729T180000Z",
-      "entry": "20260728T194716Z",
-      "urgency": 13.7278,
+      "due": "20260801T180000Z",
+      "entry": "20260728T194714Z",
+      "urgency": 13.691,
       "overdue": false
     }
   ]
