@@ -12,6 +12,6 @@ next: ""
 aliases:
 ---
 ```tw
-list 
+list
 ```
 
