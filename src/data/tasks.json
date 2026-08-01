@@ -1,8 +1,8 @@
 {
-  "exportedAt": "2026-08-01T18:27:27.403Z",
+  "exportedAt": "2026-08-01T18:29:45.801Z",
   "stats": {
-    "total": 46,
-    "pending": 14,
+    "total": 48,
+    "pending": 16,
     "completed": 32,
     "overdue": 0
   },
@@ -16,7 +16,7 @@
       "priority": "M",
       "due": "20260801T180000Z",
       "entry": "20260728T194714Z",
-      "urgency": 13.7253,
+      "urgency": 13.7261,
       "overdue": false
     },
     {
@@ -28,7 +28,7 @@
       "priority": "M",
       "due": "20260801T180000Z",
       "entry": "20260728T194714Z",
-      "urgency": 13.7253,
+      "urgency": 13.7261,
       "overdue": false
     },
     {
@@ -40,7 +40,7 @@
       "priority": "M",
       "due": "20260801T180000Z",
       "entry": "20260728T194714Z",
-      "urgency": 13.7253,
+      "urgency": 13.7261,
       "overdue": false
     },
     {
@@ -52,7 +52,7 @@
       "priority": "M",
       "due": "20260802T180000Z",
       "entry": "20260728T194714Z",
-      "urgency": 13.2682,
+      "urgency": 13.2689,
       "overdue": false
     },
     {
@@ -64,7 +64,7 @@
       "priority": "M",
       "due": "20260802T180000Z",
       "entry": "20260728T194714Z",
-      "urgency": 13.2682,
+      "urgency": 13.2689,
       "overdue": false
     },
     {
@@ -76,7 +76,7 @@
       "priority": "M",
       "due": "20260802T180000Z",
       "entry": "20260728T194714Z",
-      "urgency": 13.2682,
+      "urgency": 13.2689,
       "overdue": false
     },
     {
@@ -88,7 +88,31 @@
       "priority": "M",
       "due": "20260802T180000Z",
       "entry": "20260728T194715Z",
-      "urgency": 13.2682,
+      "urgency": 13.2689,
+      "overdue": false
+    },
+    {
+      "id": 15,
+      "uuid": "9bc472ba-765f-4d8d-96ad-c63ed0e200cd",
+      "description": "Project Proposal - SW",
+      "project": null,
+      "tags": [],
+      "priority": "H",
+      "due": "20260803T180000Z",
+      "entry": "20260801T182955Z",
+      "urgency": 13.8954,
+      "overdue": false
+    },
+    {
+      "id": 16,
+      "uuid": "fb5b681f-5a88-47c7-a4a3-00c9de66e0f3",
+      "description": "Feasibility Study - SW",
+      "project": null,
+      "tags": [],
+      "priority": "H",
+      "due": "20260803T180000Z",
+      "entry": "20260801T182955Z",
+      "urgency": 13.8954,
       "overdue": false
     },
     {
@@ -100,7 +124,7 @@
       "priority": "M",
       "due": "20260804T180000Z",
       "entry": "20260728T194715Z",
-      "urgency": 12.3539,
+      "urgency": 12.3547,
       "overdue": false
     },
     {
@@ -112,7 +136,7 @@
       "priority": "M",
       "due": "20260804T180000Z",
       "entry": "20260728T194715Z",
-      "urgency": 12.3539,
+      "urgency": 12.3547,
       "overdue": false
     },
     {
@@ -124,7 +148,7 @@
       "priority": "M",
       "due": "20260804T180000Z",
       "entry": "20260728T194715Z",
-      "urgency": 12.3539,
+      "urgency": 12.3547,
       "overdue": false
     },
     {
@@ -136,7 +160,7 @@
       "priority": "M",
       "due": "20260804T180000Z",
       "entry": "20260728T194715Z",
-      "urgency": 12.3539,
+      "urgency": 12.3547,
       "overdue": false
     },
     {
@@ -148,7 +172,7 @@
       "priority": "M",
       "due": "20260805T180000Z",
       "entry": "20260728T194715Z",
-      "urgency": 11.8968,
+      "urgency": 11.8975,
       "overdue": false
     },
     {
@@ -160,7 +184,7 @@
       "priority": "M",
       "due": "20260805T180000Z",
       "entry": "20260728T194715Z",
-      "urgency": 11.8968,
+      "urgency": 11.8975,
       "overdue": false
     },
     {
@@ -172,7 +196,7 @@
       "priority": "M",
       "due": "20260805T180000Z",
       "entry": "20260728T194716Z",
-      "urgency": 11.8968,
+      "urgency": 11.8975,
       "overdue": false
     }
   ]

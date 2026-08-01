@@ -83,7 +83,10 @@ const TW_TAG_RE = /^[+-]\S+$/;
  * parses them correctly instead of stuffing everything into the description.
  */
 function buildTaskAddArgs(raw: string): string {
-  const tokens = raw.trim().split(/\s+/);
+  // Normalize colon or dot date separators: due:2026:08:04 -> due:2026-08-04
+  const normalizedRaw = raw.replace(/\b(due|until|wait|scheduled):(\d{4})[:.](\d{2})[:.](\d{2})\b/gi, "$1:$2-$3-$4");
+
+  const tokens = normalizedRaw.trim().split(/\s+/);
   const modifiers: string[] = [];
   const descWords: string[] = [];
 

@@ -645,7 +645,7 @@ export async function addPendingTasksToGitHub(
     }
 
     const newItems: PendingTaskItem[] = taskStrings
-      .map((t) => t.trim())
+      .map((t) => t.trim().replace(/\b(due|until|wait|scheduled):(\d{4})[:.](\d{2})[:.](\d{2})\b/gi, "$1:$2-$3-$4"))
       .filter(Boolean)
       .map((t) => ({
         raw: t,
