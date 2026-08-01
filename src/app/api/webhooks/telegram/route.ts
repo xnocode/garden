@@ -745,7 +745,7 @@ export async function POST(req: Request) {
     }
 
     // ─── /mytasks — Show pending task list ───────────────────────────────────
-    if (text.startsWith("/mytasks") || text.startsWith("/tasklist") || text === "/tasks" || rawText.includes("My Tasks") || rawText.includes("📋")) {
+    if (text.startsWith("/mytasks") || text.startsWith("/tasklist") || rawText.includes("My Tasks") || rawText.includes("📋")) {
       const snapshot = await getTasksFromGitHub();
       if (!snapshot || snapshot.tasks.length === 0) {
         await sendMsg(
