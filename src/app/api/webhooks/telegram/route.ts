@@ -235,6 +235,14 @@ export async function POST(req: Request) {
       return NextResponse.json({ ok: true });
     }
 
+    if (cbq?.id) {
+      tgFetch(`https://api.telegram.org/bot${token}/answerCallbackQuery`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ callback_query_id: cbq.id }),
+      }).catch(() => {});
+    }
+
     // 🛑 Cancel / Stop
     if (text.startsWith("/cancel") || text.startsWith("/stop") || rawText.includes("Cancel") || rawText.includes("Reset") || rawText.includes("🛑")) {
       await sendMsg(token, chatId, `🛑 <b>Operation Stopped &amp; Reset</b>\n\nAll progress cancelled. Ready for next command!`);
@@ -756,11 +764,15 @@ export async function POST(req: Request) {
           const due = formattedDue ? `\n   📅 <i>${formattedDue}</i>` : "";
           return `<b>${i + 1}.</b> ${escapeHtml(t.description)}${pri}${flag}${due}`;
         });
+        const taskButtons = snapshot.tasks.map((t, i) => [
+          { text: `✅ ${i + 1}. ${t.description.slice(0, 30)}`, callback_data: `done_${i + 1}` }
+        ]);
         await sendMsg(
           token, chatId,
           `📋 <b>Tasks (${snapshot.tasks.length} visible, synced ${agoStr}):</b>\n\n` +
           lines.join("\n\n") +
-          `\n\n<i>Mark done: <code>/done 1</code> (use the number above)</i>`
+          `\n\n<i>Tap a task below to mark as completed, or type <code>/done 1</code>:</i>`,
+          { inline_keyboard: taskButtons }
         );
       }
       return NextResponse.json({ ok: true });
@@ -814,23 +826,35 @@ export async function POST(req: Request) {
       return NextResponse.json({ ok: true });
     }
 
-    // ─── /done — Mark a task as done by position number ───────────────────────
-    if (text.startsWith("/done")) {
-      const numStr = text.replace("/done", "").trim();
-      const pos = parseInt(numStr, 10);
-      if (!numStr || isNaN(pos) || pos < 1) {
+    // ─── /done — Mark a task as done by position number or interactive selection ─
+    if (text.startsWith("/done") || text.startsWith("done_")) {
+      const rawNum = text.startsWith("done_") ? text.replace("done_", "") : text.replace("/done", "").trim();
+      const pos = parseInt(rawNum, 10);
+
+      const snapshot = await getTasksFromGitHub();
+      if (!snapshot || snapshot.tasks.length === 0) {
         await sendMsg(
           token, chatId,
-          `⚠️ Usage: <code>/done 1</code>\n\n<i>Use <code>/mytasks</code> to see the numbered list first.</i>`
+          `📋 <b>No pending tasks to complete!</b>`
         );
         return NextResponse.json({ ok: true });
       }
 
-      // Resolve position → UUID from the snapshot
-      const snapshot = await getTasksFromGitHub();
-      const task = snapshot?.tasks[pos - 1];
+      if (isNaN(pos) || pos < 1) {
+        const taskButtons = snapshot.tasks.map((t, i) => [
+          { text: `✅ ${i + 1}. ${t.description.slice(0, 30)}`, callback_data: `done_${i + 1}` }
+        ]);
+        await sendMsg(
+          token, chatId,
+          `📋 <b>Select a task to mark as completed:</b>`,
+          { inline_keyboard: taskButtons }
+        );
+        return NextResponse.json({ ok: true });
+      }
+
+      const task = snapshot.tasks[pos - 1];
       if (!task) {
-        const total = snapshot?.tasks.length ?? 0;
+        const total = snapshot.tasks.length;
         await sendMsg(
           token, chatId,
           `❌ Task #${pos} not found in last snapshot (${total} visible task${total !== 1 ? "s" : ""}).\n\n` +
@@ -843,14 +867,12 @@ export async function POST(req: Request) {
 
       after(async () => {
         try {
-          // Queue UUID — never shifts even if other tasks complete in WSL
           const res = await addPendingDoneToGitHub([task.uuid]);
           if (res.success) {
             await sendMsg(
               token, chatId,
               `✅ <b>"${escapeHtml(task.description)}" queued as done!</b>\n\n` +
-              `<i>Next <code>bun run deploy</code> will mark it complete in WSL Taskwarrior \& update the website.\n` +
-              `(Safe to queue again — duplicates are ignored automatically.)</i>`
+              `<i>Next <code>bun run deploy</code> will mark it complete in WSL Taskwarrior &amp; update the website.</i>`
             );
           } else {
             await sendMsg(token, chatId, `❌ <b>Failed:</b> ${escapeHtml(res.message)}`);
