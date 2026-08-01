@@ -32,8 +32,11 @@ aliases:
 - [Lecture 1](https://drive.google.com/file/d/11FsHpTjF-7ADbMRhLOtCic6QzQlehwMg/view?usp=drive_link)
 
 ---
-## Lecture 02 
 
 > Date : 23 July 2026 ❌
+
+---
+
+> Date : 29 July 2026 ❌
 
 ---

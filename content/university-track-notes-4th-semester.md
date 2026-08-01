@@ -20,8 +20,8 @@ Class Notes Update:
 |            |     | Data Communication                                        | 🟢    | NO          |
 |            |     | Numerical Methods and Analysis                            | 🟢    | YES         |
 |            |     | Software Engineering and System Analysis                  | 🟢    | NO          |
-| 23.07.2026 | THU | Data Communication                                        | 🟢    |             |
-|            |     | Internet Programming Lab                                  | 🟢    |             |
+| 23.07.2026 | THU | Data Communication                                        | 🟢    | NO          |
+|            |     | Internet Programming Lab                                  | 🟢    | NO          |
 | 26.07.2026 | SUN | Data Structures and Algorithms \|\|                       |       |             |
 |            |     | Numerical Methods and Analysis                            |       |             |
 |            |     | Complex Variables, Fourier Analysis and Laplace Transform |       |             |
@@ -30,7 +30,7 @@ Class Notes Update:
 |            |     | Software Engineering and System Analysis                  |       |             |
 |            |     | Data Structures and Algorithms \|\| Lab                   |       |             |
 | 29.07.2026 | WED | Software Engineering and System Analysis Lab              |       |             |
-|            |     | Data Communication                                        |       |             |
+|            |     | Data Communication                                        | 🟢    | NO          |
 |            |     | Numerical Methods and Analysis                            |       |             |
 |            |     | Software Engineering and System Analysis                  |       |             |
 | 30.07.2026 | THU | Data Communication                                        |       |             |
