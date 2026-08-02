@@ -1,48 +1,12 @@
 {
-  "exportedAt": "2026-08-02T12:53:40.633Z",
+  "exportedAt": "2026-08-02T15:15:08.327Z",
   "stats": {
-    "total": 53,
-    "pending": 16,
+    "total": 50,
+    "pending": 13,
     "completed": 37,
     "overdue": 0
   },
   "tasks": [
-    {
-      "id": 14,
-      "uuid": "4353910e-ad2a-4aed-856c-88f9cffda70a",
-      "description": "Make Task List",
-      "project": "list",
-      "tags": [],
-      "priority": "H",
-      "due": "20260801T180000Z",
-      "entry": "20260801T190207Z",
-      "urgency": 16.1601,
-      "overdue": false
-    },
-    {
-      "id": 15,
-      "uuid": "9a47560d-0bd3-459a-8b4d-6bef23ab1ffc",
-      "description": "Maghrib Namaz",
-      "project": "self-activities",
-      "tags": [],
-      "priority": "H",
-      "due": "20260801T180000Z",
-      "entry": "20260802T124847Z",
-      "urgency": 16.1601,
-      "overdue": false
-    },
-    {
-      "id": 16,
-      "uuid": "df3e02e1-c31f-4f5a-9edb-276bb6298118",
-      "description": "Isha Namaz",
-      "project": "self-activities",
-      "tags": [],
-      "priority": "H",
-      "due": "20260801T180000Z",
-      "entry": "20260802T124913Z",
-      "urgency": 16.1601,
-      "overdue": false
-    },
     {
       "id": 1,
       "uuid": "b711eb20-a587-4cf6-aeb5-fd5755250712",
@@ -52,7 +16,7 @@
       "priority": "M",
       "due": "20260802T180000Z",
       "entry": "20260728T194714Z",
-      "urgency": 13.6249,
+      "urgency": 13.6698,
       "overdue": false
     },
     {
@@ -64,7 +28,7 @@
       "priority": "M",
       "due": "20260802T180000Z",
       "entry": "20260728T194714Z",
-      "urgency": 13.6249,
+      "urgency": 13.6698,
       "overdue": false
     },
     {
@@ -76,7 +40,7 @@
       "priority": "M",
       "due": "20260802T180000Z",
       "entry": "20260728T194714Z",
-      "urgency": 13.6249,
+      "urgency": 13.6698,
       "overdue": false
     },
     {
@@ -88,7 +52,7 @@
       "priority": "M",
       "due": "20260802T180000Z",
       "entry": "20260728T194715Z",
-      "urgency": 13.6249,
+      "urgency": 13.6698,
       "overdue": false
     },
     {
@@ -100,7 +64,7 @@
       "priority": "H",
       "due": "20260803T180000Z",
       "entry": "20260801T182955Z",
-      "urgency": 15.2458,
+      "urgency": 15.2907,
       "overdue": false
     },
     {
@@ -112,7 +76,7 @@
       "priority": "H",
       "due": "20260803T180000Z",
       "entry": "20260801T182955Z",
-      "urgency": 15.2458,
+      "urgency": 15.2907,
       "overdue": false
     },
     {
@@ -124,7 +88,7 @@
       "priority": "M",
       "due": "20260804T180000Z",
       "entry": "20260728T194715Z",
-      "urgency": 12.7106,
+      "urgency": 12.7555,
       "overdue": false
     },
     {
@@ -136,7 +100,7 @@
       "priority": "M",
       "due": "20260804T180000Z",
       "entry": "20260728T194715Z",
-      "urgency": 12.7106,
+      "urgency": 12.7555,
       "overdue": false
     },
     {
@@ -148,7 +112,7 @@
       "priority": "M",
       "due": "20260804T180000Z",
       "entry": "20260728T194715Z",
-      "urgency": 12.7106,
+      "urgency": 12.7555,
       "overdue": false
     },
     {
@@ -160,7 +124,7 @@
       "priority": "M",
       "due": "20260804T180000Z",
       "entry": "20260728T194715Z",
-      "urgency": 12.7106,
+      "urgency": 12.7555,
       "overdue": false
     },
     {
@@ -172,7 +136,7 @@
       "priority": "M",
       "due": "20260805T180000Z",
       "entry": "20260728T194715Z",
-      "urgency": 12.2534,
+      "urgency": 12.2983,
       "overdue": false
     },
     {
@@ -184,7 +148,7 @@
       "priority": "M",
       "due": "20260805T180000Z",
       "entry": "20260728T194715Z",
-      "urgency": 12.2534,
+      "urgency": 12.2983,
       "overdue": false
     },
     {
@@ -196,7 +160,7 @@
       "priority": "M",
       "due": "20260805T180000Z",
       "entry": "20260728T194716Z",
-      "urgency": 12.2534,
+      "urgency": 12.2983,
       "overdue": false
     }
   ]
