@@ -5,8 +5,7 @@ author: Ridoy
 draft: true
 date:
 tags:
-  - aiml
-  - python
+  - taskworrior
 prev: ""
 next: ""
 aliases:
