@@ -1,26 +1,14 @@
 {
-  "exportedAt": "2026-08-01T19:02:55.229Z",
+  "exportedAt": "2026-08-02T12:50:00.184Z",
   "stats": {
-    "total": 50,
-    "pending": 18,
-    "completed": 32,
+    "total": 53,
+    "pending": 17,
+    "completed": 36,
     "overdue": 0
   },
   "tasks": [
     {
-      "id": 17,
-      "uuid": "88ec2051-f3aa-400e-a25f-f558f3e83137",
-      "description": "Fajr Namaz",
-      "project": "self-activities",
-      "tags": [],
-      "priority": "H",
-      "due": "20260801T180000Z",
-      "entry": "20260801T185853Z",
-      "urgency": 15.8202,
-      "overdue": false
-    },
-    {
-      "id": 18,
+      "id": 14,
       "uuid": "4353910e-ad2a-4aed-856c-88f9cffda70a",
       "description": "Make Task List",
       "project": "list",
@@ -28,47 +16,47 @@
       "priority": "H",
       "due": "20260801T180000Z",
       "entry": "20260801T190207Z",
-      "urgency": 15.8202,
+      "urgency": 16.1589,
+      "overdue": false
+    },
+    {
+      "id": 15,
+      "uuid": "f32d90cc-0558-4972-93a4-9c499757188b",
+      "description": "Zuhur Namaz",
+      "project": "self-activities",
+      "tags": [],
+      "priority": "H",
+      "due": "20260801T180000Z",
+      "entry": "20260802T124816Z",
+      "urgency": 16.1589,
+      "overdue": false
+    },
+    {
+      "id": 16,
+      "uuid": "9a47560d-0bd3-459a-8b4d-6bef23ab1ffc",
+      "description": "Maghrib Namaz",
+      "project": "self-activities",
+      "tags": [],
+      "priority": "H",
+      "due": "20260801T180000Z",
+      "entry": "20260802T124847Z",
+      "urgency": 16.1589,
+      "overdue": false
+    },
+    {
+      "id": 17,
+      "uuid": "df3e02e1-c31f-4f5a-9edb-276bb6298118",
+      "description": "Isha Namaz",
+      "project": "self-activities",
+      "tags": [],
+      "priority": "H",
+      "due": "20260801T180000Z",
+      "entry": "20260802T124913Z",
+      "urgency": 16.1589,
       "overdue": false
     },
     {
       "id": 1,
-      "uuid": "6205d262-6656-4af8-96c1-9d05ff13c0d2",
-      "description": "Attend Data Structures and Algorithms II (10:10 AM - 12:00 PM)",
-      "project": "university",
-      "tags": [],
-      "priority": "M",
-      "due": "20260801T180000Z",
-      "entry": "20260728T194714Z",
-      "urgency": 13.7366,
-      "overdue": false
-    },
-    {
-      "id": 2,
-      "uuid": "9fa2a0e6-91c6-4df5-a485-daa98c5da0c2",
-      "description": "Attend Numerical Methods and Analysis (12:10 PM - 2:00 PM)",
-      "project": "university",
-      "tags": [],
-      "priority": "M",
-      "due": "20260801T180000Z",
-      "entry": "20260728T194714Z",
-      "urgency": 13.7366,
-      "overdue": false
-    },
-    {
-      "id": 3,
-      "uuid": "4b1f9f70-5315-484e-a82b-a354d2f51ca4",
-      "description": "Attend Complex Variables, Fourier Analysis and Laplace Transform (2:10 PM - 3:00 PM)",
-      "project": "university",
-      "tags": [],
-      "priority": "M",
-      "due": "20260801T180000Z",
-      "entry": "20260728T194714Z",
-      "urgency": 13.7366,
-      "overdue": false
-    },
-    {
-      "id": 4,
       "uuid": "b711eb20-a587-4cf6-aeb5-fd5755250712",
       "description": "Attend Complex Variables, Fourier Analysis and Laplace Transform (8:00 AM - 10:00 AM)",
       "project": "university",
@@ -76,11 +64,11 @@
       "priority": "M",
       "due": "20260802T180000Z",
       "entry": "20260728T194714Z",
-      "urgency": 13.2795,
+      "urgency": 13.6237,
       "overdue": false
     },
     {
-      "id": 5,
+      "id": 2,
       "uuid": "c4db624f-a84d-46dd-bd02-24350a292570",
       "description": "Attend Data Structures and Algorithms II (11:00 AM - 12:00 PM)",
       "project": "university",
@@ -88,11 +76,11 @@
       "priority": "M",
       "due": "20260802T180000Z",
       "entry": "20260728T194714Z",
-      "urgency": 13.2795,
+      "urgency": 13.6237,
       "overdue": false
     },
     {
-      "id": 6,
+      "id": 3,
       "uuid": "dfed1f02-ae54-4941-96b8-65da6b14bc4a",
       "description": "Attend Software Engineering and System Analysis (12:00 PM - 1:00 PM)",
       "project": "university",
@@ -100,11 +88,11 @@
       "priority": "M",
       "due": "20260802T180000Z",
       "entry": "20260728T194714Z",
-      "urgency": 13.2795,
+      "urgency": 13.6237,
       "overdue": false
     },
     {
-      "id": 7,
+      "id": 4,
       "uuid": "43f21d9c-1fa6-4495-a9e8-5f626765b077",
       "description": "Attend Data Structures and Algorithms II Lab (1:00 PM - 4:00 PM)",
       "project": "university",
@@ -112,11 +100,11 @@
       "priority": "M",
       "due": "20260802T180000Z",
       "entry": "20260728T194715Z",
-      "urgency": 13.2795,
+      "urgency": 13.6237,
       "overdue": false
     },
     {
-      "id": 15,
+      "id": 12,
       "uuid": "9bc472ba-765f-4d8d-96ad-c63ed0e200cd",
       "description": "Project Proposal - SW",
       "project": "university",
@@ -124,11 +112,11 @@
       "priority": "H",
       "due": "20260803T180000Z",
       "entry": "20260801T182955Z",
-      "urgency": 14.9059,
+      "urgency": 15.2446,
       "overdue": false
     },
     {
-      "id": 16,
+      "id": 13,
       "uuid": "fb5b681f-5a88-47c7-a4a3-00c9de66e0f3",
       "description": "Feasibility Study - SW",
       "project": "university",
@@ -136,11 +124,11 @@
       "priority": "H",
       "due": "20260803T180000Z",
       "entry": "20260801T182955Z",
-      "urgency": 14.9059,
+      "urgency": 15.2446,
       "overdue": false
     },
     {
-      "id": 8,
+      "id": 5,
       "uuid": "df9ec732-600f-437a-b49d-1e961042d671",
       "description": "Attend Software Engineering and System Analysis Lab (8:00 AM - 11:00 AM)",
       "project": "university",
@@ -148,11 +136,11 @@
       "priority": "M",
       "due": "20260804T180000Z",
       "entry": "20260728T194715Z",
-      "urgency": 12.3652,
+      "urgency": 12.7094,
       "overdue": false
     },
     {
-      "id": 9,
+      "id": 6,
       "uuid": "4b920a8a-64bc-4ffe-b9e8-999aee862884",
       "description": "Attend Data Communication (11:00 AM - 12:00 PM)",
       "project": "university",
@@ -160,11 +148,11 @@
       "priority": "M",
       "due": "20260804T180000Z",
       "entry": "20260728T194715Z",
-      "urgency": 12.3652,
+      "urgency": 12.7094,
       "overdue": false
     },
     {
-      "id": 10,
+      "id": 7,
       "uuid": "e71777e8-d72d-4294-a99f-b89cdf60af12",
       "description": "Attend Numerical Methods and Analysis (1:00 PM - 2:00 PM)",
       "project": "university",
@@ -172,11 +160,11 @@
       "priority": "M",
       "due": "20260804T180000Z",
       "entry": "20260728T194715Z",
-      "urgency": 12.3652,
+      "urgency": 12.7094,
       "overdue": false
     },
     {
-      "id": 11,
+      "id": 8,
       "uuid": "aad647ac-ca3e-4eed-aa93-6ffcfb206607",
       "description": "Attend Software Engineering and System Analysis (2:00 PM - 4:00 PM)",
       "project": "university",
@@ -184,11 +172,11 @@
       "priority": "M",
       "due": "20260804T180000Z",
       "entry": "20260728T194715Z",
-      "urgency": 12.3652,
+      "urgency": 12.7094,
       "overdue": false
     },
     {
-      "id": 12,
+      "id": 9,
       "uuid": "efd4e97b-02e0-4475-89b4-c5b2e0a3bb24",
       "description": "Attend Data Communication (9:00 AM - 10:00 AM)",
       "project": "university",
@@ -196,11 +184,11 @@
       "priority": "M",
       "due": "20260805T180000Z",
       "entry": "20260728T194715Z",
-      "urgency": 11.908,
+      "urgency": 12.2523,
       "overdue": false
     },
     {
-      "id": 13,
+      "id": 10,
       "uuid": "6c35a2d4-6a83-4350-a2ba-ae89583a2415",
       "description": "Attend Numerical Methods and Analysis (10:10 AM - 11:00 AM)",
       "project": "university",
@@ -208,11 +196,11 @@
       "priority": "M",
       "due": "20260805T180000Z",
       "entry": "20260728T194715Z",
-      "urgency": 11.908,
+      "urgency": 12.2523,
       "overdue": false
     },
     {
-      "id": 14,
+      "id": 11,
       "uuid": "2b418580-ade3-4913-9148-317ab265b2f4",
       "description": "Attend Internet Programming Lab (12:00 PM - 2:00 PM)",
       "project": "university",
@@ -220,7 +208,7 @@
       "priority": "M",
       "due": "20260805T180000Z",
       "entry": "20260728T194716Z",
-      "urgency": 11.908,
+      "urgency": 12.2523,
       "overdue": false
     }
   ]
