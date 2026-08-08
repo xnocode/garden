@@ -6,7 +6,7 @@ draft: false
 date: 2026-07-16
 tags:
   - aiml
-  - "#python"
+  - python
 prev: "[[python-relational-or-comparison]]"
 next: "[[python-logical-operators]]"
 aliases:
