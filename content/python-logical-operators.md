@@ -13,7 +13,6 @@ aliases:
   - logical
 updatedAt: 2026-07-22
 ---
-# python-logical-operators
 1. `not` → used to get the opposite value
 
 | Input | Output |
@@ -29,7 +28,6 @@ updatedAt: 2026-07-22
 | False   | True    | False  |
 | True    | False   | False  |
 | False   | False   | False  |
-
 
 3. `or` → returns `True` if at least one value is `True`
 
