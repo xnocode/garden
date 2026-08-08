@@ -13,6 +13,7 @@ aliases:
   - logical
 updatedAt: 2026-07-22
 ---
+# python-logical-operators
 1. `not` → used to get the opposite value
 
 | Input | Output |
