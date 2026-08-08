@@ -1,7 +1,7 @@
 ---
 title: Private Draft
 description: A note intentionally left unpublished to test the draft filter.
-draft: false
+draft: true
 author: Ridoy
 date: 2024-08-10
 tags:
