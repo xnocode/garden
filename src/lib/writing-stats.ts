@@ -70,12 +70,16 @@ export async function getWritingStats(): Promise<WritingStatsSummary> {
           const entry = wordCountsByDate.get(item.date)!;
           if (item.filePath) entry.notes.add(item.filePath);
 
+          let fileNetWords = 0;
           if (item.changes && Array.isArray(item.changes)) {
             for (const ch of item.changes) {
-              if (ch.w && ch.w > 0) {
-                entry.words += ch.w;
+              if (typeof ch.w === "number") {
+                fileNetWords += ch.w;
               }
             }
+          }
+          if (fileNetWords > 0) {
+            entry.words += fileNetWords;
           }
         }
       }
@@ -83,6 +87,12 @@ export async function getWritingStats(): Promise<WritingStatsSummary> {
   } catch (err) {
     console.error("Error parsing keep-the-rhythm data:", err);
   }
+
+  // Calculate actual total published words in garden
+  const actualGardenTotalWords = (notesData as Array<{ wordCount: number }>).reduce(
+    (acc, n) => acc + (n.wordCount || 0),
+    0
+  );
 
   // 2. Augment with notes.json published/updated dates so notes data is also counted
   for (const n of notesData as Array<{ slug: string; wordCount: number; updatedAt: string; publishDate: string | null }>) {
@@ -195,8 +205,8 @@ export async function getWritingStats(): Promise<WritingStatsSummary> {
     dailyGoal,
     todayGoalMet,
     totalActiveDays,
-    totalWordsRecorded,
-    avgWordsPerActiveDay: totalActiveDays > 0 ? Math.round(totalWordsRecorded / totalActiveDays) : 0,
+    totalWordsRecorded: actualGardenTotalWords,
+    avgWordsPerActiveDay: totalActiveDays > 0 ? Math.round(actualGardenTotalWords / totalActiveDays) : 0,
     last30Days,
     heatMapData,
   };
