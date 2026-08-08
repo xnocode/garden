@@ -17277,7 +17277,7 @@
       },
       {
         "date": "2026-08-08",
-        "filePath": "Untitled.md",
+        "filePath": "nothing-we-know.md",
         "wordCountStart": 0,
         "charCountStart": 0,
         "changes": [
@@ -17533,7 +17533,7 @@
       },
       {
         "date": "2026-08-09",
-        "filePath": "Untitled.md",
+        "filePath": "nothing-we-know.md",
         "wordCountStart": 0,
         "charCountStart": 0,
         "changes": [
@@ -17556,6 +17556,16 @@
             "timeKey": "04:10",
             "w": -26,
             "c": -206
+          },
+          {
+            "timeKey": "04:15",
+            "w": -1,
+            "c": -11
+          },
+          {
+            "timeKey": "04:20",
+            "w": 25,
+            "c": 256
           }
         ],
         "id": 1096
@@ -17620,8 +17630,8 @@
           },
           {
             "timeKey": "04:15",
-            "w": 0,
-            "c": 0
+            "w": -2,
+            "c": -14
           }
         ],
         "id": 1100
@@ -17650,6 +17660,11 @@
             "timeKey": "04:10",
             "w": 1,
             "c": 11
+          },
+          {
+            "timeKey": "04:20",
+            "w": -1,
+            "c": -11
           }
         ],
         "id": 1102
@@ -17669,12 +17684,39 @@
             "timeKey": "04:15",
             "w": -1,
             "c": -11
+          },
+          {
+            "timeKey": "04:20",
+            "w": 0,
+            "c": 0
           }
         ],
         "id": 1103
+      },
+      {
+        "date": "2026-08-09",
+        "filePath": "links-are-thoughts.md",
+        "wordCountStart": 371,
+        "charCountStart": 2141,
+        "changes": [],
+        "id": 1104
+      },
+      {
+        "date": "2026-08-09",
+        "filePath": "every-thing-we-know.md",
+        "wordCountStart": 0,
+        "charCountStart": 0,
+        "changes": [
+          {
+            "timeKey": "04:20",
+            "w": 48,
+            "c": 313
+          }
+        ],
+        "id": 1105
       }
     ],
-    "wholeVaultWordCount": 28300,
-    "wholeVaultCharCount": 225638
+    "wholeVaultWordCount": 28413,
+    "wholeVaultCharCount": 226526
   }
 }
