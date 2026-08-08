@@ -10,6 +10,14 @@ export interface DayWritingStat {
   formattedDate: string;
 }
 
+export interface MonthWritingStat {
+  monthName: string;
+  yearMonth: string;
+  days: DayWritingStat[];
+  totalWords: number;
+  activeDays: number;
+}
+
 export interface WritingStatsSummary {
   currentStreak: number;
   longestStreak: number;
@@ -20,6 +28,7 @@ export interface WritingStatsSummary {
   totalWordsRecorded: number;
   avgWordsPerActiveDay: number;
   last30Days: DayWritingStat[];
+  monthlyHistory: MonthWritingStat[];
   heatMapData: { [date: string]: number }; // YYYY-MM-DD -> word count
 }
 
@@ -134,6 +143,53 @@ export async function getWritingStats(): Promise<WritingStatsSummary> {
     });
   }
 
+  // 3b. Compute full monthly history across all recorded months
+  const allRecordedDates = Array.from(wordCountsByDate.keys()).sort();
+  const earliestDateStr = allRecordedDates[0] || today.toISOString().slice(0, 10);
+  const startDate = new Date(earliestDateStr);
+  startDate.setDate(1); // Start at first of that month
+
+  const monthlyHistoryMap: Map<string, MonthWritingStat> = new Map();
+
+  let currPointer = new Date(startDate);
+  while (currPointer <= today) {
+    const yyyymm = currPointer.toISOString().slice(0, 7);
+    const monthName = currPointer.toLocaleDateString("en-US", { month: "long", year: "numeric" });
+    const dateStr = currPointer.toISOString().slice(0, 10);
+
+    if (!monthlyHistoryMap.has(yyyymm)) {
+      monthlyHistoryMap.set(yyyymm, {
+        monthName,
+        yearMonth: yyyymm,
+        days: [],
+        totalWords: 0,
+        activeDays: 0,
+      });
+    }
+
+    const mGroup = monthlyHistoryMap.get(yyyymm)!;
+    const record = wordCountsByDate.get(dateStr);
+    const words = record ? record.words : 0;
+    const notesCount = record ? record.notes.size : 0;
+
+    if (words > 0) {
+      mGroup.totalWords += words;
+      mGroup.activeDays += 1;
+    }
+
+    mGroup.days.push({
+      date: dateStr,
+      words,
+      goalMet: words > 0 && (words >= dailyGoal || notesCount > 0),
+      notesModified: notesCount,
+      formattedDate: currPointer.toLocaleDateString("en-US", { month: "short", day: "numeric" }),
+    });
+
+    currPointer.setDate(currPointer.getDate() + 1);
+  }
+
+  const monthlyHistory = Array.from(monthlyHistoryMap.values()).reverse();
+
   // 4. Compute Streaks
   let currentStreak = 0;
   let longestStreak = 0;
@@ -208,6 +264,7 @@ export async function getWritingStats(): Promise<WritingStatsSummary> {
     totalWordsRecorded: actualGardenTotalWords,
     avgWordsPerActiveDay: totalActiveDays > 0 ? Math.round(actualGardenTotalWords / totalActiveDays) : 0,
     last30Days,
+    monthlyHistory,
     heatMapData,
   };
 }

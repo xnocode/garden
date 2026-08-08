@@ -95,37 +95,63 @@ export function WritingRhythmView({ stats }: { stats: WritingStatsSummary }) {
         </div>
       </section>
 
-      {/* 30-Day Grid */}
-      <section className="rounded-lg border border-border bg-surface/30 p-6">
-        <h2 className="mb-4 flex items-center gap-2 font-serif text-xl font-semibold text-heading">
-          <Calendar className="h-5 w-5 text-garden" />
-          30-Day Activity History
-        </h2>
+      {/* Monthly Activity History across all recorded months */}
+      <section className="space-y-8">
+        <div className="flex items-center justify-between border-b border-border pb-3">
+          <h2 className="flex items-center gap-2 font-serif text-xl font-semibold text-heading">
+            <Calendar className="h-5 w-5 text-garden" />
+            Full Monthly Activity History
+          </h2>
+          <span className="font-mono text-xs text-muted-foreground">
+            {stats.monthlyHistory?.length || 0} months recorded
+          </span>
+        </div>
 
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-5 md:grid-cols-6">
-          {last30Days.map((d) => (
-            <div
-              key={d.date}
-              className={`rounded-md border p-3 text-center transition-colors ${
-                d.words > 0 && d.goalMet
-                  ? "border-garden/40 bg-garden/10"
-                  : d.words > 0
-                  ? "border-border bg-surface/60"
-                  : "border-border/40 bg-surface/10 opacity-60"
-              }`}
-            >
-              <div className="text-[10px] font-mono text-muted-foreground">
-                {d.formattedDate}
+        {stats.monthlyHistory && stats.monthlyHistory.length > 0 ? (
+          stats.monthlyHistory.map((m) => (
+            <div key={m.yearMonth} className="rounded-lg border border-border bg-surface/30 p-5">
+              <div className="mb-4 flex items-center justify-between">
+                <h3 className="font-serif text-lg font-semibold text-heading flex items-center gap-2">
+                  <span>{m.monthName}</span>
+                </h3>
+                <div className="flex items-center gap-3 font-mono text-xs text-muted-foreground">
+                  <span>{m.activeDays} active days</span>
+                  <span>•</span>
+                  <span className="text-garden font-medium">{m.totalWords.toLocaleString()} words</span>
+                </div>
               </div>
-              <div className="mt-1 font-serif text-base font-semibold text-heading">
-                {d.words}
-              </div>
-              <div className="mt-0.5 text-[9px] font-mono text-muted-foreground/70">
-                {d.words > 0 ? "words" : "0 words"}
+
+              <div className="grid grid-cols-3 gap-2.5 sm:grid-cols-6 md:grid-cols-7">
+                {m.days.map((d) => (
+                  <div
+                    key={d.date}
+                    className={`rounded-md border p-2.5 text-center transition-colors ${
+                      d.words > 0 && d.goalMet
+                        ? "border-garden/40 bg-garden/10"
+                        : d.words > 0
+                        ? "border-border bg-surface/60"
+                        : "border-border/40 bg-surface/10 opacity-50"
+                    }`}
+                  >
+                    <div className="text-[10px] font-mono text-muted-foreground">
+                      {d.formattedDate}
+                    </div>
+                    <div className="mt-1 font-serif text-sm font-semibold text-heading">
+                      {d.words}
+                    </div>
+                    <div className="mt-0.5 text-[9px] font-mono text-muted-foreground/70">
+                      {d.words > 0 ? "words" : "0 words"}
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
-          ))}
-        </div>
+          ))
+        ) : (
+          <div className="rounded-lg border border-border bg-surface/30 p-6 text-center text-sm text-muted-foreground">
+            No monthly activity recorded yet.
+          </div>
+        )}
       </section>
 
       {/* Totals */}
