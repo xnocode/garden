@@ -4,7 +4,7 @@
  */
 
 import Link from "next/link";
-import { Sprout, Search, Network, ArrowRight, BookOpen, Link2 } from "lucide-react";
+import { Sprout, Search, Network, ArrowRight, BookOpen, Link2, Sparkles } from "lucide-react";
 import type { NoteSummary, TagInfo, GraphData } from "@/lib/notes";
 import { NoteCard } from "./note-card";
 import { TagCloud } from "./tag-cloud";
@@ -102,6 +102,26 @@ export function GardenHome({ data }: { data: HomeData }) {
           <p className="mx-auto mt-6 max-w-2xl text-lg text-muted-foreground leading-relaxed sm:text-xl">
             Not a blog. Not a wiki. Just a garden where ideas are planted, revisited, and connected over time. Wander the paths between thoughts.
           </p>
+
+          {/* Maintenance & Update Notice */}
+          <div className="mx-auto mt-8 max-w-xl rounded-xl border border-garden/30 bg-garden/10 p-4 text-left backdrop-blur-md shadow-sm">
+            <div className="flex items-start gap-3">
+              <div className="mt-0.5 rounded-md bg-garden/20 p-2 text-garden shrink-0">
+                <Sparkles className="h-4 w-4" />
+              </div>
+              <div className="space-y-1">
+                <h3 className="font-semibold text-sm text-heading flex flex-wrap items-center gap-2">
+                  <span>Publishing Temporarily Paused</span>
+                  <span className="rounded-full border border-garden/40 bg-garden/20 px-2 py-0.5 text-[11px] font-mono text-garden font-medium">
+                    Updates in Progress
+                  </span>
+                </h3>
+                <p className="text-xs text-muted-foreground leading-relaxed">
+                  All existing notes remain <strong>fully readable and accessible</strong>! New note publishing is paused for a few days while we work on exciting updates. Check back soon!
+                </p>
+              </div>
+            </div>
+          </div>
           <div className="mt-9 flex flex-wrap items-center justify-center gap-3">
             <WanderButton featuredSlug={featured[0]?.slug} />
             <SearchTrigger className="inline-flex items-center gap-2 rounded-md border border-border bg-surface/60 px-6 py-2.5 text-sm font-medium text-foreground transition-colors hover:border-garden/40 hover:bg-surface">
