@@ -121,7 +121,7 @@ export function WritingRhythmView({ stats }: { stats: WritingStatsSummary }) {
                 {d.words}
               </div>
               <div className="mt-0.5 text-[9px] font-mono text-muted-foreground/70">
-                {d.words > 0 ? "words" : "idle"}
+                {d.words > 0 ? "words" : "0 words"}
               </div>
             </div>
           ))}
