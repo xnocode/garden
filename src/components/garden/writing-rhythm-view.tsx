@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { Flame, Calendar, Target, Activity } from "lucide-react";
 import type { WritingStatsSummary } from "@/lib/writing-stats";
@@ -14,13 +15,20 @@ export function WritingRhythmView({ stats }: { stats: WritingStatsSummary }) {
     totalWordsRecorded,
     avgWordsPerActiveDay,
     last30Days,
+    monthlyHistory = [],
   } = stats;
 
-  const maxWords = Math.max(1, ...last30Days.map((d) => d.words));
+  const [selectedMonth, setSelectedMonth] = useState<string>(
+    monthlyHistory[0]?.yearMonth || "30days"
+  );
+
   const goalPct = Math.min(100, Math.round((todayWords / dailyGoal) * 100));
 
+  // Determine active month to display
+  const activeMonthData = monthlyHistory.find((m) => m.yearMonth === selectedMonth);
+
   return (
-    <div className="garden-fade-in mx-auto max-w-4xl space-y-10">
+    <div className="garden-fade-in mx-auto max-w-4xl space-y-8">
       {/* Header */}
       <header className="border-b border-border pb-6">
         <nav className="mb-2 text-sm text-muted-foreground">
@@ -95,61 +103,126 @@ export function WritingRhythmView({ stats }: { stats: WritingStatsSummary }) {
         </div>
       </section>
 
-      {/* Monthly Activity History across all recorded months */}
-      <section className="space-y-8">
+      {/* Month Filter Selector Tabs */}
+      <section className="space-y-5">
         <div className="flex items-center justify-between border-b border-border pb-3">
           <h2 className="flex items-center gap-2 font-serif text-xl font-semibold text-heading">
             <Calendar className="h-5 w-5 text-garden" />
-            Full Monthly Activity History
+            Activity History
           </h2>
           <span className="font-mono text-xs text-muted-foreground">
-            {stats.monthlyHistory?.length || 0} months recorded
+            Select a month to inspect
           </span>
         </div>
 
-        {stats.monthlyHistory && stats.monthlyHistory.length > 0 ? (
-          stats.monthlyHistory.map((m) => (
-            <div key={m.yearMonth} className="rounded-lg border border-border bg-surface/30 p-5">
-              <div className="mb-4 flex items-center justify-between">
-                <h3 className="font-serif text-lg font-semibold text-heading flex items-center gap-2">
-                  <span>{m.monthName}</span>
-                </h3>
-                <div className="flex items-center gap-3 font-mono text-xs text-muted-foreground">
-                  <span>{m.activeDays} active days</span>
-                  <span>•</span>
-                  <span className="text-garden font-medium">{m.totalWords.toLocaleString()} words</span>
-                </div>
-              </div>
+        {/* Clean Filter Tabs */}
+        <div className="flex flex-wrap items-center gap-1.5 overflow-x-auto pb-1">
+          <button
+            type="button"
+            onClick={() => setSelectedMonth("30days")}
+            className={`rounded-md px-3 py-1.5 font-mono text-xs transition-all ${
+              selectedMonth === "30days"
+                ? "border border-garden/40 bg-garden/20 font-medium text-garden"
+                : "border border-border bg-surface/40 text-muted-foreground hover:border-garden/30 hover:text-foreground"
+            }`}
+          >
+            Past 30 Days
+          </button>
 
-              <div className="grid grid-cols-3 gap-2.5 sm:grid-cols-6 md:grid-cols-7">
-                {m.days.map((d) => (
-                  <div
-                    key={d.date}
-                    className={`rounded-md border p-2.5 text-center transition-colors ${
-                      d.words > 0 && d.goalMet
-                        ? "border-garden/40 bg-garden/10"
-                        : d.words > 0
-                        ? "border-border bg-surface/60"
-                        : "border-border/40 bg-surface/10 opacity-50"
-                    }`}
-                  >
-                    <div className="text-[10px] font-mono text-muted-foreground">
-                      {d.formattedDate}
-                    </div>
-                    <div className="mt-1 font-serif text-sm font-semibold text-heading">
-                      {d.words}
-                    </div>
-                    <div className="mt-0.5 text-[9px] font-mono text-muted-foreground/70">
-                      {d.words > 0 ? "words" : "0 words"}
-                    </div>
+          {monthlyHistory.map((m) => (
+            <button
+              key={m.yearMonth}
+              type="button"
+              onClick={() => setSelectedMonth(m.yearMonth)}
+              className={`rounded-md px-3 py-1.5 font-mono text-xs transition-all ${
+                selectedMonth === m.yearMonth
+                  ? "border border-garden/40 bg-garden/20 font-medium text-garden"
+                  : "border border-border bg-surface/40 text-muted-foreground hover:border-garden/30 hover:text-foreground"
+              }`}
+            >
+              {m.monthName}
+            </button>
+          ))}
+        </div>
+
+        {/* Render Only Selected Month Grid */}
+        {selectedMonth === "30days" ? (
+          <div className="rounded-lg border border-border bg-surface/30 p-5">
+            <div className="mb-4 flex items-center justify-between">
+              <h3 className="font-serif text-lg font-semibold text-heading">
+                Past 30 Days
+              </h3>
+              <span className="font-mono text-xs text-muted-foreground">
+                Recent writing velocity
+              </span>
+            </div>
+
+            <div className="grid grid-cols-3 gap-2.5 sm:grid-cols-5 md:grid-cols-6">
+              {last30Days.map((d) => (
+                <div
+                  key={d.date}
+                  className={`rounded-md border p-2.5 text-center transition-colors ${
+                    d.words > 0 && d.goalMet
+                      ? "border-garden/40 bg-garden/10"
+                      : d.words > 0
+                      ? "border-border bg-surface/60"
+                      : "border-border/40 bg-surface/10 opacity-50"
+                  }`}
+                >
+                  <div className="text-[10px] font-mono text-muted-foreground">
+                    {d.formattedDate}
                   </div>
-                ))}
+                  <div className="mt-1 font-serif text-sm font-semibold text-heading">
+                    {d.words}
+                  </div>
+                  <div className="mt-0.5 text-[9px] font-mono text-muted-foreground/70">
+                    {d.words > 0 ? "words" : "0 words"}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        ) : activeMonthData ? (
+          <div className="rounded-lg border border-border bg-surface/30 p-5">
+            <div className="mb-4 flex items-center justify-between">
+              <h3 className="font-serif text-lg font-semibold text-heading">
+                {activeMonthData.monthName}
+              </h3>
+              <div className="flex items-center gap-3 font-mono text-xs text-muted-foreground">
+                <span>{activeMonthData.activeDays} active days</span>
+                <span>•</span>
+                <span className="text-garden font-medium">{activeMonthData.totalWords.toLocaleString()} words</span>
               </div>
             </div>
-          ))
+
+            <div className="grid grid-cols-3 gap-2.5 sm:grid-cols-6 md:grid-cols-7">
+              {activeMonthData.days.map((d) => (
+                <div
+                  key={d.date}
+                  className={`rounded-md border p-2.5 text-center transition-colors ${
+                    d.words > 0 && d.goalMet
+                      ? "border-garden/40 bg-garden/10"
+                      : d.words > 0
+                      ? "border-border bg-surface/60"
+                      : "border-border/40 bg-surface/10 opacity-50"
+                  }`}
+                >
+                  <div className="text-[10px] font-mono text-muted-foreground">
+                    {d.formattedDate}
+                  </div>
+                  <div className="mt-1 font-serif text-sm font-semibold text-heading">
+                    {d.words}
+                  </div>
+                  <div className="mt-0.5 text-[9px] font-mono text-muted-foreground/70">
+                    {d.words > 0 ? "words" : "0 words"}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
         ) : (
           <div className="rounded-lg border border-border bg-surface/30 p-6 text-center text-sm text-muted-foreground">
-            No monthly activity recorded yet.
+            No activity recorded for this month.
           </div>
         )}
       </section>
