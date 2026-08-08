@@ -27,6 +27,6 @@ This is also why [[Tags and Organization|tags]] are weaker than links. A tag say
 > [!tip]
 > When you write a note, count the links. If there are zero, ask: is this note connected to anything I've already written? If not, is it connected to anything I will write? A note with no links is an island — and islands are hard to reach.
 
-The [[Knowledge graph|graph]] is the sum of all these thoughts. Every edge is a claim someone made about how two ideas relate. The graph isn't a map of the notes — it's a map of the thinking.
+The [[Contribution Graph|graph]] is the sum of all these thoughts. Every edge is a claim someone made about how two ideas relate. The graph isn't a map of the notes — it's a map of the thinking.
 
 See [[Compounding Knowledge]], [[The Map Is Not the Territory]], [[Digital Gardens]].

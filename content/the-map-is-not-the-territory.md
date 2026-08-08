@@ -20,7 +20,7 @@ A digital garden is, in a sense, a map of a mind. The notes are the territory; t
 >
 > A good system respects both. A great system knows which one you're looking at.
 
-This is why the [[Command Palette]] search is dangerous if it's your only entry point. Search returns titles and snippets — the map. You find the note you were looking for, but you miss the notes next to it, the notes that link to it, the note three hops away that would have changed your mind. Browsing — wandering the explorer, following links, clicking around the graph — puts you back in the territory.
+This is why the [[Setup Guide|search palette]] is dangerous if it's your only entry point. Search returns titles and snippets — the map. You find the note you were looking for, but you miss the notes next to it, the notes that link to it, the note three hops away that would have changed your mind. Browsing — wandering the explorer, following links, clicking around the graph — puts you back in the territory.
 
 > [!example]
 > Compare two ways of finding a note:
