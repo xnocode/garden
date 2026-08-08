@@ -108,20 +108,27 @@ export function GardenHome({ data }: { data: HomeData }) {
 
           {/* Maintenance & Update Notice */}
           {SHOW_MAINTENANCE_NOTICE && (
-            <div className="mx-auto mt-8 max-w-xl rounded-xl border border-garden/30 bg-garden/10 p-4 text-left backdrop-blur-md shadow-sm">
-              <div className="flex items-start gap-3">
-                <div className="mt-0.5 rounded-md bg-garden/20 p-2 text-garden shrink-0">
-                  <Sparkles className="h-4 w-4" />
+            <div className="group relative mx-auto mt-8 max-w-2xl overflow-hidden rounded-2xl border border-garden/25 bg-gradient-to-b from-garden/15 via-background/60 to-background/40 p-5 text-left backdrop-blur-xl shadow-lg shadow-garden/5 transition-all hover:border-garden/40">
+              <div className="absolute -top-12 -right-12 h-28 w-28 rounded-full bg-garden/20 blur-2xl pointer-events-none" />
+              <div className="flex items-start gap-3.5">
+                <div className="relative mt-0.5 inline-flex h-9 w-9 items-center justify-center rounded-xl bg-garden/15 text-garden ring-1 ring-garden/30 shrink-0">
+                  <Sparkles className="h-4 w-4 text-garden animate-pulse" />
                 </div>
-                <div className="space-y-1">
-                  <h3 className="font-semibold text-sm text-heading flex flex-wrap items-center gap-2">
-                    <span>Publishing Temporarily Paused</span>
-                    <span className="rounded-full border border-garden/40 bg-garden/20 px-2 py-0.5 text-[11px] font-mono text-garden font-medium">
-                      Updates in Progress
+                <div className="space-y-1.5 flex-1">
+                  <div className="flex flex-wrap items-center justify-between gap-2">
+                    <h3 className="font-serif text-base font-semibold text-heading tracking-tight flex items-center gap-2">
+                      <span>Quiet Season in the Garden</span>
+                    </h3>
+                    <span className="inline-flex items-center gap-1.5 rounded-full border border-garden/30 bg-garden/10 px-2.5 py-0.5 text-[11px] font-mono text-garden font-medium">
+                      <span className="relative flex h-1.5 w-1.5">
+                        <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-garden opacity-75" />
+                        <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-garden" />
+                      </span>
+                      Tending & Improving
                     </span>
-                  </h3>
-                  <p className="text-xs text-muted-foreground leading-relaxed">
-                    All existing notes remain <strong>fully readable and accessible</strong>! New note publishing is paused for a few days while we work on exciting updates. Check back soon!
+                  </div>
+                  <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
+                    We are currently tending the soil and preparing exciting new features. New note publishing is paused for a few days, but <strong className="font-medium text-foreground">all existing notes and thoughts remain fully open for you to explore and wander</strong>!
                   </p>
                 </div>
               </div>
