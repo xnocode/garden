@@ -94,6 +94,7 @@ export async function getWritingStats(): Promise<WritingStatsSummary> {
 
   // 1. First parse Keep the Rhythm data.json if present
   try {
+    const exportedDataPath = path.join(process.cwd(), "src", "data", "keep-the-rhythm.json");
     const pluginDataPath = path.join(
       process.cwd(),
       "content",
@@ -103,8 +104,14 @@ export async function getWritingStats(): Promise<WritingStatsSummary> {
       "data.json"
     );
 
-    if (fs.existsSync(pluginDataPath)) {
-      const raw = fs.readFileSync(pluginDataPath, "utf-8");
+    const targetPath = fs.existsSync(exportedDataPath)
+      ? exportedDataPath
+      : fs.existsSync(pluginDataPath)
+      ? pluginDataPath
+      : null;
+
+    if (targetPath) {
+      const raw = fs.readFileSync(targetPath, "utf-8");
       const parsed: KeepTheRhythmData = JSON.parse(raw);
 
       if (parsed.stats?.dailyActivity) {

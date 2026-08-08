@@ -507,6 +507,17 @@ async function exportJsonData(rendered: RenderedNote[]) {
     JSON.stringify(notesData, null, 2),
     "utf8"
   );
+
+  // Copy keep-the-rhythm data to src/data/ keep-the-rhythm.json so stats work on Vercel
+  const rhythmPath = join(CONTENT_DIR, ".obsidian", "plugins", "keep-the-rhythm", "data.json");
+  if (existsSync(rhythmPath)) {
+    try {
+      const rhythmRaw = await readFile(rhythmPath, "utf8");
+      await writeFile(join(dataDir, "keep-the-rhythm.json"), rhythmRaw, "utf8");
+    } catch {
+      /* ignore */
+    }
+  }
 }
 
 // ----------------------------------------------------------------------------
