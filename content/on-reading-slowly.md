@@ -6,6 +6,7 @@ author: Ridoy
 date: 2024-08-10
 tags: [essay, reading, thinking]
 aliases: ["Slow Reading", "Reading"]
+updatedAt: 2026-07-23
 ---
 
 There's a difference between reading and finishing. Most of what we call reading is actually finishing — moving our eyes across pages until we reach the end, so we can say we did it. The information enters short-term memory, gets summarized into a sentence, and evaporates.

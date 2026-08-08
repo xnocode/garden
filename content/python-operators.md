@@ -11,6 +11,7 @@ next: "[[python-arithmetic-operators]]"
 author: Ridoy
 aliases:
   - operators
+updatedAt: 2026-07-22
 ---
 Operators are used to perform operations on variables and values.
 

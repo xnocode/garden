@@ -11,6 +11,7 @@ next: "[[python-keywords]]"
 author: Ridoy
 aliases:
   - type() function
+updatedAt: 2026-07-22
 ---
 We can check the data type of a variable using the `type()` function.
 

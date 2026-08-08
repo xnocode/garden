@@ -5,6 +5,7 @@ draft: false
 author: Ridoy
 date: 2024-09-05
 tags: [reference, setup, guide, environment]
+updatedAt: 2026-07-23
 ---
 
 This note explains **exactly** how posting works in this garden. No jargon — just the actual flow.

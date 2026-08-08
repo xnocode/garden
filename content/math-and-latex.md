@@ -6,6 +6,7 @@ author: Ridoy
 date: 2024-08-19
 tags: [reference, math]
 aliases: ["Math", "LaTeX", "KaTeX"]
+updatedAt: 2026-07-23
 ---
 
 Notes here render math with [KaTeX](https://katex.org), which means you can drop equations into prose the same way you'd drop in a wikilink. Inline math uses single dollar signs; block math uses doubled. Nothing else to configure.

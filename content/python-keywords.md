@@ -11,6 +11,7 @@ next: "[[python-comments]]"
 author: Ridoy
 aliases:
   - keywords
+updatedAt: 2026-07-22
 ---
 These are the keywords in Python.
 

@@ -11,6 +11,7 @@ prev: "[[python-user-input]]"
 next: "[[python-if-statements]]"
 aliases:
   - conditional statements
+updatedAt: 2026-07-22
 ---
 Conditional statements allow a program to **make decisions** by executing different blocks of code based on whether a condition is **`True`** or **`False`**. They control the flow of a program and enable it to respond differently to different situations.
 

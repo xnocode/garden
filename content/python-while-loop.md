@@ -11,6 +11,7 @@ prev: "[[python-loops]]"
 next: "[[python-break]]"
 aliases:
   - while loop
+updatedAt: 2026-07-22
 ---
 A `while` loop runs as long as the condition is `True`.
 

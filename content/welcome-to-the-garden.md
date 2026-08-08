@@ -6,6 +6,7 @@ author: Ridoy
 date: 2024-08-16
 tags: [meta, guide]
 aliases: ["Getting Started", "Navigation"]
+updatedAt: 2026-07-23
 ---
 
 Welcome in. If you're wondering how to actually move through this place, here's a short orientation. A digital garden rewards wandering more than reading top-to-bottom, so the tools below are really just suggestions for getting delightfully lost.

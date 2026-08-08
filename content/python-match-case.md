@@ -11,6 +11,7 @@ prev: "[[python-nesting]]"
 next: "[[python-loops]]"
 aliases:
   - match case
+updatedAt: 2026-07-22
 ---
 Used to match a value against multiple conditions (similar to switch case).
 

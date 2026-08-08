@@ -39,10 +39,12 @@ export function NoteCard({ note }: { note: NoteSummary }) {
         </p>
       )}
       <div className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-1.5 text-[11px] text-muted-foreground/80">
-        {note.publishDate && (
+        {(note.updatedAt || note.publishDate) && (
           <span className="inline-flex items-center gap-1">
             <Clock className="h-3 w-3" />
-            {formatDate(note.publishDate)}
+            {note.updatedAt && note.updatedAt.slice(0, 10) !== (note.publishDate || "").slice(0, 10)
+              ? `Updated ${formatDate(note.updatedAt)}`
+              : formatDate(note.publishDate || note.updatedAt)}
           </span>
         )}
         <span>{readingTime(note.wordCount)}</span>

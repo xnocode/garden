@@ -6,6 +6,7 @@ author: Ridoy
 date: 2024-08-18
 tags: [essay, thinking, epistemology]
 aliases: ["Map and Territory"]
+updatedAt: 2026-07-23
 ---
 
 The map is not the territory. The menu is not the meal. The index is not the library. The summary is not the argument. This is an old idea — Korzybski said it in 1933 — and it keeps being true.

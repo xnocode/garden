@@ -11,6 +11,7 @@ prev: "[[python-comments]]"
 next: "[[python-operators]]"
 aliases:
   - style
+updatedAt: 2026-07-23
 ---
 `tot_price` → snake_case  
 `totPrice` → camelCase  

@@ -6,6 +6,7 @@ author: Ridoy
 date: 2024-08-05
 tags: [essay, thinking, wikilinks, knowledge]
 aliases: ["Links as Thoughts"]
+updatedAt: 2026-07-23
 ---
 
 A footnote says "see also." A link says "this is related to that." But a wikilink in a digital garden says something stronger: ==this is part of that.==

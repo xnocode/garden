@@ -6,6 +6,7 @@ author: Ridoy
 date: 2024-08-25
 tags: [reference, embeds]
 aliases: ["Embeds", "Transclusions"]
+updatedAt: 2026-07-23
 ---
 
 An embed (or *transclusion*) is what happens when you don't just link to another note — you pull its contents directly into the current page. It's the difference between citing a source and quoting it in full, except the quote stays live: edit the source note, and every embed of it updates too.

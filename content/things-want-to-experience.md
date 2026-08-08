@@ -10,6 +10,7 @@ prev: ""
 next: ""
 aliases:
   - life
+updatedAt: 2026-07-22
 ---
 - [x] Capture beautiful moments with a camera, even without me in the frame 
 - [ ] Go skydiving and feel like touching the sky

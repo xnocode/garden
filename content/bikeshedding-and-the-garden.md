@@ -5,6 +5,7 @@ draft: false
 author: Ridoy
 date: 2024-08-14
 tags: [essay, garden, thinking]
+updatedAt: 2026-07-23
 ---
 
 Parkinson's Law of Triviality — better known as bikeshedding — says that a committee will spend more time arguing about the color of a bike shed than about the design of a nuclear reactor, because everyone has an opinion on color and almost no one has an opinion on reactors.

@@ -11,6 +11,7 @@ next: "[[python-variables]]"
 author: Ridoy
 aliases:
   - character set
+updatedAt: 2026-07-22
 ---
 Python programs are written using a **character set**, which defines the valid characters recognized by the Python interpreter.
 

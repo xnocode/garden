@@ -11,6 +11,7 @@ next: "[[python-character-set]]"
 author: Ridoy
 aliases:
   - first program
+updatedAt: 2026-07-22
 ---
 In Python, this is the first program we are writing where we print something on the screen. So we created our first file here,
 

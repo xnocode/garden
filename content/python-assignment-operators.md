@@ -11,6 +11,7 @@ prev: "[[python-relational-or-comparison]]"
 next: "[[python-logical-operators]]"
 aliases:
   - assignment
+updatedAt: 2026-07-22
 ---
 ```text
 a = b

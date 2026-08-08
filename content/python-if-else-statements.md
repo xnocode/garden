@@ -11,6 +11,7 @@ prev: "[[python-if-statements]]"
 next: "[[python-elif-statements]]"
 aliases:
   - if else
+updatedAt: 2026-07-22
 ---
 If the condition is `True`, `if` block runs. If `False`, `else` block runs
 

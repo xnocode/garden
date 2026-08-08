@@ -18,6 +18,27 @@ export interface MonthWritingStat {
   activeDays: number;
 }
 
+export interface HourlyWritingStat {
+  hour: number; // 0..23
+  label: string; // "12 AM", "1 AM", etc.
+  words: number;
+}
+
+export interface DayOfWeekWritingStat {
+  dayName: string; // "Sun", "Mon", etc.
+  dayIndex: number; // 0..6
+  words: number;
+  activeCount: number;
+}
+
+export interface TopTendedNoteStat {
+  title: string;
+  slug: string;
+  words: number;
+  edits: number;
+  isPublished: boolean;
+}
+
 export interface WritingStatsSummary {
   currentStreak: number;
   longestStreak: number;
@@ -30,6 +51,10 @@ export interface WritingStatsSummary {
   last30Days: DayWritingStat[];
   monthlyHistory: MonthWritingStat[];
   heatMapData: { [date: string]: number }; // YYYY-MM-DD -> word count
+  hourlyDistribution: HourlyWritingStat[];
+  peakWritingTimeLabel: string;
+  dayOfWeekDistribution: DayOfWeekWritingStat[];
+  topTendedNotes: TopTendedNoteStat[];
 }
 
 interface KeepTheRhythmData {
@@ -44,6 +69,7 @@ interface KeepTheRhythmData {
       date: string;
       filePath: string;
       changes?: Array<{
+        timeKey?: string;
         w?: number;
         c?: number;
       }>;
@@ -51,9 +77,20 @@ interface KeepTheRhythmData {
   };
 }
 
+function formatLocalDate(d: Date): string {
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${y}-${m}-${day}`;
+}
+
 export async function getWritingStats(): Promise<WritingStatsSummary> {
   const dailyGoal = 500;
   const wordCountsByDate: Map<string, { words: number; notes: Set<string> }> = new Map();
+  const hourlyMap = new Array<number>(24).fill(0);
+  const dayOfWeekWords = new Array<number>(7).fill(0);
+  const dayOfWeekActive = new Array<number>(7).fill(0);
+  const noteStatsMap: Map<string, { words: number; edits: number }> = new Map();
 
   // 1. First parse Keep the Rhythm data.json if present
   try {
@@ -79,16 +116,41 @@ export async function getWritingStats(): Promise<WritingStatsSummary> {
           const entry = wordCountsByDate.get(item.date)!;
           if (item.filePath) entry.notes.add(item.filePath);
 
+          // Track Day of Week
+          const dObj = new Date(item.date);
+          const dow = dObj.getDay(); // 0 = Sun
+
           let fileNetWords = 0;
           if (item.changes && Array.isArray(item.changes)) {
             for (const ch of item.changes) {
-              if (typeof ch.w === "number") {
+              if (typeof ch.w === "number" && ch.w > 0) {
                 fileNetWords += ch.w;
+
+                // Track hourly stats
+                if (ch.timeKey && typeof ch.timeKey === "string") {
+                  const hour = parseInt(ch.timeKey.slice(0, 2), 10);
+                  if (!isNaN(hour) && hour >= 0 && hour < 24) {
+                    hourlyMap[hour] += ch.w;
+                  }
+                }
               }
             }
           }
+
           if (fileNetWords > 0) {
             entry.words += fileNetWords;
+            dayOfWeekWords[dow] += fileNetWords;
+            dayOfWeekActive[dow] += 1;
+
+            if (item.filePath) {
+              const cleanPath = item.filePath.replace(/\.md$/, "");
+              if (!noteStatsMap.has(cleanPath)) {
+                noteStatsMap.set(cleanPath, { words: 0, edits: 0 });
+              }
+              const nStat = noteStatsMap.get(cleanPath)!;
+              nStat.words += fileNetWords;
+              nStat.edits += item.changes ? item.changes.length : 1;
+            }
           }
         }
       }
@@ -126,7 +188,7 @@ export async function getWritingStats(): Promise<WritingStatsSummary> {
   for (let i = 29; i >= 0; i--) {
     const d = new Date(today);
     d.setDate(d.getDate() - i);
-    const dateStr = d.toISOString().slice(0, 10);
+    const dateStr = formatLocalDate(d);
 
     const record = wordCountsByDate.get(dateStr);
     const words = record ? record.words : 0;
@@ -145,17 +207,21 @@ export async function getWritingStats(): Promise<WritingStatsSummary> {
 
   // 3b. Compute full monthly history across all recorded months
   const allRecordedDates = Array.from(wordCountsByDate.keys()).sort();
-  const earliestDateStr = allRecordedDates[0] || today.toISOString().slice(0, 10);
+  const earliestDateStr = allRecordedDates[0] || formatLocalDate(today);
   const startDate = new Date(earliestDateStr);
   startDate.setDate(1); // Start at first of that month
 
   const monthlyHistoryMap: Map<string, MonthWritingStat> = new Map();
 
   let currPointer = new Date(startDate);
-  while (currPointer <= today) {
-    const yyyymm = currPointer.toISOString().slice(0, 7);
-    const monthName = currPointer.toLocaleDateString("en-US", { month: "long", year: "numeric" });
-    const dateStr = currPointer.toISOString().slice(0, 10);
+  // Ensure comparison covers full current day
+  const endPointer = new Date(today);
+  endPointer.setHours(23, 59, 59, 999);
+
+  while (currPointer <= endPointer) {
+    const dateStr = formatLocalDate(currPointer);
+    const yyyymm = dateStr.slice(0, 7);
+    const monthName = currPointer.toLocaleDateString("en-US", { month: "short", year: "numeric" });
 
     if (!monthlyHistoryMap.has(yyyymm)) {
       monthlyHistoryMap.set(yyyymm, {
@@ -209,7 +275,7 @@ export async function getWritingStats(): Promise<WritingStatsSummary> {
   }
 
   // Calculate streak backwards from today or yesterday
-  const todayStr = today.toISOString().slice(0, 10);
+  const todayStr = formatLocalDate(today);
   const yesterday = new Date(today);
   yesterday.setDate(yesterday.getDate() - 1);
 
@@ -220,7 +286,7 @@ export async function getWritingStats(): Promise<WritingStatsSummary> {
   }
 
   while (true) {
-    const dStr = checkDate.toISOString().slice(0, 10);
+    const dStr = formatLocalDate(checkDate);
     const entry = wordCountsByDate.get(dStr);
     if (entry && (entry.words > 0 || entry.notes.size > 0)) {
       currentStreak++;
@@ -254,6 +320,71 @@ export async function getWritingStats(): Promise<WritingStatsSummary> {
   const todayWords = todayRecord ? todayRecord.words : 0;
   const todayGoalMet = todayWords > 0 && (todayWords >= dailyGoal || (todayRecord ? todayRecord.notes.size > 0 : false));
 
+  // 5. Hourly Distribution
+  const hourlyDistribution: HourlyWritingStat[] = hourlyMap.map((words, h) => {
+    const period = h >= 12 ? "PM" : "AM";
+    const displayHour = h % 12 === 0 ? 12 : h % 12;
+    return {
+      hour: h,
+      label: `${displayHour} ${period}`,
+      words,
+    };
+  });
+
+  // Calculate Peak Time Label
+  const morningWords = hourlyMap.slice(6, 12).reduce((a, b) => a + b, 0);
+  const afternoonWords = hourlyMap.slice(12, 17).reduce((a, b) => a + b, 0);
+  const eveningWords = hourlyMap.slice(17, 21).reduce((a, b) => a + b, 0);
+  const nightWords = [...hourlyMap.slice(21, 24), ...hourlyMap.slice(0, 6)].reduce((a, b) => a + b, 0);
+
+  let peakWritingTimeLabel = "Night Owl Writer (9 PM – 2 AM)";
+  const maxBlock = Math.max(morningWords, afternoonWords, eveningWords, nightWords);
+  if (maxBlock === morningWords && morningWords > 0) {
+    peakWritingTimeLabel = "Early Bird Writer (6 AM – 12 PM)";
+  } else if (maxBlock === afternoonWords && afternoonWords > 0) {
+    peakWritingTimeLabel = "Afternoon Writer (12 PM – 5 PM)";
+  } else if (maxBlock === eveningWords && eveningWords > 0) {
+    peakWritingTimeLabel = "Evening Writer (5 PM – 9 PM)";
+  }
+
+  // 6. Day of Week Distribution
+  const dayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+  const dayOfWeekDistribution: DayOfWeekWritingStat[] = dayNames.map((dayName, idx) => ({
+    dayName,
+    dayIndex: idx,
+    words: dayOfWeekWords[idx],
+    activeCount: dayOfWeekActive[idx],
+  }));
+
+  // 7. Top Tended Notes Leaderboard
+  const notesLookupMap = new Map<string, string>();
+  for (const n of notesData as Array<{ slug: string; title: string }>) {
+    notesLookupMap.set(n.slug.toLowerCase(), n.title);
+    notesLookupMap.set(n.slug.split("/").pop()!.toLowerCase(), n.title);
+  }
+
+  const publishedSlugs = new Set(
+    (notesData as Array<{ slug: string }>).map((n) => n.slug.toLowerCase())
+  );
+
+  const topTendedNotes: TopTendedNoteStat[] = Array.from(noteStatsMap.entries())
+    .map(([cleanPath, stat]) => {
+      const lowerKey = cleanPath.toLowerCase();
+      const baseKey = cleanPath.split("/").pop()!.toLowerCase();
+      const title = notesLookupMap.get(lowerKey) || notesLookupMap.get(baseKey) || cleanPath.split("/").pop() || cleanPath;
+      const isPublished = publishedSlugs.has(lowerKey) || publishedSlugs.has(baseKey);
+
+      return {
+        title,
+        slug: cleanPath,
+        words: stat.words,
+        edits: stat.edits,
+        isPublished,
+      };
+    })
+    .sort((a, b) => b.words - a.words)
+    .slice(0, 6);
+
   return {
     currentStreak,
     longestStreak,
@@ -266,5 +397,9 @@ export async function getWritingStats(): Promise<WritingStatsSummary> {
     last30Days,
     monthlyHistory,
     heatMapData,
+    hourlyDistribution,
+    peakWritingTimeLabel,
+    dayOfWeekDistribution,
+    topTendedNotes,
   };
 }

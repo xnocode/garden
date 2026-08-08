@@ -6,6 +6,7 @@ author: Ridoy
 date: 2024-08-15
 tags: [essay, garden, knowledge]
 aliases: ["Digital Garden", "Garden Metaphor"]
+updatedAt: 2026-07-23
 ---
 
 A digital garden is a collection of notes that you tend rather than publish. The metaphor is doing real work here: a blog is a stream of finished posts flowing past, dated and discarded, while a garden is a place you return to, weed, prune, and let cross-pollinate. Both are valid; they serve different needs.

@@ -5,6 +5,7 @@ draft: false
 author: Ridoy
 date: 2024-09-02
 tags: [reference, media, embeds]
+updatedAt: 2026-07-23
 ---
 
 This note tests all media embed types. Use `![[filename.ext]]` to embed any supported media in your notes.

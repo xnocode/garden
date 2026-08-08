@@ -10,6 +10,7 @@ next: "[[ai-and-ml-introduction]]"
 aliases:
   - AI & ML
 author: Ridoy
+updatedAt: 2026-07-22
 ---
 ```contributionGraph
 title: AI & ML

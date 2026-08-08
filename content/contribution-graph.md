@@ -5,6 +5,7 @@ draft: false
 author: Ridoy
 date: 2024-09-03
 tags: [reference, graph, visualization]
+updatedAt: 2026-07-23
 ---
 
 This note tests the **Obsidian Contribution Graph** plugin integration. The code blocks below use the exact same format as the plugin.

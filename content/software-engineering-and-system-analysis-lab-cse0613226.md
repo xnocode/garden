@@ -10,6 +10,7 @@ prev: ""
 next: "[[data-communication-cse0612223]]"
 aliases:
   - class notes
+updatedAt: 2026-07-29
 ---
 ## Lecture 01
 

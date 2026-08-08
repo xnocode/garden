@@ -6,6 +6,7 @@ author: Ridoy
 date: 2024-08-21
 tags: [essay, knowledge, zettelkasten]
 aliases: ["Zettelkasten", "Luhmann Method"]
+updatedAt: 2026-07-23
 ---
 
 The Zettelkasten is a note-taking method developed by the German sociologist Niklas Luhmann, who used it to write something like seventy books and four hundred articles over his career. The system is deceptively simple: write small, link densely, give every note an ID. Its power comes from what those constraints do to your thinking.

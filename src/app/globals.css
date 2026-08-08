@@ -1181,3 +1181,11 @@
   background: var(--garden);
   border-radius: 2px;
 }
+
+/* Custom dark styling for native select options */
+select option {
+  background-color: #161b22;
+  color: #e6edf3;
+  padding: 6px 12px;
+}
+

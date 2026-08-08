@@ -10,6 +10,7 @@ tags:
 prev: "[[python-while-loop]]"
 next: "[[python-continue]]"
 aliases:
+updatedAt: 2026-07-22
 ---
 `break` is used to stop the loop immediately.
 

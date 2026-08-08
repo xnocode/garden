@@ -8,6 +8,9 @@ export function GiscusComments() {
   const containerRef = useRef<HTMLDivElement>(null);
   const { theme } = useTheme();
   const [origin, setOrigin] = useState("");
+  // Track whether the script has been injected once — prevents wiping and
+  // reloading the iframe on hot-module-reload or parent re-renders.
+  const loaded = useRef(false);
 
   // Determine site origin client-side
   useEffect(() => {
@@ -23,10 +26,7 @@ export function GiscusComments() {
   const categoryId = process.env.NEXT_PUBLIC_GISCUS_CATEGORY_ID || "DIC_kwDOTIfJWs4DBHk1";
 
   useEffect(() => {
-    // Always use the local CSS file — this avoids a flash of the default
-    // white-border GitHub theme that occurred when origin was empty on first
-    // render and the fallback raw.githubusercontent.com URL was used instead.
-    // We wait until origin is set so we always have an absolute URL for Giscus.
+    // Wait until we have an absolute origin so the CSS URL is always valid.
     if (!origin) return;
 
     const giscusTheme = `${origin}/giscus-${theme}.css`;
@@ -34,35 +34,36 @@ export function GiscusComments() {
     const iframe = document.querySelector<HTMLIFrameElement>("iframe.giscus-frame");
 
     if (iframe && iframe.contentWindow) {
-      // Update theme in real-time without reloading the iframe
+      // Iframe already exists — just update the theme in real-time without
+      // reloading (avoids the white-flash on theme toggle or hot reload).
       iframe.contentWindow.postMessage(
         { giscus: { setConfig: { theme: giscusTheme } } },
         "https://giscus.app"
       );
-    } else {
-      // Clean up and load for the first time
-      if (containerRef.current) {
-        containerRef.current.innerHTML = "";
-      }
-
-      const script = document.createElement("script");
-      script.src = "https://giscus.app/client.js";
-      script.setAttribute("data-repo", repo);
-      script.setAttribute("data-repo-id", repoId);
-      script.setAttribute("data-category", category);
-      script.setAttribute("data-category-id", categoryId);
-      script.setAttribute("data-mapping", "pathname");
-      script.setAttribute("data-strict", "0");
-      script.setAttribute("data-reactions-enabled", "0");
-      script.setAttribute("data-emit-metadata", "0");
-      script.setAttribute("data-input-position", "bottom");
-      script.setAttribute("data-theme", giscusTheme);
-      script.setAttribute("data-lang", "en");
-      script.crossOrigin = "anonymous";
-      script.async = true;
-
-      containerRef.current?.appendChild(script);
+      return;
     }
+
+    // First load: only inject the script once per mount.
+    if (loaded.current) return;
+    loaded.current = true;
+
+    const script = document.createElement("script");
+    script.src = "https://giscus.app/client.js";
+    script.setAttribute("data-repo", repo);
+    script.setAttribute("data-repo-id", repoId);
+    script.setAttribute("data-category", category);
+    script.setAttribute("data-category-id", categoryId);
+    script.setAttribute("data-mapping", "pathname");
+    script.setAttribute("data-strict", "0");
+    script.setAttribute("data-reactions-enabled", "0");
+    script.setAttribute("data-emit-metadata", "0");
+    script.setAttribute("data-input-position", "bottom");
+    script.setAttribute("data-theme", giscusTheme);
+    script.setAttribute("data-lang", "en");
+    script.crossOrigin = "anonymous";
+    script.async = true;
+
+    containerRef.current?.appendChild(script);
   }, [theme, origin, repo, repoId, category, categoryId]);
 
   return (

@@ -20,6 +20,7 @@ interface NoteRecord {
   publishDate: string | null;
   createdAt: string;
   updatedAt: string;
+  stage: string | null;
   path: string;
   folder: string | null;
   /** Optional frontmatter: slug of the previous note (overrides date-based). */
@@ -39,6 +40,7 @@ export interface NoteSummary {
   publishDate: string | null;
   createdAt: string;
   updatedAt: string;
+  stage: string | null;
   path: string;
   folder: string | null;
 }
@@ -113,6 +115,7 @@ function toSummary(n: NoteRecord): NoteSummary {
     publishDate: n.publishDate,
     createdAt: n.createdAt,
     updatedAt: n.updatedAt,
+    stage: (n as any).stage ?? null,
     path: n.path,
     folder: n.folder,
   };

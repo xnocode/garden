@@ -18,6 +18,7 @@ import {
   Printer,
   CornerDownRight,
   User,
+  RotateCcw,
 } from "lucide-react";
 import { AdBanner } from "../../ads/AdBanner";
 import type { NoteDetail } from "@/lib/notes";
@@ -378,6 +379,17 @@ export function NoteView({ note }: { note: NoteDetail }) {
       })
     : null;
 
+  const updatedStr = note.updatedAt
+    ? new Date(note.updatedAt).toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      })
+    : null;
+
+  // Only show updated if it's a different date than published
+  const showUpdated = updatedStr && updatedStr !== dateStr;
+
   return (
     <article className="garden-fade-in">
       {/* Breadcrumb */}
@@ -406,6 +418,12 @@ export function NoteView({ note }: { note: NoteDetail }) {
             <span className="inline-flex items-center gap-1.5">
               <Calendar className="h-3.5 w-3.5" />
               {dateStr}
+            </span>
+          )}
+          {showUpdated && (
+            <span className="inline-flex items-center gap-1.5" title={`Last tended: ${updatedStr}`}>
+              <RotateCcw className="h-3 w-3" />
+              {updatedStr}
             </span>
           )}
           <span className="inline-flex items-center gap-1.5">

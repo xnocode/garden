@@ -11,6 +11,7 @@ next: "[[python-style-guide]]"
 author: Ridoy
 aliases:
   - comments
+updatedAt: 2026-07-22
 ---
 Comments are used to understand the code later or to leave messages in the code.
 

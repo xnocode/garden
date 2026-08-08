@@ -6,6 +6,7 @@ author: Ridoy
 date: 2024-08-23
 tags: [essay, thinking, notes]
 aliases: ["Note Taking", "Note-Taking"]
+updatedAt: 2026-07-23
 ---
 
 Most note-taking advice is about *tools* — which app, which folder structure, which shortcut. That's the easy part. The harder and more interesting question is what makes a note *good*, in the sense of aging well: a note you'll still be glad you wrote in three years. ==A good note is one your future self can pick up cold and use.==

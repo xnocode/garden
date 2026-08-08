@@ -11,6 +11,7 @@ prev: "[[python-if-else-statements]]"
 next: "[[python-nesting]]"
 aliases:
   - elif
+updatedAt: 2026-07-22
 ---
 Used to check multiple conditions.
 

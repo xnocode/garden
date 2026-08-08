@@ -10,6 +10,7 @@ tags:
 prev: "[[python-break]]"
 next:
 aliases:
+updatedAt: 2026-07-22
 ---
 `continue` is used to skip the current iteration and move to the next one.
 

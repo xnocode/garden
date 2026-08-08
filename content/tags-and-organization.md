@@ -6,6 +6,7 @@ author: Ridoy
 date: 2024-08-24
 tags: [reference, organization]
 aliases: ["Tags", "Organization"]
+updatedAt: 2026-07-23
 ---
 
 Tags and folders solve the same problem — *findability* — from opposite directions. Folders put a note in exactly one place; tags let a note live in many. A digital garden leans heavily on tags because ideas rarely belong to a single bucket, and over-foldering is the fastest way to make a garden feel like a bureaucracy.

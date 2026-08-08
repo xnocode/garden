@@ -11,6 +11,7 @@ prev: "[[python-case-sensitive]]"
 next: "[[python-type-function]]"
 aliases:
   - data types
+updatedAt: 2026-07-23
 ---
 These are the fundamental data types in Python:
 

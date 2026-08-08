@@ -6,6 +6,7 @@ author: Ridoy
 date: 2024-08-18
 tags: [reference, callouts]
 aliases: ["Callouts"]
+updatedAt: 2026-07-23
 ---
 
 Callouts are the little colored boxes you've been seeing throughout this garden. They pull a piece of text out of the flow and give it a flavor — a tip, a warning, a question. They render from a simple blockquote-with-a-tag syntax:

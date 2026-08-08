@@ -6,6 +6,7 @@ author: Ridoy
 date: 2024-08-22
 tags: [essay, knowledge, productivity]
 aliases: ["Second Brain", "CODE Method", "BASB"]
+updatedAt: 2026-07-23
 ---
 
 "Building a Second Brain" is Tiago Forte's name for a system that offloads remembering onto a trusted set of external tools, so your biological brain is free to actually *think*. The core idea is ancient — write things down so you don't forget them — but Forte wraps it in a four-step loop called **CODE**: Capture, Organize, Distill, Express.

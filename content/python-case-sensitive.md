@@ -11,6 +11,7 @@ prev: "[[python-indentation]]"
 next: "[[python-data-types]]"
 aliases:
   - case sensitive
+updatedAt: 2026-07-23
 ---
 Python is a case-sensitive language. This means uppercase and lowercase letters are treated as different.
 

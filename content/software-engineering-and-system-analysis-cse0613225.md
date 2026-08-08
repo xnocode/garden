@@ -10,6 +10,7 @@ prev: ""
 next: "[[software-engineering-and-system-analysis-lab-cse0613226]]"
 aliases:
   - class notes
+updatedAt: 2026-07-23
 ---
 ## Lecture 01
 

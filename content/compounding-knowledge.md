@@ -5,6 +5,7 @@ draft: false
 author: Ridoy
 date: 2024-08-20
 tags: [essay, knowledge, thinking]
+updatedAt: 2026-07-23
 ---
 
 Money compounds because the interest earns interest. Knowledge can compound the same way — but only if you let it. A note that connects to three other notes is worth more than three notes that connect to nothing, because the next note you write can link to all four, and the one after that can build on the structure that's emerging.

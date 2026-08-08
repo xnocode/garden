@@ -11,6 +11,7 @@ prev: "[[python-arithmetic-operators]]"
 next: "[[python-assignment-operators]]"
 aliases:
   - relational
+updatedAt: 2026-07-23
 ---
 ```text
 a == b

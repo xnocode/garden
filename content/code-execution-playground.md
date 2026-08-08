@@ -5,6 +5,7 @@ draft: false
 author: Ridoy
 date: 2024-09-01
 tags: [reference, code, playground]
+updatedAt: 2026-07-23
 ---
 
 This note tests the **Judge0 code execution** integration. Every runnable code block below has a **Run** button (visible on hover, top-right) that sends the code to `ce.judge0.com` and displays the output inline.

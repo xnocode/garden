@@ -11,6 +11,7 @@ prev: "[[python-assignment-operators]]"
 next: "[[python-type-conversion]]"
 aliases:
   - precedence
+updatedAt: 2026-07-22
 ---
 **Operator Precedence** → priority of operators (which runs first)
 

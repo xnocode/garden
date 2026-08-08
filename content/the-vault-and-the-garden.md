@@ -5,6 +5,7 @@ draft: false
 author: Ridoy
 date: 2024-08-08
 tags: [essay, garden, knowledge, metaphors]
+updatedAt: 2026-07-23
 ---
 
 There are two dominant metaphors for a personal knowledge system: the **vault** and the **garden**.

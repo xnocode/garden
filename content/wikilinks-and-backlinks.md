@@ -6,6 +6,7 @@ author: Ridoy
 date: 2024-08-17
 tags: [reference, wikilinks]
 aliases: ["Wikilinks", "Backlinks"]
+updatedAt: 2026-07-23
 ---
 
 Wikilinks are the connective tissue of a digital garden. Instead of pointing at a URL, you point at the *name* of another note, and the system resolves it for you. It sounds small, but it changes how you write: you stop worrying about where things "live" and start linking the way you think.

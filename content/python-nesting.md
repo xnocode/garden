@@ -11,6 +11,7 @@ prev: "[[python-elif-statements]]"
 next: "[[python-match-case]]"
 aliases:
   - nesting
+updatedAt: 2026-07-22
 ---
 Nesting means writing one conditional statement inside another.
 

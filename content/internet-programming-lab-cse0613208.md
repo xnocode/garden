@@ -10,6 +10,7 @@ prev: ""
 next: ""
 aliases:
   - class notes
+updatedAt: 2026-07-23
 ---
 # Lecture 01
 

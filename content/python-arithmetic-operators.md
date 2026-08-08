@@ -11,6 +11,7 @@ next: "[[python-relational-or-comparison]]"
 author: Ridoy
 aliases:
   - arithmetic
+updatedAt: 2026-07-22
 ---
 
 ```python

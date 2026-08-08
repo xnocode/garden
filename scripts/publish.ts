@@ -57,6 +57,8 @@ const ASSETS_DST = join(ROOT, "public", "content-assets");
 const IGNORE_DIRS = new Set([
   ".obsidian",
   "templates",
+  "Templates",
+  "Attachments/Templates",
   "private",
   "node_modules",
   ".git",
@@ -72,6 +74,8 @@ interface ParsedFile {
   tags: string[];
   aliases: string[];
   date?: Date;
+  updatedAt?: Date;
+  stage?: string;
   draft: boolean;
   content: string;
   raw: string;
@@ -141,6 +145,15 @@ async function parsePass(files: string[]): Promise<ParsedFile[]> {
       typeof data.permalink === "string" && data.permalink
         ? slugify(data.permalink)
         : slugify(basename(relPath, extname(relPath)));
+
+    // Parse created / published date (checking date, created, createdAt, publish)
+    const dateVal = data.date ?? data.created ?? data.createdAt ?? data.publish ?? data.publishDate;
+    
+    // Parse Linter updated date (checking updatedAt, last_modified, updated, modified, lastmod)
+    const updatedVal = data.updatedAt ?? data.last_modified ?? data.updated ?? data.modified ?? data.lastmod;
+
+    const stageVal = typeof data.stage === "string" ? data.stage : typeof data.status === "string" ? data.status : undefined;
+
     parsed.push({
       path: relPath,
       slug,
@@ -153,7 +166,9 @@ async function parsePass(files: string[]): Promise<ParsedFile[]> {
           : undefined,
       tags: coerceTags(data.tags),
       aliases: coerceStringArray(data.aliases),
-      date: todate(data.date ?? data.publish),
+      date: todate(dateVal),
+      updatedAt: todate(updatedVal),
+      stage: stageVal,
       draft,
       content,
       raw,
@@ -168,7 +183,9 @@ function todate(v: unknown): Date | undefined {
   if (!v) return undefined;
   if (v instanceof Date) return v;
   if (typeof v === "string") {
-    const d = new Date(v);
+    // Remove ordinal suffixes (1st, 2nd, 3rd, 4th...) if present from Moment formatting
+    const cleaned = v.replace(/(\d+)(st|nd|rd|th)/gi, "$1");
+    const d = new Date(cleaned);
     return isNaN(d.getTime()) ? undefined : d;
   }
   return undefined;
@@ -476,7 +493,8 @@ async function exportJsonData(rendered: RenderedNote[]) {
       draft: false,
       publishDate: r.date ? r.date.toISOString() : null,
       createdAt: (r.date ?? new Date()).toISOString(),
-      updatedAt: now,
+      updatedAt: (r.updatedAt ?? new Date()).toISOString(),
+      stage: r.stage ?? null,
       path: r.path,
       folder: dirname(r.path) === "." ? null : dirname(r.path),
       prevSlug: r.prevSlug ?? null,

@@ -6,6 +6,7 @@ author: Ridoy
 date: 2024-08-03
 tags: [reference, embeds, composition, garden]
 aliases: ["Transclusion Composition"]
+updatedAt: 2026-07-23
 ---
 
 Transclusion is the idea that you don't have to copy content to reuse it. You just point at it. When the source changes, every place that transcludes it updates too. Ted Nelson coined the term in 1980 — it's older than the web.

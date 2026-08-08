@@ -6,6 +6,7 @@ author: Ridoy
 date: 2024-07-30
 tags: [essay, thinking, memory, garden]
 aliases: ["Forgetting"]
+updatedAt: 2026-07-23
 ---
 
 We treat forgetting as a failure. If you read a book and can't remember it a year later, you say you've forgotten it — as if the reading was wasted. But that's not how memory works, and it's not how a garden works either.

@@ -6,6 +6,7 @@ author: Ridoy
 date: 2024-08-27
 tags: [essay, writing]
 aliases: ["Writing"]
+updatedAt: 2026-07-23
 ---
 
 Writing is the thing I keep doing despite having nothing clever to say about how it works. Every essay I've started about writing has collapsed into either cliché ("just write every day") or pretension ("the blank page is a mirror for the soul"), and I'm not sure this one will escape that gravity. But the garden is the right place to try, because here an unfinished essay is allowed to sit until it's ready.

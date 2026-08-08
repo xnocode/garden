@@ -10,6 +10,7 @@ next: ""
 author: Ridoy
 aliases:
   - keep learning
+updatedAt: 2026-07-23
 ---
 
 ![|577x376](https://res.cloudinary.com/dqkxxdrsg/image/upload/v1778474263/obsidian/i4mjxrsalwamndyylw4y.png)

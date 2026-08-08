@@ -5,6 +5,7 @@ draft: false
 author: Ridoy
 date: 2024-09-04
 tags: [reference, setup, deployment, guide]
+updatedAt: 2026-07-23
 ---
 
 This guide shows you how to set up the digital garden on your own machine, publish notes from the terminal, and deploy it live for **free**.

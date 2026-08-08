@@ -6,6 +6,7 @@ author: Ridoy
 date: 2024-08-28
 tags: [essay, thinking, garden]
 aliases: ["Wandering"]
+updatedAt: 2026-07-23
 ---
  
 There's a difference between searching and wandering. Searching has a target — you know what you're looking for, and you stop when you find it. Wandering has no target. You move, you notice, you follow a thread, and you stop when something catches you.

@@ -11,6 +11,7 @@ next: "[[python-indentation]]"
 author: Ridoy
 aliases:
   - variables
+updatedAt: 2026-07-23
 ---
 Variables are like containers where we can store data.
 

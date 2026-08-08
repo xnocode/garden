@@ -6,6 +6,7 @@ author: Ridoy
 date: 2024-08-26
 tags: [essay, thinking]
 aliases: ["Thinking"]
+updatedAt: 2026-07-23
 ---
 
 I used to believe thinking happened in the head and writing was just the cleanup — a transcription of ideas that had already arrived. ==I no longer believe this.== For me, and I suspect for most people who write regularly, thinking and writing are the same act performed at different speeds. The thought doesn't exist fully formed before the sentence; the sentence *is* the thought, working itself out on the page.

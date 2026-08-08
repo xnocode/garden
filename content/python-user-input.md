@@ -11,6 +11,7 @@ prev: "[[python-type-conversion]]"
 next: "[[python-conditional-statements]]"
 aliases:
   - input
+updatedAt: 2026-07-22
 ---
 `input()` → used to take input from the user
 
