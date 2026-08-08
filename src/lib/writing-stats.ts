@@ -128,7 +128,7 @@ export async function getWritingStats(): Promise<WritingStatsSummary> {
     last30Days.push({
       date: dateStr,
       words,
-      goalMet: words >= dailyGoal || notesCount > 0,
+      goalMet: words > 0 && (words >= dailyGoal || notesCount > 0),
       notesModified: notesCount,
       formattedDate: d.toLocaleDateString("en-US", { month: "short", day: "numeric" }),
     });
@@ -196,7 +196,7 @@ export async function getWritingStats(): Promise<WritingStatsSummary> {
 
   const todayRecord = wordCountsByDate.get(todayStr);
   const todayWords = todayRecord ? todayRecord.words : 0;
-  const todayGoalMet = todayWords >= dailyGoal || (todayRecord ? todayRecord.notes.size > 0 : false);
+  const todayGoalMet = todayWords > 0 && (todayWords >= dailyGoal || (todayRecord ? todayRecord.notes.size > 0 : false));
 
   return {
     currentStreak,

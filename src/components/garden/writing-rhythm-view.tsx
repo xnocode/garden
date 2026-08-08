@@ -107,7 +107,7 @@ export function WritingRhythmView({ stats }: { stats: WritingStatsSummary }) {
             <div
               key={d.date}
               className={`rounded-md border p-3 text-center transition-colors ${
-                d.goalMet
+                d.words > 0 && d.goalMet
                   ? "border-garden/40 bg-garden/10"
                   : d.words > 0
                   ? "border-border bg-surface/60"
