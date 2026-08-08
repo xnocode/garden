@@ -77,6 +77,12 @@ interface KeepTheRhythmData {
   };
 }
 
+function getDhakaDate(): Date {
+  const dhakaStr = new Date().toLocaleDateString("en-CA", { timeZone: "Asia/Dhaka" });
+  const [y, m, d] = dhakaStr.split("-").map(Number);
+  return new Date(y, m - 1, d, 12, 0, 0);
+}
+
 function formatLocalDate(d: Date): string {
   const y = d.getFullYear();
   const m = String(d.getMonth() + 1).padStart(2, "0");
@@ -188,7 +194,7 @@ export async function getWritingStats(): Promise<WritingStatsSummary> {
   }
 
   // 3. Compute 30-day window
-  const today = new Date();
+  const today = getDhakaDate();
   const last30Days: DayWritingStat[] = [];
   const heatMapData: { [date: string]: number } = {};
 
