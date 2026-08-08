@@ -148,7 +148,7 @@ async function parsePass(files: string[]): Promise<ParsedFile[]> {
 
     // Parse created / published date (checking date, created, createdAt, publish)
     const dateVal = data.date ?? data.created ?? data.createdAt ?? data.publish ?? data.publishDate;
-    
+
     // Parse Linter updated date (checking updatedAt, last_modified, updated, modified, lastmod)
     const updatedVal = data.updatedAt ?? data.last_modified ?? data.updated ?? data.modified ?? data.lastmod;
 

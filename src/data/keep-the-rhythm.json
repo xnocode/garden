@@ -17569,7 +17569,13 @@
         "filePath": "python-operators.md",
         "wordCountStart": 75,
         "charCountStart": 719,
-        "changes": [],
+        "changes": [
+          {
+            "timeKey": "03:00",
+            "w": 4,
+            "c": 22
+          }
+        ],
         "id": 1098
       }
     ],
