@@ -479,10 +479,8 @@ export async function getStats(): Promise<{
 }
 
 export async function getOnThisDay(): Promise<NoteSummary[]> {
-  const now = new Date();
-  const month = now.getMonth() + 1;
-  const day = now.getDate();
-  const year = now.getFullYear();
+  const dhakaStr = new Date().toLocaleDateString("en-CA", { timeZone: "Asia/Dhaka" });
+  const [year, month, day] = dhakaStr.split("-").map(Number);
   return NOTES.filter((n) => {
     if (!n.publishDate) return false;
     const d = new Date(n.publishDate);

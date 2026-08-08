@@ -23,9 +23,11 @@ export function OnThisDay({
   notes: NoteSummary[];
   fallback: NoteSummary[];
 }) {
-  const today = new Date();
-  const monthName = today.toLocaleDateString("en-US", { month: "long" });
-  const day = today.getDate();
+  const todayStr = new Date().toLocaleDateString("en-CA", { timeZone: "Asia/Dhaka" });
+  const [y, m, dNum] = todayStr.split("-").map(Number);
+  const todayDate = new Date(y, m - 1, dNum, 12, 0, 0);
+  const monthName = todayDate.toLocaleDateString("en-US", { month: "long" });
+  const day = dNum;
 
   // If we have "on this day" notes, show them; otherwise show the fallback
   // (recently tended) so the section is never empty.
