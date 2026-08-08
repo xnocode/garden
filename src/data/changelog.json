@@ -1,5 +1,17 @@
 [
   {
+    "version": "v0.8.0",
+    "date": "2026-08-08",
+    "title": "Selective Draft Publishing Protection",
+    "badge": "FEATURE",
+    "category": "core",
+    "changes": [
+      "Strict publishing pipeline: Only notes with 'draft: false' frontmatter are deployed to the live garden",
+      "Automatic draft filtering: Notes with 'draft: true' or unlisted drafts are strictly ignored during deployment",
+      "Ensures private vault notes and work-in-progress thoughts remain safe and protected"
+    ]
+  },
+  {
     "version": "v0.7.0",
     "date": "2026-07-29",
     "title": "Voice Notes & PDF Import",
