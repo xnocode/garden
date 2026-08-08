@@ -198,6 +198,9 @@ export async function getWritingStats(): Promise<WritingStatsSummary> {
   const last30Days: DayWritingStat[] = [];
   const heatMapData: { [date: string]: number } = {};
 
+  const MONTH_NAMES_SHORT = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+  const MONTH_NAMES_FULL = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
   for (let i = 29; i >= 0; i--) {
     const d = new Date(today);
     d.setDate(d.getDate() - i);
@@ -209,62 +212,77 @@ export async function getWritingStats(): Promise<WritingStatsSummary> {
 
     heatMapData[dateStr] = words;
 
+    const [, mNum, dNum] = dateStr.split("-").map(Number);
+
     last30Days.push({
       date: dateStr,
       words,
       goalMet: words > 0 && (words >= dailyGoal || notesCount > 0),
       notesModified: notesCount,
-      formattedDate: d.toLocaleDateString("en-US", { month: "short", day: "numeric" }),
+      formattedDate: `${MONTH_NAMES_SHORT[mNum - 1]} ${dNum}`,
     });
   }
 
-  // 3b. Compute full monthly history across all recorded months
+  // 3b. Compute full monthly history across all recorded months deterministically
   const allRecordedDates = Array.from(wordCountsByDate.keys()).sort();
   const earliestDateStr = allRecordedDates[0] || formatLocalDate(today);
-  const startDate = new Date(earliestDateStr);
-  startDate.setDate(1); // Start at first of that month
+
+  const startYear = parseInt(earliestDateStr.slice(0, 4), 10);
+  const startMonth = parseInt(earliestDateStr.slice(5, 7), 10);
+
+  const todayStr = formatLocalDate(today);
+  const currentYear = parseInt(todayStr.slice(0, 4), 10);
+  const currentMonth = parseInt(todayStr.slice(5, 7), 10);
+  const currentDay = parseInt(todayStr.slice(8, 10), 10);
 
   const monthlyHistoryMap: Map<string, MonthWritingStat> = new Map();
 
-  let currPointer = new Date(startDate);
-  // Ensure comparison covers full current day
-  const endPointer = new Date(today);
-  endPointer.setHours(23, 59, 59, 999);
+  let y = startYear;
+  let m = startMonth;
 
-  while (currPointer <= endPointer) {
-    const dateStr = formatLocalDate(currPointer);
-    const yyyymm = dateStr.slice(0, 7);
-    const monthName = currPointer.toLocaleDateString("en-US", { month: "short", year: "numeric" });
+  while (y < currentYear || (y === currentYear && m <= currentMonth)) {
+    const ymStr = `${y}-${String(m).padStart(2, "0")}`;
+    const monthName = `${MONTH_NAMES_FULL[m - 1]} ${y}`;
+    const daysInMonth = new Date(y, m, 0).getDate();
+    const maxDay = (y === currentYear && m === currentMonth) ? currentDay : daysInMonth;
 
-    if (!monthlyHistoryMap.has(yyyymm)) {
-      monthlyHistoryMap.set(yyyymm, {
-        monthName,
-        yearMonth: yyyymm,
-        days: [],
-        totalWords: 0,
-        activeDays: 0,
+    const days: DayWritingStat[] = [];
+    let totalWords = 0;
+    let activeDays = 0;
+
+    for (let d = 1; d <= maxDay; d++) {
+      const dateStr = `${y}-${String(m).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
+      const record = wordCountsByDate.get(dateStr);
+      const words = record ? record.words : 0;
+      const notesCount = record ? record.notes.size : 0;
+
+      if (words > 0) {
+        totalWords += words;
+        activeDays += 1;
+      }
+
+      days.push({
+        date: dateStr,
+        words,
+        goalMet: words > 0 && (words >= dailyGoal || notesCount > 0),
+        notesModified: notesCount,
+        formattedDate: `${MONTH_NAMES_SHORT[m - 1]} ${d}`,
       });
     }
 
-    const mGroup = monthlyHistoryMap.get(yyyymm)!;
-    const record = wordCountsByDate.get(dateStr);
-    const words = record ? record.words : 0;
-    const notesCount = record ? record.notes.size : 0;
-
-    if (words > 0) {
-      mGroup.totalWords += words;
-      mGroup.activeDays += 1;
-    }
-
-    mGroup.days.push({
-      date: dateStr,
-      words,
-      goalMet: words > 0 && (words >= dailyGoal || notesCount > 0),
-      notesModified: notesCount,
-      formattedDate: currPointer.toLocaleDateString("en-US", { month: "short", day: "numeric" }),
+    monthlyHistoryMap.set(ymStr, {
+      monthName,
+      yearMonth: ymStr,
+      days,
+      totalWords,
+      activeDays,
     });
 
-    currPointer.setDate(currPointer.getDate() + 1);
+    m++;
+    if (m > 12) {
+      m = 1;
+      y++;
+    }
   }
 
   const monthlyHistory = Array.from(monthlyHistoryMap.values()).reverse();
@@ -288,7 +306,6 @@ export async function getWritingStats(): Promise<WritingStatsSummary> {
   }
 
   // Calculate streak backwards from today or yesterday
-  const todayStr = formatLocalDate(today);
   const yesterday = new Date(today);
   yesterday.setDate(yesterday.getDate() - 1);
 
