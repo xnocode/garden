@@ -76,6 +76,18 @@ async function main() {
   console.log("  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
   run("bun run scripts/export-tasks.ts", "Snapshotting tasks…");
 
+  // Step 2.5: Sync draft exclusions with Git
+  console.log("\n  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+  console.log("  Step 2.5/5: Protecting draft notes");
+  console.log("  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+  try {
+    const { syncDraftExclusions } = await import("./sync-drafts");
+    const { drafts, publishedCount } = await syncDraftExclusions();
+    console.log(`    🔒 Draft protection active: ${drafts.length} drafts excluded, ${publishedCount} notes published.`);
+  } catch (err: any) {
+    console.warn(`    ⚠️ Warning: Could not sync draft exclusions: ${err?.message}`);
+  }
+
   // Step 3: Git add
   console.log("\n  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
   console.log("  Step 3/5: Stage changes");
