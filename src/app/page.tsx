@@ -32,6 +32,8 @@ import {
 } from "@/components/garden/views";
 import { TaskwarriorView } from "@/components/garden/taskwarrior-view";
 import { ChangelogView } from "@/components/garden/changelog-view";
+import { getWritingStats } from "@/lib/writing-stats";
+import { WritingRhythmView } from "@/components/garden/writing-rhythm-view";
 
 export const dynamic = "force-dynamic";
 
@@ -120,19 +122,24 @@ export default async function Page({ searchParams }: PageProps) {
     }
     content = <ChangelogView entries={entries} />;
     mainWidthClass = "max-w-4xl";
+  } else if (view === "rhythm") {
+    const stats = await getWritingStats();
+    content = <WritingRhythmView stats={stats} />;
+    mainWidthClass = "max-w-4xl";
   } else if (q) {
     const results = await searchNotes(q);
     content = <SearchView q={q} results={results} />;
     mainWidthClass = "max-w-3xl";
   } else {
     // Home
-    const [recentRaw, tags, graph, stats, onThisDay, totalVisitors] = await Promise.all([
+    const [recentRaw, tags, graph, stats, onThisDay, totalVisitors, writingStats] = await Promise.all([
       listNotes({ sort: "updated", limit: 6 }),
       getTags(),
       getGraph(),
       getStats(),
       getOnThisDay(),
       getTotalVisitors(),
+      getWritingStats(),
     ]);
     // Featured: a curated mix — most recent by publish date + a couple reference
     const featured = await listNotes({ sort: "newest", limit: 6 });
@@ -144,6 +151,7 @@ export default async function Page({ searchParams }: PageProps) {
           tags,
           graph,
           onThisDay,
+          writingStats,
           stats: {
             ...stats,
             totalVisitors,

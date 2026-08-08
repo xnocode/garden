@@ -13,6 +13,7 @@ const NAV_ITEMS = [
   { label: "Index", href: "/?view=index", key: "index" },
   { label: "Graph", href: "/?view=graph", key: "graph" },
   { label: "Tags", href: "/?view=tags", key: "tags" },
+  { label: "Rhythm", href: "/?view=rhythm", key: "rhythm" },
   { label: "About", href: "/?p=about", key: "about" },
   { label: "Taskwarrior", href: "/?view=tasks", key: "tasks" },
 ];

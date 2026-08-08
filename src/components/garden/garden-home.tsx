@@ -12,6 +12,8 @@ import { GraphViewWrapper } from "./graph-view-wrapper";
 import { SearchTrigger } from "./search-trigger";
 import { OnThisDay } from "./on-this-day";
 import { WanderButton } from "./wander-button";
+import { WritingRhythmWidget } from "./writing-rhythm-widget";
+import type { WritingStatsSummary } from "@/lib/writing-stats";
 
 interface HomeData {
   recent: NoteSummary[];
@@ -19,6 +21,7 @@ interface HomeData {
   tags: TagInfo[];
   graph: GraphData;
   onThisDay: NoteSummary[];
+  writingStats?: WritingStatsSummary;
   stats: {
     totalNotes: number;
     totalWords: number;
@@ -46,7 +49,7 @@ function Stat({ value, label }: { value: string | number; label: string }) {
 const SHOW_MAINTENANCE_NOTICE = true;
 
 export function GardenHome({ data }: { data: HomeData }) {
-  const { recent, featured, tags, graph, onThisDay, stats } = data;
+  const { recent, featured, tags, graph, onThisDay, writingStats, stats } = data;
   const lastUpdated = stats.lastUpdated
     ? new Date(stats.lastUpdated).toLocaleDateString("en-US", {
         month: "short",
@@ -167,6 +170,13 @@ export function GardenHome({ data }: { data: HomeData }) {
       <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6">
         {/* On this day (or recently tended fallback) */}
         <OnThisDay notes={onThisDay} fallback={recent} />
+
+        {/* Writing Rhythm & Streak Widget */}
+        {writingStats && (
+          <section className="mb-14">
+            <WritingRhythmWidget stats={writingStats} />
+          </section>
+        )}
 
         {/* Featured */}
         {featured.length > 0 && (
