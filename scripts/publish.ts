@@ -75,7 +75,6 @@ interface ParsedFile {
   aliases: string[];
   date?: Date;
   updatedAt?: Date;
-  stage?: string;
   draft: boolean;
   content: string;
   raw: string;
@@ -152,8 +151,6 @@ async function parsePass(files: string[]): Promise<ParsedFile[]> {
     // Parse Linter updated date (checking updatedAt, last_modified, updated, modified, lastmod)
     const updatedVal = data.updatedAt ?? data.last_modified ?? data.updated ?? data.modified ?? data.lastmod;
 
-    const stageVal = typeof data.stage === "string" ? data.stage : typeof data.status === "string" ? data.status : undefined;
-
     parsed.push({
       path: relPath,
       slug,
@@ -168,7 +165,6 @@ async function parsePass(files: string[]): Promise<ParsedFile[]> {
       aliases: coerceStringArray(data.aliases),
       date: todate(dateVal),
       updatedAt: todate(updatedVal),
-      stage: stageVal,
       draft,
       content,
       raw,
@@ -494,7 +490,6 @@ async function exportJsonData(rendered: RenderedNote[]) {
       publishDate: r.date ? r.date.toISOString() : null,
       createdAt: (r.date ?? new Date()).toISOString(),
       updatedAt: (r.updatedAt ?? new Date()).toISOString(),
-      stage: r.stage ?? null,
       path: r.path,
       folder: dirname(r.path) === "." ? null : dirname(r.path),
       prevSlug: r.prevSlug ?? null,

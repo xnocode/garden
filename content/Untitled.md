@@ -1,5 +1,5 @@
 ---
-title: Nothing Can DO
+title: ""
 description: ""
 author: Ridoy
 draft: false
@@ -9,8 +9,10 @@ tags:
   - aiml
   - python
 prev: "[[complex-variables-fourier-analysis-and-laplace-transform]]"
-next: "[[every-thing-we-know]]"
+next: ""
 aliases:
   - ""
+created: Saturday, August 8th 2026, 10:36:56 pm
+modified: Saturday, August 8th 2026, 10:37:56 pm
 ---
 

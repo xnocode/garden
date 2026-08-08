@@ -17566,6 +17566,11 @@
             "timeKey": "04:20",
             "w": 25,
             "c": 256
+          },
+          {
+            "timeKey": "04:35",
+            "w": -25,
+            "c": -256
           }
         ],
         "id": 1096
@@ -17756,6 +17761,11 @@
             "timeKey": "04:30",
             "w": -24,
             "c": -187
+          },
+          {
+            "timeKey": "04:35",
+            "w": 21,
+            "c": 221
           }
         ],
         "id": 1108
@@ -17806,9 +17816,31 @@
           }
         ],
         "id": 1111
+      },
+      {
+        "date": "2026-08-09",
+        "filePath": "complex-variables-fourier-analysis-and-laplace-transform.md",
+        "wordCountStart": 27,
+        "charCountStart": 204,
+        "changes": [],
+        "id": 1112
+      },
+      {
+        "date": "2026-08-09",
+        "filePath": "Untitled 1.md",
+        "wordCountStart": 0,
+        "charCountStart": 0,
+        "changes": [
+          {
+            "timeKey": "04:35",
+            "w": 22,
+            "c": 163
+          }
+        ],
+        "id": 1113
       }
     ],
-    "wholeVaultWordCount": 28601,
-    "wholeVaultCharCount": 227792
+    "wholeVaultWordCount": 28684,
+    "wholeVaultCharCount": 228370
   }
 }
