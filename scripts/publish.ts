@@ -132,7 +132,7 @@ async function parsePass(files: string[]): Promise<ParsedFile[]> {
     const full = join(CONTENT_DIR, relPath);
     const raw = await readFile(full, "utf8");
     const { data, content } = parseFrontmatter(raw);
-    const draft = data.draft === true || data.draft === "true";
+    const draft = data.draft !== false && data.draft !== "false";
     const title =
       (typeof data.title === "string" && data.title) ||
       firstH1(content) ||

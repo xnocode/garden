@@ -83,9 +83,10 @@ export async function commitNoteToGitHub(
     return { success: false, message: "No GITHUB_TOKEN environment variable found on server" };
   }
 
-  // Do not commit draft:true notes to GitHub
-  if (/^\s*draft:\s*true\b/im.test(content)) {
-    return { success: false, message: "Note is marked draft: true (kept local-only, skipped GitHub upload)" };
+  // Only commit notes to GitHub if they explicitly have draft: false in frontmatter
+  const hasExplicitDraftFalse = /^\s*draft:\s*false\b/im.test(content);
+  if (!hasExplicitDraftFalse) {
+    return { success: false, message: "Note does not have draft: false (kept local-only, skipped GitHub upload)" };
   }
 
   const repo = process.env.NEXT_PUBLIC_GISCUS_REPO || "xnocode/garden";

@@ -49,7 +49,7 @@ export async function syncDraftExclusions(): Promise<{ drafts: string[]; publish
     try {
       const raw = await readFile(fullPath, "utf8");
       const { data } = parseFrontmatter(raw);
-      const isDraft = data.draft === true || data.draft === "true";
+      const isDraft = data.draft !== false && data.draft !== "false";
       const gitRelPath = `content/${relPath}`;
 
       if (isDraft) {
