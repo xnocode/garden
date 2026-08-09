@@ -17864,12 +17864,17 @@
             "timeKey": "13:40",
             "w": 4,
             "c": 41
+          },
+          {
+            "timeKey": "13:45",
+            "w": -4,
+            "c": -40
           }
         ],
         "id": 1114
       }
     ],
-    "wholeVaultWordCount": 28688,
-    "wholeVaultCharCount": 228411
+    "wholeVaultWordCount": 28684,
+    "wholeVaultCharCount": 228371
   }
 }

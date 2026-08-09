@@ -1,5 +1,5 @@
 {
-  "exportedAt": "2026-08-09T07:44:32.834Z",
+  "exportedAt": "2026-08-09T07:49:36.516Z",
   "stats": {
     "total": 51,
     "pending": 1,
@@ -10,13 +10,13 @@
     {
       "id": 1,
       "uuid": "a0171764-4a3f-47a6-80a9-3d088984254b",
-      "description": "SW Project Proposal Submission university",
-      "project": null,
+      "description": " Project Proposal and Feasibility Study Report",
+      "project": "university",
       "tags": [],
       "priority": "H",
-      "due": "20260809T180000Z",
+      "due": "20260810T180000Z",
       "entry": "20260809T074342Z",
-      "urgency": 14.6046,
+      "urgency": 15.1491,
       "overdue": false
     }
   ]
