@@ -46,58 +46,92 @@ export interface PlayerProfile {
 // ----------------------------------------------------------------------------
 // 1000 Unique Level Titles Generator Matrix
 // ----------------------------------------------------------------------------
+// 40 prefixes — weakest → godlike (rank within current class)
 const TITLE_PREFIXES = [
-  "Novice", "Curious", "Sprout", "Thought", "Apprentice", "Seeking", "Fledgling",
-  "Diligent", "Studious", "Steadfast", "Arcane", "System", "Adept", "Keen",
-  "Ascendant", "Valiant", "Persistent", "Master", "Archon", "Paragon", "Luminous",
-  "Cosmic", "Transcendent", "Omniscient", "Sovereign"
-];
+  // L1-5 within class: raw beginnings
+  "Wandering", "Restless", "Scrappy", "Hungry", "Rising",
+  // L6-10: finding footing
+  "Forged", "Tempered", "Driven", "Burning", "Iron",
+  // L11-15: sharpening edge
+  "Gale", "Storm", "Crimson", "Thunder", "Phantom",
+  // L16-20: power emerging
+  "Silver", "Shadow", "Frost", "Blazing", "Wraith",
+  // L21-25: mid power
+  "Viper", "Titan", "Astral", "Void", "Obsidian",
+  // L26-30: high tier
+  "Aether", "Quantum", "Eclipse", "Infernal", "Mythic",
+  // L31-35: elite
+  "Divine", "Eternal", "Celestial", "Abyssal", "Cosmic",
+  // L36-40: godlike (class complete)
+  "Transcendent", "Infinite", "Primordial", "Omega", "Sovereign",
+] as const; // 40 entries
 
+// 25 domains — class ascension every 40 levels
+// (no word overlaps with prefix list to prevent "X X" titles)
 const TITLE_DOMAINS = [
-  "Observer", "Scribbler", "Weaver", "Architect", "Strategist", "Paladin",
-  "Scholar", "Alchemist", "Vanguard", "Sentinel", "Sage", "Crusader",
-  "Visionary", "Mastermind", "Monarch", "Pioneer", "Overlord", "Grandmaster"
-];
+  "Drifter",    // L1–40   class 1: beginner adventurers
+  "Scout",      // L41–80  class 2: field operatives
+  "Operative",  // L81–120 class 3: trained agents
+  "Ranger",     // L121–160
+  "Sentinel",   // L161–200
+  "Warden",     // L201–240
+  "Blade",      // L241–280 class 7: combat specialists
+  "Vanguard",   // L281–320
+  "Raider",     // L321–360
+  "Berserker",  // L361–400
+  "Sage",       // L401–440 class 11: arcane path
+  "Oracle",     // L441–480
+  "Specter",    // L481–520
+  "Reaper",     // L521–560
+  "Cipher",     // L561–600
+  "Architect",  // L601–640 class 16: builder path
+  "Warlock",    // L641–680
+  "Crusader",   // L681–720
+  "Paladin",    // L721–760
+  "Overlord",   // L761–800
+  "Archon",     // L801–840 class 21: god path
+  "Paragon",    // L841–880
+  "Nexus",      // L881–920
+  "Primarch",   // L921–960
+  "Godslayer",  // L961–1000 ← ultimate class
+] as const; // 25 entries — 40 × 25 = 1,000 unique titles
 
 /**
- * Returns a unique title for any level between 1 and 1000.
+ * Returns a guaranteed-unique title for every level 1–1000.
+ *
+ * System: every 40 levels = class ascension (domain upgrades).
+ * Within each class, prefix advances from "Wandering" → "Sovereign" (40 ranks).
+ * Zero word repeats between prefix and domain lists.
+ *
+ * Sample progression:
+ *   L1  → Wandering Drifter     (raw start)
+ *   L13 → Crimson Drifter       ← you are here
+ *   L14 → Thunder Drifter
+ *   L40 → Sovereign Drifter     (class complete)
+ *   L41 → Wandering Scout       ← class promotion!
+ *   L80 → Sovereign Scout
+ *   L81 → Wandering Operative   ← class promotion!
+ *   L100 → 🔥 special override
+ *   L961 → Wandering Godslayer  (final class)
+ *   L1000 → 👑 special override
  */
-export function getLevelTitle(level: number, isNightOwl: boolean = false): string {
+export function getLevelTitle(level: number, _isNightOwl: boolean = false): string {
   if (level <= 0) level = 1;
   if (level > 1000) level = 1000;
 
-  if (level === 1000) return "👑 Omniscient Grandmaster Sovereign";
-  if (level === 1) return "Novice Observer";
+  // Legendary milestone overrides
+  if (level === 1000) return "👑 Omega Godslayer Supreme";
+  if (level === 750)  return "💠 Primordial Primarch";
+  if (level === 500)  return "⚡ Infinite Archon";
+  if (level === 250)  return "🌟 Cosmic Paladin";
+  if (level === 100)  return "🔥 Mythic Overlord";
+  if (level === 50)   return "⚔️ Obsidian Berserker";
 
-  // Specific milestone overrides
-  const milestones: Record<number, string> = {
-    10: "Sprout Weaver",
-    25: "Taskwarrior Vanguard",
-    50: "Mind Architect",
-    100: "Century Scholar",
-    250: "Master System Designer",
-    500: "Archon of Wisdom",
-    750: "Cosmic Paragon",
-    999: "Sovereign of Infinity"
-  };
+  const idx  = level - 1;
+  const pIdx = idx % TITLE_PREFIXES.length;
+  const dIdx = Math.floor(idx / TITLE_PREFIXES.length) % TITLE_DOMAINS.length;
 
-  if (milestones[level]) {
-    return isNightOwl ? `Night ${milestones[level]}` : milestones[level];
-  }
-
-  // Algorithmic 1000-level title generation for unique name guaranteed per level
-  const pIdx = (level - 1) % TITLE_PREFIXES.length;
-  const dIdx = Math.floor((level - 1) / TITLE_PREFIXES.length) % TITLE_DOMAINS.length;
-
-  const romanNumeral = level > 50 ? ` Tier ${Math.floor(level / 25)}` : "";
-  let finalTitle = `${TITLE_PREFIXES[pIdx]} ${TITLE_DOMAINS[dIdx]}${romanNumeral}`;
-
-  if (isNightOwl && (level % 3 === 0 || level === 14)) {
-    finalTitle = finalTitle.replace(/^(Novice|Curious|Studious|Adept|Master)/, "Night");
-    if (!finalTitle.includes("Night")) finalTitle = `Night ${finalTitle}`;
-  }
-
-  return finalTitle;
+  return `${TITLE_PREFIXES[pIdx]} ${TITLE_DOMAINS[dIdx]}`;
 }
 
 /**
@@ -114,12 +148,22 @@ export function getPrestigeRank(level: number): string {
 }
 
 // ----------------------------------------------------------------------------
-// XP & Level Formula (Polynomial Curve up to Level 1000)
-// Required XP for Level N = Math.floor(100 * Math.pow(N, 1.85))
+// XP & Level Formula (Balanced Quadratic Curve up to Level 1000)
+// Required XP to *reach* Level N = 70 * N²
+//
+// XP gap per level grows linearly (~140 XP more per level):
+//   L1→2  :    280 XP
+//   L5→6  :    770 XP
+//   L10→11:  1,470 XP
+//   L13→14:  1,890 XP
+//   L25→26:  3,570 XP
+//   L50→51:  7,070 XP
+//   L100→101: 14,070 XP
+// Progressive but always achievable — never feels impossible.
 // ----------------------------------------------------------------------------
 export function getXpForLevel(level: number): number {
   if (level <= 1) return 0;
-  return Math.floor(100 * Math.pow(level, 1.85));
+  return 70 * level * level;
 }
 
 export function getLevelFromTotalXp(totalXp: number): {
@@ -183,7 +227,7 @@ export function calculatePlayerProfile(
 
   const totalNotes = notesList.length;
   const totalWords = notesList.reduce((acc, n) => acc + (n.wordCount || 0), 0);
-  const streakDays = writingStats?.currentStreak || 1;
+  const streakDays = writingStats?.currentStreak ?? 0;
 
   // XP calculation
   let baseTaskXp = completedTasks * 150;
@@ -192,11 +236,9 @@ export function calculatePlayerProfile(
   let streakXp = streakDays * 100;
 
   const nightOwlActive = isNightOwlHours();
-  let totalXp = baseTaskXp + baseNoteXp + wordXp + streakXp;
-
-  if (nightOwlActive) {
-    totalXp = Math.floor(totalXp * 1.25); // +25% Night Owl Focus Buff
-  }
+  const rawSubtotal = baseTaskXp + baseNoteXp + wordXp + streakXp;
+  const nightOwlBonus = nightOwlActive ? Math.floor(rawSubtotal * 0.25) : 0;
+  const totalXp = rawSubtotal + nightOwlBonus;
 
   const levelInfo = getLevelFromTotalXp(totalXp);
   const title = getLevelTitle(levelInfo.level, nightOwlActive);
