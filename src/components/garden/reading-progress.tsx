@@ -114,6 +114,9 @@ export function ReadingProgress() {
         } else if (e.key === "t") {
           e.preventDefault();
           router.push("/?view=tags");
+        } else if (e.key === "l") {
+          e.preventDefault();
+          router.push("/?view=life");
         } else if (e.key === "h") {
           e.preventDefault();
           router.push("/");

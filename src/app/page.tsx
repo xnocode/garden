@@ -105,7 +105,8 @@ export default async function Page({ searchParams }: PageProps) {
         tasks: [],
       };
     }
-    content = <TaskwarriorView data={taskData} />;
+    const writingStats = await getWritingStats();
+    content = <TaskwarriorView data={taskData} writingStats={writingStats} />;
     mainWidthClass = "max-w-4xl";
   } else if (view === "changelog") {
     const fs = await import("fs/promises");

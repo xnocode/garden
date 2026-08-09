@@ -1,10 +1,23 @@
 {
-  "exportedAt": "2026-08-08T22:48:41.139Z",
+  "exportedAt": "2026-08-09T07:44:32.834Z",
   "stats": {
-    "total": 50,
-    "pending": 0,
+    "total": 51,
+    "pending": 1,
     "completed": 50,
     "overdue": 0
   },
-  "tasks": []
+  "tasks": [
+    {
+      "id": 1,
+      "uuid": "a0171764-4a3f-47a6-80a9-3d088984254b",
+      "description": "SW Project Proposal Submission university",
+      "project": null,
+      "tags": [],
+      "priority": "H",
+      "due": "20260809T180000Z",
+      "entry": "20260809T074342Z",
+      "urgency": 14.6046,
+      "overdue": false
+    }
+  ]
 }
