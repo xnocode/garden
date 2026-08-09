@@ -30,6 +30,7 @@ const monoFont = IBM_Plex_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://gardenx.qzz.io"),
   title: "Garden — a digital garden",
   description:
     "A personal digital garden. Notes, essays, and ideas grown in Obsidian and published with a single command.",
@@ -48,12 +49,17 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Garden — a digital garden",
     description: "Notes grown in Obsidian, published with a single command.",
+    url: "https://gardenx.qzz.io",
+    siteName: "Garden",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
     title: "Garden — a digital garden",
     description: "Notes grown in Obsidian, published with a single command.",
+  },
+  verification: {
+    google: "lqmsnOldQ009_3Y3_afQx7No9_MqhQ5SXXbfDpsJBlI",
   },
   other: {
     "google-adsense-account": "ca-pub-5993975585691806",
