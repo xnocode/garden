@@ -1,23 +1,10 @@
 {
-  "exportedAt": "2026-08-09T19:49:58.951Z",
+  "exportedAt": "2026-08-11T19:01:44.926Z",
   "stats": {
     "total": 51,
-    "pending": 1,
-    "completed": 50,
+    "pending": 0,
+    "completed": 51,
     "overdue": 0
   },
-  "tasks": [
-    {
-      "id": 1,
-      "uuid": "a0171764-4a3f-47a6-80a9-3d088984254b",
-      "description": " Project Proposal and Feasibility Study Report",
-      "project": "university",
-      "tags": [],
-      "priority": "H",
-      "due": "20260810T180000Z",
-      "entry": "20260809T074342Z",
-      "urgency": 15.3778,
-      "overdue": false
-    }
-  ]
+  "tasks": []
 }
