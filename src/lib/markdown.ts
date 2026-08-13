@@ -1040,15 +1040,33 @@ export function rehypeShiki() {
         lang && loadedLangs.includes(lang) ? lang : null;
       let preEl: Element;
       if (!useLang) {
+        const cleanLang = (lang || "").toLowerCase();
+        const isPlaintext =
+          cleanLang === "plaintext" ||
+          cleanLang === "text" ||
+          cleanLang === "txt" ||
+          !cleanLang;
+        const classes = ["shiki", "no-lang"];
+        if (isPlaintext) {
+          classes.push("plaintext", "language-plaintext");
+        } else if (cleanLang) {
+          classes.push(`language-${cleanLang}`);
+        }
         preEl = {
           type: "element",
           tagName: "pre",
-          properties: { className: ["shiki", "no-lang"] },
+          properties: { className: classes },
           children: [
             {
               type: "element",
               tagName: "code",
-              properties: {},
+              properties: {
+                className: isPlaintext
+                  ? ["language-plaintext"]
+                  : cleanLang
+                  ? [`language-${cleanLang}`]
+                  : [],
+              },
               children: [{ type: "text", value: rawText }],
             },
           ],
