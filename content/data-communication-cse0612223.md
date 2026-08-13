@@ -254,6 +254,7 @@ If data is lost or received incorrectly, the transport layer can take action to 
 A connection is established before sending data.
 
 ```mermaid
+
 graph LR
     S((S)) --- A((A))
     A --- B((B))
@@ -272,53 +273,76 @@ graph LR
 
 > The network finds a suitable/shortest path for the data packet to reach the receiver.
 
-### Data Packet Tracking
+Data Packet Tracking: Possible path: S → C → D → R. Route with less cost is selected.
 
-```text
-Sender
-  ↓
-S → C → D → R
-          ↓
-       Receiver
-```
-
----
-
-## Network Layer
+#### Network Layer
 
 > **Main responsibility:** Host-to-Host Delivery
 
-### Main Functions
-
-1. **Logical Addressing**
-    
+1. **Logical Addressing**    
     - Uses logical addresses such as **IP addresses** to identify hosts.
-        
 2. **Packetizing**
-    
     - The Network Layer takes the segment from the Transport Layer and encapsulates it into a **packet**.
-        
-
-### Data Encapsulation
-
-```text
-                    PACKET
-┌──────────────┬───────────────────────┐
-│ Network      │      Segment          │
-│ Header       │                       │
-└──────────────┴───────────────────────┘
-```
 
 The network packet contains addressing information such as:
 
 ```text
-┌──────────────┬──────────────┬────────────┬──────────────┬──────────────┐
+┌─────────────────────────────────Packet─────────────────────────────────┐
+│			   ┌──────────────────Segment─────────────────┐              │
+│──────────────│──────────────┬────────────┬──────────────│──────────────│
 │ Source       │ Source       │ Sequence   │ Receiver     │ Receiver     │
 │ IP Address   │ Port Address │ Number     │ Port Address │ IP Address   │
 └──────────────┴──────────────┴────────────┴──────────────┴──────────────┘
 ```
 
+
+2. Data Link Layer
+
+> **Main responsibility:** Node-to-Node Delivery
+
+1. **Physical Addressing** --> Uses **MAC Address** to identify devices on a local network.
+2. **Framing** -> Divides the data received from the Network Layer into **frames**.
+3. **Error Control** --> Detects and handles errors that occur during transmission.
+4. **Flow Control** --> Controls the rate of data transmission between connected devices.
+5. **Access Control** --> Controls which device can access the shared transmission medium.
+
+```text
+
+		            ┌──────────Frame────────────┐   
+		            │  ┌───────Packet───────┐   │ 
+  ┌──────────────────┐ │ ┌────────────────┐ │ ┌────────────────────┐ 
+  │Source Mac Address│ │ │    Segment     │ │ │ Reciver Mac Address│   
+  └──────────────────┘ │ └────────────────┘ │ └────────────────────┘  
+			        │  └────────────────────┘   │ 
+		            └───────────────────────────┘
+
+```
+
+> **MAC Address → Physical Address**
+
+1. Physical Layer
+
+> The Physical Layer is responsible for transmitting **raw bits** through the physical medium.
+
+1. **Physical Characteristics of Media**    
+    - Defines the physical properties of the transmission medium.
+2. **Topology**
+    - Describes how devices are physically or logically connected.
+    - **Check the topology slide.**
+3. **Data Rate**
+    - Defines the rate at which bits are transmitted.
+
+```text
+Data
+  ↓
+Raw Bits
+  ↓
+Physical Medium
+  ↓
+Receiver
+```
+
 > **Remember:**
 > 
-> **Transport Layer → Process-to-Process Delivery**  
-> **Network Layer → Host-to-Host Delivery**
+> **Data Link Layer → Node-to-Node Delivery**  
+> **Physical Layer → Transmission of Raw Bits**
