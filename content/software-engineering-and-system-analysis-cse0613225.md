@@ -75,8 +75,11 @@ Before developing a software system, consider its possible **social impact**, in
 ---
 
 Next Class
+
 - Software Requirements
+
 Review:
+
 - **Functional Requirements**
 - **Non-Functional Requirements**
 
