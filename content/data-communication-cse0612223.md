@@ -147,6 +147,9 @@ Full-Duplex --> Data can travel in **both directions at the same time**. **Ex:**
 
 > Date: 12 August 2026
 
+## Lecture 4
+
+```
 OSI — 7 Layers
 │
 ├── 7. Application
@@ -170,3 +173,4 @@ OSI — 7 Layers
 │
 └── 1. Physical
 
+```
