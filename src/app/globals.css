@@ -439,52 +439,26 @@
 }
 .garden-prose pre:hover .copy-btn { opacity: 1; }
 
-/* Obsidian-style Plaintext code blocks (seamless dark background, no border card, top-right plaintext label) */
+/* Plaintext code blocks (seamless look matching website background, no card box, no copy button, no label) */
 .garden-prose pre.plaintext,
 .garden-prose pre.language-plaintext,
 .garden-prose pre.language-text,
 .garden-prose pre.language-txt,
 .garden-prose pre.no-lang {
-  background: #09090b !important;
+  background: var(--background) !important;
   border: none !important;
   box-shadow: none !important;
-  border-radius: 8px;
-  padding: 1.1rem 1.25rem;
-  line-height: 1.36;
+  border-radius: 0;
+  padding: 0.5rem 0;
+  line-height: 1.38;
 }
 
-.light .garden-prose pre.plaintext,
-.light .garden-prose pre.language-plaintext,
-.light .garden-prose pre.language-text,
-.light .garden-prose pre.language-txt,
-.light .garden-prose pre.no-lang {
-  background: #f4f4f6 !important;
-  border: none !important;
-  box-shadow: none !important;
-}
-
-/* Top-right "plaintext" language indicator matching Obsidian reading mode */
-.garden-prose pre.plaintext::before,
-.garden-prose pre.language-plaintext::before,
-.garden-prose pre.language-text::before,
-.garden-prose pre.language-txt::before {
-  content: "plaintext";
-  position: absolute;
-  top: 0.55rem;
-  right: 0.85rem;
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-  font-size: 0.72rem;
-  color: rgba(255, 255, 255, 0.35);
-  pointer-events: none;
-  user-select: none;
-  letter-spacing: 0.02em;
-}
-
-.light .garden-prose pre.plaintext::before,
-.light .garden-prose pre.language-plaintext::before,
-.light .garden-prose pre.language-text::before,
-.light .garden-prose pre.language-txt::before {
-  color: rgba(0, 0, 0, 0.4);
+.garden-prose pre.plaintext .copy-btn,
+.garden-prose pre.language-plaintext .copy-btn,
+.garden-prose pre.language-text .copy-btn,
+.garden-prose pre.language-txt .copy-btn,
+.garden-prose pre.no-lang .copy-btn {
+  display: none !important;
 }
 
 /* Tables */
