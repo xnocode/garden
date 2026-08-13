@@ -22,7 +22,7 @@ Class Notes Update:
 |                |         | Numerical Methods and Analysis                            |        |            |
 |                |         | ==Software Engineering and System Analysis==              | ==🟢== | ==🔴==     |
 | 23.07.2026     | THU     | Data Communication                                        |        |            |
-|                |         | Internet Programming Lab                                  |        |            |
+|                |         | ==Internet Programming Lab==                              | ==🟢== | ==🟢==     |
 | 26.07.2026     | SUN     | Data Structures and Algorithms \|\|                       |        |            |
 |                |         | Numerical Methods and Analysis                            |        |            |
 |                |         | Complex Variables, Fourier Analysis and Laplace Transform |        |            |
@@ -35,7 +35,7 @@ Class Notes Update:
 |                |         | Numerical Methods and Analysis                            |        |            |
 |                |         | ==Software Engineering and System Analysis==              | ==🟢== | ==🟢==     |
 | 30.07.2026     | THU     | Data Communication                                        |        |            |
-|                |         | Internet Programming Lab                                  |        |            |
+|                |         | ==Internet Programming Lab==                              | ==🟢== | ==🟢==     |
 | 02.08.2026     | SUN     | Data Structures and Algorithms \|\|                       |        |            |
 |                |         | Numerical Methods and Analysis                            |        |            |
 |                |         | Complex Variables, Fourier Analysis and Laplace Transform |        |            |
@@ -48,7 +48,7 @@ Class Notes Update:
 |                |         | Numerical Methods and Analysis                            | 🟡     | 🔴         |
 |                |         | ==Software Engineering and System Analysis==              | ==🟡== | ==🔴==     |
 | 06.08.2026     | THU     | Data Communication                                        |        |            |
-|                |         | Internet Programming Lab                                  |        |            |
+|                |         | ==Internet Programming Lab==                              | ==🟢== | ==🟢==     |
 | 09.08.2026     | SUN     | Data Structures and Algorithms \|\|                       |        |            |
 |                |         | Numerical Methods and Analysis                            |        |            |
 |                |         | Complex Variables, Fourier Analysis and Laplace Transform |        |            |
@@ -59,10 +59,9 @@ Class Notes Update:
 | 12.08.2026     | WED     | Data Communication                                        |        |            |
 |                |         | Numerical Methods and Analysis                            |        |            |
 |                |         | ==Software Engineering and System Analysis==              | ==🟢== | ==🔵==     |
-|                |         |                                                           |        |            |
 | 13.08.2026     | THU     | Software Engineering and System Analysis Lab              |        |            |
 |                |         | Data Communication                                        |        |            |
-|                |         | Internet Programming Lab                                  |        |            |
+|                |         | ==Internet Programming Lab==                              | ==🟢== | ==🟢==     |
 |                |         |                                                           |        |            |
 |                |         |                                                           |        |            |
 
