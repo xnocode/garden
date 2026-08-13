@@ -6,7 +6,7 @@ draft: false
 date: 2026-07-22
 tags:
   - university
-prev: ""
+prev: "[[software-engineering-and-system-analysis-cse0613225]]"
 next: "[[data-communication-cse0612223]]"
 aliases:
   - class notes
