@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Schibsted_Grotesk, Source_Sans_3, IBM_Plex_Mono } from "next/font/google";
+import { Plus_Jakarta_Sans, Source_Sans_3, IBM_Plex_Mono } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
 import { ThemeProvider } from "@/components/theme-provider";
@@ -7,7 +7,7 @@ import { GoogleAnalytics } from "@next/third-parties/google";
 import Script from "next/script";
 
 
-const headingFont = Schibsted_Grotesk({
+const headingFont = Plus_Jakarta_Sans({
   variable: "--font-serif",
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
