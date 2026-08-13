@@ -148,3 +148,177 @@ OSI — 7 Layers
 └── 1. Physical
 
 ```
+
+
+
+
+#### Transport Layer
+
+> **Main responsibility:** Process-to-Process Delivery
+
+The Transport Layer provides communication between **processes/applications** running on different devices.
+
+Main Functions:
+
+1. **Port Addressing**
+   
+Port numbers identify the **specific process/application** that should send or receive data.
+
+```text
+                HUB
+              /  |  \
+             /   |   \
+        Phone    P2   P3 (Receiver)
+          |             |
+       WhatsApp      WhatsApp
+       Port 1000     Port 1200
+        (Sender)      (Receiver)
+```
+
+> **Example:** Data is sent from a WhatsApp process using **port 1000** to a WhatsApp process using **port 1200**.
+
+2. Segmentation and Reassembly
+
+Large data is divided into smaller **segments** before transmission.
+
+```text
+H E L L O
+│ │ │ │ │
+1 2 3 4 5
+```
+
+Each segment can have a **sequence number**.
+
+```text
+Segment 1
+Segment 2
+Segment 3
+Segment 4
+Segment 5
+```
+
+The receiver uses the sequence numbers to **reassemble the data in the correct order**.
+
+> Data can arrive in a different order, but it can be reassembled correctly using sequence numbers.
+
+```text
+Example: Segmentation & Reassembly
+
+Original Data:
+HELLO
+
+Sender                              Receiver
+  │                                    │
+  │  [1:H] ─────────────────────────→  │
+  │  [3:L] ─────────────────────────→  │
+  │  [5:O] ─────────────────────────→  │
+  │  [2:E] ─────────────────────────→  │
+  │  [4:L] ─────────────────────────→  │
+  │                                    │
+  │                              Received:
+  │                              H L O E L
+  │                                    │
+  │                              Reassembly
+  │                              using sequence
+  │                              numbers
+  │                                    ↓
+  │                                  HELLO
+```
+
+3. Flow Control
+
+Controls the **rate of data transmission** so that the receiver is not overwhelmed by too much data.
+
+4. Error Control
+
+Helps ensure that data is delivered **correctly and reliably**.
+
+If data is lost or received incorrectly, the transport layer can take action to ensure correct delivery.
+
+> [!summary] summary
+> **Transport Layer → Process-to-Process Delivery**
+> 
+> **Port Addressing → Identifies the process**  
+> **Segmentation → Divides data into segments**  
+> **Sequence Number → Helps reassemble segments**  
+> **Flow Control → Controls data flow**  
+> **Error Control → Handles transmission errors**
+
+#### Protocols
+
+1. **TCP (Transmission Control Protocol)** --> Connection-oriented**
+2. **UDP (User Datagram Protocol)** --> **Connectionless**
+
+### TCP — Connection-Oriented
+
+A connection is established before sending data.
+
+```mermaid
+graph LR
+    S((S)) --- A((A))
+    A --- B((B))
+    B --- R((R))
+    S --- C((C))
+    C --- D((D))
+    D --- R
+    D --- E((E))
+    E --- F((F))
+    R --- F
+
+    S -.-> C
+    C -.-> D
+    D -.-> R
+```
+
+> The network finds a suitable/shortest path for the data packet to reach the receiver.
+
+### Data Packet Tracking
+
+```text
+Sender
+  ↓
+S → C → D → R
+          ↓
+       Receiver
+```
+
+---
+
+## Network Layer
+
+> **Main responsibility:** Host-to-Host Delivery
+
+### Main Functions
+
+1. **Logical Addressing**
+    
+    - Uses logical addresses such as **IP addresses** to identify hosts.
+        
+2. **Packetizing**
+    
+    - The Network Layer takes the segment from the Transport Layer and encapsulates it into a **packet**.
+        
+
+### Data Encapsulation
+
+```text
+                    PACKET
+┌──────────────┬───────────────────────┐
+│ Network      │      Segment          │
+│ Header       │                       │
+└──────────────┴───────────────────────┘
+```
+
+The network packet contains addressing information such as:
+
+```text
+┌──────────────┬──────────────┬────────────┬──────────────┬──────────────┐
+│ Source       │ Source       │ Sequence   │ Receiver     │ Receiver     │
+│ IP Address   │ Port Address │ Number     │ Port Address │ IP Address   │
+└──────────────┴──────────────┴────────────┴──────────────┴──────────────┘
+```
+
+> **Remember:**
+> 
+> **Transport Layer → Process-to-Process Delivery**  
+> **Network Layer → Host-to-Host Delivery**

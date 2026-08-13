@@ -18397,6 +18397,36 @@
             "timeKey": "01:05",
             "w": 0,
             "c": -41
+          },
+          {
+            "timeKey": "01:15",
+            "w": 257,
+            "c": 2236
+          },
+          {
+            "timeKey": "01:20",
+            "w": -10,
+            "c": -140
+          },
+          {
+            "timeKey": "01:25",
+            "w": 10,
+            "c": 402
+          },
+          {
+            "timeKey": "01:30",
+            "w": 139,
+            "c": 1602
+          },
+          {
+            "timeKey": "03:10",
+            "w": 0,
+            "c": -8
+          },
+          {
+            "timeKey": "03:15",
+            "w": 25,
+            "c": 90
           }
         ],
         "id": 1131
@@ -18411,12 +18441,17 @@
             "timeKey": "00:25",
             "w": 0,
             "c": 0
+          },
+          {
+            "timeKey": "03:10",
+            "w": 0,
+            "c": 0
           }
         ],
         "id": 1132
       }
     ],
-    "wholeVaultWordCount": 37630,
-    "wholeVaultCharCount": 314052
+    "wholeVaultWordCount": 38051,
+    "wholeVaultCharCount": 318234
   }
 }

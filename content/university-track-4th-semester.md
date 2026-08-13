@@ -47,7 +47,7 @@ Class Notes Update:
 |                |         | ==Data Communication==                                    | ==🟡== | ==🔴==     |
 |                |         | Numerical Methods and Analysis                            | 🟡     | 🔴         |
 |                |         | ==Software Engineering and System Analysis==              | ==🟡== | ==🔴==     |
-| 06.08.2026     | THU     | Data Communication                                        | ==🟢== | ==🟢==     |
+| 06.08.2026     | THU     | ==Data Communication==                                    | ==🟢== | ==🟢==     |
 |                |         | ==Internet Programming Lab==                              | ==🟢== | ==🟢==     |
 | 09.08.2026     | SUN     | Data Structures and Algorithms \|\|                       |        |            |
 |                |         | Numerical Methods and Analysis                            | ==🔴== | ==🔴==     |
@@ -56,11 +56,11 @@ Class Notes Update:
 |                |         | Data Structures and Algorithms \|\|                       |        |            |
 |                |         | Software Engineering and System Analysis                  | ==🟢== | ==🟢==<br> |
 |                |         | Data Structures and Algorithms \|\| Lab                   |        |            |
-| 12.08.2026     | WED     | Data Communication                                        | ==🟢== | ==🟢==     |
+| 12.08.2026     | WED     | ==Data Communication==                                    | ==🟢== | ==🟢==     |
 |                |         | Numerical Methods and Analysis                            |        |            |
 |                |         | ==Software Engineering and System Analysis==              | ==🟢== | ==🔵==     |
 | 13.08.2026     | THU     | Software Engineering and System Analysis Lab              |        |            |
-|                |         | Data Communication                                        | ==🟢== | ==🟢==     |
+|                |         | ==Data Communication==                                    | ==🟢== | ==🟢==     |
 |                |         | ==Internet Programming Lab==                              | ==🟢== | ==🟢==     |
 
 
