@@ -42,27 +42,26 @@ The SDLC describes the major stages involved in developing software.
 
 Identifying, analyzing, documenting, and managing what the software needs to do.
 
-```text
 Requirements are mainly:
 - Functional Requirements → What the system should do.  
 - Non-Functional Requirements → How the system should perform, such as security, performance, reliability, and usability.
-```
 
 #### Product Development
 
 The software is developed based on the identified requirements.
 
-```text
 Important considerations include:
 
 - Cost Analysis
+
   - Estimate the cost required for development.
   - 60% cost for development → (a point mentioned in the class lecture); this is not a universal rule and may vary depending on the project.
     
 - Certification Requirements
+
   - Required certifications or standards may need to be considered for certain software systems.
   - They help ensure that the system meets required quality, safety, security, or regulatory standards where applicable.
-```
+
 #### Social Impact Check
 
 Before developing a software system, consider its possible **social impact**, including:
