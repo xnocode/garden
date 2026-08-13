@@ -450,7 +450,18 @@
   box-shadow: none !important;
   border-radius: 0;
   padding: 0.5rem 0;
-  line-height: 1.38;
+  line-height: 1.2 !important;
+  font-family: Consolas, "Cascadia Code", "SFMono-Regular", Menlo, Monaco, "Liberation Mono", "Courier New", monospace !important;
+  letter-spacing: 0;
+}
+
+.garden-prose pre.plaintext code,
+.garden-prose pre.language-plaintext code,
+.garden-prose pre.language-text code,
+.garden-prose pre.language-txt code,
+.garden-prose pre.no-lang code {
+  line-height: 1.2 !important;
+  font-family: Consolas, "Cascadia Code", "SFMono-Regular", Menlo, Monaco, "Liberation Mono", "Courier New", monospace !important;
 }
 
 .garden-prose pre.plaintext .copy-btn,

@@ -42,21 +42,11 @@ updatedAt: 2026-08-14
 
 There are **5 basic components** of data communication:
 
-1. **Sender**
-    - The device that sends the data.
-        
-2. **Receiver**
-    - The device that receives the data.
-        
-3. **Message**
-    - The information or data being communicated.
-        
-4. **Transmission Medium**
-    - The physical or wireless path through which data travels.
-    - Example: cable, fiber optic, radio waves.
-        
-5. **Protocol**
-    - A set of rules that controls how data is communicated between devices.
+1. **Sender** --> The device that sends the data.
+2. **Receiver** --> The device that receives the data.
+3. **Message** --> The information or data being communicated.
+4. **Transmission Medium** --> The physical or wireless path through which data travels. Example: cable, fiber optic, radio waves.        
+5. **Protocol** --> A set of rules that controls how data is communicated between devices.
         
 Slides:
 
@@ -75,64 +65,48 @@ Slides:
 #### Why "Open"?
 
 - The model is **not limited to one company**.
-    
 - Different systems, such as **Windows and Linux**, can use the model.
-    
 #### 7 Layers of OSI Model
 
 ##### Software Layers
 
 1. **Application**
-    
 2. **Presentation**
-    
 3. **Session**
-    
 
 ##### Hardware / Lower Layers
 
 4. **Transport**
-    
 5. **Network**
-    
 6. **Data Link**
-    
 7. **Physical**
-
 #### Presentation Layer
 
 The **Presentation Layer** deals with the representation and transformation of data.
 
 - **Translation** → Converts data into a **common format**.
-    
 - **Compression** → Reduces the **number of bits** needed to represent data.
-    
 - **Encryption** → Provides **security** by converting data into an encoded form.
 
 #### Compression
 
 Compression can be:
-
 - **Lossy** → Some data is removed to reduce the size.
-    
 - **Lossless** → Data can be restored to its original form without losing information.
-    
 #### Session Layer
 
 The **Session Layer** is responsible for managing communication sessions between applications.
 
 - **Authentication** → Verifies the identity of a user.
-    
 - **Authorization** → Determines what an authenticated user is allowed to access.
-    
 - **Session Management** → Establishes, manages, and terminates a communication session.
 
 Example
 
 ```text
-LIBRARY
-   ↓
-ENTER ME
+  LIBRARY
+     ↓
+  ENTER ME
    ↙    ↘
   CSE   BBA
  ↙    ↘
