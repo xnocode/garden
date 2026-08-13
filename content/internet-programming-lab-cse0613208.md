@@ -13,7 +13,7 @@ aliases:
 updatedAt: 2026-08-13
 ---
 > **Date:** 23 July 2026
-# Lecture 01
+## Lecture 01
 
 | Project Proposal | After Mid-Term |
 | ---------------- | -------------- |
