@@ -6,7 +6,7 @@ draft: false
 date: 2026-07-23
 tags:
   - university
-prev: ""
+prev: "[[data-communication-cse0612223]]"
 next: ""
 aliases:
   - class notes
