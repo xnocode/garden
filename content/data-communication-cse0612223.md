@@ -149,7 +149,7 @@ Full-Duplex --> Data can travel in **both directions at the same time**. **Ex:**
 
 ## Lecture 4
 
-```
+```plaintext
 OSI — 7 Layers
 │
 ├── 7. Application
