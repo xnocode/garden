@@ -110,6 +110,7 @@ $$
 3. Check the Midpoint
 
 => Case 1: $f(x_m)\times f(x_l)<0$
+
 The root lies between $x_l$ and $x_m$. That's why the value of $x_l$ will be unchanged and $x_u=x_m$
 
 => Case 2: $f(x_m)\times f(x_l)>0$
