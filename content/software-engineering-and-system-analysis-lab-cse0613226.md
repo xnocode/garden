@@ -12,9 +12,8 @@ aliases:
   - class notes
 updatedAt: 2026-07-29
 ---
-## Lecture 01
-
 > Date : 22 July 2026
+## Lecture 01
 
 ==Requirements==
 - **Core** → Any Programming Language
@@ -50,10 +49,8 @@ Slides
 - Chapter 01: [Introduction](https://docs.google.com/presentation/d/1C2PRe3bFO-KkEoFxvDNJ_Gox7QVgbuuV/edit?usp=drive_link&ouid=101274052281868405023&rtpof=true&sd=true)
 - Chapter 02: [Software Processes ](https://docs.google.com/presentation/d/10f-c7gm5FWG15ny2JdhnbypHR1EPXBy0/edit?usp=drive_link&ouid=101274052281868405023&rtpof=true&sd=true)
 
-
-## Lecture 02
-
 > Date : 29 July 2026
+## Lecture 02
 
 A project has three main parts:
 
@@ -135,3 +132,15 @@ Week 3 -> 05-08-2026
 13. References
 	- Use the IEEE reference format.
 	- Check the format from reliable sources.
+
+
+
+> Date : 05 August 2026
+
+> Date : 13 August 2026
+
+## Lecture 3
+
+>[!warning] warning
+>Review the SRS (Software Requirements Specification) documentation and prepare an SRS document for your own project before the next class.
+
