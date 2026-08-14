@@ -682,7 +682,7 @@ $$
 
 <u>Secant Method:</u>
 
-Newton-Raphson formula:
+- Newton-Raphson formula:
 
 $$
 x_{i+1}
@@ -691,7 +691,7 @@ x_i-\frac{f(x_i)}{f'(x_i)}
 \tag{i}
 $$
 
-Newton-Raphson Method:
+- Newton-Raphson Method:
 
 $$
 f'(x_i)
@@ -730,86 +730,9 @@ $$
 > Estimate the root of $x^2-4=0$ by Secant Method, if initial guesses of the roots are $3$ and $5$. Conduct 3 iterations. Also, calculate the absolute relative approximate error after each iteration.
 
 Given,
-		$f(x)=x^2-4$
-		$x_0=3,\qquad x_1=5$
 
-<u>Iteration 1:</u>
-
-Given,
-
-$$
-f(x)=x^2-4
-$$
-
-Initial guesses:
-
-$$
-x_0=3,\qquad x_1=5
-$$
-
-Using the Secant Method:
-
-$$
-x_2
-=
-x_0-
-\frac{
-f(x_0)(x_0-x_1)
-}{
-f(x_0)-f(x_1)
-}
-$$
-
-Now,
-
-$$
-f(x_0)=f(3)=3^2-4=5
-$$
-
-$$
-f(x_1)=f(5)=5^2-4=21
-$$
-
-Therefore,
-
-$$
-x_2
-=
-3-
-\frac{
-5(3-5)
-}{
-5-21
-}
-=
-3-\frac{-10}{-16}=3-0.62500=2.37500
-$$
-
-Now, Absolute Relative Approximate Error:
-
-$$
-|E_A|
-=
-\left|
-\frac{x_2-x_0}{x_2}
-\right|
-\times100\%
-=
-\left|
-\frac{2.37500-3}{2.37500}
-\right|
-\times100\%
-=26.31579\%
-$$
-
-
-
-
-> [!question] Question
-> Estimate the root of $x^2-4=0$ by Secant Method, if initial guesses of the roots are $3$ and $5$. Conduct 3 iterations. Also, calculate the absolute relative approximate error after each iteration.
-
-Given,
 $f(x)=x^2-4$
+
 $x_i=x_0=3,\qquad x_{i-1}=x_{0-1}=x_{-1}=5$
 
 <u>Iteration 1:</u>
