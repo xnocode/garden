@@ -27,7 +27,6 @@ import { Backlinks } from "./backlinks";
 import { RelatedNotes } from "./related-notes";
 import { useRecordVisit } from "./reading-history";
 import { CodeBlockRunner } from "./code-block-runner";
-import { GiscusComments } from "./giscus-comments";
 
 
 interface PreviewData {
@@ -593,14 +592,9 @@ export function NoteView({ note }: { note: NoteDetail }) {
         </div>
       )}
 
-      {/* Auto-format ad between backlinks and comments */}
+      {/* Auto-format ad between backlinks and footer */}
       <div className="mt-8">
         <AdBanner slotId="5327787791" format="auto" />
-      </div>
-
-      {/* Giscus Comments Section */}
-      <div className="mt-8">
-        <GiscusComments />
       </div>
 
       {/* Stats footer */}
