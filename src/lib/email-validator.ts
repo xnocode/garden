@@ -17,6 +17,7 @@ export const ALLOWED_EMAIL_DOMAINS = [
   "protonmail.com",
   "fastmail.com",
   "zoho.com",
+  "gardenx.com",
 ];
 
 export function isAllowedEmailDomain(email: string): boolean {

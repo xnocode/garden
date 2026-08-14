@@ -60,9 +60,9 @@ export function AuthModal({ isOpen, onClose, defaultMode = "signin" }: AuthModal
       return;
     }
 
-    if (!isAllowedEmailDomain(cleanEmail)) {
+    if (mode === "signup" && !isAllowedEmailDomain(cleanEmail)) {
       setError(
-        "Only trusted email providers (Gmail, Outlook, Yahoo, iCloud, Proton) are supported. .edu and disposable emails are blocked."
+        "Only trusted email providers (Gmail, Outlook, Yahoo, iCloud, Proton) are supported for registration. .edu and disposable emails are blocked."
       );
       return;
     }
