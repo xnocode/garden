@@ -361,6 +361,10 @@ Data Link   ─────────┐
 Physical    ─────────┴──→ Network Access
 ```
 
+#### Slides
+- [Lecture 3 (Part 01)](https://drive.google.com/file/d/1MRPasiomca3RmDtcK9nVL2XvOfcsxUss/view?usp=drive_link)
+
+
 > Date: 13 August 2026
 
 ## Lecture 5
@@ -436,5 +440,7 @@ The request can contain information such as the **bank/account number**.
 >
 >>**Review the slides --> L3 (Part 1 & Part 2).**
 
-
-
+#### Slide
+- [Lecture 3 (Part 02)](https://drive.google.com/file/d/1B6_K3oh11wQVGNNq2eR7zg4QizHv1WCK/view?usp=drive_link)
+#### Book
+- [Data Communications and Networking - Behrouz A. Forouzan(4th Edition)](https://drive.google.com/file/d/1vVnv35wlHPEcoZz5GGErfqTcAfjt7weR/view?usp=drive_link)
