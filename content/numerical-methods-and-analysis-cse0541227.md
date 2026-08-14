@@ -407,3 +407,270 @@ $$
 \times100\%
 =0.86455\%
 $$
+
+> Date: 29 July 2026
+## Lecture 3
+
+<u>Round Off Error:</u>
+--> **Bisection Method** $20.79532839\ldots$
+
+- Take 3 digit ❌
+- Take 5 digit ✓
+
+For 5 decimal places: $20.79533$
+
+<u>Truncation Error:</u>
+
+$$
+e^x
+=
+1+x+\frac{x^2}{2!}+\frac{x^3}{3!}+\cdots+\frac{x^n}{n!}
+$$
+
+If we take the first 3 terms: $e^x\approx1+x+\frac{x^2}{2!}$
+
+For $x=0.75$;
+
+$1+0.75+\frac{(0.75)^2}{2!}=1+0.75+0.28125=2.03125$
+
+This is the truncated value, so the difference from the full series is the truncation error.
+
+#### Infinite Geometric Series
+
+$S=a+ar+ar^2+ar^3+\cdots$
+
+$S=\frac{a}{1-r}$
+
+For $a=1$ and $r=0.75$:
+
+$S=\frac{1}{1-0.75}=\frac{1}{0.25}=4$
+
+> **Note:**
+> - Finite → Error ✓
+> - Infinite → No truncation error
+
+Truncation Error: $4-2.3125=1.6875$
+
+---
+#### Significant Digits
+
+<u>Zero/Non-zero Digits:</u>
+
+**1) $\boxed{2.789\rightarrow4\text{ significant digits}}$**
+
+All non-zero digits are significant.
+
+**2) $\boxed{0.0439\rightarrow3\text{ significant digits}}$** <-- Heading Zero
+
+Zero to the left of non-zero numbers is considered insignificant.
+
+
+**3) $\boxed{4008\rightarrow4\text{ significant digits}}$**
+
+Zero in between two non-zero digits is significant.
+
+**4) $\boxed{4000.0\rightarrow5\text{ significant digits}}$**
+
+Trailing zeros after a non-zero digit are significant.
+
+
+- For $15000$, the number of significant digits can be ambiguous. It can represent:
+
+- $1.5\times10^4\quad\rightarrow\quad2\text{ significant digits}$
+- $1.50\times10^4\quad\rightarrow\quad3\text{ significant digits}$
+- $1.500\times10^4\quad\rightarrow\quad4\text{ significant digits}$
+- $1.5000\times10^4\quad\rightarrow\quad5\text{ significant digits}$
+
+Using scientific notation makes the number of significant digits clear.
+
+> **Date:** 02 August 2026
+
+## Lecture 4
+#### Finding the Root of a Non-Linear Equation
+
+Methods:
+
+- Bisection Method
+- Newton-Raphson Method
+
+### Newton-Raphson Method
+
+The graph represents the function:
+
+```mermaid
+xychart-beta
+    title "Newton-Raphson Method"
+    x-axis "x" 0 --> 10
+    y-axis "f(x)" -2 --> 7
+    line [1.2, 0.8, 0.5, 0.6, 1.2, 2.2, 3.5, 10.9, 14.9, 17.9, 19.9]
+    line [-7.3, -5.5, -3.7, -1.8, 0, 1.8, 3.7, 5.5, 7.3, 9.2, 11]
+```
+$$
+y=f(x)
+$$
+
+At $x=x_i$, a tangent is drawn to the curve.
+
+The tangent intersects the $x$-axis at $x_{i+1}$.
+
+At $x=x_i$, the tangent is drawn to the curve at the point: $(x_i,f(x_i))$
+
+The tangent intersects the $x$-axis at: $x_{i+1}$
+
+##### Slope of the Tangent: $f'(x)=\frac{\Delta y}{\Delta x}$
+
+```mermaid
+flowchart LR
+    A--- C(("Diameter"))
+    C --- B
+
+    style C fill:none,stroke:#000,stroke-width:2px
+    style A fill:none,stroke:none
+    style B fill:none,stroke:none
+    
+    
+    
+```
+```mermaid
+flowchart LR
+    A["y = f(x)"]
+
+    subgraph G[" "]
+        direction TB
+
+        C((" "))
+        D["Diameter"]
+        T["Tangent"]
+
+        C --- D
+        C --- T
+    end
+
+    A -.-> C
+
+    style G fill:none,stroke:none
+    style C fill:none,stroke:#000,stroke-width:3px
+    style D fill:none,stroke:none
+    style T fill:none,stroke:none
+    style A fill:none,stroke:none
+```
+   
+At $x=x_i$ ;$f'(x_i)=\frac{f(x_i)-0}{x_i-x_{i+1}}$
+
+
+where,
+
+- $f(x_i)$ → value of the function at $x_i$
+- $x_i$ → current approximation
+- $x_{i+1}$ → next approximation
+- $f'(x_i)$ → slope of the tangent at $x_i$
+
+
+Therefore,
+
+$x_i-x_{i+1}=\frac{f(x_i)}{f'(x_i)}$
+
+So, $\boxed{x_{i+1}=x_i-\frac{f(x_i)}{f'(x_i)}}$
+
+
+**Steps:**
+
+1. Find $f(x_i)$
+
+   > Given value of $x_i$ is used to calculate $f(x_i)$.
+
+2. Calculate the next approximation: $x_{i+1}=x_i-\frac{f(x_i)}{f'(x_i)}$
+
+3. Calculate the Absolute Relative Approximate Error:
+
+$$
+|E_A|
+=
+\left|
+\frac{x_{i+1}-x_i}{x_{i+1}}
+\right|
+\times100\%
+$$
+
+4. If, $E_A\neq0$ go to **Step 1**.
+
+> [!question] Question
+> Given, $f(x)=x^3-20$
+>
+> Initial value: $x_0=3$
+
+<u>Solution:</u>
+
+$f'(x)=3x^2 = nx^{n-1}$
+
+<u>Iteration 1:</u>
+
+$x_1=x_0-\frac{f(x_0)}{f'(x_0)}$
+
+$f(x_0)=f(3)=3^3-20=7$
+
+$f'(x_0)=f'(3)=3(3)^2=27$
+
+Now,
+$x_1=x_0-\frac{f(x_0)}{f'(x_0)}=3-\frac{7}{27}=2.74074$
+
+Now, Absolute Relative Approximate Error:
+
+$$
+|E_A|
+=
+\left|
+\frac{x_1-x_0}{x_1}
+\right|
+\times100\%
+=
+\left|
+\frac{2.74074-3}{2.74074}
+\right|
+\times100\%
+=9.45948\%
+$$
+<u>Iteration 2:</u>
+
+$x_2=x_1-\frac{f(x_1)}{f'(x_1)}$
+
+$f(x_1)=f(2.74074)=(2.74074)^3-20=0.58750$
+
+$f'(x_1)=f'(2.74074)=3(2.74074)^2=22.53497$
+
+Now,
+
+$x_2=x_1-\frac{f(x_1)}{f'(x_1)}=2.74074-\frac{0.58750}{22.53497}=2.71467$
+
+Now, Absolute Relative Approximate Error:
+
+$|E_A|=\left|\frac{x_2-x_1}{x_2}\right|\times100\%=\left|\frac{2.71467-2.74074}{2.71467}\right|\times100\%=0.96035\%$
+
+
+<u>Iteration 3:</u>
+
+$x_3=x_2-\frac{f(x_2)}{f'(x_2)}$
+
+$f(x_2)=f(2.71467)=(2.71467)^3-20=0.00558$
+
+$f'(x_2)=f'(2.71467)=3(2.71467)^2=22.10830$
+
+Now,
+$$
+x_3=x_2-\frac{f(x_2)}{f'(x_2)}=2.71467-\frac{0.00558}{22.10830}=2.71442
+$$
+Now, Absolute Relative Approximate Error:
+$$
+|E_A|
+=
+\left|
+\frac{x_3-x_2}{x_3}
+\right|
+\times100\%
+=
+\left|
+\frac{2.71442-2.71467}{2.71442}
+\right|
+\times100\%
+=0.00921\%
+$$
