@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState, useCallback, useMemo, useSyncExternalStore } from "react";
+import { useEffect, useRef, useState, useCallback, useMemo, useSyncExternalStore, useDeferredValue } from "react";
 import { useRouter } from "next/navigation";
 import { Search, FileText, Hash, CornerDownLeft, X, Zap } from "lucide-react";
 import { useUIStore } from "@/lib/ui-store";
@@ -135,6 +135,7 @@ export function CommandPalette() {
   const { searchOpen, setSearchOpen } = useUIStore();
   const router = useRouter();
   const [query, setQuery] = useState("");
+  const deferredQuery = useDeferredValue(query);
   const [active, setActive] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
   const searchIndex = useSearchIndex();
@@ -145,7 +146,7 @@ export function CommandPalette() {
   // effect needed). The index lookup is fast enough to run on every render.
   const results = useMemo<SearchResult[]>(() => {
     if (!searchOpen || !searchIndex) return [];
-    const q = query.trim();
+    const q = deferredQuery.trim();
     if (!q) return [];
     const { index, entries } = searchIndex;
     const titleRes = index.search(q, { index: "title", limit: 1000 }) as Array<{ result: string[] }>;

@@ -72,11 +72,7 @@ export function UserMenu() {
           <button
             type="button"
             onClick={() => setDropdownOpen(!dropdownOpen)}
-            className={`flex items-center gap-2 rounded-full border p-0.5 pr-2.5 transition-all ${
-              isAdmin
-                ? "border-amber-500/40 bg-amber-500/10 shadow-[0_0_12px_-3px_rgba(245,158,11,0.3)]"
-                : "border-border bg-surface/60 hover:border-garden/40"
-            }`}
+            className="flex items-center gap-2 rounded-full border border-border bg-surface/60 p-0.5 pr-2.5 transition-all hover:border-garden/50"
             aria-label="User profile menu"
           >
             {user.image ? (
@@ -87,7 +83,7 @@ export function UserMenu() {
                 className="h-7 w-7 rounded-full object-cover ring-1 ring-border"
               />
             ) : (
-              <div className="flex h-7 w-7 items-center justify-center rounded-full bg-garden/20 text-[11px] font-bold text-garden">
+              <div className="flex h-7 w-7 items-center justify-center rounded-full bg-garden/15 text-[11px] font-bold text-garden">
                 {user.name ? user.name.slice(0, 2).toUpperCase() : <User className="h-3.5 w-3.5" />}
               </div>
             )}
@@ -97,12 +93,12 @@ export function UserMenu() {
             </span>
 
             {isAdmin ? (
-              <span className="inline-flex items-center gap-0.5 rounded-full bg-amber-500/20 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-amber-400">
+              <span className="inline-flex items-center gap-0.5 rounded-full bg-garden/15 px-1.5 py-0.5 text-[9px] font-semibold tracking-wide text-garden">
                 <Crown className="h-2.5 w-2.5" />
                 <span>Admin</span>
               </span>
             ) : (
-              <span className="inline-flex items-center rounded-full bg-garden/15 px-1.5 py-0.5 text-[9px] font-medium text-garden">
+              <span className="inline-flex items-center rounded-full bg-surface-2 px-1.5 py-0.5 text-[9px] font-medium text-muted-foreground">
                 Member
               </span>
             )}
@@ -118,12 +114,12 @@ export function UserMenu() {
                 <p className="truncate text-[10px] text-muted-foreground">{user.email}</p>
                 <div className="mt-1.5 flex items-center gap-1">
                   {isAdmin ? (
-                    <span className="inline-flex items-center gap-1 rounded bg-amber-500/15 px-1.5 py-0.5 text-[10px] font-medium text-amber-400">
+                    <span className="inline-flex items-center gap-1 rounded bg-garden/15 px-1.5 py-0.5 text-[10px] font-medium text-garden">
                       <Crown className="h-3 w-3" />
-                      Garden Author (Full Access)
+                      Garden Author
                     </span>
                   ) : (
-                    <span className="inline-flex items-center gap-1 rounded bg-garden/15 px-1.5 py-0.5 text-[10px] font-medium text-garden">
+                    <span className="inline-flex items-center gap-1 rounded bg-garden/10 px-1.5 py-0.5 text-[10px] font-medium text-garden">
                       <ShieldCheck className="h-3 w-3" />
                       Verified Member
                     </span>
