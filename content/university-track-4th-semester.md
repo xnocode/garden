@@ -19,12 +19,12 @@ Class Notes Update:
 | -------------- | ------- | --------------------------------------------------------- | ------ | ---------- |
 | ==22.07.2026== | ==WED== | ==Software Engineering and System Analysis Lab==          | ==🟢== | ==🟢==     |
 |                |         | ==Data Communication==                                    | ==🟢== | ==🟢==     |
-|                |         | Numerical Methods and Analysis                            |        |            |
+|                |         | ==Numerical Methods and Analysis==                        | ==🟢== | ==🟢==     |
 |                |         | ==Software Engineering and System Analysis==              | ==🟢== | ==🔴==     |
 | ==23.07.2026== | ==THU== | ==Data Communication==                                    | ==🟢== | ==🔴==     |
 |                |         | ==Internet Programming Lab==                              | ==🟢== | ==🟢==     |
 | 26.07.2026     | SUN     | Data Structures and Algorithms \|\|                       |        |            |
-|                |         | Numerical Methods and Analysis                            |        |            |
+|                |         | ==Numerical Methods and Analysis==                        | ==🟢== | ==🟢==     |
 |                |         | Complex Variables, Fourier Analysis and Laplace Transform |        |            |
 | 27.07.2026     | MON     | Complex Variables, Fourier Analysis and Laplace Transform |        |            |
 |                |         | Data Structures and Algorithms \|\|                       |        |            |
@@ -32,12 +32,12 @@ Class Notes Update:
 |                |         | Data Structures and Algorithms \|\| Lab                   |        |            |
 | ==29.07.2026== | ==WED== | ==Software Engineering and System Analysis Lab==          | ==🟢== | ==🟢==     |
 |                |         | ==Data Communication==                                    | ==🔴== | ==🔴==     |
-|                |         | Numerical Methods and Analysis                            |        |            |
+|                |         | Numerical Methods and Analysis                            | ==🟢== | ==🟢==     |
 |                |         | ==Software Engineering and System Analysis==              | ==🟢== | ==🟢==     |
 | ==30.07.2026== | ==THU== | ==Data Communication==                                    | ==🟢== | ==🟢==     |
 |                |         | ==Internet Programming Lab==                              | ==🟢== | ==🟢==     |
 | 02.08.2026     | SUN     | Data Structures and Algorithms \|\|                       |        |            |
-|                |         | Numerical Methods and Analysis                            |        |            |
+|                |         | Numerical Methods and Analysis                            | ==🟢== | ==🟢==     |
 |                |         | Complex Variables, Fourier Analysis and Laplace Transform |        |            |
 | 03.08.2026     | MON     | Complex Variables, Fourier Analysis and Laplace Transform |        |            |
 |                |         | Data Structures and Algorithms \|\|                       |        |            |
@@ -57,7 +57,7 @@ Class Notes Update:
 |                |         | Software Engineering and System Analysis                  | ==🟢== | ==🟢==<br> |
 |                |         | Data Structures and Algorithms \|\| Lab                   |        |            |
 | 12.08.2026     | WED     | ==Data Communication==                                    | ==🟢== | ==🟢==     |
-|                |         | Numerical Methods and Analysis                            |        |            |
+|                |         | Numerical Methods and Analysis                            | ==🟢== | ==🟢==     |
 |                |         | ==Software Engineering and System Analysis==              | ==🟢== | ==🔵==     |
 | 13.08.2026     | THU     | Software Engineering and System Analysis Lab              |        |            |
 |                |         | ==Data Communication==                                    | ==🟢== | ==🟢==     |
