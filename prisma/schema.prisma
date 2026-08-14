@@ -127,3 +127,15 @@ model Comment {
   @@index([parentId])
 }
 
+/// Work-in-progress drafts created on web / mobile devices for cloud auto-save.
+model Draft {
+  id          String   @id @default(cuid())
+  title       String   @default("")
+  content     String   @default("")
+  tags        String   @default("[]")
+  visibility  String   @default("public")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+

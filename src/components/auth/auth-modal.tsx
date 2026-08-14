@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
 import { signIn } from "next-auth/react";
-import { X, Lock, Mail, User, ShieldCheck, AlertCircle, Loader2 } from "lucide-react";
+import { X, Lock, Mail, User, ShieldCheck, AlertCircle, Loader2, Eye, EyeOff } from "lucide-react";
 import { isAllowedEmailDomain } from "@/lib/email-validator";
 
 interface AuthModalProps {
@@ -18,6 +18,7 @@ export function AuthModal({ isOpen, onClose, defaultMode = "signin" }: AuthModal
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
@@ -32,6 +33,7 @@ export function AuthModal({ isOpen, onClose, defaultMode = "signin" }: AuthModal
       setMode(defaultMode);
       setError(null);
       setSuccess(null);
+      setShowPassword(false);
     }
   }, [isOpen, defaultMode]);
 
@@ -136,8 +138,8 @@ export function AuthModal({ isOpen, onClose, defaultMode = "signin" }: AuthModal
         {/* Close button */}
         <button
           onClick={onClose}
-          className="absolute right-4 top-4 rounded-lg p-1.5 text-muted-foreground hover:bg-surface-2 hover:text-foreground transition-colors"
-          aria-label="Close"
+          className="absolute right-4 top-4 rounded-lg p-2 text-muted-foreground hover:bg-surface-2 hover:text-foreground transition-colors"
+          aria-label="Close modal"
         >
           <X className="h-4 w-4" />
         </button>
@@ -152,7 +154,7 @@ export function AuthModal({ isOpen, onClose, defaultMode = "signin" }: AuthModal
           </h2>
           <p className="mt-1 text-xs text-muted-foreground">
             {mode === "signin"
-              ? "Sign in to unlock member notes and join discussions."
+              ? "Sign in to unlock member notes, post, and join discussions."
               : "Join our digital garden community with a verified email."}
           </p>
         </div>
@@ -177,7 +179,7 @@ export function AuthModal({ isOpen, onClose, defaultMode = "signin" }: AuthModal
           type="button"
           onClick={handleGoogleSignIn}
           disabled={loading}
-          className="flex w-full items-center justify-center gap-3 rounded-xl border border-border bg-surface-2 px-4 py-2.5 text-sm font-medium text-foreground transition-all hover:border-garden/40 hover:bg-surface-2/80 disabled:opacity-50"
+          className="flex w-full items-center justify-center gap-3 rounded-xl border border-border bg-surface-2 px-4 py-2.5 text-sm font-medium text-foreground transition-all hover:border-garden/40 hover:bg-surface-2/80 active:scale-[0.99] disabled:opacity-50"
         >
           {/* Official Google SVG Icon */}
           <svg className="h-4 w-4" viewBox="0 0 24 24">
@@ -205,7 +207,7 @@ export function AuthModal({ isOpen, onClose, defaultMode = "signin" }: AuthModal
         <div className="my-5 flex items-center gap-3">
           <div className="h-px flex-1 bg-border/60" />
           <span className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
-            Or with verified email
+            Or with email
           </span>
           <div className="h-px flex-1 bg-border/60" />
         </div>
@@ -218,13 +220,14 @@ export function AuthModal({ isOpen, onClose, defaultMode = "signin" }: AuthModal
                 Your Name / Username
               </label>
               <div className="relative">
-                <User className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
+                <User className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground pointer-events-none" />
                 <input
                   type="text"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   placeholder="Alex Rivers"
-                  className="w-full rounded-lg border border-border bg-surface-2 py-2 pl-9 pr-3 text-xs text-foreground placeholder:text-muted-foreground/50 focus:border-garden focus:outline-none"
+                  autoComplete="name"
+                  className="w-full rounded-lg border border-border bg-surface-2 py-2 pl-9 pr-3 text-xs text-foreground placeholder:text-muted-foreground/50 transition-colors focus:border-garden focus:outline-none focus:ring-1 focus:ring-garden/40"
                 />
               </div>
             </div>
@@ -235,19 +238,22 @@ export function AuthModal({ isOpen, onClose, defaultMode = "signin" }: AuthModal
               Email Address
             </label>
             <div className="relative">
-              <Mail className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
+              <Mail className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground pointer-events-none" />
               <input
                 type="email"
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="you@gmail.com"
-                className="w-full rounded-lg border border-border bg-surface-2 py-2 pl-9 pr-3 text-xs text-foreground placeholder:text-muted-foreground/50 focus:border-garden focus:outline-none"
+                autoComplete="email"
+                className="w-full rounded-lg border border-border bg-surface-2 py-2 pl-9 pr-3 text-xs text-foreground placeholder:text-muted-foreground/50 transition-colors focus:border-garden focus:outline-none focus:ring-1 focus:ring-garden/40"
               />
             </div>
-            <p className="mt-1 text-[10px] text-muted-foreground/70">
-              Supported: Gmail, Outlook, Yahoo, iCloud, Proton (.edu blocked).
-            </p>
+            {mode === "signup" && (
+              <p className="mt-1 text-[10px] text-muted-foreground/70">
+                Supported: Gmail, Outlook, Yahoo, iCloud, Proton (.edu blocked).
+              </p>
+            )}
           </div>
 
           <div>
@@ -255,15 +261,29 @@ export function AuthModal({ isOpen, onClose, defaultMode = "signin" }: AuthModal
               Password
             </label>
             <div className="relative">
-              <Lock className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
+              <Lock className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground pointer-events-none" />
               <input
-                type="password"
+                type={showPassword ? "text" : "password"}
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
-                className="w-full rounded-lg border border-border bg-surface-2 py-2 pl-9 pr-3 text-xs text-foreground placeholder:text-muted-foreground/50 focus:border-garden focus:outline-none"
+                autoComplete={mode === "signin" ? "current-password" : "new-password"}
+                className="w-full rounded-lg border border-border bg-surface-2 py-2 pl-9 pr-10 text-xs text-foreground placeholder:text-muted-foreground/50 transition-colors focus:border-garden focus:outline-none focus:ring-1 focus:ring-garden/40"
               />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-2.5 top-2 rounded p-1 text-muted-foreground hover:text-foreground transition-colors"
+                title={showPassword ? "Hide password" : "Show password"}
+                aria-label={showPassword ? "Hide password" : "Show password"}
+              >
+                {showPassword ? (
+                  <EyeOff className="h-3.5 w-3.5" />
+                ) : (
+                  <Eye className="h-3.5 w-3.5" />
+                )}
+              </button>
             </div>
           </div>
 
@@ -288,7 +308,7 @@ export function AuthModal({ isOpen, onClose, defaultMode = "signin" }: AuthModal
                   setMode("signup");
                   setError(null);
                 }}
-                className="font-medium text-garden underline hover:opacity-80"
+                className="font-medium text-garden underline hover:opacity-80 transition-opacity"
               >
                 Sign up
               </button>
@@ -302,7 +322,7 @@ export function AuthModal({ isOpen, onClose, defaultMode = "signin" }: AuthModal
                   setMode("signin");
                   setError(null);
                 }}
-                className="font-medium text-garden underline hover:opacity-80"
+                className="font-medium text-garden underline hover:opacity-80 transition-opacity"
               >
                 Sign in
               </button>
