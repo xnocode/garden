@@ -674,3 +674,239 @@ $$
 \times100\%
 =0.00921\%
 $$
+
+> **Date:** 12 August 2026
+
+## Lecture 5
+#### Finding the Root of Non-Linear Equation
+
+<u>Secant Method:</u>
+
+Newton-Raphson formula:
+
+$$
+x_{i+1}
+=
+x_i-\frac{f(x_i)}{f'(x_i)}
+\tag{i}
+$$
+
+Newton-Raphson Method:
+
+$$
+f'(x_i)
+=
+\frac{d}{dx}\left(f(x)\right)
+=
+\text{slope}
+=
+\frac{\Delta y}{\Delta x}
+$$
+
+For 2 points $(x_i,x_{i-1})$:
+
+$$
+f'(x_i)
+=
+\frac{f(x_i)-f(x_{i-1})}
+{x_i-x_{i-1}}
+\tag{ii}
+$$
+
+Plugging (ii) in (i):
+
+$$
+x_{i+1}
+=
+x_i-
+\frac{
+f(x_i)(x_i-x_{i-1})
+}{
+f(x_i)-f(x_{i-1})
+}
+$$
+
+> [!question] Question
+> Estimate the root of $x^2-4=0$ by Secant Method, if initial guesses of the roots are $3$ and $5$. Conduct 3 iterations. Also, calculate the absolute relative approximate error after each iteration.
+
+Given,
+		$f(x)=x^2-4$
+		$x_0=3,\qquad x_1=5$
+
+<u>Iteration 1:</u>
+
+Given,
+
+$$
+f(x)=x^2-4
+$$
+
+Initial guesses:
+
+$$
+x_0=3,\qquad x_1=5
+$$
+
+Using the Secant Method:
+
+$$
+x_2
+=
+x_0-
+\frac{
+f(x_0)(x_0-x_1)
+}{
+f(x_0)-f(x_1)
+}
+$$
+
+Now,
+
+$$
+f(x_0)=f(3)=3^2-4=5
+$$
+
+$$
+f(x_1)=f(5)=5^2-4=21
+$$
+
+Therefore,
+
+$$
+x_2
+=
+3-
+\frac{
+5(3-5)
+}{
+5-21
+}
+=
+3-\frac{-10}{-16}=3-0.62500=2.37500
+$$
+
+Now, Absolute Relative Approximate Error:
+
+$$
+|E_A|
+=
+\left|
+\frac{x_2-x_0}{x_2}
+\right|
+\times100\%
+=
+\left|
+\frac{2.37500-3}{2.37500}
+\right|
+\times100\%
+=26.31579\%
+$$
+
+
+
+
+> [!question] Question
+> Estimate the root of $x^2-4=0$ by Secant Method, if initial guesses of the roots are $3$ and $5$. Conduct 3 iterations. Also, calculate the absolute relative approximate error after each iteration.
+
+Given,
+$f(x)=x^2-4$
+$x_i=x_0=3,\qquad x_{i-1}=x_{0-1}=x_{-1}=5$
+
+<u>Iteration 1:</u>
+$$
+x_{i+1}
+=
+x_i-
+\frac{
+f(x_i)(x_i-x_{i-1})
+}{
+f(x_i)-f(x_{i-1})
+}
+$$
+
+$x_1=3-\frac{f(3)(3-5)}{f(3)-f(5)}=3-\frac{(3^2-4)(-2)}{(3^2-4)-(5^2-4)}=3-\frac{5(-2)}{5-21}=3-\frac{-10}{-16}=3-0.62500=2.37500$
+
+Now, Absolute Relative Approximate Error:
+
+$$
+|E_A|
+=
+\left|
+\frac{x_1-x_0}{x_1}
+\right|
+\times100\%
+=
+\left|
+\frac{2.37500-3}{2.37500}
+\right|
+\times100\%
+=26.31579\%
+$$
+
+<u>Iteration 2:</u>
+
+$$
+x_{i+1}
+=
+x_i-
+\frac{
+f(x_i)(x_i-x_{i-1})
+}{
+f(x_i)-f(x_{i-1})
+}
+$$
+
+$x_2=2.37500-\frac{f(2.37500)(2.37500-3)}{f(2.37500)-f(3)}=2.37500-\frac{(2.37500^2-4)(2.37500-3)}{(2.37500^2-4)-(3^2-4)}=2.37500-0.30523256=2.06977$
+
+Now, Absolute Relative Approximate Error:
+
+$$
+|E_A|
+=
+\left|
+\frac{x_2-x_1}{x_2}
+\right|
+\times100\%
+=
+\left|
+\frac{2.06977-2.37500}{2.06977}
+\right|
+\times100\%
+
+=14.74705\%
+$$
+
+
+<u>Iteration 3:</u>
+
+$$
+x_{i+1}
+=
+x_i-
+\frac{
+f(x_i)(x_i-x_{i-1})
+}{
+f(x_i)-f(x_{i-1})
+}
+$$
+
+$x_3=2.06977-\frac{f(2.06977)(2.06977-2.37500)}{f(2.06977)-f(2.37500)}=2.06977-\frac{(2.06977^2-4)(2.06977-2.37500)}{(2.06977^2-4)-(2.37500^2-4)}=2.06977-0.06388359=2.00589$
+
+Now, Absolute Relative Approximate Error:
+
+$$
+|E_A|
+=
+\left|
+\frac{x_3-x_2}{x_3}
+\right|
+\times100\%
+=
+\left|
+\frac{2.00589-2.06977}{2.00589}
+\right|
+\times100\%
+=
+3.18481\%
+$$
+ 
