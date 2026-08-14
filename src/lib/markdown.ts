@@ -351,6 +351,46 @@ export function remarkObsidianLinks(ctx: RenderContext, links: WikiLinkTarget[])
   };
 }
 
+/**
+ * Remark plugin: Obsidian smart typography.
+ * Converts the same sequences that Obsidian's "Smart punctuation" feature
+ * replaces so text renders identically on the website.
+ *
+ * Conversions (order matters — longer tokens first):
+ *   <->  →  ↔
+ *   ->   →  →
+ *   <-   →  ←
+ *   ---  →  —  (em dash)
+ *   --   →  –  (en dash)
+ *   ...  →  …  (ellipsis)
+ */
+export function remarkObsidianTypography() {
+  return (tree: Root) => {
+    visit(tree, "text", (node) => {
+      const text = (node as Text).value;
+      // Only process if the text contains one of the trigger sequences
+      if (
+        !text.includes("->") &&
+        !text.includes("<-") &&
+        !text.includes("--") &&
+        !text.includes("...")
+      ) return;
+
+      (node as Text).value = text
+        // Arrows — longer tokens first to avoid partial matches
+        .replace(/<->/g, "↔")
+        .replace(/-->/g, "→")
+        .replace(/->/g, "→")
+        .replace(/<-/g, "←")
+        // Em dash before en dash (three before two)
+        .replace(/---/g, "\u2014")
+        .replace(/--/g, "\u2013")
+        // Ellipsis
+        .replace(/\.\.\.(?!\.)/g, "\u2026");
+    });
+  };
+}
+
 /** Remark plugin: parse ==highlights== and %%comments%%. */
 export function remarkHighlightsAndComments() {
   return (tree: Root) => {
@@ -1831,6 +1871,7 @@ export async function renderMarkdown(
     .use(remarkMath)
     .use(remarkObsidianLinks, ctx, links)
     .use(remarkHighlightsAndComments)
+    .use(remarkObsidianTypography)
     .use(remarkInlineTags, tags)
     .use(remarkUrlPreviews)
     .use(remarkRehype as any, {

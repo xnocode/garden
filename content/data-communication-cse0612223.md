@@ -329,8 +329,6 @@ The network packet contains addressing information such as:
 3. **Data Rate**
     - Defines the rate at which bits are transmitted.
 
-
-
 #### TCP/IP Model
 
 > **TCP/IP → 4 Layers**
