@@ -5,7 +5,8 @@
   "license": "UNLICENSED",
   "scripts": {
     "dev": "next dev -p 3000",
-    "build": "next build",
+    "build": "prisma generate && next build",
+    "postinstall": "prisma generate",
     "start": "NODE_ENV=production bun .next/standalone/server.js",
     "lint": "eslint .",
     "publish": "bun run scripts/publish.ts",
