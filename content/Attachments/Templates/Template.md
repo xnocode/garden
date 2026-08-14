@@ -24,7 +24,7 @@ const keyword = words.length > 1 ? words.slice(1).join(" ").toLowerCase() : (!is
 title: "<% cleanTitle %>"
 description: ""
 author: Ridoy
-draft: false
+visibility: public
 date: <% tp.file.creation_date("YYYY-MM-DD") %>
 updatedAt: <% tp.file.last_modified_date("YYYY-MM-DD") %>
 tags: []
