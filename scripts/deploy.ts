@@ -82,8 +82,10 @@ async function main() {
   console.log("  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
   try {
     const { syncDraftExclusions } = await import("./sync-drafts");
-    const { drafts, publishedCount } = await syncDraftExclusions();
-    console.log(`    🔒 Draft protection active: ${drafts.length} drafts excluded, ${publishedCount} notes published.`);
+    const { drafts, privateNotes, publishedCount } = await syncDraftExclusions();
+    console.log(`    🔒 Draft protection active: ${drafts.length} draft(s) excluded (local only)`);
+    console.log(`    🔐 Private note protection: ${privateNotes.length} private note(s) in DB only (not on GitHub)`);
+    console.log(`    ✅ ${publishedCount} note(s) will be published to GitHub`);
   } catch (err: any) {
     console.warn(`    ⚠️ Warning: Could not sync draft exclusions: ${err?.message}`);
   }

@@ -1,9 +1,14 @@
 /**
- * sync-drafts.ts — Keeps draft:true notes local-only by untracking them
- * from Git index and adding them to .git/info/exclude.
+ * sync-drafts.ts — Keeps draft:true and visibility:private notes local-only
+ * by untracking them from the Git index and adding to .git/info/exclude.
  *
- * Notes with `draft: true` remain safely in content/ on your disk,
- * but are excluded from Git commits and pushed repos.
+ * Rules:
+ *   - draft: true        → excluded from Git (stays local only, not published)
+ *   - visibility: private → excluded from Git (published to DB only, not to GitHub)
+ *   - everything else    → committed to GitHub as normal
+ *
+ * This means private notes are visible on your website (only to you as admin)
+ * but their markdown source never appears in your GitHub repo.
  */
 
 import { readdir, readFile, writeFile, mkdir } from "node:fs/promises";
@@ -28,7 +33,7 @@ async function walkMarkdown(dir: string, base: string): Promise<string[]> {
     if (entry === ".git" || entry === "node_modules" || entry === ".obsidian") continue;
     const full = join(dir, entry);
     try {
-      const s = await readdir(full); // check if dir
+      await readdir(full); // check if dir — throws if file
       out.push(...(await walkMarkdown(full, base)));
     } catch {
       if (/\.md$/i.test(entry)) {
@@ -39,9 +44,14 @@ async function walkMarkdown(dir: string, base: string): Promise<string[]> {
   return out;
 }
 
-export async function syncDraftExclusions(): Promise<{ drafts: string[]; publishedCount: number }> {
+export async function syncDraftExclusions(): Promise<{
+  drafts: string[];
+  privateNotes: string[];
+  publishedCount: number;
+}> {
   const mdFiles = await walkMarkdown(CONTENT_DIR, CONTENT_DIR);
   const draftPaths: string[] = [];
+  const privatePaths: string[] = [];
   let publishedCount = 0;
 
   for (const relPath of mdFiles) {
@@ -49,11 +59,24 @@ export async function syncDraftExclusions(): Promise<{ drafts: string[]; publish
     try {
       const raw = await readFile(fullPath, "utf8");
       const { data } = parseFrontmatter(raw);
-      const isDraft = data.draft !== false && data.draft !== "false";
       const gitRelPath = `content/${relPath}`;
+
+      // Check if it's a draft (draft: true means not published at all)
+      const isDraft =
+        data.draft === true ||
+        data.draft === "true" ||
+        (!("draft" in data) && false); // only explicit draft:true
+
+      // Check if it's a private note (visible on website to admin only, but not on GitHub)
+      const isPrivate =
+        data.visibility === "private" ||
+        data.access === "private" ||
+        data.private === true;
 
       if (isDraft) {
         draftPaths.push(gitRelPath);
+      } else if (isPrivate) {
+        privatePaths.push(gitRelPath);
       } else {
         publishedCount++;
       }
@@ -61,6 +84,9 @@ export async function syncDraftExclusions(): Promise<{ drafts: string[]; publish
       // Ignore read errors
     }
   }
+
+  // All paths to exclude from Git (drafts + private notes)
+  const allExcluded = [...draftPaths, ...privatePaths];
 
   // Ensure .git/info directory exists
   const infoDir = dirname(EXCLUDE_PATH);
@@ -75,43 +101,53 @@ export async function syncDraftExclusions(): Promise<{ drafts: string[]; publish
     existingLines = content.split(/\r?\n/);
   }
 
-  // Filter out any previous content/ entries that are no longer drafts
+  // Remove all previous content/ entries managed by this script
   const nonContentLines = existingLines.filter(
-    (line) => !line.trim().startsWith("content/")
+    (line) =>
+      !line.trim().startsWith("content/") &&
+      !line.trim().startsWith("# Auto-generated")
   );
 
-  // Combine non-content lines with current draft paths
-  const draftLines = draftPaths.map((p) => p);
+  // Write new exclude file
   const newExcludeContent = [
     ...nonContentLines,
-    "# Auto-generated draft exclusions (Digital Garden)",
-    ...draftLines,
+    "# Auto-generated exclusions (Digital Garden) — DO NOT EDIT",
+    "# draft:true notes (not published anywhere)",
+    ...draftPaths,
+    "# visibility:private notes (in DB only — not on GitHub)",
+    ...privatePaths,
   ]
     .join("\n")
     .replace(/\n{3,}/g, "\n\n");
 
   await writeFile(EXCLUDE_PATH, newExcludeContent, "utf8");
 
-  // Untrack draft files from Git index if they were previously tracked
-  for (const draftPath of draftPaths) {
+  // Untrack all excluded files from Git index if they were previously tracked
+  for (const excludedPath of allExcluded) {
     try {
-      execSync(`git rm --cached -f "${draftPath}"`, {
-        stdio: "pipe",
-      });
-      console.log(`    🔒 Untracked draft note from Git: ${draftPath}`);
+      execSync(`git rm --cached -f "${excludedPath}"`, { stdio: "pipe" });
+      const kind = privatePaths.includes(excludedPath) ? "private note" : "draft";
+      console.log(`    🔒 Untracked ${kind} from Git: ${excludedPath}`);
     } catch {
-      // File was not currently tracked in Git index, which is expected for new drafts
+      // Not currently tracked — that's fine
     }
   }
 
-  return { drafts: draftPaths, publishedCount };
+  return { drafts: draftPaths, privateNotes: privatePaths, publishedCount };
 }
 
 // Run directly if invoked from CLI
 if (import.meta.url === `file:///${process.argv[1]?.replace(/\\/g, "/")}`) {
-  syncDraftExclusions().then(({ drafts, publishedCount }) => {
-    console.log(`\n  ✅ Draft sync complete: ${drafts.length} drafts excluded, ${publishedCount} published notes active.\n`);
-  }).catch((err) => {
-    console.error("  ✗ Error syncing draft exclusions:", err);
-  });
+  syncDraftExclusions()
+    .then(({ drafts, privateNotes, publishedCount }) => {
+      console.log(
+        `\n  ✅ Sync complete:\n` +
+          `     ${drafts.length} draft(s) excluded (local only)\n` +
+          `     ${privateNotes.length} private note(s) excluded from GitHub (in DB only)\n` +
+          `     ${publishedCount} note(s) published to GitHub\n`
+      );
+    })
+    .catch((err) => {
+      console.error("  ✗ Error syncing exclusions:", err);
+    });
 }

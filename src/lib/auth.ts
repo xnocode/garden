@@ -3,7 +3,6 @@ import GoogleProvider from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { db } from "@/lib/db";
 import crypto from "node:crypto";
-
 import { isAllowedEmailDomain } from "@/lib/email-validator";
 
 export function hashPassword(password: string, salt: string): string {
@@ -44,12 +43,12 @@ export const authOptions: NextAuthOptions = {
           }),
         ]
       : [
-          // Fallback provider if Google credentials are not yet configured in .env
           GoogleProvider({
             clientId: "placeholder-id",
             clientSecret: "placeholder-secret",
           }),
         ]),
+
     CredentialsProvider({
       id: "credentials",
       name: "Email & Password",
@@ -63,36 +62,51 @@ export const authOptions: NextAuthOptions = {
         }
 
         const email = credentials.email.toLowerCase().trim();
+        const adminEmail = (process.env.ADMIN_EMAIL || "").toLowerCase().trim();
+        const adminPassword = process.env.ADMIN_PASSWORD || "";
 
+        // ── ADMIN LOGIN ────────────────────────────────────────────────────
+        // Admin uses a secret fake email + secret password stored only in env.
+        // Google OAuth can NEVER grant admin role — this is the only path.
+        if (adminEmail && email === adminEmail) {
+          if (!adminPassword || credentials.password !== adminPassword) {
+            throw new Error("Invalid admin credentials.");
+          }
+          // Admin is never stored in DB — pure env-based, unhackable via OAuth
+          return {
+            id: "admin",
+            email: adminEmail,
+            name: "Garden Author",
+            image: null,
+            role: "admin",
+          };
+        }
+
+        // ── REGULAR MEMBER LOGIN ───────────────────────────────────────────
         if (!isAllowedEmailDomain(email)) {
           throw new Error(
-            "Only trusted email providers (Gmail, Outlook, Yahoo, iCloud, Proton) are supported."
+            "Only trusted email providers (Gmail, Outlook, Yahoo, iCloud, Proton) are supported. .edu and disposable emails are blocked."
           );
         }
 
         try {
-          const user = await db.user.findUnique({
-            where: { email },
-          });
+          const user = await db.user.findUnique({ where: { email } });
 
           if (!user || !user.passwordHash) {
-            throw new Error("No account found with this email or password is not set.");
+            throw new Error("No account found with this email. Please sign up first.");
           }
 
           const isValid = verifyPassword(credentials.password, user.passwordHash);
           if (!isValid) {
-            throw new Error("Invalid password.");
+            throw new Error("Incorrect password.");
           }
-
-          const adminEmail = (process.env.ADMIN_EMAIL || "").toLowerCase().trim();
-          const role = adminEmail && email === adminEmail ? "admin" : user.role || "member";
 
           return {
             id: user.id,
             name: user.name || email.split("@")[0],
             email: user.email,
             image: user.image,
-            role,
+            role: user.role || "member",
           };
         } catch (err: any) {
           throw new Error(err.message || "Failed to authenticate.");
@@ -100,51 +114,49 @@ export const authOptions: NextAuthOptions = {
       },
     }),
   ],
+
   callbacks: {
     async signIn({ user, account }) {
       if (!user.email) return false;
 
-      const email = user.email.toLowerCase().trim();
-      const adminEmail = (process.env.ADMIN_EMAIL || "").toLowerCase().trim();
-      const isAdmin = !!adminEmail && email === adminEmail;
-      const role = isAdmin ? "admin" : "member";
-
-      // If logging in via OAuth (Google), sync/upsert user record in DB
+      // Google OAuth users are ALWAYS regular members — never admin.
+      // Admin can only log in via credentials with the secret email + password.
       if (account?.provider === "google") {
+        const email = user.email.toLowerCase().trim();
         try {
           const existingUser = await db.user.findUnique({ where: { email } });
-          if (existingUser) {
-            // Update role if matches admin
-            if (isAdmin && existingUser.role !== "admin") {
-              await db.user.update({
-                where: { email },
-                data: { role: "admin", image: user.image || existingUser.image },
-              });
-            }
-          } else {
+          if (!existingUser) {
             await db.user.create({
               data: {
                 email,
                 name: user.name || email.split("@")[0],
                 image: user.image,
-                role,
+                role: "member", // Google OAuth = always member
                 emailVerified: new Date(),
               },
             });
+          } else {
+            // Keep existing role (but never promote to admin via OAuth)
+            if (existingUser.role === "admin") {
+              await db.user.update({
+                where: { email },
+                data: { role: "member", image: user.image || existingUser.image },
+              });
+            }
           }
         } catch {
-          // DB sync error fallback
+          // DB sync error — still allow sign in
         }
       }
 
       return true;
     },
+
     async jwt({ token, user, trigger, session }) {
       if (user) {
         token.id = user.id;
-        const email = (user.email || "").toLowerCase().trim();
-        const adminEmail = (process.env.ADMIN_EMAIL || "").toLowerCase().trim();
-        token.role = adminEmail && email === adminEmail ? "admin" : (user as any).role || "member";
+        // Trust the role set by the authorize() function — don't re-derive from email
+        token.role = (user as any).role || "member";
       }
 
       if (trigger === "update" && session?.name) {
@@ -153,6 +165,7 @@ export const authOptions: NextAuthOptions = {
 
       return token;
     },
+
     async session({ session, token }) {
       if (session.user) {
         (session.user as any).id = token.id as string;
@@ -161,6 +174,7 @@ export const authOptions: NextAuthOptions = {
       return session;
     },
   },
+
   pages: {
     signIn: "/", // custom modal in-place
   },
