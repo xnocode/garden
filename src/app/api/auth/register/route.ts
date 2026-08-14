@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
-import { isAllowedEmailDomain, createPasswordHash } from "@/lib/auth";
+import { createPasswordHash } from "@/lib/auth";
+import { isAllowedEmailDomain } from "@/lib/email-validator";
 
 export const dynamic = "force-dynamic";
 

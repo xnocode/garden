@@ -1,9 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { signIn } from "next-auth/react";
 import { X, Lock, Mail, User, ShieldCheck, AlertCircle, Loader2 } from "lucide-react";
-import { isAllowedEmailDomain } from "@/lib/auth";
+import { isAllowedEmailDomain } from "@/lib/email-validator";
 
 interface AuthModalProps {
   isOpen: boolean;
@@ -12,6 +13,7 @@ interface AuthModalProps {
 }
 
 export function AuthModal({ isOpen, onClose, defaultMode = "signin" }: AuthModalProps) {
+  const [mounted, setMounted] = useState(false);
   const [mode, setMode] = useState<"signin" | "signup">(defaultMode);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -20,7 +22,20 @@ export function AuthModal({ isOpen, onClose, defaultMode = "signin" }: AuthModal
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
 
-  if (!isOpen) return null;
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  // Reset state when modal opens
+  useEffect(() => {
+    if (isOpen) {
+      setMode(defaultMode);
+      setError(null);
+      setSuccess(null);
+    }
+  }, [isOpen, defaultMode]);
+
+  if (!isOpen || !mounted) return null;
 
   const handleGoogleSignIn = async () => {
     setLoading(true);
@@ -109,8 +124,11 @@ export function AuthModal({ isOpen, onClose, defaultMode = "signin" }: AuthModal
     }
   };
 
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 backdrop-blur-sm animate-in fade-in duration-200">
+  const modalContent = (
+    <div
+      className="fixed inset-0 z-[100] flex items-center justify-center bg-black/75 p-4 backdrop-blur-md animate-in fade-in duration-200"
+      onClick={onClose}
+    >
       <div
         className="relative w-full max-w-md rounded-2xl border border-border bg-surface p-6 shadow-2xl transition-all"
         onClick={(e) => e.stopPropagation()}
@@ -294,4 +312,6 @@ export function AuthModal({ isOpen, onClose, defaultMode = "signin" }: AuthModal
       </div>
     </div>
   );
+
+  return createPortal(modalContent, document.body);
 }
