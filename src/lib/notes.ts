@@ -1,6 +1,7 @@
 import type { WikiLinkTarget } from "@/lib/markdown";
 import fs from "node:fs";
 import path from "node:path";
+import { db } from "@/lib/db";
 
 // --- Types ---
 
@@ -96,10 +97,61 @@ export interface ExplorerNode {
 
 // --- Data loading ---
 
-// Import the JSON data. This is bundled at build time.
+// Static JSON bundled at build time (used as fallback / for graph/tags/stats)
 import notesData from "@/data/notes.json";
+const STATIC_NOTES: NoteRecord[] = notesData as NoteRecord[];
 
-const NOTES: NoteRecord[] = notesData as NoteRecord[];
+/** Convert a raw DB row to NoteRecord shape */
+function dbRowToRecord(row: any): NoteRecord {
+  let tags: string[] = [];
+  let aliases: string[] = [];
+  let links: WikiLinkTarget[] = [];
+  try { tags = JSON.parse(row.tags || "[]"); } catch { tags = []; }
+  try { aliases = JSON.parse(row.aliases || "[]"); } catch { aliases = []; }
+  try { links = JSON.parse(row.links || "[]"); } catch { links = []; }
+  return {
+    slug: row.slug,
+    title: row.title,
+    description: row.description ?? null,
+    author: row.author ?? null,
+    content: row.content ?? "",
+    html: row.html ?? "",
+    raw: row.raw ?? "",
+    tags,
+    aliases,
+    links,
+    wordCount: row.wordCount ?? 0,
+    draft: row.draft ?? false,
+    visibility: (row.visibility as any) ?? "public",
+    publishDate: row.publishDate ? new Date(row.publishDate).toISOString() : null,
+    createdAt: row.createdAt ? new Date(row.createdAt).toISOString() : new Date().toISOString(),
+    updatedAt: row.updatedAt ? new Date(row.updatedAt).toISOString() : new Date().toISOString(),
+    path: row.path ?? `${row.slug}.md`,
+    folder: row.folder ?? null,
+  };
+}
+
+/** Load all notes from DB, merged with static JSON as fallback. DB rows win over static. */
+async function loadAllNotes(): Promise<NoteRecord[]> {
+  try {
+    const rows = await db.note.findMany({
+      orderBy: { publishDate: "desc" },
+    });
+    if (rows.length === 0) return STATIC_NOTES;
+    const dbRecords = rows.map(dbRowToRecord);
+    // Merge: DB notes take priority, then add any static-only notes not in DB
+    const dbSlugs = new Set(dbRecords.map((n) => n.slug));
+    const staticOnly = STATIC_NOTES.filter((n) => !dbSlugs.has(n.slug));
+    return [...dbRecords, ...staticOnly];
+  } catch {
+    // If DB unavailable at build time, fall back to static
+    return STATIC_NOTES;
+  }
+}
+
+// For functions that need the full list synchronously (graph, stats, tags)
+// we keep using STATIC_NOTES as a fallback — these are updated on each deploy.
+const NOTES: NoteRecord[] = STATIC_NOTES;
 
 // --- Helpers ---
 
@@ -163,7 +215,10 @@ export async function listNotes(opts?: {
   sort?: "newest" | "oldest" | "alpha" | "updated";
 }): Promise<NoteSummary[]> {
   const { tag, folder, limit, sort = "newest" } = opts ?? {};
-  let filtered = NOTES;
+  // Load from DB (always fresh — includes web-published notes)
+  const allNotes = await loadAllNotes();
+  // Filter private notes from public listing
+  let filtered = allNotes.filter((n) => n.visibility !== "private" && !n.draft);
   if (folder) filtered = filtered.filter((n) => n.folder === folder);
   if (tag) filtered = filtered.filter((n) => n.tags.includes(tag));
   const sorted = [...filtered].sort((a, b) => {
@@ -182,7 +237,9 @@ export async function listNotes(opts?: {
 }
 
 export async function getNote(slug: string): Promise<NoteDetail | null> {
-  const n = NOTES.find((x) => x.slug === slug);
+  // Load from DB first (captures web-published notes in real time)
+  const allNotes = await loadAllNotes();
+  let n = allNotes.find((x) => x.slug === slug);
   if (!n) {
     // Dynamic filesystem fallback for freshly uploaded Telegram notes
     try {

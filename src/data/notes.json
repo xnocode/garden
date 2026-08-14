@@ -2392,7 +2392,7 @@
     "wordCount": 0,
     "draft": false,
     "publishDate": null,
-    "createdAt": "2026-08-14T21:18:28.622Z",
+    "createdAt": "2026-08-14T21:25:56.692Z",
     "updatedAt": "2026-08-02T00:00:00.000Z",
     "path": "taskworrior.md",
     "folder": null,
@@ -2565,6 +2565,28 @@
     "folder": null,
     "prevSlug": "",
     "nextSlug": ""
+  },
+  {
+    "slug": "thinking-system",
+    "title": "Thinking System",
+    "author": "Ridoy",
+    "content": "\nSuppose we are going to make a new things but we cannot do it without anyone so we are going to do it as a \n\n> [!note] Note\n\n\n",
+    "html": "<p>Suppose we are going to make a new things but we cannot do it without anyone so we are going to do it as a</p>\n<div class=\"callout\" data-callout=\"note\"><div class=\"callout-title\"><span class=\"callout-title-icon\">ℹ</span><span class=\"callout-title-text\">Note</span></div><div class=\"callout-content\">\n\n</div></div>",
+    "raw": "---\ntitle: \"Thinking System\"\nauthor: Ridoy\nvisibility: public\ndate: 2026-08-14\nupdatedAt: 2026-08-14\ntags: [\"thinking\"]\n---\n\nSuppose we are going to make a new things but we cannot do it without anyone so we are going to do it as a \n\n> [!note] Note\n\n\n",
+    "tags": [
+      "thinking"
+    ],
+    "aliases": [],
+    "links": [],
+    "wordCount": 27,
+    "draft": false,
+    "publishDate": "2026-08-14T00:00:00.000Z",
+    "createdAt": "2026-08-14T00:00:00.000Z",
+    "updatedAt": "2026-08-14T00:00:00.000Z",
+    "path": "thinking-system.md",
+    "folder": null,
+    "prevSlug": null,
+    "nextSlug": null
   },
   {
     "slug": "university-track-4th-semester",
