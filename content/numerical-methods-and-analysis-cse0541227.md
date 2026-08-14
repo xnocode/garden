@@ -2,7 +2,7 @@
 title: CSE0541227 | Numerical Methods & Analysis
 description: Notes from my university Numerical Methods & Analysis course.
 author: Ridoy
-draft: false
+visibility: public
 date: 2026-07-22
 tags:
   - university

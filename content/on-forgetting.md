@@ -1,8 +1,8 @@
 ---
 title: "On Forgetting"
 description: "Forgetting is not the enemy of learning — it's part of it. A garden that remembers everything is a hoard. The right kind of forgetting is what lets the structure show through."
-draft: false
 author: Ridoy
+visibility: public
 date: 2024-07-30
 tags: [essay, thinking, memory, garden]
 aliases: ["Forgetting"]

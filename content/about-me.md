@@ -1,13 +1,13 @@
 ---
 title: About me
 description: The more I learn, the more I realize how much I don't know.
-draft: false
 date: 2026-04-08
 tags:
   - about
 prev: ""
 next: ""
 author: Ridoy
+visibility: public
 aliases:
   - keep learning
 updatedAt: 2026-07-23

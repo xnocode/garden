@@ -1,8 +1,8 @@
 ---
 title: "Building a Second Brain"
 description: "Tiago Forte's CODE method — Capture, Organize, Distill, Express — for turning raw inputs into usable knowledge."
-draft: false
 author: Ridoy
+visibility: public
 date: 2024-08-22
 tags: [essay, knowledge, productivity]
 aliases: ["Second Brain", "CODE Method", "BASB"]

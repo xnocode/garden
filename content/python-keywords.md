@@ -1,7 +1,6 @@
 ---
 title: Python Keywords
 description: Keywords are reserved words with predefined meanings in Python.
-draft: false
 date: 2026-07-16
 tags:
   - aiml
@@ -9,6 +8,7 @@ tags:
 prev: "[[python-type-function]]"
 next: "[[python-comments]]"
 author: Ridoy
+visibility: public
 aliases:
   - keywords
 updatedAt: 2026-07-22

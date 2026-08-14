@@ -98,5 +98,35 @@
       "image": null,
       "siteName": null
     }
+  ],
+  [
+    "https://nodejs.org",
+    {
+      "url": "https://nodejs.org",
+      "title": "Node.js — Run JavaScript Everywhere",
+      "description": "Node.js® is a free, open-source, cross-platform JavaScript runtime environment that lets developers create servers, web apps, command line tools and scripts.",
+      "image": "https://nodejs.org/en/next-data/og/announcement/Node.js%20%E2%80%94%20Run%20JavaScript%20Everywhere",
+      "siteName": "nodejs.org"
+    }
+  ],
+  [
+    "https://git-scm.com",
+    {
+      "url": "https://git-scm.com",
+      "title": "Git",
+      "description": null,
+      "image": null,
+      "siteName": "git-scm.com"
+    }
+  ],
+  [
+    "https://github.com/your-username/garden",
+    {
+      "url": "https://github.com/your-username/garden",
+      "title": null,
+      "description": null,
+      "image": null,
+      "siteName": null
+    }
   ]
 ]

@@ -1,8 +1,8 @@
 ---
 title: "Code Execution Playground"
 description: "Test the Judge0 code execution integration — run Python, JavaScript, C++, and more directly from the browser with input support."
-draft: false
 author: Ridoy
+visibility: public
 date: 2024-09-01
 tags: [reference, code, playground]
 updatedAt: 2026-07-23

@@ -1,8 +1,8 @@
 ---
 title: "Bikeshedding and the Garden"
 description: "It's easy to spend more time tending the garden than growing it. A note on Parkinson's Law of Triviality, applied to digital gardens."
-draft: false
 author: Ridoy
+visibility: public
 date: 2024-08-14
 tags: [essay, garden, thinking]
 updatedAt: 2026-07-23

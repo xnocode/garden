@@ -1,8 +1,8 @@
 ---
 title: "Welcome to the Garden"
 description: "A quick orientation — search, the graph, backlinks, tags, and how to actually wander this place."
-draft: false
 author: Ridoy
+visibility: public
 date: 2024-08-16
 tags: [meta, guide]
 aliases: ["Getting Started", "Navigation"]

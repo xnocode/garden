@@ -2,7 +2,7 @@
 title: CSE0612223 | Data Communication
 description: Notes from my university Data Communication course.
 author: Ridoy
-draft: false
+visibility: public
 date: 2026-07-22
 tags:
   - university

@@ -1,7 +1,6 @@
 ---
 title: Python First Program
 description: Learn how to write, run, and understand your first Python program.
-draft: false
 date: 2026-07-16
 tags:
   - python
@@ -9,6 +8,7 @@ tags:
 prev: "[[prerequisites-tools-for-ai-ml]]"
 next: "[[python-character-set]]"
 author: Ridoy
+visibility: public
 aliases:
   - first program
 updatedAt: 2026-07-22

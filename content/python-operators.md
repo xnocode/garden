@@ -1,7 +1,6 @@
 ---
 title: Python Operators
 description: Operators are symbols or keywords that perform operations on one or more operands.
-draft: false
 date: 2026-07-16
 tags:
   - aiml
@@ -9,6 +8,7 @@ tags:
 prev: "[[python-style-guide]]"
 next: "[[python-arithmetic-operators]]"
 author: Ridoy
+visibility: public
 aliases:
   - operators
 updatedAt: 2026-07-22

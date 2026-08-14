@@ -1,7 +1,6 @@
 ---
 title: Python Comments
 description: Comments are non-executable text used to explain or document Python code.
-draft: false
 date: 2026-07-16
 tags:
   - aiml
@@ -9,6 +8,7 @@ tags:
 prev: "[[python-keywords]]"
 next: "[[python-style-guide]]"
 author: Ridoy
+visibility: public
 aliases:
   - comments
 updatedAt: 2026-07-22

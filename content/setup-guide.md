@@ -1,8 +1,8 @@
 ---
 title: "Setup Guide — Local + GitHub Deployment"
 description: "Step-by-step guide to run the garden locally, publish notes from the terminal, and deploy it live for free on GitHub Pages or Vercel."
-draft: false
 author: Ridoy
+visibility: public
 date: 2024-09-04
 tags: [reference, setup, deployment, guide]
 updatedAt: 2026-07-23

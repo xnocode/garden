@@ -2,7 +2,7 @@
 title: Python Type Conversion
 description:
 author: Ridoy
-draft: false
+visibility: public
 date: 2026-07-16
 tags:
   - aiml

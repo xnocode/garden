@@ -1,8 +1,8 @@
 ---
 title: "About"
 description: "About the gardener — who tends this place, why, and what they're trying to figure out by writing it down."
-draft: false
 author: Ridoy
+visibility: public
 date: 2024-08-15
 tags: [meta, about]
 aliases: ["About the Garden", "Colophon"]

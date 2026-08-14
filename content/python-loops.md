@@ -2,7 +2,7 @@
 title: Python Loops
 description:
 author: Ridoy
-draft: false
+visibility: public
 date: 2026-07-18
 tags:
   - aiml

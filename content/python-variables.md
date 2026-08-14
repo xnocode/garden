@@ -1,7 +1,6 @@
 ---
 title: Python Variables
 description: A variable is a named reference used to store and access data in Python.
-draft: false
 date: 2026-07-16
 tags:
   - python
@@ -9,6 +8,7 @@ tags:
 prev: "[[python-character-set]]"
 next: "[[python-indentation]]"
 author: Ridoy
+visibility: public
 aliases:
   - variables
 updatedAt: 2026-07-23

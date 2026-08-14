@@ -1,8 +1,8 @@
 ---
 title: "The Map Is Not the Territory"
 description: "A note about notes is not the note itself. Models, summaries, and indexes are useful — but they're abstractions, and abstractions leak."
-draft: false
 author: Ridoy
+visibility: public
 date: 2024-08-18
 tags: [essay, thinking, epistemology]
 aliases: ["Map and Territory"]

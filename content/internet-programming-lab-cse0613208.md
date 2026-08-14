@@ -2,7 +2,7 @@
 title: CSE0613208 | Internet Programming Lab
 description: Notes from my university Internet Programming Lab course.
 author: Ridoy
-draft: false
+visibility: public
 date: 2026-07-23
 tags:
   - university

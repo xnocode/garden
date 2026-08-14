@@ -2,7 +2,7 @@
 title: Python Logical Operators
 description:
 author: Ridoy
-draft: false
+visibility: public
 date: 2026-07-16
 tags:
   - aiml

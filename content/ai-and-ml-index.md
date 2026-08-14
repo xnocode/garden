@@ -1,5 +1,4 @@
 ---
-draft: false
 tags:
   - aiml
 date: 2026-07-16
@@ -10,6 +9,7 @@ next: "[[ai-and-ml-introduction]]"
 aliases:
   - AI & ML
 author: Ridoy
+visibility: public
 updatedAt: 2026-07-22
 ---
 ```contributionGraph

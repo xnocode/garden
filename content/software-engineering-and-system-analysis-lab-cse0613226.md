@@ -2,7 +2,7 @@
 title: CSE0613226 | Software Engineering & System Analysis Lab
 description: Notes from my university Software Engineering & System Analysis Lab course.
 author: Ridoy
-draft: false
+visibility: public
 date: 2026-07-22
 tags:
   - university

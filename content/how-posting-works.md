@@ -1,8 +1,8 @@
 ---
 title: "How Posting Actually Works"
 description: "A plain-English walkthrough of the environment — where notes live, what the publish command does, and how a note goes from your editor to the live website."
-draft: false
 author: Ridoy
+visibility: public
 date: 2024-09-05
 tags: [reference, setup, guide, environment]
 updatedAt: 2026-07-23

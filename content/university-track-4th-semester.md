@@ -2,7 +2,7 @@
 title: University 4th Semester
 description:
 author: Ridoy
-draft: false
+visibility: public
 date: 2026-07-29
 tags:
   - university

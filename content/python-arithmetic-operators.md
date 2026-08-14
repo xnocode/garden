@@ -1,7 +1,6 @@
 ---
 title: Python Arithmetic Operators
 description: Arithmetic operators perform mathematical operations on numeric operands.
-draft: false
 date: 2026-07-16
 tags:
   - aiml
@@ -9,6 +8,7 @@ tags:
 prev: "[[python-operators]]"
 next: "[[python-relational-or-comparison]]"
 author: Ridoy
+visibility: public
 aliases:
   - arithmetic
 updatedAt: 2026-07-22
