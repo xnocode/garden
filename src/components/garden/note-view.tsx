@@ -27,6 +27,9 @@ import { Backlinks } from "./backlinks";
 import { RelatedNotes } from "./related-notes";
 import { useRecordVisit } from "./reading-history";
 import { CodeBlockRunner } from "./code-block-runner";
+import { useSession } from "next-auth/react";
+import { NoteGatekeeper } from "./note-gatekeeper";
+import { CommentsSection } from "./comments-section";
 
 
 interface PreviewData {
@@ -60,16 +63,25 @@ function stripLeadingH1(html: string, title: string): string {
 
 export function NoteView({ note }: { note: NoteDetail }) {
   const router = useRouter();
-  const contentRef = useRef<HTMLDivElement>(null);
+  const { data: session } = useSession();
+  const [copied, setCopied] = useState<string | null>(null);
   const [preview, setPreview] = useState<{
-    data: PreviewData | null;
     x: number;
     y: number;
+    data: PreviewData | null;
   } | null>(null);
-  const previewTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const hoverSlug = useRef<string | null>(null);
-  const [copied, setCopied] = useState<"link" | "share" | null>(null);
+  const previewTimer = useRef<NodeJS.Timeout | null>(null);
+  const contentRef = useRef<HTMLDivElement>(null);
   const [loadingRandom, setLoadingRandom] = useState(false);
+
+  const userRole = (session?.user as any)?.role || "guest";
+  const isAdmin = userRole === "admin";
+  const isMember = userRole === "member" || isAdmin;
+
+  const noteVisibility = (note.visibility || "public") as "public" | "members" | "private";
+  const isLocked =
+    (noteVisibility === "members" && !isMember) ||
+    (noteVisibility === "private" && !isAdmin);
 
   const html = stripLeadingH1(note.html, note.title);
   const tocItems = useMemo(() => extractToc(note.html), [note.html]);
@@ -515,28 +527,35 @@ export function NoteView({ note }: { note: NoteDetail }) {
       </header>
 
       {/* Content */}
-      <div className="grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_220px] gap-8">
-        <div className="min-w-0">
-          <div
-            ref={contentRef}
-            id="note-content"
-            className="garden-prose max-w-[72ch]"
-            dangerouslySetInnerHTML={{ __html: html }}
-          />
-          <CodeBlockRunner key={note.slug} />
-          {/* In-article ad: fluid format Google renders natively inside content */}
-          <div className="mt-8">
-            <AdBanner slotId="2493782452" format="in-article" />
+      {isLocked ? (
+        <NoteGatekeeper
+          visibility={noteVisibility as "members" | "private"}
+          noteTitle={note.title}
+        />
+      ) : (
+        <div className="grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_220px] gap-8">
+          <div className="min-w-0">
+            <div
+              ref={contentRef}
+              id="note-content"
+              className="garden-prose max-w-[72ch]"
+              dangerouslySetInnerHTML={{ __html: html }}
+            />
+            <CodeBlockRunner key={note.slug} />
+            {/* In-article ad: fluid format Google renders natively inside content */}
+            <div className="mt-8">
+              <AdBanner slotId="2493782452" format="in-article" />
+            </div>
           </div>
-        </div>
 
-        {/* Right rail: TOC */}
-        <aside className="hidden xl:block">
-          <div className="sticky top-20">
-            <TableOfContents items={tocItems} />
-          </div>
-        </aside>
-      </div>
+          {/* Right rail: TOC */}
+          <aside className="hidden xl:block">
+            <div className="sticky top-20">
+              <TableOfContents items={tocItems} />
+            </div>
+          </aside>
+        </div>
+      )}
 
       {/* Prev / Next */}
       <nav className="mt-12 grid grid-cols-1 gap-3 border-t border-border pt-6 sm:grid-cols-2">
@@ -592,9 +611,14 @@ export function NoteView({ note }: { note: NoteDetail }) {
         </div>
       )}
 
-      {/* Auto-format ad between backlinks and footer */}
+      {/* Auto-format ad between backlinks and comments */}
       <div className="mt-8">
         <AdBanner slotId="5327787791" format="auto" />
+      </div>
+
+      {/* Native In-House Discussion / Comments Section */}
+      <div className="mt-8">
+        <CommentsSection noteSlug={note.slug} />
       </div>
 
       {/* Stats footer */}

@@ -17,6 +17,7 @@ interface NoteRecord {
   links: WikiLinkTarget[];
   wordCount: number;
   draft: boolean;
+  visibility?: "public" | "members" | "private";
   publishDate: string | null;
   createdAt: string;
   updatedAt: string;
@@ -36,6 +37,7 @@ export interface NoteSummary {
   tags: string[];
   aliases: string[];
   wordCount: number;
+  visibility?: "public" | "members" | "private";
   publishDate: string | null;
   createdAt: string;
   updatedAt: string;
@@ -110,6 +112,7 @@ function toSummary(n: NoteRecord): NoteSummary {
     tags: n.tags,
     aliases: n.aliases,
     wordCount: n.wordCount,
+    visibility: n.visibility || "public",
     publishDate: n.publishDate,
     createdAt: n.createdAt,
     updatedAt: n.updatedAt,

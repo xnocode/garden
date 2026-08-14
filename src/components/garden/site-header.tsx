@@ -7,6 +7,7 @@ import { usePathname, useSearchParams } from "next/navigation";
 import { useUIStore } from "@/lib/ui-store";
 import { ThemeToggle } from "./theme-toggle";
 import { AISearchModal } from "./ai-search-modal";
+import { UserMenu } from "@/components/auth/user-menu";
 
 const NAV_ITEMS = [
   { label: "Garden", href: "/", key: "home" },
@@ -104,6 +105,7 @@ export function SiteHeader() {
               </kbd>
             </button>
             <ThemeToggle />
+            <UserMenu />
           </div>
         </div>
       </header>

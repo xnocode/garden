@@ -76,6 +76,7 @@ interface ParsedFile {
   date?: Date;
   updatedAt?: Date;
   draft: boolean;
+  visibility: "public" | "members" | "private";
   content: string;
   raw: string;
   prevSlug?: string | null;
@@ -151,6 +152,15 @@ async function parsePass(files: string[]): Promise<ParsedFile[]> {
     // Parse Linter updated date (checking updatedAt, last_modified, updated, modified, lastmod)
     const updatedVal = data.updatedAt ?? data.last_modified ?? data.updated ?? data.modified ?? data.lastmod;
 
+    // Parse visibility (public, members, private)
+    const rawVis = (data.visibility ?? data.access ?? "").toString().toLowerCase().trim();
+    const visibility: "public" | "members" | "private" =
+      rawVis === "private" || data.private === true
+        ? "private"
+        : rawVis === "members" || rawVis === "member"
+        ? "members"
+        : "public";
+
     parsed.push({
       path: relPath,
       slug,
@@ -166,6 +176,7 @@ async function parsePass(files: string[]): Promise<ParsedFile[]> {
       date: todate(dateVal),
       updatedAt: todate(updatedVal),
       draft,
+      visibility,
       content,
       raw,
       prevSlug: typeof data.prev === "string" ? slugify(data.prev) : null,
@@ -414,6 +425,7 @@ async function publish() {
             links: JSON.stringify(r.links),
             wordCount: r.wordCount,
             draft: false,
+            visibility: r.visibility,
             publishDate: r.date ?? null,
             createdAt: created,
             updatedAt: now,
@@ -431,6 +443,7 @@ async function publish() {
             links: JSON.stringify(r.links),
             wordCount: r.wordCount,
             draft: false,
+            visibility: r.visibility,
             publishDate: r.date ?? null,
             updatedAt: now,
             path: r.path,

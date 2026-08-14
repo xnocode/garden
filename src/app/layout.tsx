@@ -3,6 +3,7 @@ import { Plus_Jakarta_Sans, Source_Sans_3, IBM_Plex_Mono } from "next/font/googl
 import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
 import { ThemeProvider } from "@/components/theme-provider";
+import { AuthProvider } from "@/components/auth/auth-provider";
 import { GoogleAnalytics } from "@next/third-parties/google";
 import Script from "next/script";
 
@@ -93,8 +94,10 @@ export default function RootLayout({
       <body
         className={`${headingFont.variable} ${bodyFont.variable} ${monoFont.variable} antialiased bg-background text-foreground font-sans`}
       >
-        <ThemeProvider>{children}</ThemeProvider>
-        <Toaster />
+        <AuthProvider>
+          <ThemeProvider>{children}</ThemeProvider>
+          <Toaster />
+        </AuthProvider>
 
         {process.env.NEXT_PUBLIC_GA_ID && (
           <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID} />
