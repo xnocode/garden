@@ -110,4 +110,9 @@ Slides :
 
 > Date : 12 August 2026 🟢🔵
 
-`Class Test` 
+**CT 1 — Software Engineering and System Analysis (CSE 0613225)**  
+**10 Marks | Time: 30 Minutes | 12.08.2026**
+
+1. Differentiate between Computer Science and Software Engineering. Also define Software Engineering with a suitable example. **(05)**
+    
+2. Explain the attributes of good software and discuss the fundamental software engineering principles that apply to all software systems. Why is ethical and professional responsibility important for software engineers? **(05)**

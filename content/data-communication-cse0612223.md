@@ -149,9 +149,6 @@ OSI — 7 Layers
 
 ```
 
-
-
-
 #### Transport Layer
 
 > **Main responsibility:** Process-to-Process Delivery
@@ -332,17 +329,114 @@ The network packet contains addressing information such as:
 3. **Data Rate**
     - Defines the rate at which bits are transmitted.
 
+
+
+#### TCP/IP Model
+
+> **TCP/IP → 4 Layers**
+
+The TCP/IP model is a practical model used for computer networking.
+
 ```text
-Data
-  ↓
-Raw Bits
-  ↓
-Physical Medium
-  ↓
-Receiver
+TCP/IP — 4 Layers
+│
+├── 1. Application
+├── 2. Transport
+├── 3. Internet
+└── 4. Network Access
 ```
 
-> **Remember:**
+> Layer Mapping
+
+```text
+OSI                     TCP/IP
+
+Application  ───────┐
+Presentation ───────┤──→ Application
+Session      ───────┘
+
+Transport   ───────────→ Transport
+
+Network     ───────────→ Internet
+
+Data Link   ─────────┐
+Physical    ─────────┴──→ Network Access
+```
+
+> Date: 13 August 2026
+
+## Lecture 5
+
+> **Remember / Memorize the concepts from this lecture.** --> Lecture 3 (Part 2)
+
+#### Connection Types
+
+```text
+Connectionless
+    │
+    └── No connection established
+
+Connection-Oriented
+    │
+    └── Connection established
+            ↓
+         Send Data
+```
+
+**DNS → Domain Name System**
+
+DNS converts a **host/domain name** into an **IP address**.
+
+```text
+Host Name                      www.vits.com
+    │                                │
+    │ DNS                            │  DNS 
+    ▼                                ▼
+IP Address                     192.168.25.0
+```
+
+> [!important] important
+> Mid-term Suggestion: DNS
+
+#### RPC — Remote Procedure Call
+
+RPC allows a program to request a service or procedure from another system as if it were a local procedure call.
+
+```text
+Mobile App
+    │
+    │ RPC Request
+    ▼
+get-Account-Balance (0176)
+    │
+    └── Account No.
+```
+
+The request can contain information such as the **bank/account number**.
+
+#### Addressing
+
+- **Logical Address → IP Address**
+	- Used to identify a device logically on a network.
+
+- **Physical Address → MAC Address**
+	- Used to identify a device at the Data Link Layer.
+
+> [!important] important
+> Class Test --> 19 AUG 2026 (WED)
 > 
-> **Data Link Layer → Node-to-Node Delivery**  
-> **Physical Layer → Transmission of Raw Bits**
+>> Topics
+>- TCP
+>- DSI
+> 
+>>Things to Review
+>- **Protocol & Differences**
+>- **Physical, Logical & Port Address**
+>- **Control**
+>- **Transport, Network & Data Link**
+>- **Which layer works for which function?**
+>
+>>**Review the slides --> L3 (Part 1 & Part 2).**
+
+
+
