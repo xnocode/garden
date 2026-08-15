@@ -6,9 +6,9 @@
     "badge": "MAJOR",
     "category": "core",
     "changes": [
-      "Email verification required for new accounts with OTP code or one-click link; forgot-password flow with single-use reset links",
-      "Private notes excluded from static bundle and GitHub — served only to admin from database; draft system replaced by visibility model",
-      "Fully static engine with client-side routing, zero server round-trips, and precomputed graph, tags, and stats"
+      "Email verification with OTP and reset links for accounts",
+      "Private notes excluded from GitHub and bundle — admin-only via DB",
+      "Fully static engine with zero server round-trips on navigation"
     ]
   },
   {
