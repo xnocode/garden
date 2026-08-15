@@ -103,9 +103,11 @@ model Session {
 model VerificationToken {
   identifier String
   token      String   @unique
+  otp        String?
   expires    DateTime
 
   @@unique([identifier, token])
+  @@index([identifier])
 }
 
 /// Native in-house comment model for note discussions.

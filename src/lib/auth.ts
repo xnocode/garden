@@ -101,6 +101,13 @@ export const authOptions: NextAuthOptions = {
             throw new Error("Incorrect password.");
           }
 
+          // Email/password accounts must verify their email before signing in.
+          if (!user.emailVerified) {
+            throw new Error(
+              "UNVERIFIED_EMAIL: Please verify your email before signing in. Check your inbox for the 6-digit code."
+            );
+          }
+
           return {
             id: user.id,
             name: user.name || email.split("@")[0],

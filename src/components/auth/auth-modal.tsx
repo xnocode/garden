@@ -15,11 +15,14 @@ interface AuthModalProps {
 export function AuthModal({ isOpen, onClose, defaultMode = "signin" }: AuthModalProps) {
   const [mounted, setMounted] = useState(false);
   const [mode, setMode] = useState<"signin" | "signup">(defaultMode);
+  const [step, setStep] = useState<"form" | "verify">("form");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [otp, setOtp] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [resendCooldown, setResendCooldown] = useState(0);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
 
@@ -27,10 +30,19 @@ export function AuthModal({ isOpen, onClose, defaultMode = "signin" }: AuthModal
     setMounted(true);
   }, []);
 
+  // Resend cooldown ticker
+  useEffect(() => {
+    if (resendCooldown <= 0) return;
+    const t = setTimeout(() => setResendCooldown((c) => c - 1), 1000);
+    return () => clearTimeout(t);
+  }, [resendCooldown]);
+
   // Reset state when modal opens
   useEffect(() => {
     if (isOpen) {
       setMode(defaultMode);
+      setStep("form");
+      setOtp("");
       setError(null);
       setSuccess(null);
       setShowPassword(false);
@@ -38,6 +50,116 @@ export function AuthModal({ isOpen, onClose, defaultMode = "signin" }: AuthModal
   }, [isOpen, defaultMode]);
 
   if (!isOpen || !mounted) return null;
+
+  // Sign-in errors come back opaque from NextAuth ("CredentialsSignin"),
+  // so check whether the real cause is an unverified email and switch to
+  // the OTP step if so.
+  const handleSignInError = async (cleanEmail: string, err: string) => {
+    try {
+      const res = await fetch(
+        `/api/auth/verify-status?email=${encodeURIComponent(cleanEmail)}`
+      );
+      const state = await res.json();
+      if (state?.exists && !state?.verified) {
+        setStep("verify");
+        setError(
+          "Your email isn't verified yet. Enter the 6-digit code we sent you, or request a new one below."
+        );
+        setLoading(false);
+        return;
+      }
+    } catch {
+      // fall through to the generic error
+    }
+    setError(err === "CredentialsSignin" ? "Invalid email or password." : err);
+    setLoading(false);
+  };
+
+  const handleVerify = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError(null);
+    const cleanEmail = email.toLowerCase().trim();
+
+    if (!/^\d{6}$/.test(otp)) {
+      setError("Please enter the 6-digit code from your email.");
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const res = await fetch("/api/auth/verify-email", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: cleanEmail, otp }),
+      });
+      const data = await res.json();
+
+      if (!res.ok) {
+        setError(data.error || "Verification failed.");
+        setLoading(false);
+        return;
+      }
+
+      setSuccess("Email verified! Signing you in...");
+
+      // If we still hold the password (fresh signup), auto sign-in;
+      // otherwise send the user to the sign-in form.
+      if (password) {
+        const signInRes = await signIn("credentials", {
+          redirect: false,
+          email: cleanEmail,
+          password,
+        });
+        if (signInRes?.error) {
+          setSuccess(null);
+          setStep("form");
+          setMode("signin");
+          setError("Email verified! Please sign in with your password.");
+        } else {
+          window.location.reload();
+        }
+      } else {
+        setSuccess(null);
+        setStep("form");
+        setMode("signin");
+        setError("Email verified! Please sign in with your password.");
+      }
+      setLoading(false);
+    } catch (err: any) {
+      setError(err?.message || "An unexpected error occurred.");
+      setLoading(false);
+    }
+  };
+
+  const handleResend = async () => {
+    if (resendCooldown > 0) return;
+    setError(null);
+    const cleanEmail = email.toLowerCase().trim();
+    if (!cleanEmail) {
+      setError("Please enter your email address first.");
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const res = await fetch("/api/auth/resend-verification", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: cleanEmail }),
+      });
+      const data = await res.json();
+
+      if (!res.ok) {
+        setError(data.error || "Failed to resend the code.");
+      } else {
+        setSuccess(data.message || `A new code was sent to ${cleanEmail}.`);
+        setResendCooldown(30);
+      }
+    } catch (err: any) {
+      setError(err?.message || "Failed to resend the code.");
+    }
+    setLoading(false);
+  };
 
   const handleGoogleSignIn = async () => {
     setLoading(true);
@@ -86,20 +208,14 @@ export function AuthModal({ isOpen, onClose, defaultMode = "signin" }: AuthModal
           return;
         }
 
-        setSuccess("Account created! Signing you in...");
-        // Auto-login after registration
-        const signInRes = await signIn("credentials", {
-          redirect: false,
-          email: cleanEmail,
-          password,
-        });
-
-        if (signInRes?.error) {
-          setError(signInRes.error);
-          setLoading(false);
-        } else {
-          window.location.reload();
-        }
+        // Account created (or unverified one re-armed) — verify via OTP.
+        setStep("verify");
+        setError(null);
+        setSuccess(
+          data.message ||
+            `We sent a 6-digit verification code to ${cleanEmail}. Enter it below.`
+        );
+        setLoading(false);
       } catch (err: any) {
         setError(err?.message || "An unexpected error occurred.");
         setLoading(false);
@@ -114,8 +230,7 @@ export function AuthModal({ isOpen, onClose, defaultMode = "signin" }: AuthModal
         });
 
         if (res?.error) {
-          setError(res.error);
-          setLoading(false);
+          await handleSignInError(cleanEmail, res.error);
         } else {
           window.location.reload();
         }
@@ -150,12 +265,18 @@ export function AuthModal({ isOpen, onClose, defaultMode = "signin" }: AuthModal
             <Lock className="h-5 w-5" />
           </div>
           <h2 className="text-xl font-serif font-bold text-heading">
-            {mode === "signin" ? "Welcome Back" : "Create an Account"}
+            {step === "verify"
+              ? "Verify Your Email"
+              : mode === "signin"
+                ? "Welcome Back"
+                : "Create an Account"}
           </h2>
           <p className="mt-1 text-xs text-muted-foreground">
-            {mode === "signin"
-              ? "Sign in to unlock member notes, post, and join discussions."
-              : "Join our digital garden community with a verified email."}
+            {step === "verify"
+              ? `Enter the 6-digit code we sent to ${email.toLowerCase().trim() || "your email"}.`
+              : mode === "signin"
+                ? "Sign in to unlock member notes, post, and join discussions."
+                : "Join our digital garden community with a verified email."}
           </p>
         </div>
 
@@ -174,6 +295,68 @@ export function AuthModal({ isOpen, onClose, defaultMode = "signin" }: AuthModal
           </div>
         )}
 
+        {step === "verify" ? (
+          <form onSubmit={handleVerify} className="space-y-3.5">
+            <div>
+              <label className="mb-1 block text-xs font-medium text-muted-foreground">
+                Verification Code
+              </label>
+              <div className="relative">
+                <ShieldCheck className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground pointer-events-none" />
+                <input
+                  type="text"
+                  inputMode="numeric"
+                  autoComplete="one-time-code"
+                  maxLength={6}
+                  required
+                  value={otp}
+                  onChange={(e) => setOtp(e.target.value.replace(/\D/g, ""))}
+                  placeholder="••••••"
+                  className="w-full rounded-lg border border-border bg-surface-2 py-2 pl-9 pr-3 text-center text-base tracking-[0.5em] text-foreground placeholder:text-muted-foreground/50 transition-colors focus:border-garden focus:outline-none focus:ring-1 focus:ring-garden/40"
+                />
+              </div>
+              <p className="mt-1 text-[10px] text-muted-foreground/70">
+                The code expires in 15 minutes.
+              </p>
+            </div>
+
+            <button
+              type="submit"
+              disabled={loading}
+              className="mt-2 flex w-full items-center justify-center gap-2 rounded-xl bg-garden px-4 py-2.5 text-sm font-semibold text-garden-foreground transition-transform hover:opacity-90 active:scale-[0.98] disabled:opacity-50"
+            >
+              {loading && <Loader2 className="h-4 w-4 animate-spin" />}
+              <span>Verify Account</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={handleResend}
+              disabled={loading || resendCooldown > 0}
+              className="w-full rounded-xl border border-border px-4 py-2 text-xs font-medium text-muted-foreground transition-colors hover:border-garden/40 hover:text-foreground disabled:opacity-50"
+            >
+              {resendCooldown > 0
+                ? `Resend code in ${resendCooldown}s`
+                : "Didn't get the code? Resend it"}
+            </button>
+
+            <div className="pt-1 text-center">
+              <button
+                type="button"
+                onClick={() => {
+                  setStep("form");
+                  setOtp("");
+                  setError(null);
+                  setSuccess(null);
+                }}
+                className="text-xs text-muted-foreground underline hover:text-foreground transition-colors"
+              >
+                ← Back
+              </button>
+            </div>
+          </form>
+        ) : (
+          <>
         {/* Google 1-Click Button */}
         <button
           type="button"
@@ -329,6 +512,8 @@ export function AuthModal({ isOpen, onClose, defaultMode = "signin" }: AuthModal
             </span>
           )}
         </div>
+          </>
+        )}
       </div>
     </div>
   );

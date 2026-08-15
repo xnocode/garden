@@ -2,8 +2,17 @@ import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { createPasswordHash } from "@/lib/auth";
 import { isAllowedEmailDomain } from "@/lib/email-validator";
+import { issueVerification } from "@/lib/verification";
+import { sendVerificationEmail, isEmailServiceConfigured } from "@/lib/mailer";
 
 export const dynamic = "force-dynamic";
+
+function baseUrlFromReq(req: Request): string {
+  const forwardedHost = req.headers.get("x-forwarded-host");
+  const forwardedProto = req.headers.get("x-forwarded-proto");
+  if (forwardedHost) return `${forwardedProto || "https"}://${forwardedHost}`;
+  return process.env.NEXTAUTH_URL || new URL(req.url).origin;
+}
 
 export async function POST(req: Request) {
   try {
@@ -42,6 +51,22 @@ export async function POST(req: Request) {
     });
 
     if (existing) {
+      if (!existing.emailVerified) {
+        // Account exists but was never verified — re-send the code so the
+        // user can finish signup instead of being stuck.
+        const { otp, link } = await issueVerification(cleanEmail, baseUrlFromReq(req));
+        await sendVerificationEmail(cleanEmail, otp, link);
+        return NextResponse.json(
+          {
+            success: true,
+            needsVerification: true,
+            emailSent: isEmailServiceConfigured(),
+            message:
+              "This email has an unverified account. We've sent a fresh verification code — enter it below to activate your account.",
+          },
+          { status: 200 }
+        );
+      }
       return NextResponse.json(
         { error: "An account with this email already exists. Please sign in." },
         { status: 409 }
@@ -52,27 +77,26 @@ export async function POST(req: Request) {
     const role = adminEmail && cleanEmail === adminEmail ? "admin" : "member";
     const passwordHash = createPasswordHash(password);
 
-    const user = await db.user.create({
+    await db.user.create({
       data: {
         email: cleanEmail,
         name: (name || cleanEmail.split("@")[0]).trim(),
         passwordHash,
         role,
+        emailVerified: null,
       },
-      select: {
-        id: true,
-        email: true,
-        name: true,
-        role: true,
-        createdAt: true,
-      },
+      select: { id: true },
     });
+
+    const { otp, link } = await issueVerification(cleanEmail, baseUrlFromReq(req));
+    await sendVerificationEmail(cleanEmail, otp, link);
 
     return NextResponse.json(
       {
         success: true,
-        message: "Account created successfully.",
-        user,
+        needsVerification: true,
+        emailSent: isEmailServiceConfigured(),
+        message: `Account created. We sent a 6-digit verification code to ${cleanEmail}. Enter it below to verify your account.`,
       },
       { status: 201 }
     );
