@@ -12,6 +12,8 @@ next: "[[python-case-sensitive]]"
 aliases:
   - indentation
 updatedAt: 2026-07-23
+series: "Python"
+seriesOrder: 3
 ---
 Indentation means adding spaces at the beginning of a line to define code blocks. In Python, indentation is required. It tells Python which lines belong together.
 

@@ -12,6 +12,8 @@ next: "[[python-type-conversion]]"
 aliases:
   - precedence
 updatedAt: 2026-07-22
+series: "Python"
+seriesOrder: 17
 ---
 **Operator Precedence** → priority of operators (which runs first)
 

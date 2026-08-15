@@ -12,6 +12,8 @@ visibility: public
 aliases:
   - variables
 updatedAt: 2026-07-23
+series: "Python"
+seriesOrder: 7
 ---
 Variables are like containers where we can store data.
 

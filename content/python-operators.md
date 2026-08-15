@@ -12,6 +12,8 @@ visibility: public
 aliases:
   - operators
 updatedAt: 2026-07-22
+series: "Python"
+seriesOrder: 12
 ---
 Operators are used to perform operations on variables and values.
 

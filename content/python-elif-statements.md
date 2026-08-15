@@ -12,6 +12,8 @@ next: "[[python-nesting]]"
 aliases:
   - elif
 updatedAt: 2026-07-22
+series: "Python"
+seriesOrder: 22
 ---
 Used to check multiple conditions.
 

@@ -12,6 +12,8 @@ next: "[[python-operators]]"
 aliases:
   - style
 updatedAt: 2026-07-23
+series: "Python"
+seriesOrder: 28
 ---
 `tot_price` → snake_case  
 `totPrice` → camelCase  

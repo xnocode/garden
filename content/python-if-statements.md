@@ -12,6 +12,8 @@ next: "[[python-if-else-statements]]"
 aliases:
   - if statements
 updatedAt: 2026-07-22
+series: "Python"
+seriesOrder: 20
 ---
 Used to make decisions in a program based on conditions. If the condition is `True`, the block will execute.
 

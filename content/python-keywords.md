@@ -12,6 +12,8 @@ visibility: public
 aliases:
   - keywords
 updatedAt: 2026-07-22
+series: "Python"
+seriesOrder: 2
 ---
 These are the keywords in Python.
 

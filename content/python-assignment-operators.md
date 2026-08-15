@@ -12,6 +12,8 @@ next: "[[python-logical-operators]]"
 aliases:
   - assignment
 updatedAt: 2026-07-22
+series: "Python"
+seriesOrder: 14
 ---
 ```text
 a = b

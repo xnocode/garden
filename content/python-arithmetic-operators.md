@@ -12,6 +12,8 @@ visibility: public
 aliases:
   - arithmetic
 updatedAt: 2026-07-22
+series: "Python"
+seriesOrder: 13
 ---
 
 ```python

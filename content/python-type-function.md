@@ -12,6 +12,8 @@ visibility: public
 aliases:
   - type() function
 updatedAt: 2026-07-22
+series: "Python"
+seriesOrder: 9
 ---
 We can check the data type of a variable using the `type()` function.
 

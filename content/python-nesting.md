@@ -12,6 +12,8 @@ next: "[[python-match-case]]"
 aliases:
   - nesting
 updatedAt: 2026-07-22
+series: "Python"
+seriesOrder: 18
 ---
 Nesting means writing one conditional statement inside another.
 

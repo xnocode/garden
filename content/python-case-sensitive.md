@@ -12,6 +12,8 @@ next: "[[python-data-types]]"
 aliases:
   - case sensitive
 updatedAt: 2026-07-23
+series: "Python"
+seriesOrder: 4
 ---
 Python is a case-sensitive language. This means uppercase and lowercase letters are treated as different.
 

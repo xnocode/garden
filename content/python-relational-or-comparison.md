@@ -12,6 +12,8 @@ next: "[[python-assignment-operators]]"
 aliases:
   - relational
 updatedAt: 2026-07-23
+series: "Python"
+seriesOrder: 15
 ---
 ```text
 a == b

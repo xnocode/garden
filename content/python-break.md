@@ -11,6 +11,8 @@ prev: "[[python-while-loop]]"
 next: "[[python-continue]]"
 aliases:
 updatedAt: 2026-07-22
+series: "Python"
+seriesOrder: 26
 ---
 `break` is used to stop the loop immediately.
 

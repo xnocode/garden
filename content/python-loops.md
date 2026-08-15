@@ -12,6 +12,8 @@ next: "[[python-while-loop]]"
 aliases:
   - loops
 updatedAt: 2026-07-22
+series: "Python"
+seriesOrder: 24
 ---
 Loops are used when we want to perform a task again and again. Suppose you need to print "hello world" five times:
 

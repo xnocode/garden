@@ -12,6 +12,8 @@ visibility: public
 aliases:
   - comments
 updatedAt: 2026-07-22
+series: "Python"
+seriesOrder: 6
 ---
 Comments are used to understand the code later or to leave messages in the code.
 

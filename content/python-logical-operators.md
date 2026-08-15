@@ -12,6 +12,8 @@ next: "[[python-operator-precedence]]"
 aliases:
   - logical
 updatedAt: 2026-07-22
+series: "Python"
+seriesOrder: 16
 ---
 1. `not` → used to get the opposite value
 

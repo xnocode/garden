@@ -12,6 +12,8 @@ next: "[[python-elif-statements]]"
 aliases:
   - if else
 updatedAt: 2026-07-22
+series: "Python"
+seriesOrder: 21
 ---
 If the condition is `True`, `if` block runs. If `False`, `else` block runs
 

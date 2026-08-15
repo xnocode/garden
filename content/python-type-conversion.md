@@ -12,6 +12,8 @@ next: "[[python-user-input]]"
 aliases:
   - conversion
 updatedAt: 2026-07-22
+series: "Python"
+seriesOrder: 10
 ---
 
 ```text
