@@ -2,18 +2,13 @@
   {
     "version": "v1.0.0",
     "date": "2026-08-15",
-    "title": "Accounts, Email Verification & Fully Static Engine",
+    "title": "Email Verification, Private Notes & Fully Static Engine",
     "badge": "MAJOR",
     "category": "core",
     "changes": [
-      "New accounts must verify their email — 6-digit OTP code or one-click link, sent via Resend",
-      "Full membership flow: sign up, sign in, and forgot-password with single-use 15-minute reset links",
-      "Private notes (visibility: private) never leave the machine — excluded from the static bundle and GitHub, served only to the admin from the database",
-      "Draft system replaced by a simpler visibility model: public / members / private",
-      "Fully static engine — client-side routing with zero server round-trips and precomputed graph, tags, explorer, and stats",
-      "Passwords secured with PBKDF2-SHA512 salted hashing; admin account lives only in environment variables",
-      "Google sign-in removed in favor of email + password authentication",
-      "Spam-folder hints added to all verification and reset emails"
+      "Email verification required for new accounts with OTP code or one-click link; forgot-password flow with single-use reset links",
+      "Private notes excluded from static bundle and GitHub — served only to admin from database; draft system replaced by visibility model",
+      "Fully static engine with client-side routing, zero server round-trips, and precomputed graph, tags, and stats"
     ]
   },
   {
