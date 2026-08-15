@@ -412,6 +412,9 @@ export async function getWritingStats(): Promise<WritingStatsSummary> {
         isPublished,
       };
     })
+    // Only published notes in the public leaderboard — private note titles
+    // must never ship to the client bundle.
+    .filter((n) => n.isPublished)
     .sort((a, b) => b.words - a.words)
     .slice(0, 6);
 
