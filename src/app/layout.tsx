@@ -1,12 +1,11 @@
 import type { Metadata } from "next";
-import { Plus_Jakarta_Sans, Source_Sans_3, IBM_Plex_Mono } from "next/font/google";
+import { Plus_Jakarta_Sans, Inter, IBM_Plex_Mono } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
 import { ThemeProvider } from "@/components/theme-provider";
 import { AuthProvider } from "@/components/auth/auth-provider";
 import { GoogleAnalytics } from "@next/third-parties/google";
 import Script from "next/script";
-
 
 const headingFont = Plus_Jakarta_Sans({
   variable: "--font-serif",
@@ -15,11 +14,9 @@ const headingFont = Plus_Jakarta_Sans({
   display: "swap",
 });
 
-const bodyFont = Source_Sans_3({
+const bodyFont = Inter({
   variable: "--font-sans",
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
-  style: ["normal", "italic"],
   display: "swap",
 });
 
