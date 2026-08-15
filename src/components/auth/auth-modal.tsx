@@ -15,7 +15,7 @@ interface AuthModalProps {
 export function AuthModal({ isOpen, onClose, defaultMode = "signin" }: AuthModalProps) {
   const [mounted, setMounted] = useState(false);
   const [mode, setMode] = useState<"signin" | "signup">(defaultMode);
-  const [step, setStep] = useState<"form" | "verify">("form");
+  const [step, setStep] = useState<"form" | "verify" | "forgot">("form");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -165,6 +165,37 @@ export function AuthModal({ isOpen, onClose, defaultMode = "signin" }: AuthModal
     setError("Google sign-in is not available yet. Please use email and password.");
   };
 
+  const handleForgotPassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError(null);
+    setSuccess(null);
+
+    const cleanEmail = email.toLowerCase().trim();
+    if (!cleanEmail) {
+      setError("Please enter your email address first.");
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const res = await fetch("/api/auth/forgot-password", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: cleanEmail }),
+      });
+      const data = await res.json();
+
+      if (!res.ok) {
+        setError(data.error || "Failed to send the reset email.");
+      } else {
+        setSuccess(data.message || "If an account exists, a reset link has been sent.");
+      }
+    } catch (err: any) {
+      setError(err?.message || "Failed to send the reset email.");
+    }
+    setLoading(false);
+  };
+
   const handleCredentialsAuth = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
@@ -260,16 +291,20 @@ export function AuthModal({ isOpen, onClose, defaultMode = "signin" }: AuthModal
           <h2 className="text-xl font-serif font-bold text-heading">
             {step === "verify"
               ? "Verify Your Email"
-              : mode === "signin"
-                ? "Welcome Back"
-                : "Create an Account"}
+              : step === "forgot"
+                ? "Reset Your Password"
+                : mode === "signin"
+                  ? "Welcome Back"
+                  : "Create an Account"}
           </h2>
           <p className="mt-1 text-xs text-muted-foreground">
             {step === "verify"
               ? `Enter the 6-digit code we sent to ${email.toLowerCase().trim() || "your email"}.`
-              : mode === "signin"
-                ? "Sign in to unlock member notes, post, and join discussions."
-                : "Join our digital garden community with a verified email."}
+              : step === "forgot"
+                ? "Enter your account email and we'll send you a reset link."
+                : mode === "signin"
+                  ? "Sign in to unlock member notes, post, and join discussions."
+                  : "Join our digital garden community with a verified email."}
           </p>
         </div>
 
@@ -288,7 +323,50 @@ export function AuthModal({ isOpen, onClose, defaultMode = "signin" }: AuthModal
           </div>
         )}
 
-        {step === "verify" ? (
+        {step === "forgot" ? (
+          <form onSubmit={handleForgotPassword} className="space-y-3.5">
+            <div>
+              <label className="mb-1 block text-xs font-medium text-muted-foreground">
+                Account Email
+              </label>
+              <div className="relative">
+                <Mail className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground pointer-events-none" />
+                <input
+                  type="email"
+                  required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="you@gmail.com"
+                  autoComplete="email"
+                  className="w-full rounded-lg border border-border bg-surface-2 py-2 pl-9 pr-3 text-xs text-foreground placeholder:text-muted-foreground/50 transition-colors focus:border-garden focus:outline-none focus:ring-1 focus:ring-garden/40"
+                />
+              </div>
+            </div>
+
+            <button
+              type="submit"
+              disabled={loading}
+              className="mt-2 flex w-full items-center justify-center gap-2 rounded-xl bg-garden px-4 py-2.5 text-sm font-semibold text-garden-foreground transition-transform hover:opacity-90 active:scale-[0.98] disabled:opacity-50"
+            >
+              {loading && <Loader2 className="h-4 w-4 animate-spin" />}
+              <span>Send Reset Link</span>
+            </button>
+
+            <div className="pt-1 text-center">
+              <button
+                type="button"
+                onClick={() => {
+                  setStep("form");
+                  setError(null);
+                  setSuccess(null);
+                }}
+                className="text-xs text-muted-foreground underline hover:text-foreground transition-colors"
+              >
+                ← Back to sign in
+              </button>
+            </div>
+          </form>
+        ) : step === "verify" ? (
           <form onSubmit={handleVerify} className="space-y-3.5">
             <div>
               <label className="mb-1 block text-xs font-medium text-muted-foreground">
@@ -460,6 +538,21 @@ export function AuthModal({ isOpen, onClose, defaultMode = "signin" }: AuthModal
                 )}
               </button>
             </div>
+            {mode === "signin" && (
+              <div className="mt-1.5 text-right">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setStep("forgot");
+                    setError(null);
+                    setSuccess(null);
+                  }}
+                  className="text-[11px] text-muted-foreground underline hover:text-garden transition-colors"
+                >
+                  Forgot password?
+                </button>
+              </div>
+            )}
           </div>
 
           <button
