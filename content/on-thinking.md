@@ -5,7 +5,6 @@ author: Ridoy
 visibility: public
 date: 2024-08-26
 tags: [essay, thinking]
-aliases: ["Thinking"]
 updatedAt: 2026-07-23
 ---
 

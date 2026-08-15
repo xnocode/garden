@@ -5,7 +5,6 @@ author: Ridoy
 visibility: public
 date: 2024-08-15
 tags: [garden, meta]
-aliases: ["Home", "Index"]
 updatedAt: 2026-07-23
 ---
 

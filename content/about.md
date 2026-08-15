@@ -5,7 +5,6 @@ author: Ridoy
 visibility: public
 date: 2024-08-15
 tags: [meta, about]
-aliases: ["About the Garden", "Colophon"]
 updatedAt: 2026-07-23
 ---
 This garden is tended by a quiet generalist who has spent too many years reading about how other people think and not enough years thinking for themselves. I'm a software person by trade, a lapsed philosopher by training, and a gardener in the metaphorical sense only — every real plant I've kept has died of kindness. The digital ones, mercifully, thrive on neglect.

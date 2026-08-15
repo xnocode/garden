@@ -5,12 +5,8 @@ date: 2026-07-16
 tags:
   - aiml
   - python
-prev: "[[python-keywords]]"
-next: "[[python-style-guide]]"
 author: Ridoy
 visibility: public
-aliases:
-  - comments
 updatedAt: 2026-07-22
 series: "Python"
 seriesOrder: 6

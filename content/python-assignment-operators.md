@@ -7,10 +7,6 @@ date: 2026-07-16
 tags:
   - aiml
   - python
-prev: "[[python-relational-or-comparison]]"
-next: "[[python-logical-operators]]"
-aliases:
-  - assignment
 updatedAt: 2026-07-22
 series: "Python"
 seriesOrder: 14

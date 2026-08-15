@@ -5,7 +5,6 @@ author: Ridoy
 visibility: public
 date: 2024-08-21
 tags: [essay, knowledge, zettelkasten]
-aliases: ["Zettelkasten", "Luhmann Method"]
 updatedAt: 2026-07-23
 ---
 

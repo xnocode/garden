@@ -5,12 +5,8 @@ date: 2026-07-16
 tags:
   - aiml
   - python
-prev: "[[python-type-function]]"
-next: "[[python-comments]]"
 author: Ridoy
 visibility: public
-aliases:
-  - keywords
 updatedAt: 2026-07-22
 series: "Python"
 seriesOrder: 2

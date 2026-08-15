@@ -5,7 +5,6 @@ author: Ridoy
 visibility: public
 date: 2024-08-10
 tags: [essay, reading, thinking]
-aliases: ["Slow Reading", "Reading"]
 updatedAt: 2026-07-23
 ---
 

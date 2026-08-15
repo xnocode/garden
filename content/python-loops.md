@@ -7,10 +7,6 @@ date: 2026-07-18
 tags:
   - aiml
   - python
-prev: "[[python-match-case]]"
-next: "[[python-while-loop]]"
-aliases:
-  - loops
 updatedAt: 2026-07-22
 series: "Python"
 seriesOrder: 24

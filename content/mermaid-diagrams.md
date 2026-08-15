@@ -5,7 +5,6 @@ author: Ridoy
 visibility: public
 date: 2024-08-20
 tags: [reference, diagrams]
-aliases: ["Mermaid", "Diagrams"]
 updatedAt: 2026-07-23
 ---
 Sometimes an idea is a shape, not a sentence. Mermaid lets you describe diagrams as text and have them render inline. Because the source is plain text, diagrams stay diff-able, searchable, and editable the same way the rest of a note is — no dragging boxes around in a GUI.

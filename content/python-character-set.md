@@ -5,12 +5,8 @@ date: 2026-07-16
 tags:
   - python
   - aiml
-prev: "[[python-first-program]]"
-next: "[[python-variables]]"
 author: Ridoy
 visibility: public
-aliases:
-  - character set
 updatedAt: 2026-07-22
 series: "Python"
 seriesOrder: 1

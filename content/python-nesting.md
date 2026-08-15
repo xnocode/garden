@@ -7,10 +7,6 @@ date: 2026-07-18
 tags:
   - aiml
   - python
-prev: "[[python-elif-statements]]"
-next: "[[python-match-case]]"
-aliases:
-  - nesting
 updatedAt: 2026-07-22
 series: "Python"
 seriesOrder: 18

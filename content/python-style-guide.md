@@ -7,10 +7,6 @@ date: 2026-07-16
 tags:
   - aiml
   - python
-prev: "[[python-comments]]"
-next: "[[python-operators]]"
-aliases:
-  - style
 updatedAt: 2026-07-23
 series: "Python"
 seriesOrder: 28

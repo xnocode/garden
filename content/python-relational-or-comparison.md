@@ -7,10 +7,6 @@ date: 2026-07-16
 tags:
   - aiml
   - python
-prev: "[[python-arithmetic-operators]]"
-next: "[[python-assignment-operators]]"
-aliases:
-  - relational
 updatedAt: 2026-07-23
 series: "Python"
 seriesOrder: 15

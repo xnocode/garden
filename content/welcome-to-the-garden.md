@@ -5,7 +5,6 @@ author: Ridoy
 visibility: public
 date: 2024-08-16
 tags: [meta, guide]
-aliases: ["Getting Started", "Navigation"]
 updatedAt: 2026-07-23
 ---
 

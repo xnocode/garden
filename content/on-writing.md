@@ -5,7 +5,6 @@ author: Ridoy
 visibility: public
 date: 2024-08-27
 tags: [essay, writing]
-aliases: ["Writing"]
 updatedAt: 2026-07-23
 ---
 

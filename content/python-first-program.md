@@ -5,12 +5,8 @@ date: 2026-07-16
 tags:
   - python
   - aiml
-prev: "[[prerequisites-tools-for-ai-ml]]"
-next: "[[python-character-set]]"
 author: Ridoy
 visibility: public
-aliases:
-  - first program
 updatedAt: 2026-07-22
 series: "Python"
 seriesOrder: 5

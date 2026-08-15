@@ -5,7 +5,6 @@ author: Ridoy
 visibility: public
 date: 2024-08-24
 tags: [reference, organization]
-aliases: ["Tags", "Organization"]
 updatedAt: 2026-07-23
 ---
 

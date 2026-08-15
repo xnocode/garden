@@ -7,10 +7,6 @@ date: 2026-07-17
 tags:
   - aiml
   - python
-prev: "[[python-user-input]]"
-next: "[[python-if-statements]]"
-aliases:
-  - conditional statements
 updatedAt: 2026-07-22
 series: "Python"
 seriesOrder: 19

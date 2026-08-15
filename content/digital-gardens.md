@@ -5,7 +5,6 @@ author: Ridoy
 visibility: public
 date: 2024-08-15
 tags: [essay, garden, knowledge]
-aliases: ["Digital Garden", "Garden Metaphor"]
 updatedAt: 2026-07-23
 ---
 

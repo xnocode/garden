@@ -5,7 +5,6 @@ author: Ridoy
 visibility: public
 date: 2024-08-23
 tags: [essay, thinking, notes]
-aliases: ["Note Taking", "Note-Taking"]
 updatedAt: 2026-07-23
 ---
 

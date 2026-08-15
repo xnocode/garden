@@ -5,7 +5,6 @@ author: Ridoy
 visibility: public
 date: 2024-08-17
 tags: [reference, wikilinks]
-aliases: ["Wikilinks", "Backlinks"]
 updatedAt: 2026-07-23
 ---
 

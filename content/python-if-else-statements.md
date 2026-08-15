@@ -7,10 +7,6 @@ date: 2026-07-17
 tags:
   - aiml
   - python
-prev: "[[python-if-statements]]"
-next: "[[python-elif-statements]]"
-aliases:
-  - if else
 updatedAt: 2026-07-22
 series: "Python"
 seriesOrder: 21

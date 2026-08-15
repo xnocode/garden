@@ -5,12 +5,8 @@ date: 2026-07-16
 tags:
   - aiml
   - python
-prev: "[[python-style-guide]]"
-next: "[[python-arithmetic-operators]]"
 author: Ridoy
 visibility: public
-aliases:
-  - operators
 updatedAt: 2026-07-22
 series: "Python"
 seriesOrder: 12

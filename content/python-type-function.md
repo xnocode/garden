@@ -5,12 +5,8 @@ date: 2026-07-16
 tags:
   - aiml
   - python
-prev: "[[python-data-types]]"
-next: "[[python-keywords]]"
 author: Ridoy
 visibility: public
-aliases:
-  - type() function
 updatedAt: 2026-07-22
 series: "Python"
 seriesOrder: 9

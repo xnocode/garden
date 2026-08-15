@@ -6,10 +6,6 @@ visibility: public
 date: 2026-07-22
 tags:
   - university
-prev: "[[software-engineering-and-system-analysis-cse0613225]]"
-next: "[[data-communication-cse0612223]]"
-aliases:
-  - class notes
 updatedAt: 2026-07-29
 ---
 > Date : 22 July 2026

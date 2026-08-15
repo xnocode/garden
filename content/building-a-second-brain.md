@@ -5,7 +5,6 @@ author: Ridoy
 visibility: public
 date: 2024-08-22
 tags: [essay, knowledge, productivity]
-aliases: ["Second Brain", "CODE Method", "BASB"]
 updatedAt: 2026-07-23
 ---
 

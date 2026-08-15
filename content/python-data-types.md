@@ -7,10 +7,6 @@ date: 2026-07-16
 tags:
   - aiml
   - python
-prev: "[[python-case-sensitive]]"
-next: "[[python-type-function]]"
-aliases:
-  - data types
 updatedAt: 2026-07-23
 series: "Python"
 seriesOrder: 8

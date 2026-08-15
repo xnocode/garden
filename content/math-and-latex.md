@@ -5,7 +5,6 @@ author: Ridoy
 visibility: public
 date: 2024-08-19
 tags: [reference, math]
-aliases: ["Math", "LaTeX", "KaTeX"]
 updatedAt: 2026-07-23
 ---
 

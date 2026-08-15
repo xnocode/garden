@@ -7,10 +7,6 @@ date: 2026-07-17
 tags:
   - aiml
   - python
-prev: "[[python-conditional-statements]]"
-next: "[[python-if-else-statements]]"
-aliases:
-  - if statements
 updatedAt: 2026-07-22
 series: "Python"
 seriesOrder: 20

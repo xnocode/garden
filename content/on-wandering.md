@@ -5,7 +5,6 @@ author: Ridoy
 visibility: public
 date: 2024-08-28
 tags: [essay, thinking, garden]
-aliases: ["Wandering"]
 updatedAt: 2026-07-23
 ---
  

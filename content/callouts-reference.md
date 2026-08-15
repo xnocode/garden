@@ -5,7 +5,6 @@ author: Ridoy
 visibility: public
 date: 2024-08-18
 tags: [reference, callouts]
-aliases: ["Callouts"]
 updatedAt: 2026-07-23
 ---
 

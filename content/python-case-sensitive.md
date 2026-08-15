@@ -7,10 +7,6 @@ date: 2026-07-16
 tags:
   - aiml
   - python
-prev: "[[python-indentation]]"
-next: "[[python-data-types]]"
-aliases:
-  - case sensitive
 updatedAt: 2026-07-23
 series: "Python"
 seriesOrder: 4

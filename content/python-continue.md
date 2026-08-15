@@ -7,9 +7,6 @@ date: 2026-07-18
 tags:
   - aiml
   - python
-prev: "[[python-break]]"
-next:
-aliases:
 updatedAt: 2026-07-22
 series: "Python"
 seriesOrder: 27

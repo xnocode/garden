@@ -7,10 +7,6 @@ date: 2026-07-18
 tags:
   - aiml
   - python
-prev: "[[python-loops]]"
-next: "[[python-break]]"
-aliases:
-  - while loop
 updatedAt: 2026-07-22
 series: "Python"
 seriesOrder: 25

@@ -4,10 +4,6 @@ description: AI helps computers think and solve problems. ML teaches them to lea
 date: 2026-07-16
 tags:
   - aiml
-prev: "[[ai-and-ml-index]]"
-next: "[[prerequisites-tools-for-ai-ml]]"
-aliases:
-  - aiml
 author: Ridoy
 visibility: public
 updatedAt: 2026-07-22

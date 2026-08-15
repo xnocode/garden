@@ -7,9 +7,6 @@ date: 2026-07-18
 tags:
   - aiml
   - python
-prev: "[[python-while-loop]]"
-next: "[[python-continue]]"
-aliases:
 updatedAt: 2026-07-22
 series: "Python"
 seriesOrder: 26

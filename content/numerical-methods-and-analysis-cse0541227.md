@@ -6,10 +6,6 @@ visibility: public
 date: 2026-07-22
 tags:
   - university
-prev: ""
-next: ""
-aliases:
-  - class notes
 updatedAt: 2026-07-23
 ---
 > Date: 22 July 2026

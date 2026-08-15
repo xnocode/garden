@@ -5,12 +5,8 @@ date: 2026-07-16
 tags:
   - aiml
   - python
-prev: "[[python-operators]]"
-next: "[[python-relational-or-comparison]]"
 author: Ridoy
 visibility: public
-aliases:
-  - arithmetic
 updatedAt: 2026-07-22
 series: "Python"
 seriesOrder: 13

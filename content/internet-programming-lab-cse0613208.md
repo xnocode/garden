@@ -6,10 +6,6 @@ visibility: public
 date: 2026-07-23
 tags:
   - university
-prev: "[[data-communication-cse0612223]]"
-next: ""
-aliases:
-  - class notes
 updatedAt: 2026-08-13
 ---
 > **Date:** 23 July 2026

@@ -7,10 +7,6 @@ date: 2026-07-16
 tags:
   - aiml
   - python
-prev: "[[python-operator-precedence]]"
-next: "[[python-user-input]]"
-aliases:
-  - conversion
 updatedAt: 2026-07-22
 series: "Python"
 seriesOrder: 10

@@ -5,7 +5,6 @@ author: Ridoy
 visibility: public
 date: 2024-07-30
 tags: [essay, thinking, memory, garden]
-aliases: ["Forgetting"]
 updatedAt: 2026-07-23
 ---
 

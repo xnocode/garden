@@ -5,7 +5,6 @@ author: Ridoy
 visibility: public
 date: 2024-08-05
 tags: [essay, thinking, wikilinks, knowledge]
-aliases: ["Links as Thoughts"]
 updatedAt: 2026-07-23
 ---
 

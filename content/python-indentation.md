@@ -7,10 +7,6 @@ date: 2026-07-16
 tags:
   - python
   - aiml
-prev: "[[python-variables]]"
-next: "[[python-case-sensitive]]"
-aliases:
-  - indentation
 updatedAt: 2026-07-23
 series: "Python"
 seriesOrder: 3

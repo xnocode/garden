@@ -7,10 +7,6 @@ date: 2026-07-16
 tags:
   - aiml
   - python
-prev: "[[python-type-conversion]]"
-next: "[[python-conditional-statements]]"
-aliases:
-  - input
 updatedAt: 2026-07-22
 series: "Python"
 seriesOrder: 11

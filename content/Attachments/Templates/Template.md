@@ -15,7 +15,6 @@ const files = app.vault.getMarkdownFiles()
   .sort((a, b) => b.stat.ctime - a.stat.ctime);
 
 const lastFile = files.length > 0 ? files[0] : null;
-const prevName = lastFile ? lastFile.basename : "";
 
 // Series: default = series of the last created note (Enter to continue it).
 // Leave empty for a standalone note. seriesOrder auto-increments by scanning
@@ -30,15 +29,14 @@ if (seriesName && seriesName.trim()) {
   for (const f of app.vault.getMarkdownFiles()) {
     if (f.path.includes("Templates")) continue;
     const fm = app.metadataCache.getFileCache(f)?.frontmatter;
-    if (fm && fm.series === seriesName.trim() && typeof fm.seriesOrder === "number") {
-      max = Math.max(max, fm.seriesOrder);
+    if (fm && fm.series === seriesName.trim()) {
+      const order = typeof fm.seriesOrder === "number" ? fm.seriesOrder : (typeof fm.seriesNumber === "number" ? fm.seriesNumber : 0);
+      max = Math.max(max, order);
     }
   }
   seriesOrder = max + 1;
 }
 
-const words = cleanTitle ? cleanTitle.split(" ") : [];
-const keyword = words.length > 1 ? words.slice(1).join(" ").toLowerCase() : (!isUntitled ? rawTitle.toLowerCase() : "");
 -%>
 ---
 title: "<% cleanTitle %>"
@@ -48,11 +46,7 @@ visibility: public
 date: <% tp.file.creation_date("YYYY-MM-DD") %>
 updatedAt: <% tp.file.last_modified_date("YYYY-MM-DD") %>
 tags: []
-prev: <% prevName ? '"[[' + prevName + ']]"' : '""' %>
-next: ""
 series: "<% seriesName %>"
 seriesOrder: <% seriesOrder %>
-aliases:
-  - "<% keyword %>"
 ---
 

@@ -6,10 +6,6 @@ visibility: public
 date: 2026-07-22
 tags:
   - university
-prev: "[[software-engineering-and-system-analysis-lab-cse0613226]]"
-next: ""
-aliases:
-  - class notes
 updatedAt: 2026-08-14
 ---
 > Date : 22 July 2026

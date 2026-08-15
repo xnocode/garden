@@ -185,12 +185,15 @@ async function parsePass(files: string[]): Promise<ParsedFile[]> {
         typeof data.series === "string" && data.series.trim()
           ? data.series.trim()
           : null,
-      seriesOrder:
-        typeof data.seriesOrder === "number"
-          ? data.seriesOrder
-          : typeof data.seriesOrder === "string" && data.seriesOrder.trim() !== ""
-            ? Number(data.seriesOrder) || null
-            : null,
+      seriesOrder: (() => {
+        const rawOrder = data.seriesOrder ?? data.seriesNumber ?? data.series_order;
+        if (typeof rawOrder === "number") return rawOrder;
+        if (typeof rawOrder === "string" && rawOrder.trim() !== "") {
+          const n = Number(rawOrder);
+          return isNaN(n) ? null : n;
+        }
+        return null;
+      })(),
     });
   }
   return parsed;

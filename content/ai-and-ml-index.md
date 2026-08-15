@@ -4,10 +4,6 @@ tags:
 date: 2026-07-16
 title: AI & ML Index
 description: AI enables machines to think and make decisions. ML helps machines learn from data.
-prev: ""
-next: "[[ai-and-ml-introduction]]"
-aliases:
-  - AI & ML
 author: Ridoy
 visibility: public
 updatedAt: 2026-07-22

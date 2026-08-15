@@ -4,10 +4,6 @@ description: An overview of the essential tools and prerequisites for getting st
 date: 2026-07-16
 tags:
   - aiml
-prev: "[[ai-and-ml-introduction]]"
-next: "[[python-first-program]]"
-aliases:
-  - aiml
 author: Ridoy
 visibility: public
 updatedAt: 2026-07-22

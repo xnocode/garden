@@ -7,10 +7,6 @@ date: 2026-07-18
 tags:
   - aiml
   - python
-prev: "[[python-nesting]]"
-next: "[[python-loops]]"
-aliases:
-  - match case
 updatedAt: 2026-07-22
 series: "Python"
 seriesOrder: 23

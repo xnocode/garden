@@ -7,10 +7,6 @@ date: 2026-07-17
 tags:
   - aiml
   - python
-prev: "[[python-if-else-statements]]"
-next: "[[python-nesting]]"
-aliases:
-  - elif
 updatedAt: 2026-07-22
 series: "Python"
 seriesOrder: 22

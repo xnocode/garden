@@ -5,7 +5,6 @@ author: Ridoy
 visibility: public
 date: 2024-08-25
 tags: [reference, embeds]
-aliases: ["Embeds", "Transclusions"]
 updatedAt: 2026-07-23
 ---
 

@@ -6,10 +6,6 @@ author: Ridoy
 visibility: public
 title: Things Want to Experience
 description: This is a collection of my goals, dreams, and ideas that I want to accomplish over time. It helps me stay focused, motivated, and organized.
-prev: ""
-next: ""
-aliases:
-  - life
 updatedAt: 2026-07-22
 ---
 - [x] Capture beautiful moments with a camera, even without me in the frame 

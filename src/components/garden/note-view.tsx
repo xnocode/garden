@@ -10,7 +10,7 @@ import {
   Hash,
   ChevronLeft,
   ChevronRight,
-  Edit3,
+  BookOpen,
   Share2,
   Shuffle,
   Link2,
@@ -23,7 +23,6 @@ import {
 import { AdBanner } from "../../ads/AdBanner";
 import type { NoteDetail } from "@/lib/notes";
 import { TableOfContents, extractToc } from "./table-of-contents";
-import { SeriesBox } from "./series-box";
 import { Backlinks } from "./backlinks";
 import { RelatedNotes } from "./related-notes";
 import { useRecordVisit } from "./reading-history";
@@ -453,11 +452,15 @@ export function NoteView({ note }: { note: NoteDetail }) {
               {note.author}
             </span>
           )}
-          {note.aliases.length > 0 && (
-            <span className="inline-flex items-center gap-1.5">
-              <Edit3 className="h-3.5 w-3.5" />
-              aka {note.aliases.join(", ")}
-            </span>
+          {note.series && (
+            <Link
+              href={`/?view=series&name=${encodeURIComponent(note.series.name)}`}
+              className="inline-flex items-center gap-1.5 hover:text-garden transition-colors"
+              title={`Series: ${note.series.name} (Part ${note.series.part} of ${note.series.total})`}
+            >
+              <BookOpen className="h-3.5 w-3.5 text-garden" />
+              {note.series.name}
+            </Link>
           )}
         </div>
         {note.tags.length > 0 && (
@@ -527,11 +530,6 @@ export function NoteView({ note }: { note: NoteDetail }) {
           </button>
         </div>
       </header>
-
-      {/* Series banner (reading path) */}
-      {note.series && (
-        <SeriesBox series={note.series} prev={note.prev} next={note.next} />
-      )}
 
       {/* Content */}
       {isLocked ? (

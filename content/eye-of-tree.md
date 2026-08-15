@@ -6,9 +6,6 @@ author: Ridoy
 visibility: public
 title: Eye of Tree
 description: Family is where love, support, and lifelong relationships begin.
-prev: ""
-next: ""
-aliases:
 updatedAt: 2026-07-22
 ---
 There are times when I feel that my father can see through me more clearly than I can see myself. He understands what I am capable of, even when I doubt it. Whenever I listen to his advice, my life seems to move in the right direction. When I ignore it, everything quickly becomes difficult, as if I lose my way. 

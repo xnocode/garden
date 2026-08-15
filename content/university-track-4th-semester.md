@@ -6,9 +6,6 @@ visibility: public
 date: 2026-07-29
 tags:
   - university
-prev: ""
-next: ""
-aliases:
 updatedAt: 2026-08-14
 ---
 MID TERM

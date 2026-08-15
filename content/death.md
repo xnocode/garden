@@ -6,10 +6,6 @@ visibility: public
 date: 2026-07-09
 tags:
   - death
-prev: ""
-next: ""
-aliases:
-  - death
 updatedAt: 2026-07-23
 ---
 ![|639x360](https://res.cloudinary.com/dqkxxdrsg/image/upload/v1778474130/obsidian/rgqkcjn2tguqnwyrpjkl.png)

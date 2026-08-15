@@ -5,7 +5,6 @@ author: Ridoy
 visibility: public
 date: 2024-08-03
 tags: [reference, embeds, composition, garden]
-aliases: ["Transclusion Composition"]
 updatedAt: 2026-07-23
 ---
 
