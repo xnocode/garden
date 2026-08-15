@@ -1,5 +1,4 @@
 import type { NextAuthOptions } from "next-auth";
-import GoogleProvider from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { db } from "@/lib/db";
 import crypto from "node:crypto";
@@ -30,20 +29,6 @@ export const authOptions: NextAuthOptions = {
     maxAge: 30 * 24 * 60 * 60, // 30 days
   },
   providers: [
-    ...(process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET
-      ? [
-          GoogleProvider({
-            clientId: process.env.GOOGLE_CLIENT_ID,
-            clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-            authorization: {
-              params: {
-                prompt: "select_account",
-              },
-            },
-          }),
-        ]
-      : []),
-
     CredentialsProvider({
       id: "credentials",
       name: "Email & Password",
@@ -62,7 +47,7 @@ export const authOptions: NextAuthOptions = {
 
         // ── ADMIN LOGIN ────────────────────────────────────────────────────
         // Admin uses a secret fake email + secret password stored only in env.
-        // Google OAuth can NEVER grant admin role — this is the only path.
+        // This is the only path to the admin role.
         if (adminEmail && email === adminEmail) {
           if (!adminPassword || credentials.password !== adminPassword) {
             throw new Error("Invalid admin credentials.");
@@ -118,39 +103,8 @@ export const authOptions: NextAuthOptions = {
   ],
 
   callbacks: {
-    async signIn({ user, account }) {
+    async signIn({ user }) {
       if (!user.email) return false;
-
-      // Google OAuth users are ALWAYS regular members — never admin.
-      // Admin can only log in via credentials with the secret email + password.
-      if (account?.provider === "google") {
-        const email = user.email.toLowerCase().trim();
-        try {
-          const existingUser = await db.user.findUnique({ where: { email } });
-          if (!existingUser) {
-            await db.user.create({
-              data: {
-                email,
-                name: user.name || email.split("@")[0],
-                image: user.image,
-                role: "member", // Google OAuth = always member
-                emailVerified: new Date(),
-              },
-            });
-          } else {
-            // Keep existing role (but never promote to admin via OAuth)
-            if (existingUser.role === "admin") {
-              await db.user.update({
-                where: { email },
-                data: { role: "member", image: user.image || existingUser.image },
-              });
-            }
-          }
-        } catch {
-          // DB sync error — still allow sign in
-        }
-      }
-
       return true;
     },
 

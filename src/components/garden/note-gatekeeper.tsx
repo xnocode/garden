@@ -38,7 +38,7 @@ export function NoteGatekeeper({ visibility, noteTitle }: NoteGatekeeperProps) {
         </h3>
 
         <p className="mx-auto mt-2 max-w-md text-sm text-muted-foreground">
-          &ldquo;{noteTitle}&rdquo; is exclusive to verified garden members. Sign in with Google or your verified email to unlock and read this note.
+          &ldquo;{noteTitle}&rdquo; is exclusive to verified garden members. Sign in with your verified email to unlock and read this note.
         </p>
 
         <div className="mt-6 flex flex-wrap items-center justify-center gap-3">

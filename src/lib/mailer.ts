@@ -82,7 +82,8 @@ export async function sendVerificationEmail(
      <p style="text-align:center;margin:24px 0;">
        <a href="${verifyLink}" style="background:#2e5339;color:#fff;text-decoration:none;padding:11px 24px;border-radius:9px;font-size:14px;display:inline-block;">Or click here to verify</a>
      </p>
-     <p style="color:#777;font-size:13px;">This code expires in 15 minutes.</p>`
+     <p style="color:#777;font-size:13px;">This code expires in 15 minutes.</p>
+     <p style="color:#999;font-size:12px;margin-top:14px;">Can't find it? Check your <strong>Spam</strong> or <strong>Junk</strong> folder — sometimes the email lands there.</p>`
   );
   return sendEmail({ to, subject: `Your Garden verification code: ${code}`, html });
 }
@@ -98,7 +99,8 @@ export async function sendPasswordResetEmail(
        <a href="${resetLink}" style="background:#2e5339;color:#fff;text-decoration:none;padding:12px 26px;border-radius:9px;font-size:14px;display:inline-block;">Reset your password</a>
      </p>
      <p style="color:#777;font-size:13px;">This link expires in 15 minutes and can only be used once.
-     If you didn't request this, you can safely ignore this email — your password stays unchanged.</p>`
+     If you didn't request this, you can safely ignore this email — your password stays unchanged.</p>
+     <p style="color:#999;font-size:12px;margin-top:10px;">Can't find it? Check your <strong>Spam</strong> or <strong>Junk</strong> folder.</p>`
   );
   return sendEmail({ to, subject: "Reset your Garden password", html });
 }
