@@ -19,6 +19,7 @@ import {
   CornerDownRight,
   User,
   RotateCcw,
+  Lock,
 } from "lucide-react";
 import { AdBanner } from "../../ads/AdBanner";
 import type { NoteDetail } from "@/lib/notes";
@@ -462,6 +463,18 @@ export function NoteView({ note }: { note: NoteDetail }) {
               {note.series.name}
             </Link>
           )}
+          {noteVisibility === "private" && (
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-500/10 px-2 py-0.5 text-xs font-medium text-amber-500 border border-amber-500/20">
+              <Lock className="h-3 w-3" />
+              Private Note (Author Only)
+            </span>
+          )}
+          {noteVisibility === "members" && (
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/10 px-2 py-0.5 text-xs font-medium text-emerald-500 border border-emerald-500/20">
+              <Lock className="h-3 w-3" />
+              Members Only
+            </span>
+          )}
         </div>
         {note.tags.length > 0 && (
           <div className="mt-3 flex flex-wrap gap-1.5">
@@ -538,93 +551,95 @@ export function NoteView({ note }: { note: NoteDetail }) {
           noteTitle={note.title}
         />
       ) : (
-        <div className="grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_220px] gap-8">
-          <div className="min-w-0">
-            <div
-              ref={contentRef}
-              id="note-content"
-              className="garden-prose max-w-[72ch]"
-              dangerouslySetInnerHTML={{ __html: html }}
-            />
-            <CodeBlockRunner key={note.slug} />
-            {/* In-article ad: fluid format Google renders natively inside content */}
-            <div className="mt-8">
-              <AdBanner slotId="2493782452" format="in-article" />
+        <>
+          <div className="grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_220px] gap-8">
+            <div className="min-w-0">
+              <div
+                ref={contentRef}
+                id="note-content"
+                className="garden-prose max-w-[72ch]"
+                dangerouslySetInnerHTML={{ __html: html }}
+              />
+              <CodeBlockRunner key={note.slug} />
+              {/* In-article ad: fluid format Google renders natively inside content */}
+              <div className="mt-8">
+                <AdBanner slotId="2493782452" format="in-article" />
+              </div>
             </div>
+
+            {/* Right rail: TOC */}
+            <aside className="hidden xl:block">
+              <div className="sticky top-20">
+                <TableOfContents items={tocItems} />
+              </div>
+            </aside>
           </div>
 
-          {/* Right rail: TOC */}
-          <aside className="hidden xl:block">
-            <div className="sticky top-20">
-              <TableOfContents items={tocItems} />
+          {/* Prev / Next */}
+          <nav className="mt-12 grid grid-cols-1 gap-3 border-t border-border pt-6 sm:grid-cols-2">
+            {note.prev ? (
+              <Link
+                href={`/?p=${encodeURIComponent(note.prev.slug)}`}
+                className="group flex items-center gap-3 rounded-lg border border-border bg-surface/30 p-4 transition-colors hover:border-garden/40"
+              >
+                <ChevronLeft className="h-5 w-5 text-muted-foreground group-hover:text-garden" />
+                <span className="min-w-0">
+                  <span className="block text-[11px] uppercase tracking-wider text-muted-foreground">
+                    Previous
+                  </span>
+                  <span className="block truncate font-medium text-foreground group-hover:text-garden">
+                    {note.prev.title}
+                  </span>
+                </span>
+              </Link>
+            ) : (
+              <div />
+            )}
+            {note.next ? (
+              <Link
+                href={`/?p=${encodeURIComponent(note.next.slug)}`}
+                className="group flex items-center justify-end gap-3 rounded-lg border border-border bg-surface/30 p-4 text-right transition-colors hover:border-garden/40"
+              >
+                <span className="min-w-0">
+                  <span className="block text-[11px] uppercase tracking-wider text-muted-foreground">
+                    Next
+                  </span>
+                  <span className="block truncate font-medium text-foreground group-hover:text-garden">
+                    {note.next.title}
+                  </span>
+                </span>
+                <ChevronRight className="h-5 w-5 text-muted-foreground group-hover:text-garden" />
+              </Link>
+            ) : (
+              <div />
+            )}
+          </nav>
+
+          {/* Related notes */}
+          {note.related.length > 0 && (
+            <div className="mt-8">
+              <RelatedNotes notes={note.related} />
             </div>
-          </aside>
-        </div>
+          )}
+
+          {/* Backlinks */}
+          {note.backlinks.length > 0 && (
+            <div className="mt-8">
+              <Backlinks backlinks={note.backlinks} currentSlug={note.slug} />
+            </div>
+          )}
+
+          {/* Auto-format ad between backlinks and comments */}
+          <div className="mt-8">
+            <AdBanner slotId="5327787791" format="auto" />
+          </div>
+
+          {/* Native In-House Discussion / Comments Section */}
+          <div className="mt-8">
+            <CommentsSection noteSlug={note.slug} />
+          </div>
+        </>
       )}
-
-      {/* Prev / Next */}
-      <nav className="mt-12 grid grid-cols-1 gap-3 border-t border-border pt-6 sm:grid-cols-2">
-        {note.prev ? (
-          <Link
-            href={`/?p=${encodeURIComponent(note.prev.slug)}`}
-            className="group flex items-center gap-3 rounded-lg border border-border bg-surface/30 p-4 transition-colors hover:border-garden/40"
-          >
-            <ChevronLeft className="h-5 w-5 text-muted-foreground group-hover:text-garden" />
-            <span className="min-w-0">
-              <span className="block text-[11px] uppercase tracking-wider text-muted-foreground">
-                Previous
-              </span>
-              <span className="block truncate font-medium text-foreground group-hover:text-garden">
-                {note.prev.title}
-              </span>
-            </span>
-          </Link>
-        ) : (
-          <div />
-        )}
-        {note.next ? (
-          <Link
-            href={`/?p=${encodeURIComponent(note.next.slug)}`}
-            className="group flex items-center justify-end gap-3 rounded-lg border border-border bg-surface/30 p-4 text-right transition-colors hover:border-garden/40"
-          >
-            <span className="min-w-0">
-              <span className="block text-[11px] uppercase tracking-wider text-muted-foreground">
-                Next
-              </span>
-              <span className="block truncate font-medium text-foreground group-hover:text-garden">
-                {note.next.title}
-              </span>
-            </span>
-            <ChevronRight className="h-5 w-5 text-muted-foreground group-hover:text-garden" />
-          </Link>
-        ) : (
-          <div />
-        )}
-      </nav>
-
-      {/* Related notes */}
-      {note.related.length > 0 && (
-        <div className="mt-8">
-          <RelatedNotes notes={note.related} />
-        </div>
-      )}
-
-      {/* Backlinks */}
-      {note.backlinks.length > 0 && (
-        <div className="mt-8">
-          <Backlinks backlinks={note.backlinks} currentSlug={note.slug} />
-        </div>
-      )}
-
-      {/* Auto-format ad between backlinks and comments */}
-      <div className="mt-8">
-        <AdBanner slotId="5327787791" format="auto" />
-      </div>
-
-      {/* Native In-House Discussion / Comments Section */}
-      <div className="mt-8">
-        <CommentsSection noteSlug={note.slug} />
-      </div>
 
       {/* Stats footer */}
       <footer className="mt-10 flex flex-wrap items-center justify-between gap-3 rounded-lg border border-border/60 bg-surface/20 px-4 py-3 text-xs text-muted-foreground">

@@ -11,8 +11,7 @@
  * Visibility rules (frontmatter `visibility`):
  *   - public (default) → static JSON on the site, everyone can read
  *   - members          → static JSON on the site, gated to signed-in members
- *   - private          → NEVER exported to JSON/GitHub; DB only, admin-only
- *                        via /api/notes/[slug] with an admin session.
+ *   - private          → static JSON on the site, gated to signed-in admin
  */
 
 import {
@@ -270,7 +269,7 @@ async function publish() {
   const privateNotes = parsed.filter((p) => p.visibility === "private");
 
   console.log(
-    `  publishing ${publishable.length - privateNotes.length} to site, ${privateNotes.length} private (admin-only via DB)\n`
+    `  publishing ${publishable.length} note(s) to site (${privateNotes.length} private, admin-gated)\n`
   );
 
   // Build registry for wikilink resolution
@@ -488,20 +487,18 @@ async function publish() {
 }
 
 /**
- * Export public/members note data as JSON files to src/data/.
+ * Export public, members, and private note data as JSON files to src/data/.
  * This allows the site to run on serverless platforms (Vercel) without
  * a database — the data layer reads from these JSON files instead.
  *
- * Private notes are deliberately EXCLUDED: their content must never be
- * committed to GitHub or shipped in the static bundle. They live only in
- * the database and are served to the admin session via /api/notes/[slug].
+ * Private and members notes are gated via client and server auth checks.
  */
 async function exportJsonData(rendered: RenderedNote[]) {
   const dataDir = join(ROOT, "src", "data");
   await mkdir(dataDir, { recursive: true });
 
-  // Build the full notes array with all fields — private notes filtered out
-  const exportable = rendered.filter((r) => r.visibility !== "private");
+  // Build the full notes array with all fields — all visibilities included
+  const exportable = rendered;
   const notesData = exportable.map((r) => {
     const tags = Array.from(new Set([...r.tags, ...r.inlineTags])).sort();
     const now = new Date().toISOString();

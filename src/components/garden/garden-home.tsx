@@ -4,7 +4,7 @@
  */
 
 import Link from "next/link";
-import { Sprout, Search, Network, ArrowRight, BookOpen, BookMarked, Link2, Sparkles } from "lucide-react";
+import { Sprout, Search, Network, ArrowRight, BookOpen, BookMarked, Link2, Sparkles, Lock } from "lucide-react";
 import type { NoteSummary, TagInfo, GraphData, SeriesEntry } from "@/lib/notes";
 import { NoteCard } from "./note-card";
 import { TagCloud } from "./tag-cloud";
@@ -278,8 +278,18 @@ export function GardenHome({ data }: { data: HomeData }) {
                   className="group block rounded-md border border-border bg-surface/30 p-3 transition-colors hover:border-garden/40 hover:bg-surface/60"
                 >
                   <div className="flex items-center justify-between gap-2">
-                    <span className="truncate font-medium text-sm text-foreground group-hover:text-garden">
-                      {n.title}
+                    <span className="truncate font-medium text-sm text-foreground group-hover:text-garden flex items-center gap-1.5 min-w-0">
+                      <span className="truncate">{n.title}</span>
+                      {n.visibility === "private" && (
+                        <span title="Private note" className="flex items-center">
+                          <Lock className="h-3 w-3 text-amber-500/80 flex-shrink-0" />
+                        </span>
+                      )}
+                      {n.visibility === "members" && (
+                        <span title="Members only" className="flex items-center">
+                          <Lock className="h-3 w-3 text-emerald-500/80 flex-shrink-0" />
+                        </span>
+                      )}
                     </span>
                     {n.publishDate && (
                       <span className="flex-shrink-0 text-[10px] font-mono text-muted-foreground/60">

@@ -106,6 +106,7 @@ export interface ExplorerNode {
   path: string;
   type: "folder" | "file";
   slug?: string;
+  visibility?: "public" | "members" | "private";
   children?: ExplorerNode[];
 }
 
@@ -382,6 +383,7 @@ const PRECOMPUTED_EXPLORER: ExplorerNode[] = (() => {
           path: n.path,
           type: "file",
           slug: n.slug,
+          visibility: n.visibility || "public",
         });
       } else {
         let child = cursor.children!.find(
@@ -440,7 +442,7 @@ export async function listNotes(opts?: {
   sort?: "newest" | "oldest" | "alpha" | "updated";
 }): Promise<NoteSummary[]> {
   const { tag, folder, limit, sort = "newest" } = opts ?? {};
-  let filtered = STATIC_NOTES.filter((n) => n.visibility !== "private");
+  let filtered = STATIC_NOTES;
   if (folder) filtered = filtered.filter((n) => n.folder === folder);
   if (tag) filtered = filtered.filter((n) => n.tags.includes(tag));
   const sorted = [...filtered].sort((a, b) => {

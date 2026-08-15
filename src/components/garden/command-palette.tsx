@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState, useCallback, useMemo, useSyncExternalStore, useDeferredValue } from "react";
 import { useRouter } from "next/navigation";
-import { Search, FileText, Hash, CornerDownLeft, X, Zap } from "lucide-react";
+import { Search, FileText, Hash, CornerDownLeft, X, Zap, Lock } from "lucide-react";
 import { useUIStore } from "@/lib/ui-store";
 import FlexSearch from "flexsearch";
 
@@ -14,6 +14,7 @@ interface IndexEntry {
   path: string;
   wordCount: number;
   publishDate: string | null;
+  visibility?: "public" | "members" | "private";
 }
 
 interface SearchResult {
@@ -23,6 +24,7 @@ interface SearchResult {
   tags: string[];
   snippet: string;
   path: string;
+  visibility?: "public" | "members" | "private";
 }
 
 // Module-level cache: the Flexsearch index is built once per session.
@@ -183,6 +185,7 @@ export function CommandPalette() {
         tags: entry.tags,
         snippet: buildSnippet(q, entry),
         path: entry.path,
+        visibility: entry.visibility,
       });
     }
     return out;
@@ -370,6 +373,16 @@ export function CommandPalette() {
                   >
                     {r.title}
                   </span>
+                  {r.visibility === "private" && (
+                    <span title="Private note" className="flex items-center">
+                      <Lock className="h-3 w-3 text-amber-500/80 flex-shrink-0" />
+                    </span>
+                  )}
+                  {r.visibility === "members" && (
+                    <span title="Members only" className="flex items-center">
+                      <Lock className="h-3 w-3 text-emerald-500/80 flex-shrink-0" />
+                    </span>
+                  )}
                   {r.path && (
                     <span className="ml-auto text-[10px] font-mono text-muted-foreground/50 truncate">
                       {r.path}

@@ -20,9 +20,22 @@ export async function GET(
 ) {
   const { slug } = await params;
 
-  // 1. Static notes (public + members)
+  // 1. Static notes (public + members + private)
   const note = await getNote(slug);
   if (note) {
+    if (note.visibility === "private") {
+      const session = await getServerSession(authOptions);
+      if ((session?.user as any)?.role !== "admin") {
+        return NextResponse.json({
+          note: {
+            ...note,
+            content: "",
+            html: "",
+            raw: "",
+          },
+        });
+      }
+    }
     return NextResponse.json({ note });
   }
 

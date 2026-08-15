@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { FileText, Clock, Hash } from "lucide-react";
+import { FileText, Clock, Hash, Lock } from "lucide-react";
 import type { NoteSummary } from "@/lib/notes";
 
 function readingTime(words: number): string {
@@ -31,7 +31,21 @@ export function NoteCard({ note }: { note: NoteSummary }) {
         <h3 className="font-serif text-lg font-semibold text-heading leading-snug transition-colors group-hover:text-garden">
           {note.title}
         </h3>
-        <FileText className="h-4 w-4 flex-shrink-0 text-muted-foreground/30 transition-colors group-hover:text-garden" />
+        <div className="flex items-center gap-1.5 flex-shrink-0">
+          {note.visibility === "private" && (
+            <span className="inline-flex items-center gap-1 rounded bg-amber-500/10 px-1.5 py-0.5 text-[10px] font-medium text-amber-500 border border-amber-500/20" title="Private note">
+              <Lock className="h-2.5 w-2.5" />
+              Private
+            </span>
+          )}
+          {note.visibility === "members" && (
+            <span className="inline-flex items-center gap-1 rounded bg-emerald-500/10 px-1.5 py-0.5 text-[10px] font-medium text-emerald-500 border border-emerald-500/20" title="Members only">
+              <Lock className="h-2.5 w-2.5" />
+              Members
+            </span>
+          )}
+          <FileText className="h-4 w-4 text-muted-foreground/30 transition-colors group-hover:text-garden" />
+        </div>
       </div>
       {note.description && (
         <p className="mt-2 text-sm text-muted-foreground line-clamp-2">

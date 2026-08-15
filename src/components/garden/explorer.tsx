@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useSyncExternalStore } from "react";
-import { ChevronRight, FileText, Folder, FolderOpen } from "lucide-react";
+import { ChevronRight, FileText, Folder, FolderOpen, Lock } from "lucide-react";
 import type { ExplorerNode } from "@/lib/notes";
 
 // --- Collapsed-folders store backed by localStorage, hydration-safe ---
@@ -91,6 +91,16 @@ function TreeNode({
           }`}
         />
         <span className="truncate">{node.name}</span>
+        {node.visibility === "private" && (
+          <span title="Private note" className="ml-auto flex items-center">
+            <Lock className="h-3 w-3 flex-shrink-0 text-amber-500/80" />
+          </span>
+        )}
+        {node.visibility === "members" && (
+          <span title="Members only" className="ml-auto flex items-center">
+            <Lock className="h-3 w-3 flex-shrink-0 text-emerald-500/80" />
+          </span>
+        )}
       </Link>
     );
   }

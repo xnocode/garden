@@ -19,6 +19,7 @@ export async function GET() {
       path: n.path,
       wordCount: n.wordCount,
       publishDate: n.publishDate,
+      visibility: n.visibility,
     })),
   });
 }

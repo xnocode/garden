@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Network, Hash, FileX, Search as SearchIcon, Sprout, Terminal, Code2, BookMarked, BookOpen } from "lucide-react";
+import { Network, Hash, FileX, Search as SearchIcon, Sprout, Terminal, Code2, BookMarked, BookOpen, Lock } from "lucide-react";
 import type { NoteSummary, TagInfo, GraphData, SeriesEntry } from "@/lib/notes";
 import { NoteCard } from "./note-card";
 import { GraphPageClient } from "./graph-page-client";
@@ -76,6 +76,18 @@ export function IndexView({ notes }: { notes: NoteSummary[] }) {
                       )}
                     </span>
                     <div className="flex flex-shrink-0 items-center gap-2">
+                      {n.visibility === "private" && (
+                        <span className="inline-flex items-center gap-1 rounded bg-amber-500/10 px-1.5 py-0.5 text-[10px] font-medium text-amber-500 border border-amber-500/20">
+                          <Lock className="h-2.5 w-2.5" />
+                          Private
+                        </span>
+                      )}
+                      {n.visibility === "members" && (
+                        <span className="inline-flex items-center gap-1 rounded bg-emerald-500/10 px-1.5 py-0.5 text-[10px] font-medium text-emerald-500 border border-emerald-500/20">
+                          <Lock className="h-2.5 w-2.5" />
+                          Members
+                        </span>
+                      )}
                       {n.tags.slice(0, 2).map((t) => (
                         <span
                           key={t}
