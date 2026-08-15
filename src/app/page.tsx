@@ -1,167 +1,88 @@
 import {
   getExplorer,
-  getNote,
   getGraph,
   getTags,
   getStats,
   getOnThisDay,
   listNotes,
-  searchNotes,
-  type NoteSummary,
 } from "@/lib/notes";
 import { SiteHeader } from "@/components/garden/site-header";
 import { SiteFooter } from "@/components/garden/site-footer";
-import { Explorer } from "@/components/garden/explorer";
-import { RecentNotes } from "@/components/garden/recent-notes";
 import { Sidebar } from "@/components/garden/sidebar";
 import { MobileSidebar } from "@/components/garden/mobile-sidebar";
 import { CommandPalette } from "@/components/garden/command-palette";
 import { ReadingProgress } from "@/components/garden/reading-progress";
 import { ShortcutsHelp } from "@/components/garden/shortcuts-help";
-import { NoteView } from "@/components/garden/note-view";
-import { GardenHome } from "@/components/garden/garden-home";
 import { getTotalVisitors } from "@/lib/analytics";
-import {
-  IndexView,
-  TagsView,
-  TagView,
-  GraphPage,
-  SearchView,
-  ColophonView,
-  NotFoundView,
-} from "@/components/garden/views";
-import { TaskwarriorView } from "@/components/garden/taskwarrior-view";
-import { ChangelogView } from "@/components/garden/changelog-view";
 import { getWritingStats } from "@/lib/writing-stats";
-import { WritingRhythmView } from "@/components/garden/writing-rhythm-view";
+import { GardenClientRouter } from "@/components/garden/garden-client-router";
+import { Suspense } from "react";
+import type { NoteDetail } from "@/lib/notes";
+import notesData from "@/data/notes.json";
 
-export const dynamic = "force-dynamic";
+// Build time: load all data once. No dynamic rendering on every click.
+// All navigation happens purely on the client side — zero server round trips.
+export const dynamic = "force-static";
+export const revalidate = false;
 
-interface PageProps {
-  searchParams: Promise<Record<string, string | undefined>>;
-}
-
-export default async function Page({ searchParams }: PageProps) {
-  const sp = await searchParams;
-  const p = sp.p;
-  const tag = sp.tag;
-  const view = sp.view;
-  const q = sp.q;
-
-  // Always-needed data (parallel)
-  const [explorer, allNotes, recentNotes] = await Promise.all([
-    getExplorer(),
-    listNotes(),
-    listNotes({ sort: "updated", limit: 6 }),
-  ]);
-  const noteCount = allNotes.length;
-
-  let content: React.ReactNode;
-  let showExplorer = true;
-  let mainWidthClass = "max-w-[1600px]";
-
-  if (p) {
-    const note = await getNote(p);
-    content = note ? (
-      <NoteView note={note} />
-    ) : (
-      <NotFoundView slug={p} />
-    );
-    mainWidthClass = "max-w-5xl";
-  } else if (tag) {
-    const notes = await listNotes({ tag });
-    content = <TagView tag={tag} notes={notes} />;
-    mainWidthClass = "max-w-[1600px]";
-  } else if (view === "index") {
-    content = <IndexView notes={allNotes} />;
-    mainWidthClass = "max-w-5xl";
-  } else if (view === "graph") {
-    const graph = await getGraph();
-    content = <GraphPage graph={graph} />;
-    showExplorer = false;
-    mainWidthClass = "max-w-[1600px]";
-  } else if (view === "tags") {
-    const tags = await getTags();
-    content = <TagsView tags={tags} />;
-    mainWidthClass = "max-w-4xl";
-  } else if (view === "colophon") {
-    const stats = await getStats();
-    content = <ColophonView noteCount={noteCount} stats={stats} />;
-    mainWidthClass = "max-w-3xl";
-  } else if (view === "tasks") {
-    const fs = await import("fs/promises");
-    const path = await import("path");
-    let taskData;
-    try {
-      const raw = await fs.readFile(
-        path.join(process.cwd(), "src/data/tasks.json"),
-        "utf8"
-      );
-      taskData = JSON.parse(raw);
-    } catch {
-      taskData = {
-        exportedAt: new Date().toISOString(),
-        stats: { total: 0, pending: 0, completed: 0 },
-        tasks: [],
-      };
-    }
-    const writingStats = await getWritingStats();
-    content = <TaskwarriorView data={taskData} writingStats={writingStats} />;
-    mainWidthClass = "max-w-4xl";
-  } else if (view === "changelog") {
-    const fs = await import("fs/promises");
-    const path = await import("path");
-    let entries = [];
-    try {
-      const raw = await fs.readFile(
-        path.join(process.cwd(), "src/data/changelog.json"),
-        "utf8"
-      );
-      entries = JSON.parse(raw);
-    } catch {
-      entries = [];
-    }
-    content = <ChangelogView entries={entries} />;
-    mainWidthClass = "max-w-4xl";
-  } else if (view === "rhythm") {
-    const stats = await getWritingStats();
-    content = <WritingRhythmView stats={stats} />;
-    mainWidthClass = "max-w-4xl";
-  } else if (q) {
-    const results = await searchNotes(q);
-    content = <SearchView q={q} results={results} />;
-    mainWidthClass = "max-w-3xl";
-  } else {
-    // Home
-    const [recentRaw, tags, graph, stats, onThisDay, totalVisitors, writingStats] = await Promise.all([
-      listNotes({ sort: "updated", limit: 6 }),
-      getTags(),
+export default async function Page() {
+  // Load all data in parallel at build time
+  const [notes, explorer, graph, tags, stats, onThisDay, writingStats, totalVisitors] =
+    await Promise.all([
+      listNotes(),
+      getExplorer(),
       getGraph(),
+      getTags(),
       getStats(),
       getOnThisDay(),
-      getTotalVisitors(),
       getWritingStats(),
+      getTotalVisitors(),
     ]);
-    // Featured: a curated mix — most recent by publish date + a couple reference
-    const featured = await listNotes({ sort: "newest", limit: 6 });
-    content = (
-      <GardenHome
-        data={{
-          recent: recentRaw,
-          featured,
-          tags,
-          graph,
-          onThisDay,
-          writingStats,
-          stats: {
-            ...stats,
-            totalVisitors,
-          },
-        }}
-      />
-    );
-    mainWidthClass = "max-w-[1600px]";
-  }
+
+  // Pre-build a slug→detail map for instant O(1) client-side lookups
+  // We import the raw notes data and build details client-side from notes.json
+  const noteDetails: Record<string, NoteDetail> = {};
+  
+  // Build the note details index from the precomputed data
+  // We do this by importing all details from lib/notes precomputed map
+  const { getNote } = await import("@/lib/notes");
+  await Promise.all(
+    notes.map(async (n) => {
+      const detail = await getNote(n.slug);
+      if (detail) noteDetails[n.slug] = detail;
+    })
+  );
+
+  // Load static JSON data files
+  let taskData: any = { exportedAt: new Date().toISOString(), stats: { total: 0, pending: 0, completed: 0 }, tasks: [] };
+  let changelogEntries: any[] = [];
+  try {
+    const fs = await import("fs/promises");
+    const path = await import("path");
+    const [taskRaw, changelogRaw] = await Promise.all([
+      fs.readFile(path.join(process.cwd(), "src/data/tasks.json"), "utf8").catch(() => "null"),
+      fs.readFile(path.join(process.cwd(), "src/data/changelog.json"), "utf8").catch(() => "[]"),
+    ]);
+    taskData = JSON.parse(taskRaw) ?? taskData;
+    changelogEntries = JSON.parse(changelogRaw) ?? [];
+  } catch { /* use defaults */ }
+
+  const recentNotes = [...notes]
+    .sort((a, b) => b.updatedAt.localeCompare(a.updatedAt))
+    .slice(0, 6);
+
+  const appData = {
+    notes,
+    noteDetails,
+    graph,
+    tags,
+    explorer,
+    stats: { ...stats, totalVisitors },
+    onThisDay,
+    taskData,
+    changelogEntries,
+    writingStats,
+  };
 
   return (
     <div className="garden-ambience relative flex min-h-screen flex-col bg-background">
@@ -170,21 +91,21 @@ export default async function Page({ searchParams }: PageProps) {
       <MobileSidebar
         tree={explorer}
         recentNotes={recentNotes}
-        showExplorer={showExplorer}
+        showExplorer={true}
       />
       <div className="flex flex-1">
-        {showExplorer && (
-          <aside className="sticky top-14 hidden h-[calc(100vh-3.5rem)] w-60 flex-shrink-0 border-r border-sidebar-border bg-sidebar/40 lg:block">
-            <Sidebar tree={explorer} recentNotes={recentNotes} />
-          </aside>
-        )}
-        <main className={`min-w-0 flex-1`}>
-          <div className={`mx-auto ${mainWidthClass} px-4 py-8 sm:px-6 lg:py-10`}>
-            {content}
+        <aside className="sticky top-14 hidden h-[calc(100vh-3.5rem)] w-60 flex-shrink-0 border-r border-sidebar-border bg-sidebar/40 lg:block">
+          <Sidebar tree={explorer} recentNotes={recentNotes} />
+        </aside>
+        <main className="min-w-0 flex-1">
+          <div className="mx-auto px-4 py-8 sm:px-6 lg:py-10">
+            <Suspense>
+              <GardenClientRouter data={appData} />
+            </Suspense>
           </div>
         </main>
       </div>
-      <SiteFooter noteCount={noteCount} />
+      <SiteFooter noteCount={notes.length} />
       <CommandPalette />
       <ShortcutsHelp />
     </div>
