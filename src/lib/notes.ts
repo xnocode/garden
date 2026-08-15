@@ -286,95 +286,13 @@ function buildNoteDetail(n: NoteRecord, allNotes: NoteRecord[]): NoteDetail {
     next,
   };
 }
-
-// --- Queries ---
-
-export async function listNotes(opts?: {
-  tag?: string;
-  folder?: string;
-  limit?: number;
-  sort?: "newest" | "oldest" | "alpha" | "updated";
-}): Promise<NoteSummary[]> {
-  const { tag, folder, limit, sort = "newest" } = opts ?? {};
-  // Fast in-memory summaries
-  const allNotes = await getSummaries();
-  // Exclude private or draft notes from public view
-  let filtered = allNotes.filter((n) => n.visibility !== "private" && !n.draft);
-  if (folder) filtered = filtered.filter((n) => n.folder === folder);
-  if (tag) filtered = filtered.filter((n) => n.tags.includes(tag));
-  const sorted = [...filtered].sort((a, b) => {
-    if (sort === "alpha") return a.title.localeCompare(b.title);
-    if (sort === "oldest")
-      return (
-        (a.publishDate ?? a.createdAt).localeCompare(b.publishDate ?? b.createdAt)
-      );
-    if (sort === "updated") return b.updatedAt.localeCompare(a.updatedAt);
-    // default newest
-    return (b.publishDate ?? b.createdAt).localeCompare(
-      a.publishDate ?? a.createdAt
-    );
-  });
-  const result = sorted.map(toSummary);
-  return limit ? result.slice(0, limit) : result;
+// Precomputed in-memory structures for instant 0ms execution
+const PRECOMPUTED_NOTE_DETAILS = new Map<string, NoteDetail>();
+for (const n of STATIC_NOTES) {
+  PRECOMPUTED_NOTE_DETAILS.set(n.slug, buildNoteDetail(n, STATIC_NOTES));
 }
 
-export async function getNote(slug: string): Promise<NoteDetail | null> {
-  // 1. Instant check from bundled static notes (0ms response time!)
-  const staticNote = STATIC_MAP.get(slug);
-  if (staticNote) {
-    return buildNoteDetail(staticNote, STATIC_NOTES);
-  }
-
-  // 2. If not found in static notes, check dynamic notes in Neon DB
-  try {
-    const row = await db.note.findUnique({
-      where: { slug },
-    });
-    if (row) {
-      const n = dbRowToRecord(row);
-      return buildNoteDetail(n, STATIC_NOTES);
-    }
-  } catch {
-    // DB error – fallback to filesystem
-  }
-  // Dynamic filesystem fallback for notes that exist only as markdown files
-  try {
-    const contentDir = path.join(process.cwd(), "content");
-    const filePath = path.join(contentDir, `${slug}.md`);
-    if (fs.existsSync(filePath)) {
-      const raw = fs.readFileSync(filePath, "utf-8");
-      const title = slug.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
-      const html = `<div class="prose max-w-none dark:prose-invert"><h1>${title}</h1><div class="whitespace-pre-wrap">${raw.replace(/</g, "&lt;").replace(/>/g, "&gt;")}</div></div>`;
-      return {
-        slug,
-        title,
-        description: raw.slice(0, 120),
-        author: null,
-        tags: [],
-        aliases: [],
-        wordCount: raw.split(/\s+/).length,
-        publishDate: new Date().toISOString(),
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-        path: `${slug}.md`,
-        folder: null,
-        content: raw,
-        html,
-        links: [],
-        backlinks: [],
-        related: [],
-        prev: null,
-        next: null,
-      };
-    }
-  } catch {
-    // ignore errors
-  }
-  return null;
-}
-
-
-export async function getGraph(): Promise<GraphData> {
+const PRECOMPUTED_GRAPH: GraphData = (() => {
   const nodes: GraphNode[] = NOTES.map((n) => ({
     id: n.slug,
     title: n.title,
@@ -394,9 +312,9 @@ export async function getGraph(): Promise<GraphData> {
     }
   }
   return { nodes, edges };
-}
+})();
 
-export async function getTags(): Promise<TagInfo[]> {
+const PRECOMPUTED_TAGS: TagInfo[] = (() => {
   const counts = new Map<string, number>();
   for (const n of NOTES) {
     for (const t of n.tags) {
@@ -411,47 +329,9 @@ export async function getTags(): Promise<TagInfo[]> {
   return Array.from(counts.entries())
     .map(([tag, count]) => ({ tag, count }))
     .sort((a, b) => b.count - a.count || a.tag.localeCompare(b.tag));
-}
+})();
 
-export async function searchNotes(
-  query: string
-): Promise<(NoteSummary & { snippet: string })[]> {
-  const q = query.trim().toLowerCase();
-  if (!q) return [];
-  const results: (NoteSummary & { snippet: string })[] = [];
-  for (const n of NOTES) {
-    const titleLower = n.title.toLowerCase();
-    const descLower = (n.description ?? "").toLowerCase();
-    const contentLower = n.content.toLowerCase();
-    const inTitle = titleLower.includes(q);
-    const inDesc = descLower.includes(q);
-    const inContent = contentLower.includes(q);
-    const inTags = n.tags.some((t) => t.toLowerCase().includes(q));
-    if (!inTitle && !inDesc && !inContent && !inTags) continue;
-    let snippet = "";
-    const idx = contentLower.indexOf(q);
-    if (idx !== -1) {
-      const start = Math.max(0, idx - 40);
-      const end = Math.min(n.content.length, idx + q.length + 80);
-      snippet =
-        (start > 0 ? "…" : "") +
-        n.content.slice(start, end).replace(/\s+/g, " ").trim() +
-        (end < n.content.length ? "…" : "");
-    } else if (n.description) {
-      snippet = n.description;
-    }
-    results.push({ ...toSummary(n), snippet });
-  }
-  results.sort((a, b) => {
-    const at = a.title.toLowerCase().includes(q) ? 0 : 1;
-    const bt = b.title.toLowerCase().includes(q) ? 0 : 1;
-    if (at !== bt) return at - bt;
-    return b.updatedAt > a.updatedAt ? 1 : -1;
-  });
-  return results;
-}
-
-export async function getExplorer(): Promise<ExplorerNode[]> {
+const PRECOMPUTED_EXPLORER: ExplorerNode[] = (() => {
   const sorted = [...NOTES].sort((a, b) => {
     if (a.folder !== b.folder) return (a.folder ?? "").localeCompare(b.folder ?? "");
     return a.title.localeCompare(b.title);
@@ -501,15 +381,9 @@ export async function getExplorer(): Promise<ExplorerNode[]> {
   };
   sortTree(root);
   return root.children!;
-}
+})();
 
-export async function getStats(): Promise<{
-  totalNotes: number;
-  totalWords: number;
-  totalLinks: number;
-  totalTags: number;
-  lastUpdated: string | null;
-}> {
+const PRECOMPUTED_STATS = (() => {
   const tagSet = new Set<string>();
   let totalWords = 0;
   let totalLinks = 0;
@@ -527,6 +401,118 @@ export async function getStats(): Promise<{
     totalTags: tagSet.size,
     lastUpdated,
   };
+})();
+
+// --- Queries ---
+
+export async function listNotes(opts?: {
+  tag?: string;
+  folder?: string;
+  limit?: number;
+  sort?: "newest" | "oldest" | "alpha" | "updated";
+}): Promise<NoteSummary[]> {
+  const { tag, folder, limit, sort = "newest" } = opts ?? {};
+  let filtered = STATIC_NOTES.filter((n) => n.visibility !== "private" && !n.draft);
+  if (folder) filtered = filtered.filter((n) => n.folder === folder);
+  if (tag) filtered = filtered.filter((n) => n.tags.includes(tag));
+  const sorted = [...filtered].sort((a, b) => {
+    if (sort === "alpha") return a.title.localeCompare(b.title);
+    if (sort === "oldest")
+      return (
+        (a.publishDate ?? a.createdAt).localeCompare(b.publishDate ?? b.createdAt)
+      );
+    if (sort === "updated") return b.updatedAt.localeCompare(a.updatedAt);
+    // default newest
+    return (b.publishDate ?? b.createdAt).localeCompare(
+      a.publishDate ?? a.createdAt
+    );
+  });
+  const result = sorted.map(toSummary);
+  return limit ? result.slice(0, limit) : result;
+}
+
+export async function getNote(slug: string): Promise<NoteDetail | null> {
+  // 1. Instant O(1) hash map lookup from precomputed details (<0.01ms!)
+  const precomputed = PRECOMPUTED_NOTE_DETAILS.get(slug);
+  if (precomputed) {
+    return precomputed;
+  }
+
+  // 2. Dynamic DB note fallback (for notes published live from /admin)
+  try {
+    const row = await db.note.findUnique({
+      where: { slug },
+    });
+    if (row) {
+      const n = dbRowToRecord(row);
+      const detail = buildNoteDetail(n, STATIC_NOTES);
+      PRECOMPUTED_NOTE_DETAILS.set(slug, detail);
+      return detail;
+    }
+  } catch {
+    // ignore
+  }
+  return null;
+}
+
+export async function getGraph(): Promise<GraphData> {
+  return PRECOMPUTED_GRAPH;
+}
+
+export async function getTags(): Promise<TagInfo[]> {
+  return PRECOMPUTED_TAGS;
+}
+
+export async function getExplorer(): Promise<ExplorerNode[]> {
+  return PRECOMPUTED_EXPLORER;
+}
+
+export async function getStats(): Promise<{
+  totalNotes: number;
+  totalWords: number;
+  totalLinks: number;
+  totalTags: number;
+  lastUpdated: string | null;
+}> {
+  return PRECOMPUTED_STATS;
+}
+
+export async function searchNotes(
+  query: string
+): Promise<(NoteSummary & { snippet: string })[]> {
+  const q = query.trim().toLowerCase();
+  if (!q) return [];
+  const results: (NoteSummary & { snippet: string })[] = [];
+  for (const n of NOTES) {
+    const titleLower = n.title.toLowerCase();
+    const descLower = (n.description ?? "").toLowerCase();
+    const contentLower = n.content.toLowerCase();
+    const inTitle = titleLower.includes(q);
+    const inDesc = descLower.includes(q);
+    const inContent = contentLower.includes(q);
+    const inTags = n.tags.some((t) => t.toLowerCase().includes(q));
+    if (!inTitle && !inDesc && !inContent && !inTags) continue;
+    let snippet = "";
+    const idx = contentLower.indexOf(q);
+    if (idx !== -1) {
+      const start = Math.max(0, idx - 40);
+      const end = Math.min(n.content.length, idx + q.length + 80);
+      snippet =
+        (start > 0 ? "…" : "") +
+        n.content.slice(start, end).replace(/\s+/g, " ").trim() +
+        (end < n.content.length ? "…" : "");
+    } else if (n.description) {
+      snippet = n.description;
+    }
+    results.push({ ...toSummary(n), snippet });
+  }
+  results.sort((a, b) => {
+    const at = a.title.toLowerCase().includes(q) ? 0 : 1;
+    const bt = b.title.toLowerCase().includes(q) ? 0 : 1;
+    if (at !== bt) return at - bt;
+    return b.updatedAt > a.updatedAt ? 1 : -1;
+  });
+  return results;
 }
 
 export async function getOnThisDay(): Promise<NoteSummary[]> {
