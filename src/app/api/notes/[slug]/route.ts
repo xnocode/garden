@@ -59,6 +59,7 @@ export async function GET(
       related: [],
       prev: null,
       next: null,
+      series: null,
     };
 
     return NextResponse.json({ note: detail });

@@ -1,6 +1,6 @@
 import Link from "next/link";
-import { Network, Hash, FileX, Search as SearchIcon, Sprout, Terminal, Code2, BookMarked } from "lucide-react";
-import type { NoteSummary, TagInfo, GraphData } from "@/lib/notes";
+import { Network, Hash, FileX, Search as SearchIcon, Sprout, Terminal, Code2, BookMarked, BookOpen } from "lucide-react";
+import type { NoteSummary, TagInfo, GraphData, SeriesEntry } from "@/lib/notes";
 import { NoteCard } from "./note-card";
 import { GraphPageClient } from "./graph-page-client";
 import { formatDate } from "./note-card";
@@ -191,6 +191,128 @@ export function TagView({ tag, notes }: { tag: string; notes: NoteSummary[] }) {
           {notes.map((n) => (
             <NoteCard key={n.slug} note={n} />
           ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ----------------------------------------------------------------------------
+// Series views — collections of ordered notes (reading paths)
+// ----------------------------------------------------------------------------
+export function SeriesListView({ series }: { series: SeriesEntry[] }) {
+  return (
+    <div className="garden-fade-in mx-auto max-w-4xl">
+      <header className="mb-8 border-b border-border pb-6">
+        <h1 className="flex items-center gap-3 font-serif text-3xl font-semibold text-heading">
+          <BookOpen className="h-7 w-7 text-garden" />
+          Collections
+        </h1>
+        <p className="mt-2 text-muted-foreground">
+          Ordered reading paths through the garden — start at part 1 and follow
+          the trail.
+        </p>
+      </header>
+      {series.length === 0 ? (
+        <p className="text-muted-foreground">No collections yet.</p>
+      ) : (
+        <div className="space-y-4">
+          {series.map((s) => (
+            <Link
+              key={s.name}
+              href={`/?view=series&name=${encodeURIComponent(s.name)}`}
+              className="group flex items-center justify-between gap-4 rounded-lg border border-border bg-surface/30 p-4 transition-colors hover:border-garden/40"
+            >
+              <span className="min-w-0">
+                <span className="block truncate font-medium text-foreground group-hover:text-garden">
+                  {s.name}
+                </span>
+                <span className="mt-0.5 block truncate text-xs text-muted-foreground">
+                  {s.notes[0]?.title}
+                  {s.notes.length > 1 ? ` → … → ${s.notes[s.notes.length - 1]?.title}` : ""}
+                </span>
+              </span>
+              <span className="flex-shrink-0 font-mono text-xs text-muted-foreground">
+                {s.notes.length} {s.notes.length === 1 ? "part" : "parts"}
+              </span>
+            </Link>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+export function SeriesView({
+  name,
+  notes,
+  series,
+}: {
+  name: string;
+  notes: NoteSummary[];
+  series: SeriesEntry[];
+}) {
+  return (
+    <div className="garden-fade-in mx-auto max-w-3xl">
+      <header className="mb-8 border-b border-border pb-6">
+        <nav className="mb-2 text-sm text-muted-foreground">
+          <Link href="/?view=series" className="hover:text-garden">
+            ← all collections
+          </Link>
+        </nav>
+        <h1 className="flex items-center gap-3 font-serif text-3xl font-semibold text-heading">
+          <BookOpen className="h-7 w-7 text-garden" />
+          {name}
+        </h1>
+        <p className="mt-2 text-muted-foreground">
+          A {notes.length}-part reading path — in order, start to finish.
+        </p>
+      </header>
+      <ol className="space-y-2">
+        {notes.map((n, i) => (
+          <li key={n.slug}>
+            <Link
+              href={`/?p=${encodeURIComponent(n.slug)}`}
+              className="group flex items-baseline gap-4 rounded-lg border border-border bg-surface/30 px-4 py-3 transition-colors hover:border-garden/40"
+            >
+              <span className="w-8 flex-shrink-0 text-right font-mono text-sm text-garden/70 group-hover:text-garden">
+                {String(i + 1).padStart(2, "0")}
+              </span>
+              <span className="min-w-0 flex-1">
+                <span className="block truncate font-medium text-foreground group-hover:text-garden">
+                  {n.title}
+                </span>
+                {n.description && (
+                  <span className="mt-0.5 block truncate text-xs text-muted-foreground">
+                    {n.description}
+                  </span>
+                )}
+              </span>
+              {n.publishDate && (
+                <span className="hidden flex-shrink-0 font-mono text-xs text-muted-foreground sm:inline">
+                  {formatDate(n.publishDate)}
+                </span>
+              )}
+            </Link>
+          </li>
+        ))}
+      </ol>
+      {series.length > 1 && (
+        <div className="mt-8 border-t border-border pt-4 text-sm text-muted-foreground">
+          More collections:{" "}
+          {series
+            .filter((s) => s.name !== name)
+            .map((s, i, arr) => (
+              <span key={s.name}>
+                <Link
+                  href={`/?view=series&name=${encodeURIComponent(s.name)}`}
+                  className="hover:text-garden"
+                >
+                  {s.name}
+                </Link>
+                {i < arr.length - 1 && ", "}
+              </span>
+            ))}
         </div>
       )}
     </div>

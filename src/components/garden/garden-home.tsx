@@ -4,8 +4,8 @@
  */
 
 import Link from "next/link";
-import { Sprout, Search, Network, ArrowRight, BookOpen, Link2, Sparkles } from "lucide-react";
-import type { NoteSummary, TagInfo, GraphData } from "@/lib/notes";
+import { Sprout, Search, Network, ArrowRight, BookOpen, BookMarked, Link2, Sparkles } from "lucide-react";
+import type { NoteSummary, TagInfo, GraphData, SeriesEntry } from "@/lib/notes";
 import { NoteCard } from "./note-card";
 import { TagCloud } from "./tag-cloud";
 import { GraphViewWrapper } from "./graph-view-wrapper";
@@ -19,6 +19,7 @@ interface HomeData {
   recent: NoteSummary[];
   featured: NoteSummary[];
   tags: TagInfo[];
+  series: SeriesEntry[];
   graph: GraphData;
   onThisDay: NoteSummary[];
   writingStats?: WritingStatsSummary;
@@ -196,6 +197,47 @@ export function GardenHome({ data }: { data: HomeData }) {
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {featured.map((n) => (
                 <NoteCard key={n.slug} note={n} />
+              ))}
+            </div>
+          </section>
+        )}
+
+        {/* Collections (ordered reading paths) */}
+        {data.series.length > 0 && (
+          <section className="mb-14">
+            <div className="mb-5 flex items-center justify-between">
+              <h2 className="flex items-center gap-2 font-serif text-xl font-semibold text-heading">
+                <BookMarked className="h-5 w-5 text-garden" />
+                Collections
+              </h2>
+              <Link
+                href="/?view=series"
+                className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-garden"
+              >
+                all collections <ArrowRight className="h-3.5 w-3.5" />
+              </Link>
+            </div>
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {data.series.slice(0, 3).map((s) => (
+                <Link
+                  key={s.name}
+                  href={`/?view=series&name=${encodeURIComponent(s.name)}`}
+                  className="group rounded-lg border border-border bg-surface/30 p-4 transition-colors hover:border-garden/40 hover:bg-surface/60"
+                >
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="truncate font-medium text-sm text-foreground group-hover:text-garden">
+                      {s.name}
+                    </span>
+                    <span className="flex-shrink-0 font-mono text-[10px] text-muted-foreground/60">
+                      {s.notes.length} parts
+                    </span>
+                  </div>
+                  {s.notes[0] && (
+                    <p className="mt-0.5 truncate text-xs text-muted-foreground">
+                      starts with {s.notes[0].title}
+                    </p>
+                  )}
+                </Link>
               ))}
             </div>
           </section>

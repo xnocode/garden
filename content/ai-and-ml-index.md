@@ -11,6 +11,8 @@ aliases:
 author: Ridoy
 visibility: public
 updatedAt: 2026-07-22
+series: "AI & ML"
+seriesOrder: 1
 ---
 ```contributionGraph
 title: AI & ML

@@ -2,6 +2,7 @@ import {
   getExplorer,
   getGraph,
   getTags,
+  getSeries,
   getStats,
   getOnThisDay,
   listNotes,
@@ -25,12 +26,13 @@ export const revalidate = false;
 
 export default async function Page() {
   // Load all data in parallel at build time
-  const [notes, explorer, graph, tags, stats, onThisDay, writingStats, totalVisitors] =
+  const [notes, explorer, graph, tags, series, stats, onThisDay, writingStats, totalVisitors] =
     await Promise.all([
       listNotes(),
       getExplorer(),
       getGraph(),
       getTags(),
+      getSeries(),
       getStats(),
       getOnThisDay(),
       getWritingStats(),
@@ -65,6 +67,7 @@ export default async function Page() {
     noteDetails,
     graph,
     tags,
+    series,
     explorer,
     stats: { ...stats, totalVisitors },
     onThisDay,

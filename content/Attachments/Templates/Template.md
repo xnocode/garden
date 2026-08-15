@@ -17,6 +17,26 @@ const files = app.vault.getMarkdownFiles()
 const lastFile = files.length > 0 ? files[0] : null;
 const prevName = lastFile ? lastFile.basename : "";
 
+// Series: default = series of the last created note (Enter to continue it).
+// Leave empty for a standalone note. seriesOrder auto-increments by scanning
+// the vault for the highest existing order in that series.
+const lastFm = lastFile ? app.metadataCache.getFileCache(lastFile)?.frontmatter : null;
+const lastSeries = (lastFm && typeof lastFm.series === "string" && lastFm.series.trim()) ? lastFm.series.trim() : "";
+const seriesName = await tp.system.prompt("Series (empty = standalone note)", lastSeries);
+
+let seriesOrder = "";
+if (seriesName && seriesName.trim()) {
+  let max = 0;
+  for (const f of app.vault.getMarkdownFiles()) {
+    if (f.path.includes("Templates")) continue;
+    const fm = app.metadataCache.getFileCache(f)?.frontmatter;
+    if (fm && fm.series === seriesName.trim() && typeof fm.seriesOrder === "number") {
+      max = Math.max(max, fm.seriesOrder);
+    }
+  }
+  seriesOrder = max + 1;
+}
+
 const words = cleanTitle ? cleanTitle.split(" ") : [];
 const keyword = words.length > 1 ? words.slice(1).join(" ").toLowerCase() : (!isUntitled ? rawTitle.toLowerCase() : "");
 -%>
@@ -30,6 +50,8 @@ updatedAt: <% tp.file.last_modified_date("YYYY-MM-DD") %>
 tags: []
 prev: <% prevName ? '"[[' + prevName + ']]"' : '""' %>
 next: ""
+series: "<% seriesName %>"
+seriesOrder: <% seriesOrder %>
 aliases:
   - "<% keyword %>"
 ---

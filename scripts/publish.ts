@@ -81,6 +81,8 @@ interface ParsedFile {
   raw: string;
   prevSlug?: string | null;
   nextSlug?: string | null;
+  series?: string | null;
+  seriesOrder?: number | null;
 }
 
 export interface RenderedNote extends ParsedFile {
@@ -179,6 +181,16 @@ async function parsePass(files: string[]): Promise<ParsedFile[]> {
       raw,
       prevSlug: typeof data.prev === "string" ? slugify(data.prev) : null,
       nextSlug: typeof data.next === "string" ? slugify(data.next) : null,
+      series:
+        typeof data.series === "string" && data.series.trim()
+          ? data.series.trim()
+          : null,
+      seriesOrder:
+        typeof data.seriesOrder === "number"
+          ? data.seriesOrder
+          : typeof data.seriesOrder === "string" && data.seriesOrder.trim() !== ""
+            ? Number(data.seriesOrder) || null
+            : null,
     });
   }
   return parsed;
@@ -510,6 +522,8 @@ async function exportJsonData(rendered: RenderedNote[]) {
       folder: dirname(r.path) === "." ? null : dirname(r.path),
       prevSlug: r.prevSlug ?? null,
       nextSlug: r.nextSlug ?? null,
+      series: r.series ?? null,
+      seriesOrder: r.seriesOrder ?? null,
     };
   });
 

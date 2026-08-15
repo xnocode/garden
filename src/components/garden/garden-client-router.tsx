@@ -8,6 +8,7 @@ import type {
   GraphData,
   TagInfo,
   ExplorerNode,
+  SeriesEntry,
 } from "@/lib/notes";
 import { NoteView } from "@/components/garden/note-view";
 import { PrivateNoteLoader } from "@/components/garden/private-note-loader";
@@ -19,6 +20,8 @@ import {
   GraphPage,
   SearchView,
   ColophonView,
+  SeriesListView,
+  SeriesView,
 } from "@/components/garden/views";
 import { TaskwarriorView } from "@/components/garden/taskwarrior-view";
 import { ChangelogView } from "@/components/garden/changelog-view";
@@ -31,6 +34,7 @@ export interface GardenAppData {
   noteDetails: Record<string, NoteDetail>;
   graph: GraphData;
   tags: TagInfo[];
+  series: SeriesEntry[];
   explorer: ExplorerNode[];
   stats: {
     totalNotes: number;
@@ -56,6 +60,7 @@ export function GardenClientRouter({ data }: Props) {
   const tag = searchParams.get("tag") ?? undefined;
   const view = searchParams.get("view") ?? undefined;
   const q = searchParams.get("q") ?? undefined;
+  const seriesName = searchParams.get("name") ?? undefined;
 
   // All search/filter operations run in-browser against the pre-loaded data
   const searchResults = useMemo(() => {
@@ -124,6 +129,20 @@ export function GardenClientRouter({ data }: Props) {
   } else if (view === "tags") {
     content = <TagsView tags={data.tags} />;
     mainWidthClass = "max-w-4xl";
+  } else if (view === "series") {
+    if (seriesName) {
+      const entry = data.series.find((s) => s.name === seriesName);
+      content = (
+        <SeriesView
+          name={seriesName}
+          notes={entry?.notes ?? []}
+          series={data.series}
+        />
+      );
+    } else {
+      content = <SeriesListView series={data.series} />;
+    }
+    mainWidthClass = "max-w-4xl";
   } else if (view === "colophon") {
     content = <ColophonView noteCount={data.stats.totalNotes} stats={data.stats} />;
     mainWidthClass = "max-w-3xl";
@@ -153,6 +172,7 @@ export function GardenClientRouter({ data }: Props) {
           recent,
           featured,
           tags: data.tags,
+          series: data.series,
           graph: data.graph,
           onThisDay: data.onThisDay,
           writingStats: data.writingStats,

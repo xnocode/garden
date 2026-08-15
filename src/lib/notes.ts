@@ -26,6 +26,10 @@ interface NoteRecord {
   prevSlug?: string | null;
   /** Optional frontmatter: slug of the next note (overrides date-based). */
   nextSlug?: string | null;
+  /** Optional frontmatter: series this note belongs to ("" = none). */
+  series?: string | null;
+  /** Optional frontmatter: position within the series (unset = date order). */
+  seriesOrder?: number | null;
 }
 
 export interface NoteSummary {
@@ -53,6 +57,17 @@ export interface BacklinkNote extends NoteSummary {
   context: string | null;
 }
 
+export interface SeriesInfo {
+  name: string;
+  part: number;
+  total: number;
+}
+
+export interface SeriesEntry {
+  name: string;
+  notes: NoteSummary[];
+}
+
 export interface NoteDetail extends NoteSummary {
   content: string;
   html: string;
@@ -61,6 +76,7 @@ export interface NoteDetail extends NoteSummary {
   related: RelatedNote[];
   prev: NoteSummary | null;
   next: NoteSummary | null;
+  series: SeriesInfo | null;
 }
 
 export interface GraphNode {
@@ -106,6 +122,32 @@ const STATIC_NOTES: NoteRecord[] = notesData as NoteRecord[];
    async function getSummaries(): Promise<NoteRecord[]> {
      return STATIC_NOTES;
    }
+
+// Series index: name → notes ordered by seriesOrder (unset/invalid → date order)
+const STATIC_SERIES: SeriesEntry[] = (() => {
+  const byName = new Map<string, NoteRecord[]>();
+  for (const n of STATIC_NOTES) {
+    if (!n.series) continue;
+    const list = byName.get(n.series) ?? [];
+    list.push(n);
+    byName.set(n.series, list);
+  }
+  return Array.from(byName.entries())
+    .map(([name, notes]) => ({
+      name,
+      notes: [...notes]
+        .sort((a, b) => {
+          const ao = typeof a.seriesOrder === "number" ? a.seriesOrder : Infinity;
+          const bo = typeof b.seriesOrder === "number" ? b.seriesOrder : Infinity;
+          if (ao !== bo) return ao - bo;
+          return (a.publishDate ?? a.createdAt).localeCompare(
+            b.publishDate ?? b.createdAt
+          );
+        })
+        .map(toSummary),
+    }))
+    .sort((a, b) => b.notes.length - a.notes.length || a.name.localeCompare(b.name));
+})();
 
 // --- Helpers ---
 
@@ -174,24 +216,41 @@ function buildNoteDetail(n: NoteRecord, allNotes: NoteRecord[]): NoteDetail {
     }))
     .sort((a, b) => b.updatedAt.localeCompare(a.updatedAt));
 
-  // Prev/next handling
+  // Prev/next handling.
+  // Priority: series nav (if the note belongs to a series) → manual
+  // frontmatter prev/next → publish-date neighbors. A series is a closed
+  // path: part 1 has no prev, the last part has no next, and manual
+  // prev/next are ignored on series notes.
   let prev: NoteSummary | null = null;
   let next: NoteSummary | null = null;
-  if (n.prevSlug) {
-    const prevNote = allNotes.find((x) => x.slug === n.prevSlug);
-    if (prevNote) prev = toSummary(prevNote);
+  let seriesInfo: SeriesInfo | null = null;
+  if (n.series) {
+    const siblings = STATIC_SERIES.find((s) => s.name === n.series);
+    const ordered = siblings?.notes ?? [];
+    const idx = ordered.findIndex((x) => x.slug === slug);
+    if (idx >= 0) {
+      prev = idx > 0 ? ordered[idx - 1] : null;
+      next = idx < ordered.length - 1 ? ordered[idx + 1] : null;
+      seriesInfo = { name: n.series, part: idx + 1, total: ordered.length };
+    }
   }
-  if (n.nextSlug) {
-    const nextNote = allNotes.find((x) => x.slug === n.nextSlug);
-    if (nextNote) next = toSummary(nextNote);
-  }
-  if (!prev && !next) {
-    const sorted = [...allNotes].sort((a, b) =>
-      (a.publishDate ?? a.createdAt).localeCompare(b.publishDate ?? b.createdAt)
-    );
-    const idx = sorted.findIndex((x) => x.slug === slug);
-    prev = idx > 0 ? toSummary(sorted[idx - 1]) : null;
-    next = idx >= 0 && idx < sorted.length - 1 ? toSummary(sorted[idx + 1]) : null;
+  if (!seriesInfo) {
+    if (n.prevSlug) {
+      const prevNote = allNotes.find((x) => x.slug === n.prevSlug);
+      if (prevNote) prev = toSummary(prevNote);
+    }
+    if (n.nextSlug) {
+      const nextNote = allNotes.find((x) => x.slug === n.nextSlug);
+      if (nextNote) next = toSummary(nextNote);
+    }
+    if (!prev && !next) {
+      const sorted = [...allNotes].sort((a, b) =>
+        (a.publishDate ?? a.createdAt).localeCompare(b.publishDate ?? b.createdAt)
+      );
+      const idx = sorted.findIndex((x) => x.slug === slug);
+      prev = idx > 0 ? toSummary(sorted[idx - 1]) : null;
+      next = idx >= 0 && idx < sorted.length - 1 ? toSummary(sorted[idx + 1]) : null;
+    }
   }
 
   // Related notes
@@ -252,6 +311,7 @@ function buildNoteDetail(n: NoteRecord, allNotes: NoteRecord[]): NoteDetail {
     related: related.slice(0, 6),
     prev,
     next,
+    series: seriesInfo,
   };
 }
 // Precomputed in-memory structures for instant 0ms execution
@@ -410,6 +470,10 @@ export async function getGraph(): Promise<GraphData> {
 
 export async function getTags(): Promise<TagInfo[]> {
   return PRECOMPUTED_TAGS;
+}
+
+export async function getSeries(): Promise<SeriesEntry[]> {
+  return STATIC_SERIES;
 }
 
 export async function getExplorer(): Promise<ExplorerNode[]> {

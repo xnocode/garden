@@ -23,6 +23,7 @@ import {
 import { AdBanner } from "../../ads/AdBanner";
 import type { NoteDetail } from "@/lib/notes";
 import { TableOfContents, extractToc } from "./table-of-contents";
+import { SeriesBox } from "./series-box";
 import { Backlinks } from "./backlinks";
 import { RelatedNotes } from "./related-notes";
 import { useRecordVisit } from "./reading-history";
@@ -526,6 +527,11 @@ export function NoteView({ note }: { note: NoteDetail }) {
           </button>
         </div>
       </header>
+
+      {/* Series banner (reading path) */}
+      {note.series && (
+        <SeriesBox series={note.series} prev={note.prev} next={note.next} />
+      )}
 
       {/* Content */}
       {isLocked ? (
