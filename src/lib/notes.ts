@@ -131,27 +131,59 @@ function dbRowToRecord(row: any): NoteRecord {
   };
 }
 
-/** Load all notes from DB, merged with static JSON as fallback. DB rows win over static. */
-async function loadAllNotes(): Promise<NoteRecord[]> {
-  try {
-    const rows = await db.note.findMany({
-      orderBy: { publishDate: "desc" },
-    });
-    if (rows.length === 0) return STATIC_NOTES;
-    const dbRecords = rows.map(dbRowToRecord);
-    // Merge: DB notes take priority, then add any static-only notes not in DB
-    const dbSlugs = new Set(dbRecords.map((n) => n.slug));
-    const staticOnly = STATIC_NOTES.filter((n) => !dbSlugs.has(n.slug));
-    return [...dbRecords, ...staticOnly];
-  } catch {
-    // If DB unavailable at build time, fall back to static
-    return STATIC_NOTES;
-  }
-}
+   // Load summaries only (no heavy content) for fast list operations
+   // This function is used by listNotes and other summary‑only queries.
+   // It selects only the fields needed for a NoteSummary.
+   async function loadSummaries(): Promise<NoteRecord[]> {
+     try {
+       const rows = await db.note.findMany({
+         select: {
+           slug: true,
+           title: true,
+           description: true,
+           author: true,
+           tags: true,
+           aliases: true,
+           wordCount: true,
+           visibility: true,
+           publishDate: true,
+           createdAt: true,
+           updatedAt: true,
+           path: true,
+           folder: true,
+           draft: true,
+         },
+         orderBy: { publishDate: "desc" },
+       });
+       // Convert raw DB rows to the same shape as NoteRecord (content related fields left empty)
+       return rows.map((r) => ({
+         ...r,
+         content: "",
+         html: "",
+         raw: "",
+         links: [],
+       } as unknown as NoteRecord));
+     } catch {
+       // If DB query fails, fallback to static JSON
+       return STATIC_NOTES;
+     }
+   }
 
-// For functions that need the full list synchronously (graph, stats, tags)
-// we keep using STATIC_NOTES as a fallback — these are updated on each deploy.
-const NOTES: NoteRecord[] = STATIC_NOTES;
+   // Simple in‑memory cache for summaries (30 seconds TTL)
+   let summaryCache: { data: NoteRecord[]; ts: number } | null = null;
+   async function getSummaries(): Promise<NoteRecord[]> {
+     const now = Date.now();
+     if (summaryCache && now - summaryCache.ts < 30_000) {
+       return summaryCache.data;
+     }
+     const data = await loadSummaries();
+     summaryCache = { data, ts: now };
+     return data;
+   }
+
+   // For functions that need the full list synchronously (graph, stats, tags)
+   // we keep using STATIC_NOTES as a fallback — these are updated on each deploy.
+   const NOTES: NoteRecord[] = STATIC_NOTES;
 
 // --- Helpers ---
 
@@ -215,9 +247,9 @@ export async function listNotes(opts?: {
   sort?: "newest" | "oldest" | "alpha" | "updated";
 }): Promise<NoteSummary[]> {
   const { tag, folder, limit, sort = "newest" } = opts ?? {};
-  // Load from DB (always fresh — includes web-published notes)
-  const allNotes = await loadAllNotes();
-  // Filter private notes from public listing
+  // Get fast summary list (cached for 30 s)
+  const allNotes = await getSummaries();
+  // Exclude private or draft notes from public view
   let filtered = allNotes.filter((n) => n.visibility !== "private" && !n.draft);
   if (folder) filtered = filtered.filter((n) => n.folder === folder);
   if (tag) filtered = filtered.filter((n) => n.tags.includes(tag));
@@ -228,6 +260,7 @@ export async function listNotes(opts?: {
         (a.publishDate ?? a.createdAt).localeCompare(b.publishDate ?? b.createdAt)
       );
     if (sort === "updated") return b.updatedAt.localeCompare(a.updatedAt);
+    // default newest
     return (b.publishDate ?? b.createdAt).localeCompare(
       a.publishDate ?? a.createdAt
     );
@@ -237,45 +270,144 @@ export async function listNotes(opts?: {
 }
 
 export async function getNote(slug: string): Promise<NoteDetail | null> {
-  // Load from DB first (captures web-published notes in real time)
-  const allNotes = await loadAllNotes();
-  let n = allNotes.find((x) => x.slug === slug);
-  if (!n) {
-    // Dynamic filesystem fallback for freshly uploaded Telegram notes
-    try {
-      const contentDir = path.join(process.cwd(), "content");
-      const filePath = path.join(contentDir, `${slug}.md`);
-      if (fs.existsSync(filePath)) {
-        const raw = fs.readFileSync(filePath, "utf-8");
-        const title = slug.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
-        const html = `<div class="prose max-w-none dark:prose-invert"><h1>${title}</h1><div class="whitespace-pre-wrap">${raw.replace(/</g, "&lt;").replace(/>/g, "&gt;")}</div></div>`;
-        return {
-          slug,
-          title,
-          description: raw.slice(0, 120),
-          author: null,
-          tags: [],
-          aliases: [],
-          wordCount: raw.split(/\s+/).length,
-          publishDate: new Date().toISOString(),
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString(),
-          path: `${slug}.md`,
-          folder: null,
-          content: raw,
-          html,
-          links: [],
-          backlinks: [],
-          related: [],
-          prev: null,
-          next: null,
-        };
+  // Try to fetch the full note directly from the DB (includes content, html, links, etc.)
+  try {
+    const row = await db.note.findUnique({
+      where: { slug },
+      // Grab everything we need for the detailed view
+    });
+    if (row) {
+      // Convert DB row to our internal shape
+      const n = dbRowToRecord(row);
+      const summary = toSummary(n);
+      const links = n.links;
+
+      // Backlinks – use static notes for quick lookup (they contain content for context)
+      const backlinks: BacklinkNote[] = NOTES.filter(
+        (b) => b.slug !== slug && b.links.some((l) => l.slug === slug)
+      ).map((b) => ({
+        ...toSummary(b),
+        context: extractBacklinkContext(b.content, n.title, n.aliases),
+      })).sort((a, b) => b.updatedAt.localeCompare(a.updatedAt));
+
+      // Prev/next handling (same as before)
+      let prev: NoteSummary | null = null;
+      let next: NoteSummary | null = null;
+      if (n.prevSlug) {
+        const prevNote = NOTES.find((x) => x.slug === n.prevSlug);
+        if (prevNote) prev = toSummary(prevNote);
       }
-    } catch {
-      // Ignore read errors
+      if (n.nextSlug) {
+        const nextNote = NOTES.find((x) => x.slug === n.nextSlug);
+        if (nextNote) next = toSummary(nextNote);
+      }
+      if (!prev && !next) {
+        const sorted = [...NOTES].sort((a, b) =>
+          (a.publishDate ?? a.createdAt).localeCompare(b.publishDate ?? b.createdAt)
+        );
+        const idx = sorted.findIndex((x) => x.slug === slug);
+        prev = idx > 0 ? toSummary(sorted[idx - 1]) : null;
+        next = idx >= 0 && idx < sorted.length - 1 ? toSummary(sorted[idx + 1]) : null;
+      }
+
+      // Related notes – same logic as before, using static NOTES for cheap iteration
+      const currentTags = new Set(summary.tags);
+      const currentLinkSlugs = new Set(
+        links.filter((l) => l.exists).map((l) => l.slug)
+      );
+      const backlinkSlugs = new Set(backlinks.map((b) => b.slug));
+      const related: RelatedNote[] = [];
+      for (const other of NOTES) {
+        if (other.slug === slug) continue;
+        const otherLinkSlugs = new Set(
+          other.links.filter((l) => l.exists).map((l) => l.slug)
+        );
+        let score = 0;
+        let reason: RelatedNote["reason"] | null = null;
+        const sharedTags = other.tags.filter((t) => currentTags.has(t)).length;
+        if (sharedTags > 0) {
+          score += sharedTags * 2;
+          reason = "shared-tags";
+        }
+        if (!currentLinkSlugs.has(other.slug) && !backlinkSlugs.has(other.slug)) {
+          let twoHop = false;
+          for (const nSlug of currentLinkSlugs) {
+            const neighbor = NOTES.find((x) => x.slug === nSlug);
+            if (neighbor && neighbor.links.some((l) => l.slug === other.slug && l.exists)) {
+              twoHop = true;
+              break;
+            }
+          }
+          if (twoHop) {
+            score += 3;
+            reason = "2-hop";
+          }
+        }
+        let sharedLinks = 0;
+        for (const sl of otherLinkSlugs) {
+          if (currentLinkSlugs.has(sl) && sl !== other.slug && sl !== slug) {
+            sharedLinks++;
+          }
+        }
+        if (sharedLinks > 0) {
+          score += sharedLinks;
+          if (!reason) reason = "shared-links";
+        }
+        if (score > 0 && reason) {
+          related.push({ ...toSummary(other), reason, score });
+        }
+      }
+      related.sort((a, b) => b.score - a.score);
+
+      return {
+        ...summary,
+        content: n.content,
+        html: n.html,
+        links,
+        backlinks,
+        related: related.slice(0, 6),
+        prev,
+        next,
+      };
     }
-    return null;
+  } catch {
+    // DB error – fall back to static JSON / filesystem path handling
   }
+  // Dynamic filesystem fallback for notes that exist only as markdown files
+  try {
+    const contentDir = path.join(process.cwd(), "content");
+    const filePath = path.join(contentDir, `${slug}.md`);
+    if (fs.existsSync(filePath)) {
+      const raw = fs.readFileSync(filePath, "utf-8");
+      const title = slug.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+      const html = `<div class="prose max-w-none dark:prose-invert"><h1>${title}</h1><div class="whitespace-pre-wrap">${raw.replace(/</g, "&lt;").replace(/>/g, "&gt;")}</div></div>`;
+      return {
+        slug,
+        title,
+        description: raw.slice(0, 120),
+        author: null,
+        tags: [],
+        aliases: [],
+        wordCount: raw.split(/\s+/).length,
+        publishDate: new Date().toISOString(),
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+        path: `${slug}.md`,
+        folder: null,
+        content: raw,
+        html,
+        links: [],
+        backlinks: [],
+        related: [],
+        prev: null,
+        next: null,
+      };
+    }
+  } catch {
+    // ignore errors
+  }
+  return null;
+}
   const summary = toSummary(n);
   const links = n.links;
 
