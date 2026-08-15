@@ -53,20 +53,11 @@ async function main() {
 
   console.log("\n  🚀  Digital Garden — Deploy to Live\n");
 
-  // Step 0: Sync with remote & download any notes authored from web/mobile
+  // Step 0: Sync with remote repository
   console.log("  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
-  console.log("  Step 0/5: Sync with GitHub & Cloud");
+  console.log("  Step 0/5: Sync with GitHub");
   console.log("  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
   run("git pull --rebase --autostash origin main", "Pulling latest from GitHub…");
-  try {
-    const { syncDownWebNotes } = await import("./sync-down");
-    const { pulledCount } = await syncDownWebNotes();
-    if (pulledCount > 0) {
-      console.log(`    📥 Synced down ${pulledCount} new note(s) from cloud.`);
-    }
-  } catch (err: any) {
-    console.warn(`    ⚠️ Cloud note sync-down skipped: ${err?.message}`);
-  }
 
   // Step 1: Publish
   console.log("\n  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");

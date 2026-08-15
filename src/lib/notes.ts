@@ -1,7 +1,6 @@
 import type { WikiLinkTarget } from "@/lib/markdown";
 import fs from "node:fs";
 import path from "node:path";
-import { db } from "@/lib/db";
 
 // --- Types ---
 
@@ -100,36 +99,6 @@ export interface ExplorerNode {
 // Static JSON bundled at build time (used as fallback / for graph/tags/stats)
 import notesData from "@/data/notes.json";
 const STATIC_NOTES: NoteRecord[] = notesData as NoteRecord[];
-
-/** Convert a raw DB row to NoteRecord shape */
-function dbRowToRecord(row: any): NoteRecord {
-  let tags: string[] = [];
-  let aliases: string[] = [];
-  let links: WikiLinkTarget[] = [];
-  try { tags = JSON.parse(row.tags || "[]"); } catch { tags = []; }
-  try { aliases = JSON.parse(row.aliases || "[]"); } catch { aliases = []; }
-  try { links = JSON.parse(row.links || "[]"); } catch { links = []; }
-  return {
-    slug: row.slug,
-    title: row.title,
-    description: row.description ?? null,
-    author: row.author ?? null,
-    content: row.content ?? "",
-    html: row.html ?? "",
-    raw: row.raw ?? "",
-    tags,
-    aliases,
-    links,
-    wordCount: row.wordCount ?? 0,
-    draft: row.draft ?? false,
-    visibility: (row.visibility as any) ?? "public",
-    publishDate: row.publishDate ? new Date(row.publishDate).toISOString() : null,
-    createdAt: row.createdAt ? new Date(row.createdAt).toISOString() : new Date().toISOString(),
-    updatedAt: row.updatedAt ? new Date(row.updatedAt).toISOString() : new Date().toISOString(),
-    path: row.path ?? `${row.slug}.md`,
-    folder: row.folder ?? null,
-  };
-}
 
    // For all public queries, serve instantly from STATIC_NOTES in 0ms
    const NOTES: NoteRecord[] = STATIC_NOTES;
@@ -432,27 +401,8 @@ export async function listNotes(opts?: {
 }
 
 export async function getNote(slug: string): Promise<NoteDetail | null> {
-  // 1. Instant O(1) hash map lookup from precomputed details (<0.01ms!)
-  const precomputed = PRECOMPUTED_NOTE_DETAILS.get(slug);
-  if (precomputed) {
-    return precomputed;
-  }
-
-  // 2. Dynamic DB note fallback (for notes published live from /admin)
-  try {
-    const row = await db.note.findUnique({
-      where: { slug },
-    });
-    if (row) {
-      const n = dbRowToRecord(row);
-      const detail = buildNoteDetail(n, STATIC_NOTES);
-      PRECOMPUTED_NOTE_DETAILS.set(slug, detail);
-      return detail;
-    }
-  } catch {
-    // ignore
-  }
-  return null;
+  // Instant O(1) in-memory lookup (<0.01ms)
+  return PRECOMPUTED_NOTE_DETAILS.get(slug) ?? null;
 }
 
 export async function getGraph(): Promise<GraphData> {

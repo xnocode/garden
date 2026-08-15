@@ -1,9 +1,8 @@
 import { NextResponse } from "next/server";
-import { revalidatePath } from "next/cache";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
-import { db } from "@/lib/db";
-import { renderMarkdown, slugify } from "@/lib/markdown";
+import { slugify } from "@/lib/markdown";
+import { commitNoteToGitHub } from "@/lib/telegram-file-handler";
 
 export const dynamic = "force-dynamic";
 
@@ -30,83 +29,37 @@ export async function POST(req: Request) {
     let slug = slugify(cleanTitle);
     if (!slug) slug = `note-${Date.now()}`;
 
-    // Render markdown to HTML
-    const renderResult = await renderMarkdown(cleanContent, {
-      slugs: new Set([slug]),
-      aliasToSlug: new Map(),
-      noteMeta: new Map(),
-      assetBase: "",
-    });
-
     const now = new Date();
-    const tagsJson = JSON.stringify(cleanTags);
-    const linksJson = JSON.stringify(renderResult.links || []);
-
-    // Construct raw markdown with YAML frontmatter
     const tagsYaml = cleanTags.length > 0 ? `\ntags: [${cleanTags.map((t: string) => `"${t}"`).join(", ")}]` : "\ntags: []";
     const raw = `---
 title: "${cleanTitle}"
 author: Ridoy
 visibility: ${cleanVisibility}
+draft: false
 date: ${now.toISOString().split("T")[0]}
 updatedAt: ${now.toISOString().split("T")[0]}${tagsYaml}
 ---
 
 ${cleanContent}`;
 
-    // Save/upsert note in Neon DB
-    const note = await db.note.upsert({
-      where: { slug },
-      create: {
-        slug,
-        title: cleanTitle,
-        description: cleanContent.slice(0, 160).replace(/[#*`_[\]]/g, "").trim(),
-        content: cleanContent,
-        html: renderResult.html,
-        raw,
-        tags: tagsJson,
-        aliases: "[]",
-        links: linksJson,
-        wordCount: renderResult.wordCount || cleanContent.trim().split(/\s+/).filter(Boolean).length,
-        draft: false,
-        visibility: cleanVisibility,
-        publishDate: now,
-        createdAt: now,
-        updatedAt: now,
-        path: `${slug}.md`,
-        folder: null,
-      },
-      update: {
-        title: cleanTitle,
-        description: cleanContent.slice(0, 160).replace(/[#*`_[\]]/g, "").trim(),
-        content: cleanContent,
-        html: renderResult.html,
-        raw,
-        tags: tagsJson,
-        links: linksJson,
-        wordCount: renderResult.wordCount || cleanContent.trim().split(/\s+/).filter(Boolean).length,
-        visibility: cleanVisibility,
-        updatedAt: now,
-      },
-    });
+    // Commit file directly to GitHub repository (triggers Vercel build)
+    const ghRes = await commitNoteToGitHub(`${slug}.md`, raw, false);
 
-    // If draft was converted to published note, delete the draft
+    // If draft was converted to published note, clean up draft if DB is present
     if (draftId) {
       try {
+        const { db } = await import("@/lib/db");
         await db.draft.delete({ where: { id: draftId } });
       } catch {
         // Draft already deleted or not found
       }
     }
 
-    // Invalidate caches so the newly published note is visible immediately everywhere
-    try {
-      revalidatePath("/", "layout");
-    } catch {
-      // Ignore in background
+    if (!ghRes.success && !ghRes.message?.includes("skipped GitHub upload")) {
+      return NextResponse.json({ error: ghRes.message || "Failed to commit note to GitHub" }, { status: 500 });
     }
 
-    return NextResponse.json({ success: true, slug: note.slug });
+    return NextResponse.json({ success: true, slug, message: "Note published and committed to GitHub!" });
   } catch (err: any) {
     return NextResponse.json({ error: err.message || "Failed to publish note" }, { status: 500 });
   }
