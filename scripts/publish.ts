@@ -37,18 +37,8 @@ import {
 } from "../src/lib/markdown";
 import { fetchUrlPreviews, findUrlsInMarkdown } from "../src/lib/url-preview";
 
-// Database is optional — only used for local dev with watch mode.
-// On Vercel/build servers we skip DB entirely and use JSON files.
-const isVercel = !!process.env.VERCEL || !!process.env.CI;
-let db: any = null;
-if (!isVercel && process.env.DATABASE_URL) {
-  try {
-    const { db: dbClient } = await import("../src/lib/db");
-    db = dbClient;
-  } catch {
-    /* DB not available — JSON-only mode */
-  }
-}
+// Pure JSON static mode — no database sync needed
+const db: any = null;
 
 const ROOT = process.cwd();
 const CONTENT_DIR = join(ROOT, "content");
