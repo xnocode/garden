@@ -40,14 +40,6 @@ bun run publish      # build static JSON from the vault
 bun run dev          # http://localhost:3000
 ```
 
-## Deploy
-
-```bash
-bun run deploy       # publish → protect private notes → commit → push
-```
-
-Vercel auto-deploys on push.
-
 ## License
 
 Private project — all rights reserved.
