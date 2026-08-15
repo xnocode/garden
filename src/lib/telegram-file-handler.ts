@@ -314,6 +314,7 @@ export async function deleteTelegramNote(
   if (!cleanName.endsWith(".md") && !cleanName.endsWith(".markdown")) {
     cleanName += ".md";
   }
+  const slug = cleanName.replace(/\.md$/, "").replace(/\.markdown$/, "");
 
   const existedInMap = dynamicNotesMap.delete(cleanName.toLowerCase());
   const targetPath = path.join(CONTENT_DIR, cleanName);
@@ -326,14 +327,30 @@ export async function deleteTelegramNote(
     } catch {}
   }
 
-  // Delete from GitHub repository
+  // 1. Delete from Neon PostgreSQL database
+  try {
+    const { db } = await import("@/lib/db");
+    await db.note.deleteMany({
+      where: {
+        OR: [
+          { slug },
+          { path: cleanName },
+          { path: { endsWith: cleanName } },
+        ],
+      },
+    });
+  } catch (dbErr) {
+    console.error("Failed to delete note from database:", dbErr);
+  }
+
+  // 2. Delete from GitHub repository
   const ghRes = await deleteNoteFromGitHub(cleanName);
 
   if (ghRes.success) {
     return {
       success: true,
       deletedFile: cleanName,
-      message: `Deleted "${cleanName}" from GitHub & website. Vercel rebuild triggered (~1-2 min).`,
+      message: `Deleted "${cleanName}" from Database, GitHub & website. Vercel rebuild triggered (~1-2 min).`,
     };
   }
 
@@ -341,7 +358,7 @@ export async function deleteTelegramNote(
     return {
       success: true,
       deletedFile: cleanName,
-      message: `Deleted "${cleanName}" from memory, but GitHub note status: ${ghRes.message}`,
+      message: `Deleted "${cleanName}" from Database & memory, but GitHub note status: ${ghRes.message}`,
     };
   }
 
