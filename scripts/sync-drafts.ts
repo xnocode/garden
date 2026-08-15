@@ -1,10 +1,10 @@
 /**
- * sync-drafts.ts — Keeps draft:true and visibility:private notes local-only
+ * sync-drafts.ts — Keeps visibility:private notes out of GitHub
  * by untracking them from the Git index and adding to .git/info/exclude.
  *
  * Rules:
- *   - draft: true        → excluded from Git (stays local only, not published)
- *   - visibility: private → excluded from Git (published to DB only, not to GitHub)
+ *   - visibility: private → excluded from Git (synced to DB only, served to
+ *                           the admin session via /api/notes/[slug])
  *   - everything else    → committed to GitHub as normal
  *
  * This means private notes are visible on your website (only to you as admin)
@@ -50,7 +50,6 @@ export async function syncDraftExclusions(): Promise<{
   publishedCount: number;
 }> {
   const mdFiles = await walkMarkdown(CONTENT_DIR, CONTENT_DIR);
-  const draftPaths: string[] = [];
   const privatePaths: string[] = [];
   let publishedCount = 0;
 
@@ -61,21 +60,13 @@ export async function syncDraftExclusions(): Promise<{
       const { data } = parseFrontmatter(raw);
       const gitRelPath = `content/${relPath}`;
 
-      // Check if it's a draft (draft: true means not published at all)
-      const isDraft =
-        data.draft === true ||
-        data.draft === "true" ||
-        (!("draft" in data) && false); // only explicit draft:true
-
       // Check if it's a private note (visible on website to admin only, but not on GitHub)
       const isPrivate =
         data.visibility === "private" ||
         data.access === "private" ||
         data.private === true;
 
-      if (isDraft) {
-        draftPaths.push(gitRelPath);
-      } else if (isPrivate) {
+      if (isPrivate) {
         privatePaths.push(gitRelPath);
       } else {
         publishedCount++;
@@ -85,8 +76,8 @@ export async function syncDraftExclusions(): Promise<{
     }
   }
 
-  // All paths to exclude from Git (drafts + private notes)
-  const allExcluded = [...draftPaths, ...privatePaths];
+  // All paths to exclude from Git (private notes)
+  const allExcluded = [...privatePaths];
 
   // Ensure .git/info directory exists
   const infoDir = dirname(EXCLUDE_PATH);
@@ -112,8 +103,6 @@ export async function syncDraftExclusions(): Promise<{
   const newExcludeContent = [
     ...nonContentLines,
     "# Auto-generated exclusions (Digital Garden) — DO NOT EDIT",
-    "# draft:true notes (not published anywhere)",
-    ...draftPaths,
     "# visibility:private notes (in DB only — not on GitHub)",
     ...privatePaths,
   ]
@@ -126,23 +115,21 @@ export async function syncDraftExclusions(): Promise<{
   for (const excludedPath of allExcluded) {
     try {
       execSync(`git rm --cached -f "${excludedPath}"`, { stdio: "pipe" });
-      const kind = privatePaths.includes(excludedPath) ? "private note" : "draft";
-      console.log(`    🔒 Untracked ${kind} from Git: ${excludedPath}`);
+      console.log(`    🔒 Untracked private note from Git: ${excludedPath}`);
     } catch {
       // Not currently tracked — that's fine
     }
   }
 
-  return { drafts: draftPaths, privateNotes: privatePaths, publishedCount };
+  return { drafts: [], privateNotes: privatePaths, publishedCount };
 }
 
 // Run directly if invoked from CLI
 if (import.meta.url === `file:///${process.argv[1]?.replace(/\\/g, "/")}`) {
   syncDraftExclusions()
-    .then(({ drafts, privateNotes, publishedCount }) => {
+    .then(({ privateNotes, publishedCount }) => {
       console.log(
         `\n  ✅ Sync complete:\n` +
-          `     ${drafts.length} draft(s) excluded (local only)\n` +
           `     ${privateNotes.length} private note(s) excluded from GitHub (in DB only)\n` +
           `     ${publishedCount} note(s) published to GitHub\n`
       );

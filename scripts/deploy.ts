@@ -75,18 +75,17 @@ async function main() {
   console.log("  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
   run("bun run scripts/export-tasks.ts", "Snapshotting tasks…");
 
-  // Step 2.5: Sync draft exclusions with Git
+  // Step 2.5: Keep private notes out of GitHub
   console.log("\n  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
-  console.log("  Step 2.5/5: Protecting draft notes");
+  console.log("  Step 2.5/5: Protecting private notes");
   console.log("  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
   try {
     const { syncDraftExclusions } = await import("./sync-drafts");
-    const { drafts, privateNotes, publishedCount } = await syncDraftExclusions();
-    console.log(`    🔒 Draft protection active: ${drafts.length} draft(s) excluded (local only)`);
+    const { privateNotes, publishedCount } = await syncDraftExclusions();
     console.log(`    🔐 Private note protection: ${privateNotes.length} private note(s) in DB only (not on GitHub)`);
     console.log(`    ✅ ${publishedCount} note(s) will be published to GitHub`);
   } catch (err: any) {
-    console.warn(`    ⚠️ Warning: Could not sync draft exclusions: ${err?.message}`);
+    console.warn(`    ⚠️ Warning: Could not sync private note exclusions: ${err?.message}`);
   }
 
   // Step 3: Git add

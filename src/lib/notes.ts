@@ -16,7 +16,6 @@ interface NoteRecord {
   aliases: string[];
   links: WikiLinkTarget[];
   wordCount: number;
-  draft: boolean;
   visibility?: "public" | "members" | "private";
   publishDate: string | null;
   createdAt: string;
@@ -381,7 +380,7 @@ export async function listNotes(opts?: {
   sort?: "newest" | "oldest" | "alpha" | "updated";
 }): Promise<NoteSummary[]> {
   const { tag, folder, limit, sort = "newest" } = opts ?? {};
-  let filtered = STATIC_NOTES.filter((n) => n.visibility !== "private" && !n.draft);
+  let filtered = STATIC_NOTES.filter((n) => n.visibility !== "private");
   if (folder) filtered = filtered.filter((n) => n.folder === folder);
   if (tag) filtered = filtered.filter((n) => n.tags.includes(tag));
   const sorted = [...filtered].sort((a, b) => {

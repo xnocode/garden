@@ -10,6 +10,7 @@ import type {
   ExplorerNode,
 } from "@/lib/notes";
 import { NoteView } from "@/components/garden/note-view";
+import { PrivateNoteLoader } from "@/components/garden/private-note-loader";
 import { GardenHome } from "@/components/garden/garden-home";
 import {
   IndexView,
@@ -18,7 +19,6 @@ import {
   GraphPage,
   SearchView,
   ColophonView,
-  NotFoundView,
 } from "@/components/garden/views";
 import { TaskwarriorView } from "@/components/garden/taskwarrior-view";
 import { ChangelogView } from "@/components/garden/changelog-view";
@@ -103,7 +103,13 @@ export function GardenClientRouter({ data }: Props) {
 
   if (p) {
     const note = data.noteDetails[p];
-    content = note ? <NoteView note={note} /> : <NotFoundView slug={p} />;
+    // Missing from the static bundle → private note; the loader asks the
+    // API, which only serves it to a signed-in admin.
+    content = note ? (
+      <NoteView note={note} />
+    ) : (
+      <PrivateNoteLoader slug={p} />
+    );
     mainWidthClass = "max-w-5xl";
   } else if (tag) {
     content = <TagView tag={tag} notes={tagNotes} />;

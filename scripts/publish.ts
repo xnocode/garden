@@ -1,17 +1,18 @@
 /**
  * publish.ts — Digital Garden publish CLI.
  *
- * Scans the Obsidian vault (content/), imports every note whose frontmatter
- * has `draft: false`, renders it to HTML, computes outgoing links, copies
- * assets, and syncs everything into the SQLite database.
+ * Scans the Obsidian vault (content/), renders every note to HTML, computes
+ * outgoing links, copies assets, and exports static JSON + syncs the database.
  *
  * Usage:
  *   bun run publish            # publish + preview summary
  *   bun run publish --watch    # re-publish on file change (for local dev)
  *
- * Only notes with `draft: false` in their frontmatter are published. All
- * others (draft: true, or missing the field) are kept private and removed
- * from the site.
+ * Visibility rules (frontmatter `visibility`):
+ *   - public (default) → static JSON on the site, everyone can read
+ *   - members          → static JSON on the site, gated to signed-in members
+ *   - private          → NEVER exported to JSON/GitHub; DB only, admin-only
+ *                        via /api/notes/[slug] with an admin session.
  */
 
 import {
@@ -37,8 +38,18 @@ import {
 } from "../src/lib/markdown";
 import { fetchUrlPreviews, findUrlsInMarkdown } from "../src/lib/url-preview";
 
-// Pure JSON static mode — no database sync needed
-const db: any = null;
+// Database sync — only used for private notes (admin-only via API).
+// Public/members notes live in the static JSON; the DB mirror exists so the
+// server can serve private notes to the admin session at runtime.
+let db: any = null;
+if (process.env.DATABASE_URL) {
+  try {
+    const { PrismaClient } = await import("@prisma/client");
+    db = new PrismaClient();
+  } catch {
+    db = null;
+  }
+}
 
 const ROOT = process.cwd();
 const CONTENT_DIR = join(ROOT, "content");
@@ -65,7 +76,6 @@ interface ParsedFile {
   aliases: string[];
   date?: Date;
   updatedAt?: Date;
-  draft: boolean;
   visibility: "public" | "members" | "private";
   content: string;
   raw: string;
@@ -126,7 +136,6 @@ async function parsePass(files: string[]): Promise<ParsedFile[]> {
     const full = join(CONTENT_DIR, relPath);
     const raw = await readFile(full, "utf8");
     const { data, content } = parseFrontmatter(raw);
-    const draft = data.draft === true || data.draft === "true";
     const title =
       (typeof data.title === "string" && data.title) ||
       firstH1(content) ||
@@ -165,7 +174,6 @@ async function parsePass(files: string[]): Promise<ParsedFile[]> {
       aliases: coerceStringArray(data.aliases),
       date: todate(dateVal),
       updatedAt: todate(updatedVal),
-      draft,
       visibility,
       content,
       raw,
@@ -243,11 +251,11 @@ async function publish() {
   console.log(`  discovered ${files.length} markdown file(s)`);
 
   const parsed = await parsePass(files);
-  const publishable = parsed.filter((p) => !p.draft);
-  const skipped = parsed.filter((p) => p.draft);
+  const publishable = parsed;
+  const privateNotes = parsed.filter((p) => p.visibility === "private");
 
   console.log(
-    `  publishing ${publishable.length} (draft:false), skipping ${skipped.length} (draft)\n`
+    `  publishing ${publishable.length - privateNotes.length} to site, ${privateNotes.length} private (admin-only via DB)\n`
   );
 
   // Build registry for wikilink resolution
@@ -457,24 +465,29 @@ async function publish() {
       `    ${r.slug.padEnd(38)} ${String(r.wordCount).padStart(5)}w${tagStr}`
     );
   }
-  if (skipped.length) {
-    console.log(`\n  private (not published):`);
-    for (const s of skipped) console.log(`    ${s.slug}`);
+  if (privateNotes.length) {
+    console.log(`\n  private (admin-only, served via DB):`);
+    for (const s of privateNotes) console.log(`    ${s.slug}`);
   }
   console.log("");
 }
 
 /**
- * Export all note data as JSON files to src/data/.
+ * Export public/members note data as JSON files to src/data/.
  * This allows the site to run on serverless platforms (Vercel) without
  * a database — the data layer reads from these JSON files instead.
+ *
+ * Private notes are deliberately EXCLUDED: their content must never be
+ * committed to GitHub or shipped in the static bundle. They live only in
+ * the database and are served to the admin session via /api/notes/[slug].
  */
 async function exportJsonData(rendered: RenderedNote[]) {
   const dataDir = join(ROOT, "src", "data");
   await mkdir(dataDir, { recursive: true });
 
-  // Build the full notes array with all fields
-  const notesData = rendered.map((r) => {
+  // Build the full notes array with all fields — private notes filtered out
+  const exportable = rendered.filter((r) => r.visibility !== "private");
+  const notesData = exportable.map((r) => {
     const tags = Array.from(new Set([...r.tags, ...r.inlineTags])).sort();
     const now = new Date().toISOString();
     return {
@@ -489,7 +502,7 @@ async function exportJsonData(rendered: RenderedNote[]) {
       aliases: r.aliases,
       links: r.links,
       wordCount: r.wordCount,
-      draft: false,
+      visibility: r.visibility,
       publishDate: r.date ? r.date.toISOString() : null,
       createdAt: (r.date ?? new Date()).toISOString(),
       updatedAt: (r.updatedAt ?? new Date()).toISOString(),
