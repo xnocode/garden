@@ -42,12 +42,7 @@ export const authOptions: NextAuthOptions = {
             },
           }),
         ]
-      : [
-          GoogleProvider({
-            clientId: "placeholder-id",
-            clientSecret: "placeholder-secret",
-          }),
-        ]),
+      : []),
 
     CredentialsProvider({
       id: "credentials",

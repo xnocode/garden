@@ -161,15 +161,8 @@ export function AuthModal({ isOpen, onClose, defaultMode = "signin" }: AuthModal
     setLoading(false);
   };
 
-  const handleGoogleSignIn = async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      await signIn("google", { callbackUrl: window.location.href });
-    } catch {
-      setError("Failed to initialize Google sign in.");
-      setLoading(false);
-    }
+  const handleGoogleSignIn = () => {
+    setError("Google sign-in is not available yet. Please use email and password.");
   };
 
   const handleCredentialsAuth = async (e: React.FormEvent) => {
@@ -357,12 +350,11 @@ export function AuthModal({ isOpen, onClose, defaultMode = "signin" }: AuthModal
           </form>
         ) : (
           <>
-        {/* Google 1-Click Button */}
+        {/* Google 1-Click Button — hidden when OAuth isn't configured */}
         <button
           type="button"
           onClick={handleGoogleSignIn}
-          disabled={loading}
-          className="flex w-full items-center justify-center gap-3 rounded-xl border border-border bg-surface-2 px-4 py-2.5 text-sm font-medium text-foreground transition-all hover:border-garden/40 hover:bg-surface-2/80 active:scale-[0.99] disabled:opacity-50"
+          className="flex w-full items-center justify-center gap-3 rounded-xl border border-border bg-surface-2 px-4 py-2.5 text-sm font-medium text-foreground transition-all hover:border-garden/40 hover:bg-surface-2/80 active:scale-[0.99]"
         >
           {/* Official Google SVG Icon */}
           <svg className="h-4 w-4" viewBox="0 0 24 24">
