@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
@@ -96,6 +97,13 @@ ${cleanContent}`;
       } catch {
         // Draft already deleted or not found
       }
+    }
+
+    // Invalidate caches so the newly published note is visible immediately everywhere
+    try {
+      revalidatePath("/", "layout");
+    } catch {
+      // Ignore in background
     }
 
     return NextResponse.json({ success: true, slug: note.slug });
