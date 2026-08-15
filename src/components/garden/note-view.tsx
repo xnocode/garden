@@ -64,7 +64,7 @@ function stripLeadingH1(html: string, title: string): string {
 
 export function NoteView({ note }: { note: NoteDetail }) {
   const router = useRouter();
-  const { data: session } = useSession();
+  const { data: session, status: sessionStatus } = useSession();
   const [copied, setCopied] = useState<string | null>(null);
   const [preview, setPreview] = useState<{
     x: number;
@@ -81,9 +81,14 @@ export function NoteView({ note }: { note: NoteDetail }) {
   const isMember = userRole === "member" || isAdmin;
 
   const noteVisibility = (note.visibility || "public") as "public" | "members" | "private";
+  // While the session is loading, never lock — avoid false gatekeeper flash.
+  // Once status is 'authenticated' or 'unauthenticated', evaluate access correctly.
   const isLocked =
-    (noteVisibility === "members" && !isMember) ||
-    (noteVisibility === "private" && !isAdmin);
+    sessionStatus !== "loading" &&
+    (
+      (noteVisibility === "members" && !isMember) ||
+      (noteVisibility === "private" && !isAdmin)
+    );
 
   const html = stripLeadingH1(note.html, note.title);
   const tocItems = useMemo(() => extractToc(note.html), [note.html]);
