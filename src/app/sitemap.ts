@@ -24,7 +24,28 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "daily",
       priority: 0.7,
     },
+    {
+      url: `${baseUrl}/?view=series`,
+      lastModified: new Date(),
+      changeFrequency: "weekly",
+      priority: 0.7,
+    },
   ];
+
+  // Series reading paths — one URL per collection
+  const seriesNames = Array.from(
+    new Set(
+      (Array.isArray(notesData) ? notesData : [])
+        .map((n: any) => (typeof n.series === "string" ? n.series : ""))
+        .filter(Boolean)
+    )
+  );
+  const seriesRoutes: MetadataRoute.Sitemap = seriesNames.map((name) => ({
+    url: `${baseUrl}/?view=series&name=${encodeURIComponent(name)}`,
+    lastModified: new Date(),
+    changeFrequency: "weekly",
+    priority: 0.6,
+  }));
 
   // Dynamic note routes — notes live at /?p=slug
   const noteRoutes: MetadataRoute.Sitemap = Object.keys(notesData || {}).map((slug) => ({
@@ -34,5 +55,5 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.8,
   }));
 
-  return [...staticRoutes, ...noteRoutes];
+  return [...staticRoutes, ...seriesRoutes, ...noteRoutes];
 }

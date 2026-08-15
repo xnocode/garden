@@ -14,6 +14,7 @@ const NAV_ITEMS = [
   { label: "Index", href: "/?view=index", key: "index" },
   { label: "Graph", href: "/?view=graph", key: "graph" },
   { label: "Tags", href: "/?view=tags", key: "tags" },
+  { label: "Collections", href: "/?view=series", key: "series" },
   { label: "Rhythm", href: "/?view=rhythm", key: "rhythm" },
   { label: "Taskwarrior", href: "/?view=tasks", key: "tasks" },
   { label: "About", href: "/?p=about", key: "about" },

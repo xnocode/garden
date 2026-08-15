@@ -1,5 +1,17 @@
 [
   {
+    "version": "v1.1.0",
+    "date": "2026-08-15",
+    "title": "Collections & Reading Paths",
+    "badge": "FEATURE",
+    "category": "feature",
+    "changes": [
+      "Series collections with ordered reading paths via note frontmatter",
+      "Series-aware prev/next navigation with part banners on notes",
+      "Collections page, home section, header nav and sitemap coverage"
+    ]
+  },
+  {
     "version": "v1.0.0",
     "date": "2026-08-15",
     "title": "Email Verification, Private Notes & Fully Static Engine",
