@@ -23,6 +23,8 @@ import {
 import { TaskwarriorView } from "@/components/garden/taskwarrior-view";
 import { ChangelogView } from "@/components/garden/changelog-view";
 import { WritingRhythmView } from "@/components/garden/writing-rhythm-view";
+import { Sidebar } from "@/components/garden/sidebar";
+import { MobileSidebar } from "@/components/garden/mobile-sidebar";
 
 export interface GardenAppData {
   notes: NoteSummary[];
@@ -66,7 +68,7 @@ export function GardenClientRouter({ data }: Props) {
         return (
           t.includes(query) ||
           d.includes(query) ||
-          n.tags.some((tag) => tag.toLowerCase().includes(query))
+          n.tags.some((tg) => tg.toLowerCase().includes(query))
         );
       })
       .map((n) => ({
@@ -86,80 +88,94 @@ export function GardenClientRouter({ data }: Props) {
     return data.notes.filter((n) => n.tags.includes(tag));
   }, [tag, data.notes]);
 
-  // Routing — pure client-side, zero network requests
+  const recentNotes = useMemo(
+    () =>
+      [...data.notes]
+        .sort((a, b) => b.updatedAt.localeCompare(a.updatedAt))
+        .slice(0, 6),
+    [data.notes]
+  );
+
+  // Per-view layout config — exactly matching the original design
+  let showExplorer = true;
+  let mainWidthClass = "max-w-[1600px]";
+  let content: React.ReactNode;
+
   if (p) {
     const note = data.noteDetails[p];
-    return note ? <NoteView note={note} /> : <NotFoundView slug={p} />;
+    content = note ? <NoteView note={note} /> : <NotFoundView slug={p} />;
+    mainWidthClass = "max-w-5xl";
+  } else if (tag) {
+    content = <TagView tag={tag} notes={tagNotes} />;
+    mainWidthClass = "max-w-[1600px]";
+  } else if (view === "index") {
+    content = <IndexView notes={data.notes} />;
+    mainWidthClass = "max-w-5xl";
+  } else if (view === "graph") {
+    content = <GraphPage graph={data.graph} />;
+    showExplorer = false;
+    mainWidthClass = "max-w-[1600px]";
+  } else if (view === "tags") {
+    content = <TagsView tags={data.tags} />;
+    mainWidthClass = "max-w-4xl";
+  } else if (view === "colophon") {
+    content = <ColophonView noteCount={data.stats.totalNotes} stats={data.stats} />;
+    mainWidthClass = "max-w-3xl";
+  } else if (view === "tasks") {
+    content = <TaskwarriorView data={data.taskData} writingStats={data.writingStats} />;
+    mainWidthClass = "max-w-4xl";
+  } else if (view === "changelog") {
+    content = <ChangelogView entries={data.changelogEntries} />;
+    mainWidthClass = "max-w-4xl";
+  } else if (view === "rhythm") {
+    content = <WritingRhythmView stats={data.writingStats} />;
+    mainWidthClass = "max-w-4xl";
+  } else if (q) {
+    content = <SearchView q={q} results={searchResults} />;
+    mainWidthClass = "max-w-3xl";
+  } else {
+    // Home
+    const recent = recentNotes;
+    const featured = [...data.notes]
+      .sort((a, b) =>
+        (b.publishDate ?? b.createdAt).localeCompare(a.publishDate ?? a.createdAt)
+      )
+      .slice(0, 6);
+    content = (
+      <GardenHome
+        data={{
+          recent,
+          featured,
+          tags: data.tags,
+          graph: data.graph,
+          onThisDay: data.onThisDay,
+          writingStats: data.writingStats,
+          stats: data.stats,
+        }}
+      />
+    );
+    mainWidthClass = "max-w-[1600px]";
   }
-
-  if (tag) {
-    return <TagView tag={tag} notes={tagNotes} />;
-  }
-
-  if (view === "index") {
-    return <IndexView notes={data.notes} />;
-  }
-
-  if (view === "graph") {
-    return <GraphPage graph={data.graph} />;
-  }
-
-  if (view === "tags") {
-    return <TagsView tags={data.tags} />;
-  }
-
-  if (view === "colophon") {
-    return <ColophonView noteCount={data.stats.totalNotes} stats={data.stats} />;
-  }
-
-  if (view === "tasks") {
-    return <TaskwarriorView data={data.taskData} writingStats={data.writingStats} />;
-  }
-
-  if (view === "changelog") {
-    return <ChangelogView entries={data.changelogEntries} />;
-  }
-
-  if (view === "rhythm") {
-    return <WritingRhythmView stats={data.writingStats} />;
-  }
-
-  if (q) {
-    return <SearchView q={q} results={searchResults} />;
-  }
-
-  // Home
-  const recent = [...data.notes]
-    .sort((a, b) => b.updatedAt.localeCompare(a.updatedAt))
-    .slice(0, 6);
-  const featured = [...data.notes]
-    .sort((a, b) =>
-      (b.publishDate ?? b.createdAt).localeCompare(a.publishDate ?? a.createdAt)
-    )
-    .slice(0, 6);
 
   return (
-    <GardenHome
-      data={{
-        recent,
-        featured,
-        tags: data.tags,
-        graph: data.graph,
-        onThisDay: data.onThisDay,
-        writingStats: data.writingStats,
-        stats: data.stats,
-      }}
-    />
+    <>
+      <MobileSidebar
+        tree={data.explorer}
+        recentNotes={recentNotes}
+        showExplorer={showExplorer}
+      />
+      <div className="flex flex-1">
+        {showExplorer && (
+          <aside className="sticky top-14 hidden h-[calc(100vh-3.5rem)] w-60 flex-shrink-0 border-r border-sidebar-border bg-sidebar/40 lg:block">
+            <Sidebar tree={data.explorer} recentNotes={recentNotes} />
+          </aside>
+        )}
+        <main className="min-w-0 flex-1">
+          <div className={`mx-auto ${mainWidthClass} px-4 py-8 sm:px-6 lg:py-10`}>
+            {content}
+          </div>
+        </main>
+      </div>
+    </>
   );
-}
-
-// Also export a hook for getting current view info (used by Sidebar, MobileSidebar)
-export function useCurrentView() {
-  const searchParams = useSearchParams();
-  return {
-    p: searchParams.get("p") ?? undefined,
-    tag: searchParams.get("tag") ?? undefined,
-    view: searchParams.get("view") ?? undefined,
-    q: searchParams.get("q") ?? undefined,
-  };
 }
