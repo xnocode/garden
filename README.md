@@ -1,13 +1,6 @@
 # 🌱 Garden
 
-> A personal digital garden — a quiet place to think, write, and grow ideas in public.
-
-**Live:** [gardenx.qzz.io](https://gardenx.qzz.io)
----
-
-## About
-
-Garden turns an Obsidian vault into a fast, fully static website — with wikilinks, backlinks, a knowledge graph, LaTeX math, Mermaid diagrams, and a live code runner. It supports verified member accounts, comments, members-only notes, and truly private notes that never touch the public repo.
+> Garden turns an Obsidian vault into a fast, fully static website with wikilinks, backlinks, a knowledge graph, LaTeX math, Mermaid diagrams, and a live code runner. It supports verified member accounts, comments, members-only notes, and truly private notes that never touch the public repo.
 
 ## Features
 
