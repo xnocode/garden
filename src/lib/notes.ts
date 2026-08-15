@@ -131,83 +131,13 @@ function dbRowToRecord(row: any): NoteRecord {
   };
 }
 
-   // Load summaries only (no heavy content) for fast list operations
-   // This function is used by listNotes and other summary‑only queries.
-   async function loadSummaries(): Promise<NoteRecord[]> {
-     try {
-       const rows = await db.note.findMany({
-         select: {
-           slug: true,
-           title: true,
-           description: true,
-           tags: true,
-           aliases: true,
-           wordCount: true,
-           visibility: true,
-           publishDate: true,
-           createdAt: true,
-           updatedAt: true,
-           path: true,
-           folder: true,
-           draft: true,
-         },
-         orderBy: { publishDate: "desc" },
-       });
-       if (!rows || rows.length === 0) return STATIC_NOTES;
-       
-       // Map DB rows to NoteRecord shape
-       const dbRecords: NoteRecord[] = rows.map((r) => {
-         let tags: string[] = [];
-         let aliases: string[] = [];
-         try { tags = JSON.parse(r.tags || "[]"); } catch { tags = []; }
-         try { aliases = JSON.parse(r.aliases || "[]"); } catch { aliases = []; }
-         return {
-           slug: r.slug,
-           title: r.title,
-           description: r.description ?? null,
-           author: "Ridoy",
-           content: "",
-           html: "",
-           raw: "",
-           tags,
-           aliases,
-           links: [],
-           wordCount: r.wordCount ?? 0,
-           draft: r.draft ?? false,
-           visibility: (r.visibility as any) ?? "public",
-           publishDate: r.publishDate ? new Date(r.publishDate).toISOString() : null,
-           createdAt: r.createdAt ? new Date(r.createdAt).toISOString() : new Date().toISOString(),
-           updatedAt: r.updatedAt ? new Date(r.updatedAt).toISOString() : new Date().toISOString(),
-           path: r.path ?? `${r.slug}.md`,
-           folder: r.folder ?? null,
-         };
-       });
-
-       // Merge with static notes (DB overrides static notes if matching slug)
-       const dbSlugSet = new Set(dbRecords.map((d) => d.slug));
-       const merged = [...dbRecords, ...STATIC_NOTES.filter((s) => !dbSlugSet.has(s.slug))];
-       return merged;
-     } catch {
-       // If DB query fails or is unreachable, fallback to instant static JSON
-       return STATIC_NOTES;
-     }
-   }
-
-   // Fast in‑memory cache for summaries (60 seconds TTL)
-   let summaryCache: { data: NoteRecord[]; ts: number } | null = null;
-   async function getSummaries(): Promise<NoteRecord[]> {
-     const now = Date.now();
-     if (summaryCache && now - summaryCache.ts < 60_000) {
-       return summaryCache.data;
-     }
-     const data = await loadSummaries();
-     summaryCache = { data, ts: now };
-     return data;
-   }
-
-   // For functions that need the full list synchronously (graph, stats, tags)
+   // For all public queries, serve instantly from STATIC_NOTES in 0ms
    const NOTES: NoteRecord[] = STATIC_NOTES;
    const STATIC_MAP = new Map<string, NoteRecord>(STATIC_NOTES.map((n) => [n.slug, n]));
+
+   async function getSummaries(): Promise<NoteRecord[]> {
+     return STATIC_NOTES;
+   }
 
 // --- Helpers ---
 
