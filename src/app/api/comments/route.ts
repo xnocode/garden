@@ -92,8 +92,12 @@ export async function POST(req: Request) {
     });
 
     if (!userRecord && userEmail) {
-      const adminEmail = (process.env.ADMIN_EMAIL || "").toLowerCase().trim();
-      const isAdmin = userEmail.toLowerCase() === adminEmail;
+      const adminEmails = (process.env.ADMIN_EMAIL || "")
+        .toLowerCase()
+        .split(",")
+        .map((e) => e.trim())
+        .filter(Boolean);
+      const isAdmin = adminEmails.includes(userEmail.toLowerCase());
       userRecord = await db.user.create({
         data: {
           email: userEmail,

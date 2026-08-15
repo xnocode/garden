@@ -497,8 +497,10 @@ async function exportJsonData(rendered: RenderedNote[]) {
   const dataDir = join(ROOT, "src", "data");
   await mkdir(dataDir, { recursive: true });
 
-  // Build the full notes array with all fields — all visibilities included
-  const exportable = rendered;
+  // Build the full notes array — private notes deliberately EXCLUDED so they
+  // never ship in the static bundle or git. They live only in the database
+  // and are served to the admin session via /api/notes/[slug].
+  const exportable = rendered.filter((r) => r.visibility !== "private");
   const notesData = exportable.map((r) => {
     const tags = Array.from(new Set([...r.tags, ...r.inlineTags])).sort();
     const now = new Date().toISOString();

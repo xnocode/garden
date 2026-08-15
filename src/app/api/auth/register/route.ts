@@ -78,8 +78,12 @@ export async function POST(req: Request) {
       );
     }
 
-    const adminEmail = (process.env.ADMIN_EMAIL || "").toLowerCase().trim();
-    const role = adminEmail && cleanEmail === adminEmail ? "admin" : "member";
+    const adminEmails = (process.env.ADMIN_EMAIL || "")
+      .toLowerCase()
+      .split(",")
+      .map((e) => e.trim())
+      .filter(Boolean);
+    const role = adminEmails.includes(cleanEmail) ? "admin" : "member";
     const passwordHash = createPasswordHash(password);
 
     await db.user.create({

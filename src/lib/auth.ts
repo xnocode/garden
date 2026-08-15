@@ -52,27 +52,28 @@ export const authOptions: NextAuthOptions = {
         }
 
         const email = credentials.email.toLowerCase().trim();
-        const adminEmail = (process.env.ADMIN_EMAIL || "").toLowerCase().trim();
+        const adminEmails = (process.env.ADMIN_EMAIL || "")
+          .toLowerCase()
+          .split(",")
+          .map((e) => e.trim())
+          .filter(Boolean);
         const adminPassword = process.env.ADMIN_PASSWORD || "";
 
-        // ── ADMIN LOGIN ────────────────────────────────────────────────────
-        // Admin uses a secret fake email + secret password stored only in env.
-        // This is the only path to the admin role.
-        if (adminEmail && email === adminEmail) {
-          if (!adminPassword || credentials.password !== adminPassword) {
-            throw new Error("Invalid admin credentials.");
+        // ── ADMIN SECRET CREDENTIALS LOGIN ─────────────────────────────────
+        // Allows direct login using admin email + admin secret password
+        if (adminEmails.includes(email)) {
+          if (adminPassword && credentials.password === adminPassword) {
+            return {
+              id: "admin",
+              email,
+              name: "Garden Author",
+              image: null,
+              role: "admin",
+            };
           }
-          // Admin is never stored in DB — pure env-based, unhackable via OAuth
-          return {
-            id: "admin",
-            email: adminEmail,
-            name: "Garden Author",
-            image: null,
-            role: "admin",
-          };
         }
 
-        // ── REGULAR MEMBER LOGIN ───────────────────────────────────────────
+        // ── REGULAR / REGISTERED USER LOGIN ───────────────────────────────
         if (!isAllowedEmailDomain(email)) {
           throw new Error(
             "Only trusted email providers (Gmail, Outlook, Yahoo, iCloud, Proton) are supported. .edu and disposable emails are blocked."
@@ -98,12 +99,14 @@ export const authOptions: NextAuthOptions = {
             );
           }
 
+          const isAdmin = user.role === "admin" || adminEmails.includes(email);
+
           return {
             id: user.id,
             name: user.name || email.split("@")[0],
             email: user.email,
             image: user.image,
-            role: user.role || "member",
+            role: isAdmin ? "admin" : (user.role || "member"),
           };
         } catch (err: any) {
           throw new Error(err.message || "Failed to authenticate.");
@@ -121,8 +124,18 @@ export const authOptions: NextAuthOptions = {
     async jwt({ token, user, trigger, session }) {
       if (user) {
         token.id = user.id;
-        // Trust the role set by the authorize() function — don't re-derive from email
         token.role = (user as any).role || "member";
+      }
+
+      if (token.email) {
+        const adminEmails = (process.env.ADMIN_EMAIL || "")
+          .toLowerCase()
+          .split(",")
+          .map((e) => e.trim())
+          .filter(Boolean);
+        if (adminEmails.includes(token.email.toLowerCase())) {
+          token.role = "admin";
+        }
       }
 
       if (trigger === "update" && session?.name) {
