@@ -1,8 +1,9 @@
 {
-  "name": "nextjs_tailwind_shadcn_ts",
+  "name": "garden",
   "version": "0.2.0",
   "private": true,
   "license": "UNLICENSED",
+  "author": "xnocode <xridoynocode@gmail.com> (https://github.com/xnocode)",
   "scripts": {
     "dev": "next dev -p 3000",
     "build": "prisma generate && next build",

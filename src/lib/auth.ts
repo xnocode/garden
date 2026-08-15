@@ -23,7 +23,17 @@ export function createPasswordHash(password: string): string {
 }
 
 export const authOptions: NextAuthOptions = {
-  secret: process.env.NEXTAUTH_SECRET || "digital-garden-secret-token-key-321-safe",
+  // No fallback: signing sessions with a committed string would let anyone
+  // forge admin cookies. Crash instead of silently weakening auth.
+  secret: (() => {
+    const secret = process.env.NEXTAUTH_SECRET;
+    if (!secret) {
+      throw new Error(
+        "NEXTAUTH_SECRET is not set. Add a random 64-char hex value (openssl rand -hex 32) to the environment."
+      );
+    }
+    return secret;
+  })(),
   session: {
     strategy: "jwt",
     maxAge: 30 * 24 * 60 * 60, // 30 days

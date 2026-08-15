@@ -1,0 +1,5 @@
+# CODEOWNERS — these users must review and approve any PR before it merges.
+# https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+
+# All files require xnocode's approval
+* @xnocode
