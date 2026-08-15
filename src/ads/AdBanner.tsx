@@ -17,7 +17,7 @@ type AdBannerProps = {
 
 type AdStatus = 'pending' | 'filled' | 'unfilled';
 
-const CLIENT_ID = 'ca-pub-5993975585691806';
+const CLIENT_ID = process.env.NEXT_PUBLIC_ADSENSE_ID || '';
 
 /**
  * Universal Google AdSense ad unit.

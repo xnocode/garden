@@ -62,7 +62,7 @@ export const metadata: Metadata = {
     google: "lqmsnOldQ009_3Y3_afQx7No9_MqhQ5SXXbfDpsJBlI",
   },
   other: {
-    "google-adsense-account": "ca-pub-5993975585691806",
+    "google-adsense-account": process.env.NEXT_PUBLIC_ADSENSE_ID || "",
   },
 };
 
@@ -82,13 +82,15 @@ export default function RootLayout({
           }}
         />
         {/* Google AdSense */}
-        <Script
-          id="adsense"
-          async
-          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5993975585691806"
-          crossOrigin="anonymous"
-          strategy="afterInteractive"
-        />
+        {process.env.NEXT_PUBLIC_ADSENSE_ID && (
+          <Script
+            id="adsense"
+            async
+            src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${process.env.NEXT_PUBLIC_ADSENSE_ID}`}
+            crossOrigin="anonymous"
+            strategy="afterInteractive"
+          />
+        )}
       </head>
       <body
         className={`${headingFont.variable} ${bodyFont.variable} ${monoFont.variable} antialiased bg-background text-foreground font-sans`}

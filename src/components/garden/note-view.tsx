@@ -71,6 +71,7 @@ export function NoteView({ note }: { note: NoteDetail }) {
     data: PreviewData | null;
   } | null>(null);
   const previewTimer = useRef<NodeJS.Timeout | null>(null);
+  const hoverSlug = useRef<string | null>(null);
   const contentRef = useRef<HTMLDivElement>(null);
   const [loadingRandom, setLoadingRandom] = useState(false);
 

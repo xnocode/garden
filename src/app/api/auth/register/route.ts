@@ -4,6 +4,7 @@ import { createPasswordHash } from "@/lib/auth";
 import { isAllowedEmailDomain } from "@/lib/email-validator";
 import { issueVerification } from "@/lib/verification";
 import { sendVerificationEmail, isEmailServiceConfigured } from "@/lib/mailer";
+import { rateLimit, getClientIp, tooManyRequests } from "@/lib/rate-limit";
 
 export const dynamic = "force-dynamic";
 
@@ -16,6 +17,10 @@ function baseUrlFromReq(req: Request): string {
 
 export async function POST(req: Request) {
   try {
+    // 5 signups per hour per IP — each one triggers a verification email.
+    const limit = rateLimit(`register:${getClientIp(req)}`, 5, 60 * 60 * 1000);
+    if (!limit.ok) return tooManyRequests(limit.retryAfter);
+
     const body = await req.json();
     const { name, email, password } = body;
 

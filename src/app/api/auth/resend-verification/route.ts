@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { issueVerification } from "@/lib/verification";
 import { sendVerificationEmail, isEmailServiceConfigured } from "@/lib/mailer";
+import { rateLimit, getClientIp, tooManyRequests } from "@/lib/rate-limit";
 
 export const dynamic = "force-dynamic";
 
@@ -15,6 +16,10 @@ function baseUrlFromReq(req: Request): string {
 /** POST /api/auth/resend-verification — body: { email } */
 export async function POST(req: Request) {
   try {
+    // 5 resends per hour per IP — each one may send an email.
+    const limit = rateLimit(`resend:${getClientIp(req)}`, 5, 60 * 60 * 1000);
+    if (!limit.ok) return tooManyRequests(limit.retryAfter);
+
     const { email } = await req.json();
     if (!email) {
       return NextResponse.json({ error: "Email is required." }, { status: 400 });

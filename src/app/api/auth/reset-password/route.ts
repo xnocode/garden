@@ -1,11 +1,16 @@
 import { NextResponse } from "next/server";
 import { createPasswordHash } from "@/lib/auth";
 import { checkResetToken, consumeResetToken } from "@/lib/password-reset";
+import { rateLimit, getClientIp, tooManyRequests } from "@/lib/rate-limit";
 
 export const dynamic = "force-dynamic";
 
 // GET ?token=... — validate the token without consuming it (page load check).
 export async function GET(req: Request) {
+  // 12 checks per 15 min per IP — stops reset-token guessing.
+  const limit = rateLimit(`reset-check:${getClientIp(req)}`, 12, 15 * 60 * 1000);
+  if (!limit.ok) return tooManyRequests(limit.retryAfter);
+
   const token = new URL(req.url).searchParams.get("token");
   if (!token) {
     return NextResponse.json({ valid: false, reason: "invalid" });
@@ -20,6 +25,10 @@ export async function GET(req: Request) {
 // POST { token, password } — set the new password and burn the token.
 export async function POST(req: Request) {
   try {
+    // 8 attempts per 15 min per IP — stops password resets from being abused.
+    const limit = rateLimit(`reset-post:${getClientIp(req)}`, 8, 15 * 60 * 1000);
+    if (!limit.ok) return tooManyRequests(limit.retryAfter);
+
     const body = await req.json();
     const { token, password } = body;
 

@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { issuePasswordReset } from "@/lib/password-reset";
 import { sendPasswordResetEmail } from "@/lib/mailer";
+import { rateLimit, getClientIp, tooManyRequests } from "@/lib/rate-limit";
 
 export const dynamic = "force-dynamic";
 
@@ -14,6 +15,10 @@ function baseUrlFromReq(req: Request): string {
 
 export async function POST(req: Request) {
   try {
+    // 5 reset requests per hour per IP — each one may send an email.
+    const limit = rateLimit(`forgot:${getClientIp(req)}`, 5, 60 * 60 * 1000);
+    if (!limit.ok) return tooManyRequests(limit.retryAfter);
+
     const body = await req.json();
     const email = typeof body.email === "string" ? body.email.toLowerCase().trim() : "";
 

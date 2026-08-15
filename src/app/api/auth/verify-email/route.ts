@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { verifyWithToken, verifyWithOtp } from "@/lib/verification";
+import { rateLimit, getClientIp, tooManyRequests } from "@/lib/rate-limit";
 
 export const dynamic = "force-dynamic";
 
@@ -9,6 +10,10 @@ export const dynamic = "force-dynamic";
  */
 export async function POST(req: Request) {
   try {
+    // 12 attempts per 15 min per IP — stops OTP brute-forcing (1M combos).
+    const limit = rateLimit(`verify:${getClientIp(req)}`, 12, 15 * 60 * 1000);
+    if (!limit.ok) return tooManyRequests(limit.retryAfter);
+
     const body = await req.json();
     const { token, email, otp } = body;
 
