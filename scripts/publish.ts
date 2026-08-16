@@ -40,8 +40,11 @@ import { fetchUrlPreviews, findUrlsInMarkdown } from "../src/lib/url-preview";
 // Database sync — only used for private notes (admin-only via API).
 // Public/members notes live in the static JSON; the DB mirror exists so the
 // server can serve private notes to the admin session at runtime.
+// IMPORTANT: local-only. On Vercel builds the vault comes from git, which
+// excludes private notes — running the sync there would delete every private
+// note from the DB as "stale". VERCEL is set automatically in Vercel builds.
 let db: any = null;
-if (process.env.DATABASE_URL) {
+if (process.env.DATABASE_URL && !process.env.VERCEL) {
   try {
     const { PrismaClient } = await import("@prisma/client");
     db = new PrismaClient();
