@@ -1,7 +1,7 @@
 "use client";
 
 import { useSearchParams } from "next/navigation";
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import type {
   NoteSummary,
   NoteDetail,
@@ -62,6 +62,12 @@ export function GardenClientRouter({ data }: Props) {
   const view = searchParams.get("view") ?? undefined;
   const q = searchParams.get("q") ?? undefined;
   const seriesName = searchParams.get("name") ?? undefined;
+
+  // The #garden-boot script veils the app for direct note/view links until
+  // the right view has rendered client-side; lift the veil on first render.
+  useEffect(() => {
+    document.documentElement.classList.remove("garden-boot");
+  }, []);
 
   // All search/filter operations run in-browser against the pre-loaded data
   const searchResults = useMemo(() => {

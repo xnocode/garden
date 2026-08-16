@@ -81,6 +81,16 @@ export default function RootLayout({
             __html: `(function(){try{var t=localStorage.getItem('garden-theme');if(t==='light'){document.documentElement.classList.remove('dark');document.documentElement.classList.add('light');}}catch(e){}})();`,
           }}
         />
+        {/* Deep-link boot veil — the page is static and always ships the home
+            view; when a note/view link is opened directly (?p=, ?view=, ?tag=,
+            ?q=), hide the app until the client router renders the right view,
+            so home never flashes first. Safety-removed after 4s no matter what. */}
+        <script
+          id="garden-boot"
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{if(/[?&](p|view|tag|q)=[^&]/.test(location.search)){var c=document.documentElement.classList;c.add('garden-boot');setTimeout(function(){c.remove('garden-boot');},4000);}}catch(e){}})();`,
+          }}
+        />
         {/* Google AdSense */}
         {process.env.NEXT_PUBLIC_ADSENSE_ID && (
           <Script
