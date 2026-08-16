@@ -5,6 +5,7 @@
 
 import Link from "next/link";
 import { Sprout, Rss, Network, BookMarked, Github } from "lucide-react";
+import { InstallButton } from "./pwa";
 
 export function SiteFooter({ noteCount }: { noteCount: number }) {
   const year = new Date().getFullYear();
@@ -58,6 +59,7 @@ export function SiteFooter({ noteCount }: { noteCount: number }) {
           >
             colophon
           </Link>
+          <InstallButton />
           <a
             href="/api/rss"
             target="_blank"

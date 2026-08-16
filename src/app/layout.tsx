@@ -6,6 +6,7 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { AuthProvider } from "@/components/auth/auth-provider";
 import { GoogleAnalytics } from "@next/third-parties/google";
 import Script from "next/script";
+import { PwaRegister } from "@/components/garden/pwa";
 
 const headingFont = Plus_Jakarta_Sans({
   variable: "--font-serif",
@@ -45,7 +46,14 @@ export const metadata: Metadata = {
   authors: [{ name: "Garden" }],
   icons: {
     icon: "/favicon.svg",
+    apple: "/apple-touch-icon.png",
   },
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "black-translucent",
+    title: "Garden",
+  },
+  manifest: "/manifest.webmanifest",
   openGraph: {
     title: "Garden — a digital garden",
     description: "Notes grown in Obsidian, published with a single command.",
@@ -109,6 +117,7 @@ export default function RootLayout({
           <ThemeProvider>{children}</ThemeProvider>
           <Toaster />
         </AuthProvider>
+        <PwaRegister />
 
         {process.env.NEXT_PUBLIC_GA_ID && (
           <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID} />
