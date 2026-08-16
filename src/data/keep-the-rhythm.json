@@ -19280,11 +19280,17 @@
         "filePath": "numerical-methods-and-analysis-cse0541227.md",
         "wordCountStart": 1964,
         "charCountStart": 12822,
-        "changes": [],
+        "changes": [
+          {
+            "timeKey": "21:50",
+            "w": 2,
+            "c": -8
+          }
+        ],
         "id": 1157
       }
     ],
-    "wholeVaultWordCount": 41523,
-    "wholeVaultCharCount": 341410
+    "wholeVaultWordCount": 41525,
+    "wholeVaultCharCount": 341402
   }
 }

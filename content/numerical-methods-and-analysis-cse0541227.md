@@ -495,11 +495,11 @@ The graph represents the function:
 
 ```mermaid
 xychart-beta
-    title "Newton-Raphson Method"
-    x-axis "x" 0 --> 10
-    y-axis "f(x)" -2 --> 7
-    line [1.2, 0.8, 0.5, 0.6, 1.2, 2.2, 3.5, 10.9, 14.9, 17.9, 19.9]
-    line [-7.3, -5.5, -3.7, -1.8, 0, 1.8, 3.7, 5.5, 7.3, 9.2, 11]
+    title "Newton-Raphson Method"
+    x-axis "x" 0 --> 10
+    y-axis "f(x)" -2 --> 7
+    line [1.2, 0.8, 0.5, 0.6, 1.2, 2.2, 3.5, 10.9, 14.9, 17.9, 19.9]
+    line [-7.3, -5.5, -3.7, -1.8, 0, 1.8, 3.7, 5.5, 7.3, 9.2, 11]
 ```
 $$
 y=f(x)
@@ -517,15 +517,12 @@ The tangent intersects the $x$-axis at: $x_{i+1}$
 
 ```mermaid
 flowchart LR
-    A--- C(("Diameter"))
+    A --- C(("Diameter"))
     C --- B
 
-    style C fill:none,stroke:#000,stroke-width:2px
+    style C fill:none,stroke:#84a59d,stroke-width:2px
     style A fill:none,stroke:none
     style B fill:none,stroke:none
-    
-    
-    
 ```
 ```mermaid
 flowchart LR
@@ -545,7 +542,7 @@ flowchart LR
     A -.-> C
 
     style G fill:none,stroke:none
-    style C fill:none,stroke:#000,stroke-width:3px
+    style C fill:none,stroke:#84a59d,stroke-width:3px
     style D fill:none,stroke:none
     style T fill:none,stroke:none
     style A fill:none,stroke:none

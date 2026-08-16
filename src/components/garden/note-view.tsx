@@ -247,6 +247,7 @@ export function NoteView({ note }: { note: NoteDetail }) {
         .then((mermaid) => {
           mermaid.initialize({
             startOnLoad: false,
+            securityLevel: "loose",
             theme: "dark",
             themeVariables: {
               background: "#0a0a0c",
@@ -267,6 +268,16 @@ export function NoteView({ note }: { note: NoteDetail }) {
             ".mermaid:not([data-processed])"
           );
           if (liveDivs.length === 0) return;
+
+          // Double defense: normalize unicode spaces directly on DOM nodes
+          liveDivs.forEach((el) => {
+            if (el.textContent) {
+              el.textContent = el.textContent
+                .replace(/[\u00a0\u1680\u2000-\u200a\u202f\u205f\u3000]/g, " ")
+                .replace(/[\u200b\u200c\u200d\u200e\u200f\ufeff]/g, "");
+            }
+          });
+
           // suppressErrors: one invalid diagram must not kill the whole
           // batch — bad ones render mermaid's syntax-error card instead.
           mermaid

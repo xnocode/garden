@@ -1240,3 +1240,43 @@ select option {
   padding: 6px 12px;
 }
 
+/* ============================================================
+   Mermaid diagram styling (Obsidian parity & contrast support)
+   ============================================================ */
+.mermaid {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 1.75rem 0;
+  padding: 1rem 0.5rem;
+  overflow-x: auto;
+  background: transparent;
+  border-radius: var(--radius-md, 0.375rem);
+}
+
+.mermaid svg {
+  max-width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+/* Obsidian dark-theme parity: prevent dark strokes or text from disappearing against dark backgrounds */
+:root:not(.light) .mermaid svg [stroke="#000"],
+:root:not(.light) .mermaid svg [stroke="#000000"],
+:root:not(.light) .mermaid svg [stroke="black"],
+.dark .mermaid svg [stroke="#000"],
+.dark .mermaid svg [stroke="#000000"],
+.dark .mermaid svg [stroke="black"] {
+  stroke: var(--foreground, #dcdce0) !important;
+}
+
+:root:not(.light) .mermaid svg [fill="#000"]:not(text),
+:root:not(.light) .mermaid svg [fill="#000000"]:not(text),
+:root:not(.light) .mermaid svg [fill="black"]:not(text),
+.dark .mermaid svg [fill="#000"]:not(text),
+.dark .mermaid svg [fill="#000000"]:not(text),
+.dark .mermaid svg [fill="black"]:not(text) {
+  fill: var(--surface-2, #161619) !important;
+}
+
+

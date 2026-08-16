@@ -1056,11 +1056,14 @@ export function rehypeShiki() {
 
       // Mermaid → passthrough div (rendered client-side)
       if (lang === "mermaid") {
+        const sanitized = rawText
+          .replace(/[\u00a0\u1680\u2000-\u200a\u202f\u205f\u3000]/g, " ")
+          .replace(/[\u200b\u200c\u200d\u200e\u200f\ufeff]/g, "");
         const div: Element = {
           type: "element",
           tagName: "div",
           properties: { className: ["mermaid"] },
-          children: [{ type: "text", value: rawText }],
+          children: [{ type: "text", value: sanitized }],
         };
         replacements.push({ index, parent: parent as Element, node: div });
         return;
