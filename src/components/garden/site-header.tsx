@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { Search, Menu, Sprout, Sparkles } from "lucide-react";
 import { usePathname, useSearchParams } from "next/navigation";
+import { useSession } from "next-auth/react";
 import { useUIStore } from "@/lib/ui-store";
 import { ThemeToggle } from "./theme-toggle";
 import { AISearchModal } from "./ai-search-modal";
@@ -35,6 +36,11 @@ export function SiteHeader() {
   const active = useActiveKey();
   const { setSearchOpen, mobileNavOpen, setMobileNavOpen } = useUIStore();
   const [aiModalOpen, setAiModalOpen] = useState(false);
+  const { data: session } = useSession();
+  const isAdmin = (session?.user as any)?.role === "admin";
+  const navItems = isAdmin
+    ? [...NAV_ITEMS, { label: "Private", href: "/?view=private", key: "private" }]
+    : NAV_ITEMS;
 
   return (
     <>
@@ -63,7 +69,7 @@ export function SiteHeader() {
 
           {/* Desktop nav */}
           <nav className="ml-2 hidden items-center gap-1 lg:flex">
-            {NAV_ITEMS.map((item) => {
+            {navItems.map((item) => {
               const isActive =
                 item.key === active ||
                 (item.key === "home" && active === "home");

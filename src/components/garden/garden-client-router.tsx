@@ -26,6 +26,7 @@ import {
 import { TaskwarriorView } from "@/components/garden/taskwarrior-view";
 import { ChangelogView } from "@/components/garden/changelog-view";
 import { WritingRhythmView } from "@/components/garden/writing-rhythm-view";
+import { PrivateNotesView } from "@/components/garden/private-notes-view";
 import { Sidebar } from "@/components/garden/sidebar";
 import { MobileSidebar } from "@/components/garden/mobile-sidebar";
 
@@ -155,6 +156,9 @@ export function GardenClientRouter({ data }: Props) {
   } else if (view === "rhythm") {
     content = <WritingRhythmView stats={data.writingStats} />;
     mainWidthClass = "max-w-4xl";
+  } else if (view === "private") {
+    content = <PrivateNotesView />;
+    mainWidthClass = "max-w-3xl";
   } else if (q) {
     content = <SearchView q={q} results={searchResults} />;
     mainWidthClass = "max-w-3xl";
