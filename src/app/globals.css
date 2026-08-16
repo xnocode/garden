@@ -950,16 +950,14 @@
 
 /* Deep-link boot veil — set by #garden-boot script before hydration when a
    note/view URL is opened directly. Hides the static home view until the
-   client router renders the actual target, so home never flashes first. */
+   client router renders the actual target. Intentionally a plain background:
+   it must read as a normal blank page load, not an interstitial. */
 html.garden-boot .garden-ambience { visibility: hidden; }
 html.garden-boot::after {
   content: "";
   position: fixed;
   inset: 0;
-  background:
-    radial-gradient(circle at 50% 50%, rgba(132, 165, 157, 0.3) 0%, transparent 70%),
-    var(--background, #101613);
-  animation: garden-pulse 1.2s ease-in-out infinite;
+  background: var(--background, #101613);
 }
 
 /* Skeleton shimmer */

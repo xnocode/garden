@@ -39,12 +39,17 @@ export default async function Page() {
       getTotalVisitors(),
     ]);
 
-  // Pre-build slug→detail map for instant O(1) client-side note lookups
+  // Pre-build slug→detail map for instant O(1) client-side note lookups.
+  // `content` (raw markdown) is stripped — the client renders from `html`,
+  // and dropping the duplicate roughly halves the page payload size.
   const noteDetails: Record<string, NoteDetail> = {};
   await Promise.all(
     notes.map(async (n) => {
       const detail = await getNote(n.slug);
-      if (detail) noteDetails[n.slug] = detail;
+      if (detail) {
+        const { content: _content, ...rest } = detail;
+        noteDetails[n.slug] = rest;
+      }
     })
   );
 

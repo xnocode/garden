@@ -69,7 +69,8 @@ export interface SeriesEntry {
 }
 
 export interface NoteDetail extends NoteSummary {
-  content: string;
+  /** Raw markdown — server-side only; stripped from the client bundle. */
+  content?: string;
   html: string;
   links: WikiLinkTarget[];
   backlinks: BacklinkNote[];
