@@ -62,6 +62,35 @@ function stripLeadingH1(html: string, title: string): string {
   return html;
 }
 
+const MERMAID_CDN =
+  "https://cdn.jsdelivr.net/npm/mermaid@11.16.0/dist/mermaid.min.js";
+
+let mermaidPromise: Promise<any> | null = null;
+
+/** Load mermaid once per session from CDN (bundler-agnostic). */
+function loadMermaidFromCDN(): Promise<any> {
+  if (mermaidPromise) return mermaidPromise;
+  mermaidPromise = new Promise((resolve, reject) => {
+    const w = window as any;
+    if (w.mermaid) return resolve(w.mermaid);
+    const existing = document.querySelector<HTMLScriptElement>(
+      `script[data-mermaid-cdn]`
+    );
+    const script = existing ?? document.createElement("script");
+    script.src = MERMAID_CDN;
+    script.async = true;
+    script.dataset.mermaidCdn = "1";
+    script.onload = () =>
+      w.mermaid ? resolve(w.mermaid) : reject(new Error("mermaid global missing"));
+    script.onerror = () => {
+      mermaidPromise = null; // allow retry on next note
+      reject(new Error("failed to load mermaid from CDN"));
+    };
+    if (!existing) document.head.appendChild(script);
+  });
+  return mermaidPromise;
+}
+
 export function NoteView({ note }: { note: NoteDetail }) {
   const router = useRouter();
   const { data: session, status: sessionStatus } = useSession();
@@ -208,34 +237,48 @@ export function NoteView({ note }: { note: NoteDetail }) {
     });
 
     // 3. Mermaid rendering
+    // NOTE: loaded via CDN <script> instead of `import("mermaid")` — Turbopack
+    // (dev and Next 16 builds) hangs on the dynamic package import without
+    // ever fetching the chunk, so diagrams silently never render.
     let mermaidCleanup: (() => void) | null = null;
     const mermaidDivs = root.querySelectorAll(".mermaid");
     if (mermaidDivs.length > 0) {
-      import("mermaid")
-        .then(({ default: mermaid }) => {
-          try {
-            mermaid.initialize({
-              startOnLoad: false,
-              theme: "dark",
-              themeVariables: {
-                background: "#0a0a0c",
-                primaryColor: "#84a59d",
-                primaryTextColor: "#e8e8ea",
-                primaryBorderColor: "#84a59d",
-                lineColor: "#84a59d",
-                secondaryColor: "#161619",
-                tertiaryColor: "#101013",
-                fontFamily: "var(--font-mono)",
-              },
-            });
-            mermaid.run({ nodes: Array.from(mermaidDivs) as any });
-          } catch {
-            /* ignore */
-          }
+      loadMermaidFromCDN()
+        .then((mermaid) => {
+          mermaid.initialize({
+            startOnLoad: false,
+            theme: "dark",
+            themeVariables: {
+              background: "#0a0a0c",
+              primaryColor: "#84a59d",
+              primaryTextColor: "#e8e8ea",
+              primaryBorderColor: "#84a59d",
+              lineColor: "#84a59d",
+              secondaryColor: "#161619",
+              tertiaryColor: "#101013",
+              fontFamily: "var(--font-mono)",
+            },
+          });
+          // Re-query LIVE nodes: React may have replaced the content div's
+          // children (hydration re-sets dangerouslySetInnerHTML) between the
+          // effect and the async script load — the captured NodeList would
+          // then point at detached, invisible nodes.
+          const liveDivs = root.querySelectorAll(
+            ".mermaid:not([data-processed])"
+          );
+          if (liveDivs.length === 0) return;
+          // suppressErrors: one invalid diagram must not kill the whole
+          // batch — bad ones render mermaid's syntax-error card instead.
+          mermaid
+            .run({
+              nodes: Array.from(liveDivs) as any,
+              suppressErrors: true,
+            })
+            .catch((err: unknown) =>
+              console.error("mermaid render failed:", err)
+            );
         })
-        .catch(() => {
-          /* ignore */
-        });
+        .catch((err: unknown) => console.error("mermaid load failed:", err));
     }
 
     // 4. Heading copy-link buttons (h2/h3/h4 with ids)

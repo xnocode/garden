@@ -10,10 +10,11 @@
  *
  * Bump CACHE_VERSION to invalidate old caches on deploy.
  */
-const CACHE_VERSION = "garden-v1";
+const CACHE_VERSION = "garden-v2";
 const SHELL_CACHE = `${CACHE_VERSION}-shell`;
 const ASSET_CACHE = `${CACHE_VERSION}-assets`;
 const SHELL_URL = "/";
+const MERMAID_CDN_URL = "https://cdn.jsdelivr.net/npm/mermaid@11.16.0/dist/mermaid.min.js";
 
 self.addEventListener("install", (event) => {
   event.waitUntil(
@@ -44,7 +45,7 @@ async function staleWhileRevalidate(request, cacheName) {
   const cached = await cache.match(request);
   const network = fetch(request)
     .then((res) => {
-      if (res && res.ok) cache.put(request, res.clone());
+      if (res && (res.ok || res.type === "opaque")) cache.put(request, res.clone());
       return res;
     })
     .catch(() => null);
@@ -65,6 +66,13 @@ self.addEventListener("fetch", (event) => {
   if (request.method !== "GET") return;
 
   const url = new URL(request.url);
+
+  // Mermaid diagram engine (CDN) — runtime cache so offline PWA keeps diagrams.
+  if (url.href === MERMAID_CDN_URL) {
+    event.respondWith(staleWhileRevalidate(request, ASSET_CACHE));
+    return;
+  }
+
   if (url.origin !== self.location.origin) return;
   if (url.pathname.startsWith("/api/")) return; // network-only
 
