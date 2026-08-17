@@ -7,6 +7,7 @@ import {
   getOnThisDay,
   listNotes,
   getNote,
+  type NoteDetail,
 } from "@/lib/notes";
 import { SiteHeader } from "@/components/garden/site-header";
 import { SiteFooter } from "@/components/garden/site-footer";
@@ -17,12 +18,96 @@ import { getTotalVisitors } from "@/lib/analytics";
 import { getWritingStats } from "@/lib/writing-stats";
 import { GardenClientRouter } from "@/components/garden/garden-client-router";
 import { Suspense } from "react";
-import type { NoteDetail } from "@/lib/notes";
+import type { Metadata } from "next";
 
-// Build time: load all data once. No dynamic rendering on every click.
-// All navigation happens purely on the client side — zero server round trips.
-export const dynamic = "force-static";
-export const revalidate = false;
+interface PageProps {
+  searchParams: Promise<{ p?: string; view?: string; tag?: string; q?: string }>;
+}
+
+export async function generateMetadata({ searchParams }: PageProps): Promise<Metadata> {
+  const params = await searchParams;
+  const slug = params?.p;
+
+  if (slug) {
+    const note = await getNote(slug);
+    if (note) {
+      const title = `${note.title} — Garden`;
+      const description =
+        note.description ||
+        `Notes on ${note.title} grown in Obsidian and published on Garden.`;
+      const url = `https://gardenx.qzz.io/?p=${note.slug}`;
+
+      return {
+        title,
+        description,
+        alternates: {
+          canonical: url,
+        },
+        openGraph: {
+          title: note.title,
+          description,
+          url,
+          siteName: "Garden",
+          type: "article",
+          publishedTime: note.publishDate || note.createdAt || undefined,
+          modifiedTime: note.updatedAt || undefined,
+          tags: note.tags,
+        },
+        twitter: {
+          card: "summary_large_image",
+          title: note.title,
+          description,
+        },
+      };
+    }
+  }
+
+  if (params?.view) {
+    const viewTitle =
+      params.view.charAt(0).toUpperCase() + params.view.slice(1);
+    const url = `https://gardenx.qzz.io/?view=${params.view}`;
+    return {
+      title: `${viewTitle} — Garden`,
+      alternates: {
+        canonical: url,
+      },
+      openGraph: {
+        title: `${viewTitle} — Garden`,
+        url,
+      },
+    };
+  }
+
+  if (params?.tag) {
+    const url = `https://gardenx.qzz.io/?tag=${params.tag}`;
+    return {
+      title: `#${params.tag} — Garden`,
+      alternates: {
+        canonical: url,
+      },
+      openGraph: {
+        title: `#${params.tag} — Garden`,
+        url,
+      },
+    };
+  }
+
+  return {
+    title: "Garden — a digital garden",
+    description:
+      "A personal digital garden. Notes, essays, and ideas grown in Obsidian and published with a single command.",
+    alternates: {
+      canonical: "https://gardenx.qzz.io",
+    },
+    openGraph: {
+      title: "Garden — a digital garden",
+      description: "Notes grown in Obsidian, published with a single command.",
+      url: "https://gardenx.qzz.io",
+      siteName: "Garden",
+      type: "website",
+    },
+  };
+}
 
 export default async function Page() {
   // Load all data in parallel at build time
@@ -82,16 +167,16 @@ export default async function Page() {
   };
 
   return (
-    <div className="garden-ambience relative flex min-h-screen flex-col bg-background">
-      <ReadingProgress />
-      <SiteHeader />
-      {/* GardenClientRouter owns sidebar + layout + routing — all client-side */}
-      <Suspense>
+    <Suspense fallback={null}>
+      <div className="garden-ambience relative flex min-h-screen flex-col bg-background">
+        <ReadingProgress />
+        <SiteHeader />
+        {/* GardenClientRouter owns sidebar + layout + routing — all client-side */}
         <GardenClientRouter data={appData} />
-      </Suspense>
-      <SiteFooter noteCount={notes.length} />
-      <CommandPalette />
-      <ShortcutsHelp />
-    </div>
+        <SiteFooter noteCount={notes.length} />
+        <CommandPalette />
+        <ShortcutsHelp />
+      </div>
+    </Suspense>
   );
 }
