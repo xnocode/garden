@@ -19,6 +19,20 @@ export interface TaskwarriorTask {
   overdue?: boolean;
 }
 
+export interface CompletedTaskData {
+  id?: number;
+  uuid?: string;
+  description: string;
+  project: string | null;
+  tags: string[];
+  priority: string | null;
+  due: string | null;
+  entry: string | null;
+  end: string | null;
+  urgency?: number;
+  xpAwarded: number;
+}
+
 export interface TaskSnapshot {
   exportedAt: string;
   stats: {
@@ -28,6 +42,7 @@ export interface TaskSnapshot {
     overdue?: number;
   };
   tasks: TaskwarriorTask[];
+  completedTasks?: CompletedTaskData[];
 }
 
 export interface PlayerProfile {

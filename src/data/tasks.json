@@ -1,10 +1,142 @@
 {
-  "exportedAt": "2026-08-17T18:08:49.301Z",
+  "exportedAt": "2026-08-17T19:12:04.757Z",
   "stats": {
     "total": 51,
     "pending": 0,
     "completed": 51,
     "overdue": 0
   },
-  "tasks": []
+  "tasks": [],
+  "completedTasks": [
+    {
+      "id": 0,
+      "uuid": "a0171764-4a3f-47a6-80a9-3d088984254b",
+      "description": " Project Proposal and Feasibility Study Report",
+      "project": "university",
+      "tags": [],
+      "priority": "H",
+      "due": "20260810T180000Z",
+      "entry": "20260809T074342Z",
+      "end": "20260811T184524Z",
+      "urgency": 19.0438,
+      "xpAwarded": 250
+    },
+    {
+      "id": 0,
+      "uuid": "2b418580-ade3-4913-9148-317ab265b2f4",
+      "description": "Attend Internet Programming Lab (12:00 PM - 2:00 PM)",
+      "project": "university",
+      "tags": [],
+      "priority": "M",
+      "due": "20260805T180000Z",
+      "entry": "20260728T194716Z",
+      "end": "20260804T171345Z",
+      "urgency": 17.0041,
+      "xpAwarded": 200
+    },
+    {
+      "id": 0,
+      "uuid": "6c35a2d4-6a83-4350-a2ba-ae89583a2415",
+      "description": "Attend Numerical Methods and Analysis (10:10 AM - 11:00 AM)",
+      "project": "university",
+      "tags": [],
+      "priority": "M",
+      "due": "20260805T180000Z",
+      "entry": "20260728T194715Z",
+      "end": "20260804T171343Z",
+      "urgency": 17.0041,
+      "xpAwarded": 200
+    },
+    {
+      "id": 0,
+      "uuid": "efd4e97b-02e0-4475-89b4-c5b2e0a3bb24",
+      "description": "Attend Data Communication (9:00 AM - 10:00 AM)",
+      "project": "university",
+      "tags": [],
+      "priority": "M",
+      "due": "20260805T180000Z",
+      "entry": "20260728T194715Z",
+      "end": "20260804T171335Z",
+      "urgency": 17.0041,
+      "xpAwarded": 200
+    },
+    {
+      "id": 0,
+      "uuid": "aad647ac-ca3e-4eed-aa93-6ffcfb206607",
+      "description": "Attend Software Engineering and System Analysis (2:00 PM - 4:00 PM)",
+      "project": "university",
+      "tags": [],
+      "priority": "M",
+      "due": "20260804T180000Z",
+      "entry": "20260728T194715Z",
+      "end": "20260804T171335Z",
+      "urgency": 17.0041,
+      "xpAwarded": 200
+    },
+    {
+      "id": 0,
+      "uuid": "e71777e8-d72d-4294-a99f-b89cdf60af12",
+      "description": "Attend Numerical Methods and Analysis (1:00 PM - 2:00 PM)",
+      "project": "university",
+      "tags": [],
+      "priority": "M",
+      "due": "20260804T180000Z",
+      "entry": "20260728T194715Z",
+      "end": "20260804T171334Z",
+      "urgency": 17.0041,
+      "xpAwarded": 200
+    },
+    {
+      "id": 0,
+      "uuid": "4b920a8a-64bc-4ffe-b9e8-999aee862884",
+      "description": "Attend Data Communication (11:00 AM - 12:00 PM)",
+      "project": "university",
+      "tags": [],
+      "priority": "M",
+      "due": "20260804T180000Z",
+      "entry": "20260728T194715Z",
+      "end": "20260804T171334Z",
+      "urgency": 17.0041,
+      "xpAwarded": 200
+    },
+    {
+      "id": 0,
+      "uuid": "df9ec732-600f-437a-b49d-1e961042d671",
+      "description": "Attend Software Engineering and System Analysis Lab (8:00 AM - 11:00 AM)",
+      "project": "university",
+      "tags": [],
+      "priority": "M",
+      "due": "20260804T180000Z",
+      "entry": "20260728T194715Z",
+      "end": "20260804T171329Z",
+      "urgency": 17.0041,
+      "xpAwarded": 200
+    },
+    {
+      "id": 0,
+      "uuid": "fb5b681f-5a88-47c7-a4a3-00c9de66e0f3",
+      "description": "Feasibility Study - SW",
+      "project": "university",
+      "tags": [],
+      "priority": "H",
+      "due": "20260803T180000Z",
+      "entry": "20260801T182955Z",
+      "end": "20260804T171328Z",
+      "urgency": 19.0877,
+      "xpAwarded": 250
+    },
+    {
+      "id": 0,
+      "uuid": "9bc472ba-765f-4d8d-96ad-c63ed0e200cd",
+      "description": "Project Proposal - SW",
+      "project": "university",
+      "tags": [],
+      "priority": "H",
+      "due": "20260803T180000Z",
+      "entry": "20260801T182955Z",
+      "end": "20260804T171327Z",
+      "urgency": 19.0877,
+      "xpAwarded": 250
+    }
+  ]
 }

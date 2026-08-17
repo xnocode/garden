@@ -183,13 +183,45 @@ async function main() {
     overdue,
   });
 
-  // Sort order: overdue first, then today/tomorrow, then no due date, then future tasks
+  // Calculate XP awarded for completing a task based on priority and urgency
+  function calculateCompletedTaskXp(t: RawTask): number {
+    let xp = 150; // base task completion XP
+    if (t.priority === "H") xp += 100; // 250 XP for high priority
+    else if (t.priority === "M") xp += 50; // 200 XP for medium priority
+    else if (t.priority === "L") xp += 20; // 170 XP for low priority
+    return xp;
+  }
+
+  // Categorize and sort ALL pending tasks:
+  // Order: overdue first, then today/tomorrow, then no due date, then future tasks
   const visibleTasks = [
     ...overdueTasks.sort((a, b) => (b.urgency || 0) - (a.urgency || 0)).map((t) => mapTask(t, true)),
     ...todayTomorrow.sort((a, b) => (b.urgency || 0) - (a.urgency || 0)).map((t) => mapTask(t, false)),
     ...noDueDateTasks.sort((a, b) => (b.urgency || 0) - (a.urgency || 0)).map((t) => mapTask(t, false)),
     ...futureTasks.sort((a, b) => (b.urgency || 0) - (a.urgency || 0)).map((t) => mapTask(t, false)),
   ];
+
+  // Most recent 10 completed tasks (sorted by end timestamp descending)
+  const recentCompleted = [...completedTasks]
+    .sort((a, b) => {
+      const dateA = a.end ? (parseTWDate(a.end)?.getTime() ?? 0) : (a.modified ? (parseTWDate(a.modified)?.getTime() ?? 0) : 0);
+      const dateB = b.end ? (parseTWDate(b.end)?.getTime() ?? 0) : (b.modified ? (parseTWDate(b.modified)?.getTime() ?? 0) : 0);
+      return dateB - dateA;
+    })
+    .slice(0, 10)
+    .map((t) => ({
+      id: t.id,
+      uuid: t.uuid,
+      description: t.description,
+      project: t.project || null,
+      tags: t.tags || [],
+      priority: t.priority || null,
+      due: t.due || null,
+      entry: t.entry || null,
+      end: t.end || t.modified || null,
+      urgency: t.urgency ?? 0,
+      xpAwarded: calculateCompletedTaskXp(t),
+    }));
 
   const snapshot = {
     exportedAt: new Date().toISOString(),
@@ -200,6 +232,7 @@ async function main() {
       overdue: overdueTasks.length,
     },
     tasks: visibleTasks,
+    completedTasks: recentCompleted,
   };
 
   const outDir = resolve((import.meta as any).dir, "..", "src", "data");
@@ -208,8 +241,8 @@ async function main() {
   writeFileSync(outPath, JSON.stringify(snapshot, null, 2), "utf8");
 
   console.log(
-    `    ✓ ${visibleTasks.length} visible task(s) (${overdueTasks.length} overdue), ` +
-      `${pendingTasks.length} pending, ${completedTasks.length} completed`
+    `    ✓ ${visibleTasks.length} pending task(s) (${overdueTasks.length} overdue), ` +
+      `${recentCompleted.length} recent completed task(s), ${completedTasks.length} total completed`
   );
 }
 
