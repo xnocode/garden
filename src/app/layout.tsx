@@ -57,7 +57,6 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Garden — a digital garden",
     description: "Notes grown in Obsidian, published with a single command.",
-    url: "https://gardenx.qzz.io",
     siteName: "Garden",
     type: "website",
   },
