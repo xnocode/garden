@@ -1,0 +1,72 @@
+{
+  "wallets": [
+    {
+      "name": "Default Wallet",
+      "type": "cash",
+      "initialBalance": 265,
+      "status": "active",
+      "includeInNetAsset": true
+    }
+  ],
+  "defaultWallet": "Default Wallet",
+  "folderName": "/",
+  "decimalPlaces": 0,
+  "options": {
+    "types": {
+      "default": [
+        "expense",
+        "income",
+        "transfer"
+      ],
+      "custom": []
+    },
+    "categories": {
+      "expense": {
+        "default": [
+          "food",
+          "clothing",
+          "housing",
+          "transport",
+          "education",
+          "entertainment",
+          "shopping",
+          "medical",
+          "cash_expense",
+          "insurance",
+          "fees",
+          "tax"
+        ],
+        "custom": []
+      },
+      "income": {
+        "default": [
+          "salary",
+          "interest",
+          "side_income",
+          "bonus",
+          "lottery",
+          "rent",
+          "cashback",
+          "dividend",
+          "investment_profit",
+          "insurance_income",
+          "pension"
+        ],
+        "custom": [
+          "Support from Brother",
+          "Pocket Money"
+        ]
+      },
+      "transfer": {
+        "default": [
+          "account_transfer",
+          "credit_card_payment",
+          "investment_trade"
+        ],
+        "custom": []
+      }
+    }
+  },
+  "tags": [],
+  "autoValidateOnLoad": true
+}

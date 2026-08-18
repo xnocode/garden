@@ -1,12 +1,37 @@
 {
-  "exportedAt": "2026-08-17T19:12:04.757Z",
+  "exportedAt": "2026-08-18T03:29:44.966Z",
   "stats": {
-    "total": 51,
-    "pending": 0,
+    "total": 53,
+    "pending": 2,
     "completed": 51,
     "overdue": 0
   },
-  "tasks": [],
+  "tasks": [
+    {
+      "id": 2,
+      "uuid": "45cdd3f9-660b-49bf-93b5-2cd19d8ccdbe",
+      "description": "Chapter 3(Part 1 & Part 2)",
+      "project": "university",
+      "tags": [],
+      "priority": "H",
+      "due": "20260817T180000Z",
+      "entry": "20260818T032731Z",
+      "urgency": 15.9809,
+      "overdue": false
+    },
+    {
+      "id": 1,
+      "uuid": "678fb3fe-e8b4-4dcd-bdf2-e7ba4c6d79a0",
+      "description": "SRS Documentation - SW Lab",
+      "project": "university",
+      "tags": [],
+      "priority": "H",
+      "due": "20260818T180000Z",
+      "entry": "20260818T032532Z",
+      "urgency": 15.5237,
+      "overdue": false
+    }
+  ],
   "completedTasks": [
     {
       "id": 0,
@@ -31,7 +56,7 @@
       "due": "20260805T180000Z",
       "entry": "20260728T194716Z",
       "end": "20260804T171345Z",
-      "urgency": 17.0041,
+      "urgency": 17.0096,
       "xpAwarded": 200
     },
     {
@@ -44,7 +69,7 @@
       "due": "20260805T180000Z",
       "entry": "20260728T194715Z",
       "end": "20260804T171343Z",
-      "urgency": 17.0041,
+      "urgency": 17.0096,
       "xpAwarded": 200
     },
     {
@@ -57,7 +82,7 @@
       "due": "20260805T180000Z",
       "entry": "20260728T194715Z",
       "end": "20260804T171335Z",
-      "urgency": 17.0041,
+      "urgency": 17.0096,
       "xpAwarded": 200
     },
     {
@@ -70,7 +95,7 @@
       "due": "20260804T180000Z",
       "entry": "20260728T194715Z",
       "end": "20260804T171335Z",
-      "urgency": 17.0041,
+      "urgency": 17.0096,
       "xpAwarded": 200
     },
     {
@@ -83,7 +108,7 @@
       "due": "20260804T180000Z",
       "entry": "20260728T194715Z",
       "end": "20260804T171334Z",
-      "urgency": 17.0041,
+      "urgency": 17.0096,
       "xpAwarded": 200
     },
     {
@@ -96,7 +121,7 @@
       "due": "20260804T180000Z",
       "entry": "20260728T194715Z",
       "end": "20260804T171334Z",
-      "urgency": 17.0041,
+      "urgency": 17.0096,
       "xpAwarded": 200
     },
     {
@@ -109,7 +134,7 @@
       "due": "20260804T180000Z",
       "entry": "20260728T194715Z",
       "end": "20260804T171329Z",
-      "urgency": 17.0041,
+      "urgency": 17.0096,
       "xpAwarded": 200
     },
     {
