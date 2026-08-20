@@ -1,11 +1,36 @@
 {
-  "exportedAt": "2026-08-20T20:23:01.444Z",
+  "exportedAt": "2026-08-20T20:25:48.291Z",
   "stats": {
-    "total": 0,
-    "pending": 0,
+    "total": 2,
+    "pending": 2,
     "completed": 0,
     "overdue": 0
   },
-  "tasks": [],
+  "tasks": [
+    {
+      "id": 1,
+      "uuid": "b03c809a-c2fb-42b9-bb07-c5fb64eeb50e",
+      "description": "Learn Programming C++",
+      "project": "cp",
+      "tags": [],
+      "priority": "H",
+      "due": "20260820T180000Z",
+      "entry": "20260820T202549Z",
+      "urgency": 15.8463,
+      "overdue": false
+    },
+    {
+      "id": 2,
+      "uuid": "0d230005-06c9-4196-abcf-d6575357189e",
+      "description": "Test New Things",
+      "project": "ts",
+      "tags": [],
+      "priority": "M",
+      "due": "20260820T180000Z",
+      "entry": "20260820T202549Z",
+      "urgency": 13.7463,
+      "overdue": false
+    }
+  ],
   "completedTasks": []
 }
