@@ -8,6 +8,7 @@
  */
 
 const GEMINI_API_KEY = (process.env.GEMINI_API_KEY || "").trim();
+import { geminiUrl } from "./ai-models";
 
 interface PdfNote {
   slug: string;
@@ -68,7 +69,7 @@ Rules:
 Output ONLY the complete Markdown note starting with ---`;
 
   const genRes = await fetch(
-    `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=${GEMINI_API_KEY}`,
+    geminiUrl(GEMINI_API_KEY),
     {
       method: "POST",
       headers: { "Content-Type": "application/json" },

@@ -2,6 +2,7 @@
  * telegram-dump.ts — Unstructured Raw Brain Dump to Structured AI Markdown Note.
  */
 
+import { geminiUrl } from "./ai-models";
 interface DumpResult {
   title: string;
   slug: string;
@@ -36,7 +37,7 @@ ${rawText}`;
   if (geminiKey) {
     try {
       const res = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=${geminiKey}`,
+        geminiUrl(geminiKey),
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },

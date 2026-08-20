@@ -5,6 +5,7 @@
 
 import { NextResponse } from "next/server";
 import { listNotes, getNote } from "@/lib/notes";
+import { geminiUrl } from "@/lib/ai-models";
 
 export const dynamic = "force-dynamic";
 
@@ -132,7 +133,7 @@ Rules:
     if (!aiAnswer && geminiKey) {
       try {
         const gemRes = await fetch(
-          `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=${geminiKey}`,
+          geminiUrl(geminiKey),
           {
             method: "POST",
             headers: { "Content-Type": "application/json" },

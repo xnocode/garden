@@ -1,7 +1,8 @@
 /**
- * telegram-voice.ts — Voice Note to Markdown via Gemini 2.0 Flash / Groq Whisper.
+ * telegram-voice.ts — Voice Note to Markdown via Gemini / Groq Whisper.
  */
 
+import { geminiUrl } from "./ai-models";
 interface VoiceNoteResult {
   title: string;
   slug: string;
@@ -24,7 +25,7 @@ export async function processVoiceNoteToMarkdown(
     try {
       const base64Audio = audioBuffer.toString("base64");
       const res = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=${geminiKey}`,
+        geminiUrl(geminiKey),
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },

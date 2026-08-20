@@ -1,5 +1,6 @@
 import { listNotes } from "@/lib/notes";
 import { getTasksFromGitHub } from "@/lib/telegram-file-handler";
+import { geminiUrl } from "@/lib/ai-models";
 
 const GEMINI_API_KEY = (process.env.GEMINI_API_KEY || "").trim();
 
@@ -58,7 +59,7 @@ Today's date: ${today}
 Output ONLY the 1-2 sentence suggestion, nothing else.`;
 
       const res = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=${GEMINI_API_KEY}`,
+        geminiUrl(GEMINI_API_KEY),
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },

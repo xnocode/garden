@@ -3,6 +3,7 @@
  */
 
 import { searchTelegramNotes, getTasksFromGitHub } from "./telegram-file-handler";
+import { geminiUrl } from "./ai-models";
 
 export async function askGardenKnowledgeBase(question: string): Promise<string> {
   // 1. Retrieve top matching notes from garden
@@ -47,7 +48,7 @@ Rules:
   if (geminiKey) {
     try {
       const res = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=${geminiKey}`,
+        geminiUrl(geminiKey),
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },

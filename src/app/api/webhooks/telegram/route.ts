@@ -21,6 +21,7 @@ import { processBrainDumpToNote } from "@/lib/telegram-dump";
 import { processPdfToNote } from "@/lib/telegram-pdf";
 import { getMorningDigest } from "@/lib/telegram-digest";
 import { scanNotebookForNewTasks, scanNotebookForCompletedTasks } from "@/lib/notebook-scanner";
+import { geminiUrl } from "@/lib/ai-models";
 
 export const dynamic = "force-dynamic";
 
@@ -152,7 +153,7 @@ Transcript: "${transcribedText}"`;
   if (gemKey) {
     try {
       const gemRes = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=${gemKey}`,
+        geminiUrl(gemKey),
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },

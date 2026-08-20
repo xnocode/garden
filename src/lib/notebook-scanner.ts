@@ -1,4 +1,5 @@
 import { SnapshotTask } from "./telegram-file-handler";
+import { geminiUrl } from "./ai-models";
 
 export interface ParsedNotebookTask {
   description: string;
@@ -74,7 +75,7 @@ Output JSON format strictly matching this schema:
 
   try {
     const res = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=${geminiKey}`,
+      geminiUrl(geminiKey),
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -221,7 +222,7 @@ Output JSON strictly matching this schema:
 
   try {
     const res = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=${geminiKey}`,
+      geminiUrl(geminiKey),
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
