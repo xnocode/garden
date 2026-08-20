@@ -1,5 +1,5 @@
 {
-  "exportedAt": "2026-08-20T20:30:21.671Z",
+  "exportedAt": "2026-08-20T20:31:05.601Z",
   "stats": {
     "total": 2,
     "pending": 2,
@@ -16,7 +16,7 @@
       "priority": "H",
       "due": "20260820T180000Z",
       "entry": "20260820T202549Z",
-      "urgency": 15.8477,
+      "urgency": 15.848,
       "overdue": false
     },
     {
@@ -28,7 +28,7 @@
       "priority": "M",
       "due": "20260820T180000Z",
       "entry": "20260820T202549Z",
-      "urgency": 13.7477,
+      "urgency": 13.748,
       "overdue": false
     }
   ],
