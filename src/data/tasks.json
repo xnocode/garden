@@ -1,24 +1,12 @@
 {
-  "exportedAt": "2026-08-18T03:29:44.966Z",
+  "exportedAt": "2026-08-20T03:36:27.521Z",
   "stats": {
     "total": 53,
-    "pending": 2,
-    "completed": 51,
-    "overdue": 0
+    "pending": 1,
+    "completed": 52,
+    "overdue": 1
   },
   "tasks": [
-    {
-      "id": 2,
-      "uuid": "45cdd3f9-660b-49bf-93b5-2cd19d8ccdbe",
-      "description": "Chapter 3(Part 1 & Part 2)",
-      "project": "university",
-      "tags": [],
-      "priority": "H",
-      "due": "20260817T180000Z",
-      "entry": "20260818T032731Z",
-      "urgency": 15.9809,
-      "overdue": false
-    },
     {
       "id": 1,
       "uuid": "678fb3fe-e8b4-4dcd-bdf2-e7ba4c6d79a0",
@@ -28,11 +16,24 @@
       "priority": "H",
       "due": "20260818T180000Z",
       "entry": "20260818T032532Z",
-      "urgency": 15.5237,
-      "overdue": false
+      "urgency": 16.4511,
+      "overdue": true
     }
   ],
   "completedTasks": [
+    {
+      "id": 0,
+      "uuid": "45cdd3f9-660b-49bf-93b5-2cd19d8ccdbe",
+      "description": "Data Communication -",
+      "project": "university",
+      "tags": [],
+      "priority": "H",
+      "due": "20260817T180000Z",
+      "entry": "20260818T032731Z",
+      "end": "20260819T123749Z",
+      "urgency": 16.9082,
+      "xpAwarded": 250
+    },
     {
       "id": 0,
       "uuid": "a0171764-4a3f-47a6-80a9-3d088984254b",
@@ -43,7 +44,7 @@
       "due": "20260810T180000Z",
       "entry": "20260809T074342Z",
       "end": "20260811T184524Z",
-      "urgency": 19.0438,
+      "urgency": 19.0548,
       "xpAwarded": 250
     },
     {
@@ -56,7 +57,7 @@
       "due": "20260805T180000Z",
       "entry": "20260728T194716Z",
       "end": "20260804T171345Z",
-      "urgency": 17.0096,
+      "urgency": 17.0205,
       "xpAwarded": 200
     },
     {
@@ -69,7 +70,7 @@
       "due": "20260805T180000Z",
       "entry": "20260728T194715Z",
       "end": "20260804T171343Z",
-      "urgency": 17.0096,
+      "urgency": 17.0205,
       "xpAwarded": 200
     },
     {
@@ -82,7 +83,7 @@
       "due": "20260805T180000Z",
       "entry": "20260728T194715Z",
       "end": "20260804T171335Z",
-      "urgency": 17.0096,
+      "urgency": 17.0205,
       "xpAwarded": 200
     },
     {
@@ -95,7 +96,7 @@
       "due": "20260804T180000Z",
       "entry": "20260728T194715Z",
       "end": "20260804T171335Z",
-      "urgency": 17.0096,
+      "urgency": 17.0205,
       "xpAwarded": 200
     },
     {
@@ -108,7 +109,7 @@
       "due": "20260804T180000Z",
       "entry": "20260728T194715Z",
       "end": "20260804T171334Z",
-      "urgency": 17.0096,
+      "urgency": 17.0205,
       "xpAwarded": 200
     },
     {
@@ -121,7 +122,7 @@
       "due": "20260804T180000Z",
       "entry": "20260728T194715Z",
       "end": "20260804T171334Z",
-      "urgency": 17.0096,
+      "urgency": 17.0205,
       "xpAwarded": 200
     },
     {
@@ -134,7 +135,7 @@
       "due": "20260804T180000Z",
       "entry": "20260728T194715Z",
       "end": "20260804T171329Z",
-      "urgency": 17.0096,
+      "urgency": 17.0205,
       "xpAwarded": 200
     },
     {
@@ -147,20 +148,7 @@
       "due": "20260803T180000Z",
       "entry": "20260801T182955Z",
       "end": "20260804T171328Z",
-      "urgency": 19.0877,
-      "xpAwarded": 250
-    },
-    {
-      "id": 0,
-      "uuid": "9bc472ba-765f-4d8d-96ad-c63ed0e200cd",
-      "description": "Project Proposal - SW",
-      "project": "university",
-      "tags": [],
-      "priority": "H",
-      "due": "20260803T180000Z",
-      "entry": "20260801T182955Z",
-      "end": "20260804T171327Z",
-      "urgency": 19.0877,
+      "urgency": 19.0986,
       "xpAwarded": 250
     }
   ]

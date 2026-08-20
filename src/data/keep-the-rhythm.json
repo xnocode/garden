@@ -19364,12 +19364,711 @@
             "timeKey": "09:20",
             "w": 4,
             "c": 39
+          },
+          {
+            "timeKey": "09:30",
+            "w": -4,
+            "c": -38
           }
         ],
         "id": 1162
+      },
+      {
+        "date": "2026-08-19",
+        "filePath": "taskworrior.md",
+        "wordCountStart": 17,
+        "charCountStart": 142,
+        "changes": [
+          {
+            "timeKey": "18:35",
+            "w": 0,
+            "c": 0
+          }
+        ],
+        "id": 1163
+      },
+      {
+        "date": "2026-08-19",
+        "filePath": "Untitled.md",
+        "wordCountStart": 0,
+        "charCountStart": 0,
+        "changes": [
+          {
+            "timeKey": "03:45",
+            "w": 93,
+            "c": 479
+          },
+          {
+            "timeKey": "17:55",
+            "w": -93,
+            "c": -479
+          },
+          {
+            "timeKey": "18:00",
+            "w": 71,
+            "c": 388
+          },
+          {
+            "timeKey": "18:05",
+            "w": 70,
+            "c": 342
+          },
+          {
+            "timeKey": "18:35",
+            "w": -141,
+            "c": -730
+          },
+          {
+            "timeKey": "23:00",
+            "w": 0,
+            "c": 0
+          },
+          {
+            "timeKey": "23:40",
+            "w": 20,
+            "c": 150
+          }
+        ],
+        "id": 1164
+      },
+      {
+        "date": "2026-08-19",
+        "filePath": "2026-08.md",
+        "wordCountStart": 33,
+        "charCountStart": 324,
+        "changes": [
+          {
+            "timeKey": "17:45",
+            "w": -33,
+            "c": -324
+          }
+        ],
+        "id": 1165
+      },
+      {
+        "date": "2026-08-19",
+        "filePath": "Untitled 1.md",
+        "wordCountStart": 0,
+        "charCountStart": 0,
+        "changes": [
+          {
+            "timeKey": "17:50",
+            "w": 47,
+            "c": 383
+          },
+          {
+            "timeKey": "17:55",
+            "w": -47,
+            "c": -383
+          }
+        ],
+        "id": 1166
+      },
+      {
+        "date": "2026-08-19",
+        "filePath": "university-track-4th-semester.md",
+        "wordCountStart": 275,
+        "charCountStart": 5417,
+        "changes": [],
+        "id": 1167
+      },
+      {
+        "date": "2026-08-19",
+        "filePath": "things-want-to-experience.md",
+        "wordCountStart": 182,
+        "charCountStart": 1007,
+        "changes": [],
+        "id": 1168
+      },
+      {
+        "date": "2026-08-19",
+        "filePath": "OneNote/Testing New things/Testing New things.md",
+        "wordCountStart": 20,
+        "charCountStart": 157,
+        "changes": [
+          {
+            "timeKey": "18:50",
+            "w": -20,
+            "c": -157
+          }
+        ],
+        "id": 1169
+      },
+      {
+        "date": "2026-08-19",
+        "filePath": "OneNote/Testing New things/Testing New things 1.md",
+        "wordCountStart": 34,
+        "charCountStart": 226,
+        "changes": [
+          {
+            "timeKey": "18:50",
+            "w": -34,
+            "c": -226
+          }
+        ],
+        "id": 1170
+      },
+      {
+        "date": "2026-08-19",
+        "filePath": "javascript.md",
+        "wordCountStart": 469,
+        "charCountStart": 2743,
+        "changes": [
+          {
+            "timeKey": "19:05",
+            "w": 5,
+            "c": 33
+          },
+          {
+            "timeKey": "19:10",
+            "w": 72,
+            "c": 372
+          },
+          {
+            "timeKey": "19:15",
+            "w": 30,
+            "c": 179
+          },
+          {
+            "timeKey": "19:20",
+            "w": 44,
+            "c": 219
+          },
+          {
+            "timeKey": "19:25",
+            "w": 53,
+            "c": 338
+          },
+          {
+            "timeKey": "19:30",
+            "w": 16,
+            "c": 81
+          },
+          {
+            "timeKey": "19:35",
+            "w": 22,
+            "c": 139
+          },
+          {
+            "timeKey": "19:40",
+            "w": 56,
+            "c": 301
+          },
+          {
+            "timeKey": "19:45",
+            "w": 39,
+            "c": 226
+          },
+          {
+            "timeKey": "21:20",
+            "w": 0,
+            "c": -1
+          },
+          {
+            "timeKey": "21:25",
+            "w": 0,
+            "c": 2
+          },
+          {
+            "timeKey": "21:30",
+            "w": 47,
+            "c": 254
+          }
+        ],
+        "id": 1171
+      },
+      {
+        "date": "2026-08-20",
+        "filePath": "Untitled.md",
+        "wordCountStart": 20,
+        "charCountStart": 150,
+        "changes": [
+          {
+            "timeKey": "09:35",
+            "w": -20,
+            "c": -150
+          }
+        ],
+        "id": 1172
+      },
+      {
+        "date": "2026-08-20",
+        "filePath": "about.md",
+        "wordCountStart": 292,
+        "charCountStart": 1666,
+        "changes": [],
+        "id": 1173
+      },
+      {
+        "date": "2026-08-20",
+        "filePath": "about-me.md",
+        "wordCountStart": 192,
+        "charCountStart": 1122,
+        "changes": [],
+        "id": 1174
+      },
+      {
+        "date": "2026-08-20",
+        "filePath": "ai-and-ml-index.md",
+        "wordCountStart": 146,
+        "charCountStart": 2230,
+        "changes": [],
+        "id": 1175
+      },
+      {
+        "date": "2026-08-20",
+        "filePath": "ai-and-ml-introduction.md",
+        "wordCountStart": 115,
+        "charCountStart": 830,
+        "changes": [
+          {
+            "timeKey": "09:30",
+            "w": 0,
+            "c": -1
+          }
+        ],
+        "id": 1176
+      },
+      {
+        "date": "2026-08-20",
+        "filePath": "bikeshedding-and-the-garden.md",
+        "wordCountStart": 389,
+        "charCountStart": 2200,
+        "changes": [],
+        "id": 1177
+      },
+      {
+        "date": "2026-08-20",
+        "filePath": "building-a-second-brain.md",
+        "wordCountStart": 457,
+        "charCountStart": 2915,
+        "changes": [],
+        "id": 1178
+      },
+      {
+        "date": "2026-08-20",
+        "filePath": "callouts-reference.md",
+        "wordCountStart": 401,
+        "charCountStart": 2416,
+        "changes": [],
+        "id": 1179
+      },
+      {
+        "date": "2026-08-20",
+        "filePath": "code-execution-playground.md",
+        "wordCountStart": 564,
+        "charCountStart": 3865,
+        "changes": [],
+        "id": 1180
+      },
+      {
+        "date": "2026-08-20",
+        "filePath": "composing-with-transclusions.md",
+        "wordCountStart": 355,
+        "charCountStart": 2290,
+        "changes": [],
+        "id": 1181
+      },
+      {
+        "date": "2026-08-20",
+        "filePath": "compounding-knowledge.md",
+        "wordCountStart": 394,
+        "charCountStart": 2353,
+        "changes": [],
+        "id": 1182
+      },
+      {
+        "date": "2026-08-20",
+        "filePath": "contribution-graph.md",
+        "wordCountStart": 403,
+        "charCountStart": 2794,
+        "changes": [],
+        "id": 1183
+      },
+      {
+        "date": "2026-08-20",
+        "filePath": "data-communication-cse0612223.md",
+        "wordCountStart": 1272,
+        "charCountStart": 11183,
+        "changes": [
+          {
+            "timeKey": "09:30",
+            "w": 0,
+            "c": 0
+          }
+        ],
+        "id": 1184
+      },
+      {
+        "date": "2026-08-20",
+        "filePath": "data-structures-and-algorithms-ii.md",
+        "wordCountStart": 668,
+        "charCountStart": 4186,
+        "changes": [],
+        "id": 1185
+      },
+      {
+        "date": "2026-08-20",
+        "filePath": "data-structures-and-algorithms-ii-lab.md",
+        "wordCountStart": 27,
+        "charCountStart": 191,
+        "changes": [],
+        "id": 1186
+      },
+      {
+        "date": "2026-08-20",
+        "filePath": "death.md",
+        "wordCountStart": 286,
+        "charCountStart": 1582,
+        "changes": [],
+        "id": 1187
+      },
+      {
+        "date": "2026-08-20",
+        "filePath": "embeds-and-transclusions.md",
+        "wordCountStart": 343,
+        "charCountStart": 2098,
+        "changes": [],
+        "id": 1188
+      },
+      {
+        "date": "2026-08-20",
+        "filePath": "digital-gardens.md",
+        "wordCountStart": 426,
+        "charCountStart": 2563,
+        "changes": [],
+        "id": 1189
+      },
+      {
+        "date": "2026-08-20",
+        "filePath": "entering-hell.md",
+        "wordCountStart": 1380,
+        "charCountStart": 8084,
+        "changes": [
+          {
+            "timeKey": "09:30",
+            "w": -1380,
+            "c": -8084
+          }
+        ],
+        "id": 1190
+      },
+      {
+        "date": "2026-08-20",
+        "filePath": "eye-of-tree.md",
+        "wordCountStart": 544,
+        "charCountStart": 2834,
+        "changes": [
+          {
+            "timeKey": "09:30",
+            "w": -544,
+            "c": -2834
+          }
+        ],
+        "id": 1191
+      },
+      {
+        "date": "2026-08-20",
+        "filePath": "how-posting-works.md",
+        "wordCountStart": 1339,
+        "charCountStart": 9428,
+        "changes": [],
+        "id": 1192
+      },
+      {
+        "date": "2026-08-20",
+        "filePath": "index.md",
+        "wordCountStart": 281,
+        "charCountStart": 1671,
+        "changes": [],
+        "id": 1193
+      },
+      {
+        "date": "2026-08-20",
+        "filePath": "internet-programming-lab-cse0613208.md",
+        "wordCountStart": 443,
+        "charCountStart": 3892,
+        "changes": [],
+        "id": 1194
+      },
+      {
+        "date": "2026-08-20",
+        "filePath": "javascript.md",
+        "wordCountStart": 853,
+        "charCountStart": 4886,
+        "changes": [],
+        "id": 1195
+      },
+      {
+        "date": "2026-08-20",
+        "filePath": "links-are-thoughts.md",
+        "wordCountStart": 365,
+        "charCountStart": 2116,
+        "changes": [],
+        "id": 1196
+      },
+      {
+        "date": "2026-08-20",
+        "filePath": "math-and-latex.md",
+        "wordCountStart": 313,
+        "charCountStart": 1844,
+        "changes": [],
+        "id": 1197
+      },
+      {
+        "date": "2026-08-20",
+        "filePath": "media-embeds-reference.md",
+        "wordCountStart": 418,
+        "charCountStart": 2934,
+        "changes": [],
+        "id": 1198
+      },
+      {
+        "date": "2026-08-20",
+        "filePath": "mermaid-diagrams.md",
+        "wordCountStart": 286,
+        "charCountStart": 2054,
+        "changes": [],
+        "id": 1199
+      },
+      {
+        "date": "2026-08-20",
+        "filePath": "moving-to-new-laptop.md",
+        "wordCountStart": 298,
+        "charCountStart": 1979,
+        "changes": [],
+        "id": 1200
+      },
+      {
+        "date": "2026-08-20",
+        "filePath": "numerical-methods-and-analysis-cse0541227.md",
+        "wordCountStart": 1966,
+        "charCountStart": 12814,
+        "changes": [],
+        "id": 1201
+      },
+      {
+        "date": "2026-08-20",
+        "filePath": "on-forgetting.md",
+        "wordCountStart": 368,
+        "charCountStart": 2101,
+        "changes": [],
+        "id": 1202
+      },
+      {
+        "date": "2026-08-20",
+        "filePath": "on-reading-slowly.md",
+        "wordCountStart": 350,
+        "charCountStart": 1999,
+        "changes": [],
+        "id": 1203
+      },
+      {
+        "date": "2026-08-20",
+        "filePath": "on-thinking.md",
+        "wordCountStart": 427,
+        "charCountStart": 2503,
+        "changes": [],
+        "id": 1204
+      },
+      {
+        "date": "2026-08-20",
+        "filePath": "on-wandering.md",
+        "wordCountStart": 375,
+        "charCountStart": 2112,
+        "changes": [],
+        "id": 1205
+      },
+      {
+        "date": "2026-08-20",
+        "filePath": "on-writing.md",
+        "wordCountStart": 477,
+        "charCountStart": 2586,
+        "changes": [],
+        "id": 1206
+      },
+      {
+        "date": "2026-08-20",
+        "filePath": "prerequisites-tools-for-ai-ml.md",
+        "wordCountStart": 80,
+        "charCountStart": 561,
+        "changes": [
+          {
+            "timeKey": "09:30",
+            "w": 0,
+            "c": 1
+          }
+        ],
+        "id": 1207
+      },
+      {
+        "date": "2026-08-20",
+        "filePath": "private-draft.md",
+        "wordCountStart": 149,
+        "charCountStart": 862,
+        "changes": [],
+        "id": 1208
+      },
+      {
+        "date": "2026-08-20",
+        "filePath": "python-arithmetic-operators.md",
+        "wordCountStart": 132,
+        "charCountStart": 829,
+        "changes": [],
+        "id": 1209
+      },
+      {
+        "date": "2026-08-20",
+        "filePath": "python-assignment-operators.md",
+        "wordCountStart": 117,
+        "charCountStart": 839,
+        "changes": [],
+        "id": 1210
+      },
+      {
+        "date": "2026-08-20",
+        "filePath": "python-break.md",
+        "wordCountStart": 63,
+        "charCountStart": 442,
+        "changes": [],
+        "id": 1211
+      },
+      {
+        "date": "2026-08-20",
+        "filePath": "python-case-sensitive.md",
+        "wordCountStart": 68,
+        "charCountStart": 532,
+        "changes": [],
+        "id": 1212
+      },
+      {
+        "date": "2026-08-20",
+        "filePath": "python-character-set.md",
+        "wordCountStart": 81,
+        "charCountStart": 600,
+        "changes": [],
+        "id": 1213
+      },
+      {
+        "date": "2026-08-20",
+        "filePath": "questions-project.md",
+        "wordCountStart": 2463,
+        "charCountStart": 26892,
+        "changes": [
+          {
+            "timeKey": "09:35",
+            "w": -2463,
+            "c": -26892
+          }
+        ],
+        "id": 1214
+      },
+      {
+        "date": "2026-08-20",
+        "filePath": "setup-guide.md",
+        "wordCountStart": 1182,
+        "charCountStart": 7873,
+        "changes": [],
+        "id": 1215
+      },
+      {
+        "date": "2026-08-20",
+        "filePath": "software-engineering-and-system-analysis-cse0613225.md",
+        "wordCountStart": 432,
+        "charCountStart": 3442,
+        "changes": [],
+        "id": 1216
+      },
+      {
+        "date": "2026-08-20",
+        "filePath": "software-engineering-and-system-analysis-lab-cse0613226.md",
+        "wordCountStart": 580,
+        "charCountStart": 4212,
+        "changes": [],
+        "id": 1217
+      },
+      {
+        "date": "2026-08-20",
+        "filePath": "taskworrior.md",
+        "wordCountStart": 17,
+        "charCountStart": 142,
+        "changes": [],
+        "id": 1218
+      },
+      {
+        "date": "2026-08-20",
+        "filePath": "tags-and-organization.md",
+        "wordCountStart": 406,
+        "charCountStart": 2480,
+        "changes": [],
+        "id": 1219
+      },
+      {
+        "date": "2026-08-20",
+        "filePath": "the-art-of-note-taking.md",
+        "wordCountStart": 480,
+        "charCountStart": 2801,
+        "changes": [],
+        "id": 1220
+      },
+      {
+        "date": "2026-08-20",
+        "filePath": "the-map-is-not-the-territory.md",
+        "wordCountStart": 398,
+        "charCountStart": 2319,
+        "changes": [],
+        "id": 1221
+      },
+      {
+        "date": "2026-08-20",
+        "filePath": "the-vault-and-the-garden.md",
+        "wordCountStart": 359,
+        "charCountStart": 2253,
+        "changes": [],
+        "id": 1222
+      },
+      {
+        "date": "2026-08-20",
+        "filePath": "things-want-to-experience.md",
+        "wordCountStart": 182,
+        "charCountStart": 1007,
+        "changes": [],
+        "id": 1223
+      },
+      {
+        "date": "2026-08-20",
+        "filePath": "university-track-4th-semester.md",
+        "wordCountStart": 275,
+        "charCountStart": 5417,
+        "changes": [],
+        "id": 1224
+      },
+      {
+        "date": "2026-08-20",
+        "filePath": "welcome-to-the-garden.md",
+        "wordCountStart": 309,
+        "charCountStart": 1848,
+        "changes": [],
+        "id": 1225
+      },
+      {
+        "date": "2026-08-20",
+        "filePath": "wikilinks-and-backlinks.md",
+        "wordCountStart": 392,
+        "charCountStart": 2339,
+        "changes": [],
+        "id": 1226
+      },
+      {
+        "date": "2026-08-20",
+        "filePath": "zettelkasten-method.md",
+        "wordCountStart": 468,
+        "charCountStart": 2716,
+        "changes": [],
+        "id": 1227
       }
     ],
-    "wholeVaultWordCount": 41787,
-    "wholeVaultCharCount": 343251
+    "wholeVaultWordCount": 42474,
+    "wholeVaultCharCount": 347209
   }
 }
