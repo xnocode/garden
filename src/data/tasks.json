@@ -1,14 +1,15 @@
 {
-  "exportedAt": "2026-08-20T20:31:05.601Z",
+  "exportedAt": "2026-08-20T20:32:26.786Z",
   "stats": {
     "total": 2,
-    "pending": 2,
-    "completed": 0,
+    "pending": 0,
+    "completed": 2,
     "overdue": 0
   },
-  "tasks": [
+  "tasks": [],
+  "completedTasks": [
     {
-      "id": 1,
+      "id": 0,
       "uuid": "b03c809a-c2fb-42b9-bb07-c5fb64eeb50e",
       "description": "Learn Programming C++",
       "project": "cp",
@@ -16,11 +17,14 @@
       "priority": "H",
       "due": "20260820T180000Z",
       "entry": "20260820T202549Z",
-      "urgency": 15.848,
-      "overdue": false
+      "end": "20260820T203226Z",
+      "urgency": 15.8484,
+      "wasMissed": false,
+      "xpAwarded": 250,
+      "xpPenalty": 0
     },
     {
-      "id": 2,
+      "id": 0,
       "uuid": "0d230005-06c9-4196-abcf-d6575357189e",
       "description": "Test New Things",
       "project": "ts",
@@ -28,9 +32,11 @@
       "priority": "M",
       "due": "20260820T180000Z",
       "entry": "20260820T202549Z",
-      "urgency": 13.748,
-      "overdue": false
+      "end": "20260820T203226Z",
+      "urgency": 13.7484,
+      "wasMissed": false,
+      "xpAwarded": 200,
+      "xpPenalty": 0
     }
-  ],
-  "completedTasks": []
+  ]
 }
