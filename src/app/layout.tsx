@@ -95,7 +95,7 @@ export default function RootLayout({
         <script
           id="garden-boot"
           dangerouslySetInnerHTML={{
-            __html: `(function(){try{if(/[?&](p|view|tag|q)=[^&]/.test(location.search)){var c=document.documentElement.classList;c.add('garden-boot');setTimeout(function(){c.remove('garden-boot');},4000);}}catch(e){}})();`,
+            __html: `(function(){try{if(/[?&](p|view|tag|q)=[^&]/.test(location.search)){var c=document.documentElement.classList;c.add('garden-boot');setTimeout(function(){c.remove('garden-boot');},800);}}catch(e){}})();`,
           }}
         />
         {/* Google AdSense */}
