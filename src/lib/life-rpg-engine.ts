@@ -31,6 +31,8 @@ export interface CompletedTaskData {
   end: string | null;
   urgency?: number;
   xpAwarded: number;
+  xpPenalty?: number;  // negative value; only present on missed (overdue-completed) tasks
+  wasMissed?: boolean;
 }
 
 export interface TaskSnapshot {
@@ -250,10 +252,16 @@ export function calculatePlayerProfile(
   let wordXp = Math.floor(totalWords / 10);
   let streakXp = streakDays * 100;
 
+  // Subtract XP penalties for missed (overdue-completed) tasks
+  const missedXpPenalty = (taskData.completedTasks ?? []).reduce(
+    (sum, t) => sum + (t.xpPenalty ?? 0),
+    0
+  );
+
   const nightOwlActive = isNightOwlHours();
-  const rawSubtotal = baseTaskXp + baseNoteXp + wordXp + streakXp;
+  const rawSubtotal = baseTaskXp + baseNoteXp + wordXp + streakXp + missedXpPenalty;
   const nightOwlBonus = nightOwlActive ? Math.floor(rawSubtotal * 0.25) : 0;
-  const totalXp = rawSubtotal + nightOwlBonus;
+  const totalXp = Math.max(0, rawSubtotal + nightOwlBonus);
 
   const levelInfo = getLevelFromTotalXp(totalXp);
   const title = getLevelTitle(levelInfo.level, nightOwlActive);

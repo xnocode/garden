@@ -183,13 +183,23 @@ async function main() {
     overdue,
   });
 
-  // Calculate XP awarded for completing a task based on priority and urgency
+  // Calculate XP awarded for completing a task on time
   function calculateCompletedTaskXp(t: RawTask): number {
     let xp = 150; // base task completion XP
     if (t.priority === "H") xp += 100; // 250 XP for high priority
     else if (t.priority === "M") xp += 50; // 200 XP for medium priority
     else if (t.priority === "L") xp += 20; // 170 XP for low priority
     return xp;
+  }
+
+  // Calculate XP penalty for completing a task AFTER its due date (missed)
+  // Penalty is harsher than the reward to enforce real accountability.
+  function calculateMissedTaskXpPenalty(t: RawTask): number {
+    let penalty = 200; // base penalty (vs 150 base reward)
+    if (t.priority === "H") penalty += 150; // -350 XP (vs +250 reward)
+    else if (t.priority === "M") penalty += 50;  // -250 XP (vs +200 reward)
+    else if (t.priority === "L") penalty += 20;  // -220 XP (vs +170 reward)
+    return -penalty; // always negative
   }
 
   // Categorize and sort ALL pending tasks:
@@ -209,19 +219,27 @@ async function main() {
       return dateB - dateA;
     })
     .slice(0, 10)
-    .map((t) => ({
-      id: t.id,
-      uuid: t.uuid,
-      description: t.description,
-      project: t.project || null,
-      tags: t.tags || [],
-      priority: t.priority || null,
-      due: t.due || null,
-      entry: t.entry || null,
-      end: t.end || t.modified || null,
-      urgency: t.urgency ?? 0,
-      xpAwarded: calculateCompletedTaskXp(t),
-    }));
+    .map((t) => {
+      // A task is "missed" if it had a due date and was completed after that due date
+      const endTime = t.end ? parseTWDate(t.end)?.getTime() : null;
+      const dueTime = t.due ? parseTWDate(t.due)?.getTime() : null;
+      const wasMissed = !!(dueTime && endTime && endTime > dueTime);
+      return {
+        id: t.id,
+        uuid: t.uuid,
+        description: t.description,
+        project: t.project || null,
+        tags: t.tags || [],
+        priority: t.priority || null,
+        due: t.due || null,
+        entry: t.entry || null,
+        end: t.end || t.modified || null,
+        urgency: t.urgency ?? 0,
+        wasMissed,
+        xpAwarded: wasMissed ? 0 : calculateCompletedTaskXp(t),
+        xpPenalty: wasMissed ? calculateMissedTaskXpPenalty(t) : 0,
+      };
+    });
 
   const snapshot = {
     exportedAt: new Date().toISOString(),
@@ -240,9 +258,11 @@ async function main() {
   const outPath = resolve(outDir, "tasks.json");
   writeFileSync(outPath, JSON.stringify(snapshot, null, 2), "utf8");
 
+  const missedCount = recentCompleted.filter((t) => t.wasMissed).length;
   console.log(
     `    ✓ ${visibleTasks.length} pending task(s) (${overdueTasks.length} overdue), ` +
-      `${recentCompleted.length} recent completed task(s), ${completedTasks.length} total completed`
+      `${recentCompleted.length} recent completed task(s) (${missedCount} missed/penalized), ` +
+      `${completedTasks.length} total completed`
   );
 }
 

@@ -1,5 +1,5 @@
 {
-  "exportedAt": "2026-08-20T03:36:27.521Z",
+  "exportedAt": "2026-08-20T03:46:23.148Z",
   "stats": {
     "total": 53,
     "pending": 1,
@@ -16,7 +16,7 @@
       "priority": "H",
       "due": "20260818T180000Z",
       "entry": "20260818T032532Z",
-      "urgency": 16.4511,
+      "urgency": 16.4543,
       "overdue": true
     }
   ],
@@ -31,8 +31,10 @@
       "due": "20260817T180000Z",
       "entry": "20260818T032731Z",
       "end": "20260819T123749Z",
-      "urgency": 16.9082,
-      "xpAwarded": 250
+      "urgency": 16.9114,
+      "wasMissed": true,
+      "xpAwarded": 0,
+      "xpPenalty": -350
     },
     {
       "id": 0,
@@ -45,7 +47,9 @@
       "entry": "20260809T074342Z",
       "end": "20260811T184524Z",
       "urgency": 19.0548,
-      "xpAwarded": 250
+      "wasMissed": true,
+      "xpAwarded": 0,
+      "xpPenalty": -350
     },
     {
       "id": 0,
@@ -58,7 +62,9 @@
       "entry": "20260728T194716Z",
       "end": "20260804T171345Z",
       "urgency": 17.0205,
-      "xpAwarded": 200
+      "wasMissed": false,
+      "xpAwarded": 200,
+      "xpPenalty": 0
     },
     {
       "id": 0,
@@ -71,7 +77,9 @@
       "entry": "20260728T194715Z",
       "end": "20260804T171343Z",
       "urgency": 17.0205,
-      "xpAwarded": 200
+      "wasMissed": false,
+      "xpAwarded": 200,
+      "xpPenalty": 0
     },
     {
       "id": 0,
@@ -84,7 +92,9 @@
       "entry": "20260728T194715Z",
       "end": "20260804T171335Z",
       "urgency": 17.0205,
-      "xpAwarded": 200
+      "wasMissed": false,
+      "xpAwarded": 200,
+      "xpPenalty": 0
     },
     {
       "id": 0,
@@ -97,7 +107,9 @@
       "entry": "20260728T194715Z",
       "end": "20260804T171335Z",
       "urgency": 17.0205,
-      "xpAwarded": 200
+      "wasMissed": false,
+      "xpAwarded": 200,
+      "xpPenalty": 0
     },
     {
       "id": 0,
@@ -110,7 +122,9 @@
       "entry": "20260728T194715Z",
       "end": "20260804T171334Z",
       "urgency": 17.0205,
-      "xpAwarded": 200
+      "wasMissed": false,
+      "xpAwarded": 200,
+      "xpPenalty": 0
     },
     {
       "id": 0,
@@ -123,7 +137,9 @@
       "entry": "20260728T194715Z",
       "end": "20260804T171334Z",
       "urgency": 17.0205,
-      "xpAwarded": 200
+      "wasMissed": false,
+      "xpAwarded": 200,
+      "xpPenalty": 0
     },
     {
       "id": 0,
@@ -136,7 +152,9 @@
       "entry": "20260728T194715Z",
       "end": "20260804T171329Z",
       "urgency": 17.0205,
-      "xpAwarded": 200
+      "wasMissed": false,
+      "xpAwarded": 200,
+      "xpPenalty": 0
     },
     {
       "id": 0,
@@ -149,7 +167,9 @@
       "entry": "20260801T182955Z",
       "end": "20260804T171328Z",
       "urgency": 19.0986,
-      "xpAwarded": 250
+      "wasMissed": true,
+      "xpAwarded": 0,
+      "xpPenalty": -350
     }
   ]
 }
