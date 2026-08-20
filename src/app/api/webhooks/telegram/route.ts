@@ -438,6 +438,21 @@ export async function POST(req: Request) {
 
 
 
+      // 📸 IMAGE DOCUMENT in scan mode — treat as notebook photo scan
+      const isImageDoc =
+        doc.mime_type?.startsWith("image/") ||
+        /\.(png|jpe?g|webp|heic|gif|bmp)$/i.test(lowerName);
+      const scanMode = pendingPhotoMode.get(chatId);
+      if (isImageDoc && scanMode) {
+        pendingPhotoMode.delete(chatId);
+        if (scanMode === "scan_add") {
+          await handleScanPhotoAdd(token, chatId, doc.file_id);
+        } else {
+          await handleScanPhotoDone(token, chatId, doc.file_id);
+        }
+        return NextResponse.json({ ok: true });
+      }
+
       if (!lowerName.endsWith(".md") && !lowerName.endsWith(".markdown")) {
         await sendMsg(token, chatId, `⚠️ Only <code>.md</code> or <code>.pdf</code> files accepted.\n<i>"${escapeHtml(fileName)}"</i> rejected.`);
         return NextResponse.json({ ok: true });
