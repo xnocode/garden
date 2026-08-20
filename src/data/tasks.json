@@ -1,14 +1,15 @@
 {
-  "exportedAt": "2026-08-20T03:46:23.148Z",
+  "exportedAt": "2026-08-20T03:48:16.573Z",
   "stats": {
     "total": 53,
-    "pending": 1,
-    "completed": 52,
-    "overdue": 1
+    "pending": 0,
+    "completed": 53,
+    "overdue": 0
   },
-  "tasks": [
+  "tasks": [],
+  "completedTasks": [
     {
-      "id": 1,
+      "id": 0,
       "uuid": "678fb3fe-e8b4-4dcd-bdf2-e7ba4c6d79a0",
       "description": "SRS Documentation - SW Lab",
       "project": "university",
@@ -16,11 +17,12 @@
       "priority": "H",
       "due": "20260818T180000Z",
       "entry": "20260818T032532Z",
-      "urgency": 16.4543,
-      "overdue": true
-    }
-  ],
-  "completedTasks": [
+      "end": "20260820T034758Z",
+      "urgency": 16.4549,
+      "wasMissed": true,
+      "xpAwarded": 0,
+      "xpPenalty": -350
+    },
     {
       "id": 0,
       "uuid": "45cdd3f9-660b-49bf-93b5-2cd19d8ccdbe",
@@ -31,7 +33,7 @@
       "due": "20260817T180000Z",
       "entry": "20260818T032731Z",
       "end": "20260819T123749Z",
-      "urgency": 16.9114,
+      "urgency": 16.912,
       "wasMissed": true,
       "xpAwarded": 0,
       "xpPenalty": -350
@@ -155,21 +157,6 @@
       "wasMissed": false,
       "xpAwarded": 200,
       "xpPenalty": 0
-    },
-    {
-      "id": 0,
-      "uuid": "fb5b681f-5a88-47c7-a4a3-00c9de66e0f3",
-      "description": "Feasibility Study - SW",
-      "project": "university",
-      "tags": [],
-      "priority": "H",
-      "due": "20260803T180000Z",
-      "entry": "20260801T182955Z",
-      "end": "20260804T171328Z",
-      "urgency": 19.0986,
-      "wasMissed": true,
-      "xpAwarded": 0,
-      "xpPenalty": -350
     }
   ]
 }
