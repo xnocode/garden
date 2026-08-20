@@ -81,3 +81,5 @@ async function registerCommands() {
 
 await registerWebhook();
 await registerCommands();
+
+export {};
