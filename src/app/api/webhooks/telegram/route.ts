@@ -20,6 +20,7 @@ import { askGardenKnowledgeBase } from "@/lib/telegram-ask";
 import { processBrainDumpToNote } from "@/lib/telegram-dump";
 import { processPdfToNote } from "@/lib/telegram-pdf";
 import { getMorningDigest } from "@/lib/telegram-digest";
+import { scanNotebookForNewTasks, scanNotebookForCompletedTasks } from "@/lib/notebook-scanner";
 
 export const dynamic = "force-dynamic";
 
@@ -38,6 +39,9 @@ const MAIN_KEYBOARD = {
 const recentMediaGroups = new Set<string>();
 // Session state: tracks whether the next voice from a chat should be a note or task
 const pendingVoiceMode = new Map<number | string, "note" | "task">();
+// Session state: tracks whether the next photo from a chat is for adding tasks or checking completed
+const pendingPhotoMode = new Map<number | string, "scan_add" | "scan_done">();
+const cachedPhotoFileId = new Map<number | string, string>();
 
 function delay(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -174,12 +178,118 @@ Transcript: "${transcribedText}"`;
   return [];
 }
 
+async function handleScanPhotoAdd(token: string, chatId: number | string, fileId: string) {
+  await sendMsg(token, chatId, `📸 <b>Scanning notebook page with AI Vision...</b>\n<i>Transcribing handwritten tasks & metadata...</i>`);
+  after(async () => {
+    try {
+      const fileRes = await tgFetch(`https://api.telegram.org/bot${token}/getFile?file_id=${fileId}`);
+      const fileData = await fileRes.json();
+      if (!fileData.ok || !fileData.result?.file_path) {
+        await sendMsg(token, chatId, `❌ <b>Failed to fetch photo from Telegram.</b>`);
+        return;
+      }
+      const photoRes = await tgFetch(`https://api.telegram.org/file/bot${token}/${fileData.result.file_path}`);
+      const arrayBuf = await photoRes.arrayBuffer();
+      const buffer = Buffer.from(arrayBuf);
+
+      const scanRes = await scanNotebookForNewTasks(buffer, "image/jpeg");
+      if (!scanRes.success || scanRes.taskLines.length === 0) {
+        await sendMsg(
+          token, chatId,
+          `⚠️ <b>No pending tasks detected in photo.</b>\n\n` +
+          `<i>Make sure handwriting is clear with task descriptions or checkboxes.</i>\n` +
+          (scanRes.error ? `<code>${escapeHtml(scanRes.error)}</code>` : "")
+        );
+        return;
+      }
+
+      const res = await addPendingTasksToGitHub(scanRes.taskLines);
+      if (res.success) {
+        const taskList = scanRes.tasks.map((t, i) => {
+          const pri = t.priority ? ` [<b>${t.priority}</b>]` : "";
+          const proj = t.project ? ` 📁<code>${escapeHtml(t.project)}</code>` : "";
+          const due = t.due ? ` 📅<i>${escapeHtml(t.due)}</i>` : "";
+          return `${i + 1}. <b>${escapeHtml(t.description)}</b>${proj}${due}${pri}`;
+        }).join("\n");
+
+        await sendMsg(
+          token, chatId,
+          `📸 <b>Handwritten Tasks Queued (${res.count})!</b>\n\n` +
+          `${taskList}\n\n` +
+          `<i>Next <code>bun run deploy</code> imports into WSL Taskwarrior &amp; updates the website live!</i>`
+        );
+      } else {
+        await sendMsg(token, chatId, `❌ <b>Task Queue Failed:</b> ${escapeHtml(res.message)}`);
+      }
+    } catch (err: any) {
+      await sendMsg(token, chatId, `❌ <b>Notebook Scan Error:</b> ${escapeHtml(err.message)}`);
+    }
+  });
+}
+
+async function handleScanPhotoDone(token: string, chatId: number | string, fileId: string) {
+  await sendMsg(token, chatId, `📸 <b>Scanning notebook for completed tasks...</b>\n<i>Detecting ticked checkboxes and matching active tasks...</i>`);
+  after(async () => {
+    try {
+      const fileRes = await tgFetch(`https://api.telegram.org/bot${token}/getFile?file_id=${fileId}`);
+      const fileData = await fileRes.json();
+      if (!fileData.ok || !fileData.result?.file_path) {
+        await sendMsg(token, chatId, `❌ <b>Failed to fetch photo from Telegram.</b>`);
+        return;
+      }
+      const photoRes = await tgFetch(`https://api.telegram.org/file/bot${token}/${fileData.result.file_path}`);
+      const arrayBuf = await photoRes.arrayBuffer();
+      const buffer = Buffer.from(arrayBuf);
+
+      const snapshot = await getTasksFromGitHub();
+      const activeTasks = snapshot?.tasks || [];
+
+      if (activeTasks.length === 0) {
+        await sendMsg(token, chatId, `📋 <b>No active Taskwarrior tasks found to complete.</b>`);
+        return;
+      }
+
+      const scanRes = await scanNotebookForCompletedTasks(buffer, "image/jpeg", activeTasks);
+      if (!scanRes.success || scanRes.result.matchedUuids.length === 0) {
+        const detectedHandwritten = scanRes.result?.completedHandwrittenTasks?.length
+          ? `\n\n<b>Handwritten items marked done on paper:</b>\n` + scanRes.result.completedHandwrittenTasks.map((t) => `• <i>${escapeHtml(t)}</i>`).join("\n")
+          : "";
+        await sendMsg(
+          token, chatId,
+          `⚠️ <b>No matching active tasks found to complete.</b>` +
+          detectedHandwritten +
+          `\n\n<i>Make sure the checked items match existing task descriptions in <code>/mytasks</code>.</i>` +
+          (scanRes.error ? `\n<code>${escapeHtml(scanRes.error)}</code>` : "")
+        );
+        return;
+      }
+
+      const res = await addPendingDoneToGitHub(scanRes.result.matchedUuids);
+      if (res.success) {
+        const completedList = scanRes.result.matchedTasks.map((t, i) => `${i + 1}. ✅ <b>${escapeHtml(t.description)}</b>`).join("\n");
+        await sendMsg(
+          token, chatId,
+          `📸 <b>Completed Task(s) Marked Done (${res.count})!</b>\n\n` +
+          `${completedList}\n\n` +
+          `<i>Next <code>bun run deploy</code> will mark them complete in WSL Taskwarrior &amp; update the website!</i>`
+        );
+      } else {
+        await sendMsg(token, chatId, `❌ <b>Failed to queue completed tasks:</b> ${escapeHtml(res.message)}`);
+      }
+    } catch (err: any) {
+      await sendMsg(token, chatId, `❌ <b>Completed Scan Error:</b> ${escapeHtml(err.message)}`);
+    }
+  });
+}
+
 function registerCommands(token: string) {
   const commands = [
     { command: "ask", description: "🧠 Ask AI about your notes & tasks" },
     { command: "digest", description: "☀️ Morning digest: tasks + notes + AI tip" },
     { command: "voice", description: "🎙️ Send voice → AI creates a published note" },
     { command: "vtask", description: "🎙️ Send voice → AI adds to Taskwarrior tasks" },
+    { command: "scantask", description: "📸 Scan notebook page → add tasks" },
+    { command: "scandone", description: "📸 Scan notebook page → mark done" },
     { command: "dump", description: "💬 Organize raw messy text to AI note" },
     { command: "append", description: "📝 Append text to an existing note" },
     { command: "note", description: "✏️ Create a text note directly" },
@@ -225,7 +335,7 @@ export async function POST(req: Request) {
 
     const senderId = (cbq?.from?.id?.toString() || message.from?.id?.toString() || message.sender_chat?.id?.toString() || "").trim();
     const chatId = message.chat?.id ? message.chat.id.toString() : "";
-    const rawText = (message.text?.trim() || cbq?.data || "").trim();
+    const rawText = (cbq?.data || message.text?.trim() || message.caption?.trim() || "").trim();
     const text = rawText.replace(/@\w+_bot/gi, "").trim();
 
     // Auth check — allows senderId or chatId matching
@@ -245,7 +355,26 @@ export async function POST(req: Request) {
 
     // 🛑 Cancel / Stop
     if (text.startsWith("/cancel") || text.startsWith("/stop") || rawText.includes("Cancel") || rawText.includes("Reset") || rawText.includes("🛑")) {
+      pendingVoiceMode.delete(chatId);
+      pendingPhotoMode.delete(chatId);
+      cachedPhotoFileId.delete(chatId);
       await sendMsg(token, chatId, `🛑 <b>Operation Stopped &amp; Reset</b>\n\nAll progress cancelled. Ready for next command!`);
+      return NextResponse.json({ ok: true });
+    }
+
+    // 📸 Inline button callbacks for photo actions
+    if (text.startsWith("photo_add") || text.startsWith("photo_done")) {
+      const fileIdFromCallback = text.replace(/^photo_(add|done)_?/, "").trim();
+      const fileId = fileIdFromCallback || cachedPhotoFileId.get(chatId);
+      if (!fileId) {
+        await sendMsg(token, chatId, `⚠️ Photo session expired. Please send or resend the notebook photo.`);
+        return NextResponse.json({ ok: true });
+      }
+      if (text.startsWith("photo_add")) {
+        await handleScanPhotoAdd(token, chatId, fileId);
+      } else {
+        await handleScanPhotoDone(token, chatId, fileId);
+      }
       return NextResponse.json({ ok: true });
     }
 
@@ -368,8 +497,6 @@ export async function POST(req: Request) {
     // ═══════════════════════════════════════════════════════════════════
     // 🎥 /voice — Set pending mode to 'note', prompt user to send voice
     // ═══════════════════════════════════════════════════════════════════
-    // 🎥 /voice — Set pending mode to 'note', prompt user to send voice
-    // ═══════════════════════════════════════════════════════════════════
     if (text.startsWith("/voice")) {
       pendingVoiceMode.set(chatId, "note");
       await sendMsg(token, chatId,
@@ -390,6 +517,34 @@ export async function POST(req: Request) {
         `Now send a voice message describing your task(s).\n` +
         `<i>Gemini will transcribe it and add them to Taskwarrior automatically.</i>\n\n` +
         `<b>Example:</b> <i>"Submit DSA assignment due tomorrow, high priority"</i>`,
+        { force_reply: true, selective: true }
+      );
+      return NextResponse.json({ ok: true });
+    }
+
+    // ═══════════════════════════════════════════════════════════════════
+    // 📸 /scantask or /scan — Scan handwritten notebook page & add tasks
+    // ═══════════════════════════════════════════════════════════════════
+    if (text.startsWith("/scantask") || text.startsWith("/scan_add") || text === "/scan") {
+      pendingPhotoMode.set(chatId, "scan_add");
+      await sendMsg(token, chatId,
+        `📸 <b>Scan Notebook (Add Tasks) — Ready!</b>\n\n` +
+        `Take a photo of your handwritten notebook page and send it here.\n` +
+        `<i>Gemini Vision will transcribe your tasks, project, due date & priority into Taskwarrior automatically!</i>`,
+        { force_reply: true, selective: true }
+      );
+      return NextResponse.json({ ok: true });
+    }
+
+    // ═══════════════════════════════════════════════════════════════════
+    // 📸 /scandone or /scancheck — Scan handwritten notebook page & check completed
+    // ═══════════════════════════════════════════════════════════════════
+    if (text.startsWith("/scandone") || text.startsWith("/scancheck") || text.startsWith("/scan_done")) {
+      pendingPhotoMode.set(chatId, "scan_done");
+      await sendMsg(token, chatId,
+        `📸 <b>Scan Notebook (Mark Done) — Ready!</b>\n\n` +
+        `Take a photo of your notebook page with completed/checked tasks (<code>[x]</code>, checkmarks, strikethroughs).\n` +
+        `<i>Gemini Vision will identify ticked items, match them with your active Taskwarrior tasks, and mark them completed!</i>`,
         { force_reply: true, selective: true }
       );
       return NextResponse.json({ ok: true });
@@ -497,7 +652,62 @@ export async function POST(req: Request) {
       return NextResponse.json({ ok: true, voice: true });
     }
 
+    // ═══════════════════════════════════════════════════════════════════
+    // 📸 PHOTO — Handle handwritten notebook scanning or direct photos
+    // ═══════════════════════════════════════════════════════════════════
+    if (message.photo && Array.isArray(message.photo) && message.photo.length > 0) {
+      const replyText = (message.reply_to_message?.text || "").toLowerCase();
+      const photoCaption = (message.caption || "").trim().toLowerCase();
+      const photoObj = message.photo[message.photo.length - 1];
+      const fileId = photoObj.file_id;
 
+      const isAddMode =
+        pendingPhotoMode.get(chatId) === "scan_add" ||
+        replyText.includes("add tasks") ||
+        photoCaption.includes("/scantask") ||
+        photoCaption.includes("/scan") ||
+        photoCaption.includes("add task");
+
+      const isDoneMode =
+        pendingPhotoMode.get(chatId) === "scan_done" ||
+        replyText.includes("mark done") ||
+        photoCaption.includes("/scandone") ||
+        photoCaption.includes("/scancheck") ||
+        photoCaption.includes("done") ||
+        photoCaption.includes("complete");
+
+      pendingPhotoMode.delete(chatId);
+
+      if (isAddMode) {
+        await handleScanPhotoAdd(token, chatId, fileId);
+        return NextResponse.json({ ok: true, photoScanAdd: true });
+      }
+
+      if (isDoneMode) {
+        await handleScanPhotoDone(token, chatId, fileId);
+        return NextResponse.json({ ok: true, photoScanDone: true });
+      }
+
+      // If no explicit mode or caption, prompt user with interactive inline buttons
+      cachedPhotoFileId.set(chatId, fileId);
+      await sendMsg(
+        token,
+        chatId,
+        `📸 <b>Notebook Photo Received!</b>\n\n` +
+        `How would you like to process this notebook photo?\n\n` +
+        `• <b>➕ Scan &amp; Add Tasks:</b> Extract handwriting into new Taskwarrior tasks\n` +
+        `• <b>✅ Scan &amp; Mark Done:</b> Detect ticked checkmarks &amp; complete matching tasks`,
+        {
+          inline_keyboard: [
+            [
+              { text: "➕ Scan & Add Tasks", callback_data: `photo_add_${fileId.slice(0, 30)}` },
+              { text: "✅ Scan & Mark Done", callback_data: `photo_done_${fileId.slice(0, 30)}` },
+            ],
+          ],
+        }
+      );
+      return NextResponse.json({ ok: true, photoAwaitingAction: true });
+    }
 
     // ═══════════════════════════════════════════════════════════════════
     // 💬 RAW BRAIN DUMP — Organize Messy Text to Structured Note
@@ -1030,18 +1240,22 @@ export async function POST(req: Request) {
         `💡 <b>Garden Bot — Complete AI &amp; Command Guide</b>\n\n` +
         `🧠 <b>1. Ask Your Garden AI:</b>\n` +
         `• <code>/ask What notes do I have about Python?</code>\n\n` +
-        `🎙️ <b>2. Voice Capturing:</b>\n` +
+        `📸 <b>2. Pen &amp; Paper Notebook Scanner:</b>\n` +
+        `• <code>/scantask</code> (or <code>/scan</code>) → send photo → AI extracts handwritten tasks &amp; metadata to Taskwarrior\n` +
+        `• <code>/scandone</code> (or <code>/scancheck</code>) → send photo → AI detects ticked boxes &amp; marks matching tasks done\n` +
+        `• Or send any notebook photo directly for interactive choices!\n\n` +
+        `🎙️ <b>3. Voice Capturing:</b>\n` +
         `• <code>/voice</code> → then send voice → AI creates a <b>published note</b>\n` +
         `• <code>/vtask</code> → then send voice → AI creates a <b>Taskwarrior task</b>\n` +
         `• Or just send a voice directly — defaults to creating a note.\n\n` +
-        `💬 <b>3. Raw Brain Dump:</b>\n` +
+        `💬 <b>4. Raw Brain Dump:</b>\n` +
         `• <code>/dump Messy thoughts &amp; notes go here...</code>\n\n` +
-        `📌 <b>4. Taskwarrior Tasks:</b>\n` +
+        `📌 <b>5. Taskwarrior Tasks:</b>\n` +
         `• Add: <code>/task Buy milk due:today priority:H</code>\n` +
         `• Multi: <code>/tasks\n- Task 1 due:today\n- Task 2 due:tomorrow</code>\n` +
         `• View: <code>/mytasks</code> — See pending task list with IDs\n` +
         `• Done: <code>/done 2</code> — Mark task #2 as complete\n\n` +
-        `📚 <b>5. Manage Notes:</b>\n` +
+        `📚 <b>6. Manage Notes:</b>\n` +
         `• <code>/note Title\nBody... #tag</code> — Write text note directly\n` +
         `• <code>.md File Upload</code> — Publish or update existing note\n` +
         `• <code>.pdf File Upload</code> — AI converts PDF to note\n` +

@@ -1,5 +1,5 @@
 /**
- * Setup Telegram Bot Webhook
+ * Setup Telegram Bot Webhook + Register Bot Commands
  *
  * Usage:
  *   bun run scripts/setup-telegram-webhook.ts https://your-domain.vercel.app
@@ -21,6 +21,21 @@ if (!botToken) {
 }
 const webhookUrl = `${domain.replace(/\/$/, "")}/api/webhooks/telegram`;
 
+// All bot commands to register (shown when user types "/" in Telegram)
+const BOT_COMMANDS = [
+  { command: "scantask", description: "📸 Scan handwritten notebook page → add tasks to Taskwarrior" },
+  { command: "scandone", description: "✅ Scan page with ticked tasks → mark them complete in Taskwarrior" },
+  { command: "tasks", description: "📋 View your active Taskwarrior tasks" },
+  { command: "vtask", description: "🎙️ Record a voice message to add tasks" },
+  { command: "voice", description: "🎙️ Record a voice message to create a note" },
+  { command: "note", description: "📝 Start a new written note" },
+  { command: "dump", description: "🧠 Dump raw text/voice → AI formats it into a note" },
+  { command: "ask", description: "💡 Ask a question about your Garden knowledge base" },
+  { command: "digest", description: "🌅 Get your morning digest / daily summary" },
+  { command: "stats", description: "📊 View Garden stats" },
+  { command: "search", description: "🔍 Search your notes" },
+  { command: "help", description: "❓ Show all available commands" },
+];
 
 async function registerWebhook() {
   console.log(`\n  📡 Registering Telegram Webhook to: ${webhookUrl}\n`);
@@ -42,4 +57,27 @@ async function registerWebhook() {
   }
 }
 
-registerWebhook();
+async function registerCommands() {
+  console.log(`  📋 Registering ${BOT_COMMANDS.length} bot commands with Telegram...\n`);
+  try {
+    const res = await fetch(`https://api.telegram.org/bot${botToken}/setMyCommands`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ commands: BOT_COMMANDS }),
+    });
+    const data = await res.json();
+    if (data.ok) {
+      console.log("  ✅ Bot commands registered! They will now appear when users type '/' in Telegram.\n");
+      console.log("  Registered commands:");
+      BOT_COMMANDS.forEach((c) => console.log(`    /${c.command} — ${c.description}`));
+      console.log();
+    } else {
+      console.error("  ❌ Failed to register commands:", data);
+    }
+  } catch (e: any) {
+    console.error("  ❌ Error:", e.message);
+  }
+}
+
+await registerWebhook();
+await registerCommands();
