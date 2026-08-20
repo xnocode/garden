@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { GardenLink } from "./garden-link";
 import { FileText, Clock, Hash, Lock } from "lucide-react";
 import type { NoteSummary } from "@/lib/notes";
 
@@ -22,7 +22,7 @@ function formatDate(d: string | null): string {
 
 export function NoteCard({ note }: { note: NoteSummary }) {
   return (
-    <Link
+    <GardenLink
       href={`/?p=${encodeURIComponent(note.slug)}`}
       className="card-elevated group relative block overflow-hidden p-5"
     >
@@ -73,7 +73,7 @@ export function NoteCard({ note }: { note: NoteSummary }) {
           </span>
         ))}
       </div>
-    </Link>
+    </GardenLink>
   );
 }
 

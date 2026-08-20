@@ -1,7 +1,8 @@
 "use client";
 
+import { navigate } from "./garden-link";
+
 import { useEffect, useRef, useState, useCallback, useMemo, useSyncExternalStore, useDeferredValue } from "react";
-import { useRouter } from "next/navigation";
 import { Search, FileText, Hash, CornerDownLeft, X, Zap, Lock } from "lucide-react";
 import { useUIStore } from "@/lib/ui-store";
 import FlexSearch from "flexsearch";
@@ -135,7 +136,6 @@ function buildSnippet(
 
 export function CommandPalette() {
   const { searchOpen, setSearchOpen } = useUIStore();
-  const router = useRouter();
   const [query, setQuery] = useState("");
   const deferredQuery = useDeferredValue(query);
   const [active, setActive] = useState(0);
@@ -250,9 +250,9 @@ export function CommandPalette() {
   const go = useCallback(
     (slug: string) => {
       setSearchOpen(false);
-      router.push(`/?p=${encodeURIComponent(slug)}`);
+      navigate(`/?p=${encodeURIComponent(slug)}`);
     },
-    [router, setSearchOpen]
+    [setSearchOpen]
   );
 
   const onKeyDown = (e: React.KeyboardEvent) => {

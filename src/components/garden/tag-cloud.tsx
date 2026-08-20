@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { GardenLink } from "./garden-link";
 import { Hash } from "lucide-react";
 import type { TagInfo } from "@/lib/notes";
 
@@ -11,7 +11,7 @@ export function TagCloud({ tags }: { tags: TagInfo[] }) {
   return (
     <div className="flex flex-wrap gap-2">
       {tags.map((t) => (
-        <Link
+        <GardenLink
           key={t.tag}
           href={`/?tag=${encodeURIComponent(t.tag)}`}
           className="tag-pill"
@@ -20,7 +20,7 @@ export function TagCloud({ tags }: { tags: TagInfo[] }) {
           <Hash className="h-3 w-3" />
           {t.tag}
           <span className="ml-1 text-muted-foreground/60">{t.count}</span>
-        </Link>
+        </GardenLink>
       ))}
     </div>
   );

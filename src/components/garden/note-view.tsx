@@ -1,8 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, useLayoutEffect, useMemo, useCallback } from "react";
-import { useRouter } from "next/navigation";
-import Link from "next/link";
+import { GardenLink, navigate } from "./garden-link";
 import {
   Calendar,
   Clock,
@@ -92,7 +91,6 @@ function loadMermaidFromCDN(): Promise<any> {
 }
 
 export function NoteView({ note }: { note: NoteDetail }) {
-  const router = useRouter();
   const { data: session, status: sessionStatus } = useSession();
   const [copied, setCopied] = useState<string | null>(null);
   const [preview, setPreview] = useState<{
@@ -169,14 +167,14 @@ export function NoteView({ note }: { note: NoteDetail }) {
       const data = await res.json();
       if (data.slug) {
         window.scrollTo({ top: 0, behavior: "smooth" });
-        router.push(`/?p=${encodeURIComponent(data.slug)}`);
+        navigate(`/?p=${encodeURIComponent(data.slug)}`);
       }
     } catch {
       /* ignore */
     } finally {
       setLoadingRandom(false);
     }
-  }, [note.slug, router]);
+  }, [note.slug]);
 
   const printNote = useCallback(() => {
     window.print();
@@ -357,7 +355,7 @@ export function NoteView({ note }: { note: NoteDetail }) {
         const slug = url.searchParams.get("p");
         if (slug) {
           window.scrollTo({ top: 0, behavior: "instant" as ScrollBehavior });
-          router.push(`/?p=${encodeURIComponent(slug)}`);
+          navigate(`/?p=${encodeURIComponent(slug)}`);
         }
         return;
       }
@@ -366,7 +364,7 @@ export function NoteView({ note }: { note: NoteDetail }) {
         e.preventDefault();
         const url = new URL(href, window.location.origin);
         const tag = url.searchParams.get("tag");
-        if (tag) router.push(`/?tag=${encodeURIComponent(tag)}`);
+        if (tag) navigate(`/?tag=${encodeURIComponent(tag)}`);
         return;
       }
       // Heading anchors → smooth scroll
@@ -440,7 +438,7 @@ export function NoteView({ note }: { note: NoteDetail }) {
       root.removeEventListener("mouseover", onMouseOver);
       root.removeEventListener("mouseout", onMouseOut);
     };
-  }, [router, html]);
+  }, [html]);
 
   const readingTime = Math.max(1, Math.round(note.wordCount / 220));
   const dateStr = note.publishDate
@@ -467,7 +465,7 @@ export function NoteView({ note }: { note: NoteDetail }) {
       {/* Breadcrumb */}
       {note.folder && (
         <nav className="mb-4 flex items-center gap-1.5 text-xs text-muted-foreground font-mono">
-          <Link href="/" className="hover:text-garden">garden</Link>
+          <GardenLink href="/" className="hover:text-garden">garden</GardenLink>
           <span className="text-muted-foreground/40">/</span>
           <span className="text-muted-foreground/70">{note.folder}</span>
           <span className="text-muted-foreground/40">/</span>
@@ -513,14 +511,14 @@ export function NoteView({ note }: { note: NoteDetail }) {
             </span>
           )}
           {note.series && (
-            <Link
+            <GardenLink
               href={`/?view=series&name=${encodeURIComponent(note.series.name)}`}
               className="inline-flex items-center gap-1.5 hover:text-garden transition-colors"
               title={`Series: ${note.series.name} (Part ${note.series.part} of ${note.series.total})`}
             >
               <BookOpen className="h-3.5 w-3.5 text-garden" />
               {note.series.name}
-            </Link>
+            </GardenLink>
           )}
           {noteVisibility === "private" && (
             <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-500/10 px-2 py-0.5 text-xs font-medium text-amber-500 border border-amber-500/20">
@@ -538,14 +536,14 @@ export function NoteView({ note }: { note: NoteDetail }) {
         {note.tags.length > 0 && (
           <div className="mt-3 flex flex-wrap gap-1.5">
             {note.tags.map((t) => (
-              <Link
+              <GardenLink
                 key={t}
                 href={`/?tag=${encodeURIComponent(t)}`}
                 className="tag-pill"
               >
                 <Hash className="h-2.5 w-2.5" />
                 {t}
-              </Link>
+              </GardenLink>
             ))}
           </div>
         )}
@@ -637,7 +635,7 @@ export function NoteView({ note }: { note: NoteDetail }) {
           {/* Prev / Next */}
           <nav className="mt-12 grid grid-cols-1 gap-3 border-t border-border pt-6 sm:grid-cols-2">
             {note.prev ? (
-              <Link
+              <GardenLink
                 href={`/?p=${encodeURIComponent(note.prev.slug)}`}
                 className="group flex items-center gap-3 rounded-lg border border-border bg-surface/30 p-4 transition-colors hover:border-garden/40"
               >
@@ -650,12 +648,12 @@ export function NoteView({ note }: { note: NoteDetail }) {
                     {note.prev.title}
                   </span>
                 </span>
-              </Link>
+              </GardenLink>
             ) : (
               <div />
             )}
             {note.next ? (
-              <Link
+              <GardenLink
                 href={`/?p=${encodeURIComponent(note.next.slug)}`}
                 className="group flex items-center justify-end gap-3 rounded-lg border border-border bg-surface/30 p-4 text-right transition-colors hover:border-garden/40"
               >
@@ -668,7 +666,7 @@ export function NoteView({ note }: { note: NoteDetail }) {
                   </span>
                 </span>
                 <ChevronRight className="h-5 w-5 text-muted-foreground group-hover:text-garden" />
-              </Link>
+              </GardenLink>
             ) : (
               <div />
             )}

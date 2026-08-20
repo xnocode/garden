@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { GardenLink } from "./garden-link";
 import { Sparkles, Hash, ArrowRight } from "lucide-react";
 import type { RelatedNote } from "@/lib/notes";
 
@@ -29,7 +29,7 @@ export function RelatedNotes({ notes }: { notes: RelatedNote[] }) {
       <ul className="grid grid-cols-1 gap-2 sm:grid-cols-2">
         {notes.map((n) => (
           <li key={n.slug}>
-            <Link
+            <GardenLink
               href={`/?p=${encodeURIComponent(n.slug)}`}
               className="group flex h-full flex-col gap-1.5 rounded-lg border border-border bg-surface/40 p-3 transition-all hover:border-garden/40 hover:bg-surface/70 hover:shadow-sm"
             >
@@ -58,7 +58,7 @@ export function RelatedNotes({ notes }: { notes: RelatedNote[] }) {
                   </span>
                 ))}
               </div>
-            </Link>
+            </GardenLink>
           </li>
         ))}
       </ul>

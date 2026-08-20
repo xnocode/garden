@@ -1,7 +1,8 @@
 "use client";
 
+import { navigate } from "./garden-link";
+
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { Sprout } from "lucide-react";
 
 interface WanderButtonProps {
@@ -9,7 +10,6 @@ interface WanderButtonProps {
 }
 
 export function WanderButton({ featuredSlug }: WanderButtonProps) {
-  const router = useRouter();
   const [loading, setLoading] = useState(false);
 
   const startWandering = async () => {
@@ -19,13 +19,13 @@ export function WanderButton({ featuredSlug }: WanderButtonProps) {
       if (!res.ok) throw new Error();
       const data = await res.json();
       if (data.slug) {
-        router.push(`/?p=${encodeURIComponent(data.slug)}`);
+        navigate(`/?p=${encodeURIComponent(data.slug)}`);
       }
     } catch {
       if (featuredSlug) {
-        router.push(`/?p=${encodeURIComponent(featuredSlug)}`);
+        navigate(`/?p=${encodeURIComponent(featuredSlug)}`);
       } else {
-        router.push("/?view=index");
+        navigate("/?view=index");
       }
     } finally {
       setLoading(false);

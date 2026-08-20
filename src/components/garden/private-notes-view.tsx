@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Link from "next/link";
+import { GardenLink } from "./garden-link";
 import { useSession } from "next-auth/react";
 import { Lock, Loader2, ShieldAlert } from "lucide-react";
 
@@ -98,7 +98,7 @@ export function PrivateNotesView() {
       {notes && notes.length > 0 && (
         <div className="space-y-2">
           {notes.map((n) => (
-            <Link
+            <GardenLink
               key={n.slug}
               href={`/?p=${encodeURIComponent(n.slug)}`}
               className="group flex items-center justify-between gap-3 rounded-lg border border-border bg-surface/30 px-4 py-3 transition-colors hover:border-garden/40"
@@ -119,7 +119,7 @@ export function PrivateNotesView() {
               <span className="flex-shrink-0 font-mono text-xs text-muted-foreground/60">
                 {n.wordCount}w
               </span>
-            </Link>
+            </GardenLink>
           ))}
         </div>
       )}

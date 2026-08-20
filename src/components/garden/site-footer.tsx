@@ -3,7 +3,7 @@
  * Source-Available License applies. See LICENSE file in repository root.
  */
 
-import Link from "next/link";
+import { GardenLink } from "./garden-link";
 import { Sprout, Rss, Network, BookMarked, Github } from "lucide-react";
 import { InstallButton } from "./pwa";
 
@@ -21,44 +21,44 @@ export function SiteFooter({ noteCount }: { noteCount: number }) {
           </span>
         </div>
         <div className="flex items-center gap-4 text-sm text-muted-foreground">
-          <Link
+          <GardenLink
             href="/?view=index"
             className="inline-flex items-center gap-1 hover:text-foreground transition-colors"
           >
             <BookMarked className="h-3.5 w-3.5" />
             <span className="hidden sm:inline">index</span>
-          </Link>
-          <Link
+          </GardenLink>
+          <GardenLink
             href="/?view=graph"
             className="inline-flex items-center gap-1 hover:text-foreground transition-colors"
           >
             <Network className="h-3.5 w-3.5" />
             <span className="hidden sm:inline">graph</span>
-          </Link>
-          <Link
+          </GardenLink>
+          <GardenLink
             href="/?view=rhythm"
             className="hover:text-foreground transition-colors"
           >
             rhythm
-          </Link>
-          <Link
+          </GardenLink>
+          <GardenLink
             href="/?view=tasks"
             className="hover:text-foreground transition-colors"
           >
             taskwarrior
-          </Link>
-          <Link
+          </GardenLink>
+          <GardenLink
             href="/?view=changelog"
             className="hover:text-foreground transition-colors"
           >
             changelog
-          </Link>
-          <Link
+          </GardenLink>
+          <GardenLink
             href="/?view=colophon"
             className="hover:text-foreground transition-colors"
           >
             colophon
-          </Link>
+          </GardenLink>
           <InstallButton />
           <a
             href="/api/rss"

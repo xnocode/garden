@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useRef, useState, useCallback } from "react";
-import { useSearchParams, useRouter } from "next/navigation";
+import { useSearchParams } from "next/navigation";
+import { navigate } from "./garden-link";
 import { ArrowUp } from "lucide-react";
 
 /**
@@ -26,7 +27,6 @@ import { ArrowUp } from "lucide-react";
  * re-rendering on every scroll event.
  */
 export function ReadingProgress() {
-  const router = useRouter();
   const sp = useSearchParams();
   const currentSlug = sp.get("p");
   const isNote = !!currentSlug;
@@ -107,19 +107,19 @@ export function ReadingProgress() {
       if (gPressed) {
         if (e.key === "i") {
           e.preventDefault();
-          router.push("/?view=index");
+          navigate("/?view=index");
         } else if (e.key === "g") {
           e.preventDefault();
-          router.push("/?view=graph");
+          navigate("/?view=graph");
         } else if (e.key === "t") {
           e.preventDefault();
-          router.push("/?view=tags");
+          navigate("/?view=tags");
         } else if (e.key === "l") {
           e.preventDefault();
-          router.push("/?view=life");
+          navigate("/?view=life");
         } else if (e.key === "h") {
           e.preventDefault();
-          router.push("/");
+          navigate("/");
         }
         gPressed = false;
         if (gTimer) clearTimeout(gTimer);
@@ -158,7 +158,7 @@ export function ReadingProgress() {
 
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [router]);
+  }, []);
 
   const scrollToTop = useCallback(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });

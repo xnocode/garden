@@ -1,7 +1,8 @@
 "use client";
 
+import { navigate } from "./garden-link";
+
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { Sparkles, Search, X, Loader2, ArrowRight, BookOpen, Copy, Check, RotateCcw, ExternalLink } from "lucide-react";
 
 const SUGGESTED_PROMPTS = [
@@ -50,7 +51,6 @@ function renderFormattedMarkdown(text: string, onNavigate: (urlOrSlug: string) =
 }
 
 export function AISearchModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
-  const router = useRouter();
   const [query, setQuery] = useState("");
   const [loading, setLoading] = useState(false);
   const [answer, setAnswer] = useState<string | null>(null);
@@ -63,7 +63,7 @@ export function AISearchModal({ isOpen, onClose }: { isOpen: boolean; onClose: (
   function handleNavigate(urlOrSlug: string) {
     onClose();
     const href = urlOrSlug.startsWith("/") ? urlOrSlug : `/?p=${encodeURIComponent(urlOrSlug)}`;
-    router.push(href);
+    navigate(href);
   }
 
   async function handleSearch(searchQuery: string) {

@@ -3,7 +3,7 @@
  * Source-Available License applies. See LICENSE file in repository root.
  */
 
-import Link from "next/link";
+import { GardenLink } from "./garden-link";
 import { Sprout, Search, Network, ArrowRight, BookOpen, BookMarked, Link2, Sparkles, Lock } from "lucide-react";
 import type { NoteSummary, TagInfo, GraphData, SeriesEntry } from "@/lib/notes";
 import { NoteCard } from "./note-card";
@@ -137,13 +137,13 @@ export function GardenHome({ data }: { data: HomeData }) {
               <Search className="h-4 w-4" />
               Search notes
             </SearchTrigger>
-            <Link
+            <GardenLink
               href="/?view=graph"
               className="inline-flex items-center gap-2 rounded-md border border-border bg-surface/60 px-6 py-2.5 text-sm font-medium text-foreground transition-colors hover:border-garden/40 hover:bg-surface"
             >
               <Network className="h-4 w-4" />
               View graph
-            </Link>
+            </GardenLink>
           </div>
 
           {/* Stats */}
@@ -187,12 +187,12 @@ export function GardenHome({ data }: { data: HomeData }) {
                 <BookOpen className="h-5 w-5 text-garden" />
                 Featured
               </h2>
-              <Link
+              <GardenLink
                 href="/?view=index"
                 className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-garden"
               >
                 all notes <ArrowRight className="h-3.5 w-3.5" />
-              </Link>
+              </GardenLink>
             </div>
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {featured.map((n) => (
@@ -210,16 +210,16 @@ export function GardenHome({ data }: { data: HomeData }) {
                 <BookMarked className="h-5 w-5 text-garden" />
                 Collections
               </h2>
-              <Link
+              <GardenLink
                 href="/?view=series"
                 className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-garden"
               >
                 all collections <ArrowRight className="h-3.5 w-3.5" />
-              </Link>
+              </GardenLink>
             </div>
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {data.series.slice(0, 3).map((s) => (
-                <Link
+                <GardenLink
                   key={s.name}
                   href={`/?view=series&name=${encodeURIComponent(s.name)}`}
                   className="group rounded-lg border border-border bg-surface/30 p-4 transition-colors hover:border-garden/40 hover:bg-surface/60"
@@ -237,7 +237,7 @@ export function GardenHome({ data }: { data: HomeData }) {
                       starts with {s.notes[0].title}
                     </p>
                   )}
-                </Link>
+                </GardenLink>
               ))}
             </div>
           </section>
@@ -257,12 +257,12 @@ export function GardenHome({ data }: { data: HomeData }) {
                 height={360}
               />
             </div>
-            <Link
+            <GardenLink
               href="/?view=graph"
               className="mt-3 inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-garden"
             >
               explore the full graph <ArrowRight className="h-3.5 w-3.5" />
-            </Link>
+            </GardenLink>
           </section>
 
           <section>
@@ -272,7 +272,7 @@ export function GardenHome({ data }: { data: HomeData }) {
             </h2>
             <div className="space-y-2">
               {recent.map((n) => (
-                <Link
+                <GardenLink
                   key={n.slug}
                   href={`/?p=${encodeURIComponent(n.slug)}`}
                   className="group block rounded-md border border-border bg-surface/30 p-3 transition-colors hover:border-garden/40 hover:bg-surface/60"
@@ -305,7 +305,7 @@ export function GardenHome({ data }: { data: HomeData }) {
                       {n.description}
                     </p>
                   )}
-                </Link>
+                </GardenLink>
               ))}
             </div>
           </section>

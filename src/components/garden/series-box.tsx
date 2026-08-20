@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import { GardenLink } from "./garden-link";
 import { BookOpen, ListOrdered } from "lucide-react";
 import type { SeriesInfo, NoteSummary } from "@/lib/notes";
 
@@ -23,45 +23,45 @@ export function SeriesBox({ series, prev, next }: Props) {
       <div className="flex flex-wrap items-center justify-between gap-2">
         <div className="flex min-w-0 items-center gap-2 text-sm">
           <BookOpen className="h-4 w-4 flex-shrink-0 text-garden" />
-          <Link
+          <GardenLink
             href={`/?view=series&name=${encodeURIComponent(series.name)}`}
             className="truncate font-medium text-foreground hover:text-garden"
           >
             {series.name}
-          </Link>
+          </GardenLink>
           <span className="flex-shrink-0 font-mono text-xs text-muted-foreground">
             Part {series.part} of {series.total}
           </span>
         </div>
-        <Link
+        <GardenLink
           href={`/?view=series&name=${encodeURIComponent(series.name)}`}
           className="inline-flex flex-shrink-0 items-center gap-1.5 text-xs text-muted-foreground transition-colors hover:text-garden"
         >
           <ListOrdered className="h-3.5 w-3.5" />
           All {series.total} parts
-        </Link>
+        </GardenLink>
       </div>
       {(prev || next) && (
         <div className="mt-2 flex items-center justify-between gap-3 border-t border-garden/15 pt-2 text-xs">
           {prev ? (
-            <Link
+            <GardenLink
               href={`/?p=${encodeURIComponent(prev.slug)}`}
               className="min-w-0 truncate text-muted-foreground transition-colors hover:text-garden"
               title={prev.title}
             >
               ← {prev.title}
-            </Link>
+            </GardenLink>
           ) : (
             <span />
           )}
           {next ? (
-            <Link
+            <GardenLink
               href={`/?p=${encodeURIComponent(next.slug)}`}
               className="min-w-0 truncate text-right text-muted-foreground transition-colors hover:text-garden"
               title={next.title}
             >
               {next.title} →
-            </Link>
+            </GardenLink>
           ) : (
             <span />
           )}

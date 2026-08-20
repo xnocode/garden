@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 import { usePathname, useSearchParams } from "next/navigation";
-import Link from "next/link";
+import { GardenLink } from "./garden-link";
 import { useUIStore } from "@/lib/ui-store";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Sidebar } from "./sidebar";
@@ -67,7 +67,7 @@ export function MobileSidebar({
             {NAV_ITEMS.map((item) => {
               const isActive = item.key === active;
               return (
-                <Link
+                <GardenLink
                   key={item.key}
                   href={item.href}
                   onClick={() => setMobileNavOpen(false)}
@@ -78,7 +78,7 @@ export function MobileSidebar({
                   }`}
                 >
                   {item.label}
-                </Link>
+                </GardenLink>
               );
             })}
           </nav>

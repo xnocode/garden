@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { GardenLink } from "./garden-link";
 import { Calendar, ArrowRight, Clock } from "lucide-react";
 import type { NoteSummary } from "@/lib/notes";
 
@@ -61,7 +61,7 @@ export function OnThisDay({
             ? new Date(n.publishDate).getFullYear()
             : null;
           return (
-            <Link
+            <GardenLink
               key={n.slug}
               href={`/?p=${encodeURIComponent(n.slug)}`}
               className="card-elevated group relative block overflow-hidden p-5"
@@ -90,7 +90,7 @@ export function OnThisDay({
                 <span>Read note</span>
                 <ArrowRight className="h-3 w-3" />
               </div>
-            </Link>
+            </GardenLink>
           );
         })}
       </div>

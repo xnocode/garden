@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
+import { GardenLink } from "./garden-link";
 import { Search, Menu, Sprout, Sparkles } from "lucide-react";
 import { usePathname, useSearchParams } from "next/navigation";
 import { useSession } from "next-auth/react";
@@ -57,7 +57,7 @@ export function SiteHeader() {
           </button>
 
           {/* Logo */}
-          <Link
+          <GardenLink
             href="/"
             className="group flex items-center gap-2 font-serif text-lg font-semibold tracking-tight text-heading"
           >
@@ -65,7 +65,7 @@ export function SiteHeader() {
               <Sprout className="h-4 w-4" />
             </span>
             <span className="hidden sm:inline">garden</span>
-          </Link>
+          </GardenLink>
 
           {/* Desktop nav */}
           <nav className="ml-2 hidden items-center gap-1 lg:flex">
@@ -74,7 +74,7 @@ export function SiteHeader() {
                 item.key === active ||
                 (item.key === "home" && active === "home");
               return (
-                <Link
+                <GardenLink
                   key={item.key}
                   href={item.href}
                   className={`nav-link rounded-md px-3 py-1.5 text-sm font-medium ${
@@ -82,7 +82,7 @@ export function SiteHeader() {
                   }`}
                 >
                   {item.label}
-                </Link>
+                </GardenLink>
               );
             })}
           </nav>

@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { GardenLink } from "./garden-link";
 import { Network, Hash, FileX, Search as SearchIcon, Sprout, Terminal, Code2, BookMarked, BookOpen, Lock } from "lucide-react";
 import type { NoteSummary, TagInfo, GraphData, SeriesEntry } from "@/lib/notes";
 import { NoteCard } from "./note-card";
@@ -61,7 +61,7 @@ export function IndexView({ notes }: { notes: NoteSummary[] }) {
             <ul className="space-y-1">
               {groups.get(l)!.map((n) => (
                 <li key={n.slug}>
-                  <Link
+                  <GardenLink
                     href={`/?p=${encodeURIComponent(n.slug)}`}
                     className="group flex items-baseline justify-between gap-4 rounded-lg border border-transparent px-3 py-2.5 transition-all hover:border-border hover:bg-surface/60"
                   >
@@ -97,7 +97,7 @@ export function IndexView({ notes }: { notes: NoteSummary[] }) {
                         </span>
                       ))}
                     </div>
-                  </Link>
+                  </GardenLink>
                 </li>
               ))}
             </ul>
@@ -127,7 +127,7 @@ export function TagsView({ tags }: { tags: TagInfo[] }) {
       {/* Uniform tag cloud — all tags same size, count shown as a badge */}
       <div className="flex flex-wrap items-center gap-2 rounded-xl border border-border bg-surface/30 p-6">
         {tags.map((t) => (
-          <Link
+          <GardenLink
             key={t.tag}
             href={`/?tag=${encodeURIComponent(t.tag)}`}
             className="group inline-flex items-center gap-1.5 rounded-full border border-border bg-surface px-3 py-1.5 font-mono text-sm transition-all hover:border-garden/50 hover:bg-garden/10"
@@ -139,7 +139,7 @@ export function TagsView({ tags }: { tags: TagInfo[] }) {
             <span className="rounded-full bg-muted px-1.5 py-0.5 text-[10px] font-medium text-muted-foreground transition-colors group-hover:bg-garden/20 group-hover:text-garden">
               {t.count}
             </span>
-          </Link>
+          </GardenLink>
         ))}
       </div>
       {/* Summary stats */}
@@ -181,9 +181,9 @@ export function TagView({ tag, notes }: { tag: string; notes: NoteSummary[] }) {
     <div className="garden-fade-in mx-auto max-w-5xl">
       <header className="mb-8 border-b border-border pb-6">
         <nav className="mb-2 text-sm text-muted-foreground">
-          <Link href="/?view=tags" className="hover:text-garden">
+          <GardenLink href="/?view=tags" className="hover:text-garden">
             ← all tags
-          </Link>
+          </GardenLink>
         </nav>
         <h1 className="flex items-center gap-3 font-serif text-3xl font-semibold text-heading">
           <span className="inline-flex items-center gap-1 font-mono text-garden">
@@ -230,7 +230,7 @@ export function SeriesListView({ series }: { series: SeriesEntry[] }) {
       ) : (
         <div className="space-y-4">
           {series.map((s) => (
-            <Link
+            <GardenLink
               key={s.name}
               href={`/?view=series&name=${encodeURIComponent(s.name)}`}
               className="group flex items-center justify-between gap-4 rounded-lg border border-border bg-surface/30 p-4 transition-colors hover:border-garden/40"
@@ -247,7 +247,7 @@ export function SeriesListView({ series }: { series: SeriesEntry[] }) {
               <span className="flex-shrink-0 font-mono text-xs text-muted-foreground">
                 {s.notes.length} {s.notes.length === 1 ? "part" : "parts"}
               </span>
-            </Link>
+            </GardenLink>
           ))}
         </div>
       )}
@@ -268,9 +268,9 @@ export function SeriesView({
     <div className="garden-fade-in mx-auto max-w-3xl">
       <header className="mb-8 border-b border-border pb-6">
         <nav className="mb-2 text-sm text-muted-foreground">
-          <Link href="/?view=series" className="hover:text-garden">
+          <GardenLink href="/?view=series" className="hover:text-garden">
             ← all collections
-          </Link>
+          </GardenLink>
         </nav>
         <h1 className="flex items-center gap-3 font-serif text-3xl font-semibold text-heading">
           <BookOpen className="h-7 w-7 text-garden" />
@@ -283,7 +283,7 @@ export function SeriesView({
       <ol className="space-y-2">
         {notes.map((n, i) => (
           <li key={n.slug}>
-            <Link
+            <GardenLink
               href={`/?p=${encodeURIComponent(n.slug)}`}
               className="group flex items-baseline gap-4 rounded-lg border border-border bg-surface/30 px-4 py-3 transition-colors hover:border-garden/40"
             >
@@ -305,7 +305,7 @@ export function SeriesView({
                   {formatDate(n.publishDate)}
                 </span>
               )}
-            </Link>
+            </GardenLink>
           </li>
         ))}
       </ol>
@@ -316,12 +316,12 @@ export function SeriesView({
             .filter((s) => s.name !== name)
             .map((s, i, arr) => (
               <span key={s.name}>
-                <Link
+                <GardenLink
                   href={`/?view=series&name=${encodeURIComponent(s.name)}`}
                   className="hover:text-garden"
                 >
                   {s.name}
-                </Link>
+                </GardenLink>
                 {i < arr.length - 1 && ", "}
               </span>
             ))}
@@ -374,7 +374,7 @@ export function SearchView({
         <ul className="space-y-3">
           {results.map((r) => (
             <li key={r.slug}>
-              <Link
+              <GardenLink
                 href={`/?p=${encodeURIComponent(r.slug)}`}
                 className="group block rounded-lg border border-border bg-surface/30 p-4 transition-colors hover:border-garden/40"
               >
@@ -390,7 +390,7 @@ export function SearchView({
                   {r.publishDate && <span>{formatDate(r.publishDate)}</span>}
                   <span className="font-mono">{r.path}</span>
                 </div>
-              </Link>
+              </GardenLink>
             </li>
           ))}
         </ul>
@@ -513,7 +513,7 @@ $ bun run dev              # preview at localhost:3000`}</code>
         </li>
         <li>
           <strong>Release History</strong> — view feature updates and release logs at{" "}
-          <Link href="/?view=changelog" className="text-garden underline font-medium">Changelog</Link>.
+          <GardenLink href="/?view=changelog" className="text-garden underline font-medium">Changelog</GardenLink>.
         </li>
         <li>
           <strong>Related notes</strong> — shared tags + 2-hop link analysis.
@@ -583,18 +583,18 @@ export function NotFoundView({ slug }: { slug: string }) {
         . It may be a draft, or the link may be broken.
       </p>
       <div className="mt-6 flex justify-center gap-3">
-        <Link
+        <GardenLink
           href="/"
           className="inline-flex items-center gap-2 rounded-md bg-garden px-4 py-2 text-sm font-medium text-garden-foreground"
         >
           <Sprout className="h-4 w-4" /> Back to the garden
-        </Link>
-        <Link
+        </GardenLink>
+        <GardenLink
           href="/?view=index"
           className="inline-flex items-center gap-2 rounded-md border border-border bg-surface/60 px-4 py-2 text-sm font-medium text-foreground hover:border-garden/40"
         >
           Browse the index
-        </Link>
+        </GardenLink>
       </div>
     </div>
   );

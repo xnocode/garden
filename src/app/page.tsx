@@ -20,94 +20,28 @@ import { GardenClientRouter } from "@/components/garden/garden-client-router";
 import { Suspense } from "react";
 import type { Metadata } from "next";
 
-interface PageProps {
-  searchParams: Promise<{ p?: string; view?: string; tag?: string; q?: string }>;
-}
+// The garden is a single fully static page: all views (?p=, ?view=, ?tag=,
+// ?q=) are rendered client-side from data embedded at build time. Without
+// this, reading searchParams in metadata opts the route into dynamic
+// rendering — and every client navigation re-renders the whole page on
+// the server (seconds of latency per click).
+export const dynamic = "force-static";
 
-export async function generateMetadata({ searchParams }: PageProps): Promise<Metadata> {
-  const params = await searchParams;
-  const slug = params?.p;
-
-  if (slug) {
-    const note = await getNote(slug);
-    if (note) {
-      const title = `${note.title} — Garden`;
-      const description =
-        note.description ||
-        `Notes on ${note.title} grown in Obsidian and published on Garden.`;
-      const url = `https://gardenx.qzz.io/?p=${note.slug}`;
-
-      return {
-        title,
-        description,
-        alternates: {
-          canonical: url,
-        },
-        openGraph: {
-          title: note.title,
-          description,
-          url,
-          siteName: "Garden",
-          type: "article",
-          publishedTime: note.publishDate || note.createdAt || undefined,
-          modifiedTime: note.updatedAt || undefined,
-          tags: note.tags,
-        },
-        twitter: {
-          card: "summary_large_image",
-          title: note.title,
-          description,
-        },
-      };
-    }
-  }
-
-  if (params?.view) {
-    const viewTitle =
-      params.view.charAt(0).toUpperCase() + params.view.slice(1);
-    const url = `https://gardenx.qzz.io/?view=${params.view}`;
-    return {
-      title: `${viewTitle} — Garden`,
-      alternates: {
-        canonical: url,
-      },
-      openGraph: {
-        title: `${viewTitle} — Garden`,
-        url,
-      },
-    };
-  }
-
-  if (params?.tag) {
-    const url = `https://gardenx.qzz.io/?tag=${params.tag}`;
-    return {
-      title: `#${params.tag} — Garden`,
-      alternates: {
-        canonical: url,
-      },
-      openGraph: {
-        title: `#${params.tag} — Garden`,
-        url,
-      },
-    };
-  }
-
-  return {
+export const metadata: Metadata = {
+  title: "Garden — a digital garden",
+  description:
+    "A personal digital garden. Notes, essays, and ideas grown in Obsidian and published with a single command.",
+  alternates: {
+    canonical: "https://gardenx.qzz.io",
+  },
+  openGraph: {
     title: "Garden — a digital garden",
-    description:
-      "A personal digital garden. Notes, essays, and ideas grown in Obsidian and published with a single command.",
-    alternates: {
-      canonical: "https://gardenx.qzz.io",
-    },
-    openGraph: {
-      title: "Garden — a digital garden",
-      description: "Notes grown in Obsidian, published with a single command.",
-      url: "https://gardenx.qzz.io",
-      siteName: "Garden",
-      type: "website",
-    },
-  };
-}
+    description: "Notes grown in Obsidian, published with a single command.",
+    url: "https://gardenx.qzz.io",
+    siteName: "Garden",
+    type: "website",
+  },
+};
 
 export default async function Page() {
   // Load all data in parallel at build time

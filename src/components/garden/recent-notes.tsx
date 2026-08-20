@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { GardenLink } from "./garden-link";
 import { Clock } from "lucide-react";
 import type { NoteSummary } from "@/lib/notes";
 
@@ -30,7 +30,7 @@ export function RecentNotes({ notes }: { notes: NoteSummary[] }) {
         <ul className="space-y-0.5">
           {notes.map((n) => (
             <li key={n.slug}>
-              <Link
+              <GardenLink
                 href={`/?p=${encodeURIComponent(n.slug)}`}
                 className="group flex items-center gap-2 rounded-md px-2 py-1.5 text-sm transition-colors hover:bg-surface"
               >
@@ -42,7 +42,7 @@ export function RecentNotes({ notes }: { notes: NoteSummary[] }) {
                 <span className="flex-shrink-0 text-[10px] font-mono text-muted-foreground/50">
                   {relativeTime(n.updatedAt)}
                 </span>
-              </Link>
+              </GardenLink>
             </li>
           ))}
         </ul>

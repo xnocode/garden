@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import { GardenLink } from "./garden-link";
 import { useSyncExternalStore, useEffect } from "react";
 import { History, X } from "lucide-react";
 
@@ -142,7 +142,7 @@ export function ReadingHistory({
         <ul className="space-y-0.5">
           {visible.map((e) => (
             <li key={e.slug}>
-              <Link
+              <GardenLink
                 href={`/?p=${encodeURIComponent(e.slug)}`}
                 className="group flex items-center gap-2 rounded-md px-2 py-1.5 text-sm transition-colors hover:bg-surface"
               >
@@ -154,7 +154,7 @@ export function ReadingHistory({
                 <span className="flex-shrink-0 text-[10px] font-mono text-muted-foreground/50">
                   {relativeTime(e.visitedAt)}
                 </span>
-              </Link>
+              </GardenLink>
             </li>
           ))}
         </ul>

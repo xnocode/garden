@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import Link from "next/link";
+import { GardenLink } from "./garden-link";
 import { Flame, Calendar, Target, Activity, ChevronLeft, ChevronRight, CheckCircle2, PenTool, ChevronDown, Clock } from "lucide-react";
 import type { WritingStatsSummary } from "@/lib/writing-stats";
 
@@ -98,9 +98,9 @@ export function WritingRhythmView({ stats }: { stats: WritingStatsSummary }) {
       {/* Header */}
       <header className="border-b border-border pb-6">
         <nav className="mb-2 text-sm text-muted-foreground">
-          <Link href="/" className="hover:text-garden">
+          <GardenLink href="/" className="hover:text-garden">
             ← back to garden
-          </Link>
+          </GardenLink>
         </nav>
         <h1 className="flex items-center gap-3 font-serif text-3xl font-semibold text-heading">
           <Flame className="h-7 w-7 text-garden" />

@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { GardenLink } from "./garden-link";
 import { Link2, ArrowUpRight, CornerDownRight, Quote } from "lucide-react";
 import type { BacklinkNote } from "@/lib/notes";
 import { formatDate } from "./note-card";
@@ -30,7 +30,7 @@ export function Backlinks({
       <ul className="space-y-1">
         {backlinks.map((b) => (
           <li key={b.slug}>
-            <Link
+            <GardenLink
               href={`/?p=${encodeURIComponent(b.slug)}`}
               className="group flex items-start gap-2.5 rounded-lg border border-transparent px-2.5 py-2 transition-all hover:border-border hover:bg-surface/80"
             >
@@ -62,7 +62,7 @@ export function Backlinks({
                   )}
                 </span>
               </span>
-            </Link>
+            </GardenLink>
           </li>
         ))}
       </ul>

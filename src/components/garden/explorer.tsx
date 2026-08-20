@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import { GardenLink } from "./garden-link";
 import { useSearchParams } from "next/navigation";
 import { useSyncExternalStore } from "react";
 import { ChevronRight, FileText, Folder, FolderOpen, Lock } from "lucide-react";
@@ -74,7 +74,7 @@ function TreeNode({
   if (node.type === "file") {
     const isActive = currentSlug === node.slug;
     return (
-      <Link
+      <GardenLink
         href={`/?p=${encodeURIComponent(node.slug!)}`}
         className={`group flex items-center gap-1.5 rounded-md py-1 pr-2 text-sm transition-colors ${
           isActive
@@ -101,7 +101,7 @@ function TreeNode({
             <Lock className="h-3 w-3 flex-shrink-0 text-emerald-500/80" />
           </span>
         )}
-      </Link>
+      </GardenLink>
     );
   }
 

@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import { GardenLink } from "./garden-link";
 import { Flame, ArrowRight } from "lucide-react";
 import type { WritingStatsSummary } from "@/lib/writing-stats";
 
@@ -24,12 +24,12 @@ export function WritingRhythmWidget({ stats }: { stats: WritingStatsSummary }) {
           <Flame className="h-5 w-5 text-garden" />
           Writing rhythm
         </h2>
-        <Link
+        <GardenLink
           href="/?view=rhythm"
           className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-garden transition-colors"
         >
           view rhythm analytics <ArrowRight className="h-3.5 w-3.5" />
-        </Link>
+        </GardenLink>
       </div>
 
       <div className="overflow-hidden rounded-lg border border-border bg-surface/30 p-5">
