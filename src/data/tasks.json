@@ -1,5 +1,5 @@
 {
-  "exportedAt": "2026-08-20T03:48:16.573Z",
+  "exportedAt": "2026-08-20T03:55:25.412Z",
   "stats": {
     "total": 53,
     "pending": 0,
@@ -18,7 +18,7 @@
       "due": "20260818T180000Z",
       "entry": "20260818T032532Z",
       "end": "20260820T034758Z",
-      "urgency": 16.4549,
+      "urgency": 16.4571,
       "wasMissed": true,
       "xpAwarded": 0,
       "xpPenalty": -350
@@ -33,7 +33,7 @@
       "due": "20260817T180000Z",
       "entry": "20260818T032731Z",
       "end": "20260819T123749Z",
-      "urgency": 16.912,
+      "urgency": 16.9143,
       "wasMissed": true,
       "xpAwarded": 0,
       "xpPenalty": -350

@@ -129,6 +129,7 @@ export function TaskwarriorView({ data, writingStats }: { data: TaskSnapshot; wr
 
   const exportDate = new Date(exportedAt);
   const formattedDate = exportDate.toLocaleDateString("en-US", {
+    timeZone: "Asia/Dhaka",
     month: "long",
     day: "numeric",
     year: "numeric",

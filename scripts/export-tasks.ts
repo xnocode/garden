@@ -32,24 +32,54 @@ function parseTWDate(dateStr: string): Date | null {
   return new Date(`${m[1]}-${m[2]}-${m[3]}T${m[4]}:${m[5]}:${m[6]}Z`);
 }
 
+function formatTWDueDateInDhaka(dateStr: string | null | undefined): string {
+  if (!dateStr) return "";
+  const m = dateStr.match(/^(\d{4})(\d{2})(\d{2})T(\d{2})(\d{2})(\d{2})Z$/);
+  if (!m) return "";
+  const d = new Date(Date.UTC(+m[1], +m[2] - 1, +m[3], +m[4], +m[5], +m[6]));
+  return new Intl.DateTimeFormat("en-CA", {
+    timeZone: "Asia/Dhaka",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).format(d);
+}
+
+function getDhakaDateInfo() {
+  const now = new Date();
+  const todayStr = new Intl.DateTimeFormat("en-CA", {
+    timeZone: "Asia/Dhaka",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).format(now);
+
+  const [y, m, d] = todayStr.split("-").map(Number);
+  const tomorrow = new Date(Date.UTC(y, m - 1, d + 1));
+  const tomorrowStr = new Intl.DateTimeFormat("en-CA", {
+    timeZone: "Asia/Dhaka",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).format(tomorrow);
+
+  return { todayStr, tomorrowStr };
+}
+
 function isOverdue(dateStr?: string): boolean {
   if (!dateStr) return false;
-  const d = parseTWDate(dateStr);
-  if (!d) return false;
-  const now = new Date();
-  const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-  return d < todayStart;
+  const dueDhakaStr = formatTWDueDateInDhaka(dateStr);
+  if (!dueDhakaStr) return false;
+  const { todayStr } = getDhakaDateInfo();
+  return dueDhakaStr < todayStr;
 }
 
 function isTodayOrTomorrow(dateStr?: string): boolean {
   if (!dateStr) return false;
-  const d = parseTWDate(dateStr);
-  if (!d) return false;
-  const now = new Date();
-  const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-  const dayAfterTomorrow = new Date(todayStart);
-  dayAfterTomorrow.setDate(dayAfterTomorrow.getDate() + 2);
-  return d >= todayStart && d < dayAfterTomorrow;
+  const dueDhakaStr = formatTWDueDateInDhaka(dateStr);
+  if (!dueDhakaStr) return false;
+  const { todayStr, tomorrowStr } = getDhakaDateInfo();
+  return dueDhakaStr === todayStr || dueDhakaStr === tomorrowStr;
 }
 
 function runCmd(cmd: string): string {
@@ -116,7 +146,7 @@ async function main() {
         console.log(`    ▸ Marking ${uuids.length} task(s) done from Telegram /done queue…`);
         for (const uuid of uuids) {
           // UUID is stable — never shifts when other tasks complete
-          const out = runCmd(`wsl -- bash -c "task rc.confirmation=off uuid:${uuid} done 2>/dev/null"`);
+          const out = runCmd(`wsl -- bash -c "TZ='Asia/Dhaka' task rc.confirmation=off uuid:${uuid} done 2>/dev/null"`);
           if (out.includes("Completed") || out.includes("completed")) {
             console.log(`      ✓ Marked done: ${uuid.slice(0, 8)}…`);
           } else if (out.includes("No matches") || out.includes("No tasks")) {
@@ -143,7 +173,7 @@ async function main() {
         for (const item of items) {
           if (!item.raw) continue;
           const args = buildTaskAddArgs(item.raw);
-          runCmd(`wsl -- bash -c "task add ${args} 2>/dev/null"`);
+          runCmd(`wsl -- bash -c "TZ='Asia/Dhaka' task add ${args} 2>/dev/null"`);
           console.log(`      ✓ Added to WSL: "${item.raw}"`);
         }
         // Clear queue after importing
@@ -155,12 +185,12 @@ async function main() {
   }
 
   const pendingRaw = runCmd(
-    'wsl -- bash -c "task rc.json.array=on status:pending export 2>/dev/null"'
+    'wsl -- bash -c "TZ=\'Asia/Dhaka\' task rc.json.array=on status:pending export 2>/dev/null"'
   );
   const pendingTasks = parseTaskOutput(pendingRaw);
 
   const completedRaw = runCmd(
-    'wsl -- bash -c "task rc.json.array=on status:completed export 2>/dev/null"'
+    'wsl -- bash -c "TZ=\'Asia/Dhaka\' task rc.json.array=on status:completed export 2>/dev/null"'
   );
   const completedTasks = parseTaskOutput(completedRaw);
 
@@ -220,10 +250,10 @@ async function main() {
     })
     .slice(0, 10)
     .map((t) => {
-      // A task is "missed" if it had a due date and was completed after that due date
-      const endTime = t.end ? parseTWDate(t.end)?.getTime() : null;
-      const dueTime = t.due ? parseTWDate(t.due)?.getTime() : null;
-      const wasMissed = !!(dueTime && endTime && endTime > dueTime);
+      // A task is "missed" if it had a due date and was completed after that due date in Dhaka time
+      const endDhakaDate = t.end ? formatTWDueDateInDhaka(t.end) : (t.modified ? formatTWDueDateInDhaka(t.modified) : null);
+      const dueDhakaDate = t.due ? formatTWDueDateInDhaka(t.due) : null;
+      const wasMissed = !!(dueDhakaDate && endDhakaDate && endDhakaDate > dueDhakaDate);
       return {
         id: t.id,
         uuid: t.uuid,
