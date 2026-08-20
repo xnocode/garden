@@ -379,9 +379,6 @@ export function TaskwarriorView({ data, writingStats }: { data: TaskSnapshot; wr
               <h2 className="font-serif text-lg font-semibold text-heading">
                 Completed Tasks
               </h2>
-              <span className="rounded-full bg-emerald-500/10 border border-emerald-500/30 px-2 py-0.5 font-mono text-xs text-emerald-400">
-                Page {validPage} of {totalPages}
-              </span>
             </div>
             <span className="font-mono text-xs text-emerald-400/80 flex items-center gap-1">
               <Trophy className="h-3.5 w-3.5" />
