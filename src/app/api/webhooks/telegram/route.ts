@@ -282,41 +282,48 @@ async function handleScanPhotoDone(token: string, chatId: number | string, fileI
   });
 }
 
+let lastCommandsRegisteredAt = 0;
+
 function registerCommands(token: string) {
+  const now = Date.now();
+  // Only register commands once per hour per instance to avoid Telegram API rate limits & flickering
+  if (now - lastCommandsRegisteredAt < 3600000) return;
+  lastCommandsRegisteredAt = now;
+
   const commands = [
-    { command: "ask", description: "🧠 Ask AI about your notes & tasks" },
-    { command: "digest", description: "☀️ Morning digest: tasks + notes + AI tip" },
-    { command: "voice", description: "🎙️ Send voice → AI creates a published note" },
-    { command: "vtask", description: "🎙️ Send voice → AI adds to Taskwarrior tasks" },
     { command: "scantask", description: "📸 Scan notebook page → add tasks" },
-    { command: "scandone", description: "📸 Scan notebook page → mark done" },
-    { command: "dump", description: "💬 Organize raw messy text to AI note" },
-    { command: "append", description: "📝 Append text to an existing note" },
-    { command: "note", description: "✏️ Create a text note directly" },
-    { command: "task", description: "📌 Add task(s) to Taskwarrior" },
-    { command: "mytasks", description: "📋 View your pending task list" },
-    { command: "done", description: "✅ Mark a task as done by number" },
-    { command: "list", description: "📚 List published notes" },
-    { command: "search", description: "🔍 Search notes" },
-    { command: "stats", description: "📊 Garden statistics" },
-    { command: "tags", description: "🏷️ Explore tags" },
-    { command: "delete", description: "🗑️ Delete a note" },
-    { command: "cancel", description: "🛑 Cancel operation" },
-    { command: "help", description: "💡 Full help guide" },
+    { command: "scandone", description: "✅ Scan notebook page → mark done" },
+    { command: "mytasks",  description: "📋 View your pending task list" },
+    { command: "task",     description: "📌 Add task(s) to Taskwarrior" },
+    { command: "vtask",    description: "🎙️ Send voice → AI adds to Taskwarrior tasks" },
+    { command: "ask",      description: "🧠 Ask AI about your notes & tasks" },
+    { command: "digest",   description: "☀️ Morning digest: tasks + notes + AI tip" },
+    { command: "voice",    description: "🎙️ Send voice → AI creates a published note" },
+    { command: "dump",     description: "💬 Organize raw messy text to AI note" },
+    { command: "append",   description: "📝 Append text to an existing note" },
+    { command: "note",     description: "✏️ Create a text note directly" },
+    { command: "done",     description: "✅ Mark a task as done by number" },
+    { command: "list",     description: "📚 List published notes" },
+    { command: "search",   description: "🔍 Search notes" },
+    { command: "stats",    description: "📊 Garden statistics" },
+    { command: "help",     description: "💡 Full help guide" },
   ];
 
+  // Set default scope
   tgFetch(`https://api.telegram.org/bot${token}/setMyCommands`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ commands }),
   }).catch(() => {});
 
+  // Set private chat scope (overrides private chats)
   tgFetch(`https://api.telegram.org/bot${token}/setMyCommands`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ commands, scope: { type: "all_private_chats" } }),
   }).catch(() => {});
 }
+
 
 export async function POST(req: Request) {
   try {

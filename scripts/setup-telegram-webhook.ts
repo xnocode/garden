@@ -21,20 +21,23 @@ if (!botToken) {
 }
 const webhookUrl = `${domain.replace(/\/$/, "")}/api/webhooks/telegram`;
 
-// All bot commands to register (Telegram shows these in reverse, so put most important LAST)
 const BOT_COMMANDS = [
-  { command: "help",     description: "❓ Show all available commands" },
-  { command: "search",   description: "🔍 Search your notes" },
-  { command: "stats",    description: "📊 View Garden stats" },
-  { command: "digest",   description: "🌅 Get your morning digest / daily summary" },
-  { command: "ask",      description: "💡 Ask a question about your Garden knowledge base" },
-  { command: "dump",     description: "🧠 Dump raw text/voice → AI formats it into a note" },
-  { command: "note",     description: "📝 Start a new written note" },
-  { command: "voice",    description: "🎙️ Record a voice message to create a note" },
-  { command: "vtask",    description: "🎙️ Record a voice message to add tasks" },
-  { command: "tasks",    description: "📋 View your active Taskwarrior tasks" },
-  { command: "scandone", description: "✅ Scan page with ticked tasks → mark done in Taskwarrior" },
-  { command: "scantask", description: "📸 Scan handwritten notebook page → add tasks to Taskwarrior" },
+  { command: "scantask", description: "📸 Scan notebook page → add tasks" },
+  { command: "scandone", description: "✅ Scan notebook page → mark done" },
+  { command: "mytasks",  description: "📋 View your pending task list" },
+  { command: "task",     description: "📌 Add task(s) to Taskwarrior" },
+  { command: "vtask",    description: "🎙️ Send voice → AI adds to Taskwarrior tasks" },
+  { command: "ask",      description: "🧠 Ask AI about your notes & tasks" },
+  { command: "digest",   description: "☀️ Morning digest: tasks + notes + AI tip" },
+  { command: "voice",    description: "🎙️ Send voice → AI creates a published note" },
+  { command: "dump",     description: "💬 Organize raw messy text to AI note" },
+  { command: "append",   description: "📝 Append text to an existing note" },
+  { command: "note",     description: "✏️ Create a text note directly" },
+  { command: "done",     description: "✅ Mark a task as done by number" },
+  { command: "list",     description: "📚 List published notes" },
+  { command: "search",   description: "🔍 Search notes" },
+  { command: "stats",    description: "📊 Garden statistics" },
+  { command: "help",     description: "💡 Full help guide" },
 ];
 
 async function registerWebhook() {
@@ -60,14 +63,19 @@ async function registerWebhook() {
 async function registerCommands() {
   console.log(`  📋 Registering ${BOT_COMMANDS.length} bot commands with Telegram...\n`);
   try {
-    const res = await fetch(`https://api.telegram.org/bot${botToken}/setMyCommands`, {
+    const res1 = await fetch(`https://api.telegram.org/bot${botToken}/setMyCommands`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ commands: BOT_COMMANDS }),
     });
-    const data = await res.json();
+    const res2 = await fetch(`https://api.telegram.org/bot${botToken}/setMyCommands`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ commands: BOT_COMMANDS, scope: { type: "all_private_chats" } }),
+    });
+    const data = await res1.json();
     if (data.ok) {
-      console.log("  ✅ Bot commands registered! They will now appear when users type '/' in Telegram.\n");
+      console.log("  ✅ Bot commands registered for default & private chats!\n");
       console.log("  Registered commands:");
       BOT_COMMANDS.forEach((c) => console.log(`    /${c.command} — ${c.description}`));
       console.log();
@@ -78,6 +86,7 @@ async function registerCommands() {
     console.error("  ❌ Error:", e.message);
   }
 }
+
 
 await registerWebhook();
 await registerCommands();
