@@ -241,14 +241,13 @@ async function main() {
     ...futureTasks.sort((a, b) => (b.urgency || 0) - (a.urgency || 0)).map((t) => mapTask(t, false)),
   ];
 
-  // Most recent 10 completed tasks (sorted by end timestamp descending)
-  const recentCompleted = [...completedTasks]
+  // All completed tasks (sorted by end timestamp descending: newest first)
+  const allCompletedTasks = [...completedTasks]
     .sort((a, b) => {
       const dateA = a.end ? (parseTWDate(a.end)?.getTime() ?? 0) : (a.modified ? (parseTWDate(a.modified)?.getTime() ?? 0) : 0);
       const dateB = b.end ? (parseTWDate(b.end)?.getTime() ?? 0) : (b.modified ? (parseTWDate(b.modified)?.getTime() ?? 0) : 0);
       return dateB - dateA;
     })
-    .slice(0, 10)
     .map((t) => {
       // A task is "missed" if it had a due date and was completed after that due date in Dhaka time
       const endDhakaDate = t.end ? formatTWDueDateInDhaka(t.end) : (t.modified ? formatTWDueDateInDhaka(t.modified) : null);
@@ -280,7 +279,7 @@ async function main() {
       overdue: overdueTasks.length,
     },
     tasks: visibleTasks,
-    completedTasks: recentCompleted,
+    completedTasks: allCompletedTasks,
   };
 
   const outDir = resolve((import.meta as any).dir, "..", "src", "data");
@@ -288,11 +287,10 @@ async function main() {
   const outPath = resolve(outDir, "tasks.json");
   writeFileSync(outPath, JSON.stringify(snapshot, null, 2), "utf8");
 
-  const missedCount = recentCompleted.filter((t) => t.wasMissed).length;
+  const missedCount = allCompletedTasks.filter((t) => t.wasMissed).length;
   console.log(
     `    ✓ ${visibleTasks.length} pending task(s) (${overdueTasks.length} overdue), ` +
-      `${recentCompleted.length} recent completed task(s) (${missedCount} missed/penalized), ` +
-      `${completedTasks.length} total completed`
+      `${allCompletedTasks.length} completed task(s) (${missedCount} missed/penalized)`
   );
 }
 

@@ -12,6 +12,8 @@ import {
   Flame,
   Shield,
   Moon,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
 import {
   calculatePlayerProfile,
@@ -139,6 +141,30 @@ export function TaskwarriorView({ data, writingStats }: { data: TaskSnapshot; wr
 
   // RPG Profile
   const profile = useMemo(() => calculatePlayerProfile(data as RpgTaskSnapshot, writingStats), [data, writingStats]);
+
+  // Completed Tasks Pagination (10 per page, newest first)
+  const [completedPage, setCompletedPage] = useState(1);
+  const COMPLETED_PAGE_SIZE = 10;
+  const totalPages = Math.max(1, Math.ceil(completedTasks.length / COMPLETED_PAGE_SIZE));
+  const validPage = Math.min(completedPage, totalPages);
+
+  const pagedCompleted = useMemo(() => {
+    const start = (validPage - 1) * COMPLETED_PAGE_SIZE;
+    return completedTasks.slice(start, start + COMPLETED_PAGE_SIZE);
+  }, [completedTasks, validPage]);
+
+  const pageNumbers = useMemo(() => {
+    if (totalPages <= 6) {
+      return Array.from({ length: totalPages }, (_, i) => i + 1);
+    }
+    if (validPage <= 3) {
+      return [1, 2, 3, 4, "…", totalPages];
+    }
+    if (validPage >= totalPages - 2) {
+      return [1, "…", totalPages - 3, totalPages - 2, totalPages - 1, totalPages];
+    }
+    return [1, "…", validPage - 1, validPage, validPage + 1, "…", totalPages];
+  }, [validPage, totalPages]);
 
   return (
     <div className="garden-fade-in mx-auto max-w-4xl space-y-8">
@@ -344,17 +370,17 @@ export function TaskwarriorView({ data, writingStats }: { data: TaskSnapshot; wr
         )}
       </div>
 
-      {/* ── Recently Completed Tasks (XP Harvested) ── */}
+      {/* ── Completed Tasks (XP Harvested) with 10-Item Pagination ── */}
       {completedTasks && completedTasks.length > 0 && (
         <div className="space-y-3 pt-2">
-          <div className="flex items-center justify-between">
+          <div className="flex flex-wrap items-center justify-between gap-2">
             <div className="flex items-center gap-2">
               <CheckCircle2 className="h-4 w-4 text-emerald-400" />
               <h2 className="font-serif text-lg font-semibold text-heading">
-                Recently Completed Tasks
+                Completed Tasks
               </h2>
               <span className="rounded-full bg-emerald-500/10 border border-emerald-500/30 px-2 py-0.5 font-mono text-xs text-emerald-400">
-                Last {completedTasks.length}
+                Page {validPage} of {totalPages}
               </span>
             </div>
             <span className="font-mono text-xs text-emerald-400/80 flex items-center gap-1">
@@ -388,7 +414,7 @@ export function TaskwarriorView({ data, writingStats }: { data: TaskSnapshot; wr
                 </tr>
               </thead>
               <tbody>
-                {completedTasks.map((task, i) => (
+                {pagedCompleted.map((task, i) => (
                   <tr
                     key={task.uuid || task.id || i}
                     className={`border-b transition-colors ${
@@ -440,9 +466,66 @@ export function TaskwarriorView({ data, writingStats }: { data: TaskSnapshot; wr
                 ))}
               </tbody>
             </table>
-            <div className="border-t border-border bg-surface/20 px-3 sm:px-4 py-2 text-[11px] sm:text-xs text-muted-foreground/60 font-mono flex items-center justify-between">
-              <span>Showing {completedTasks.length} most recent completed tasks</span>
-              <span className="text-emerald-400/80">{stats.completed} total completed all time</span>
+
+            {/* Pagination Controls & Item Range */}
+            <div className="border-t border-border bg-surface/20 px-3 sm:px-4 py-2.5 text-[11px] sm:text-xs text-muted-foreground/80 font-mono flex flex-wrap items-center justify-between gap-2">
+              <div>
+                Showing{" "}
+                <span className="font-semibold text-foreground">
+                  {(validPage - 1) * COMPLETED_PAGE_SIZE + 1}–
+                  {Math.min(validPage * COMPLETED_PAGE_SIZE, completedTasks.length)}
+                </span>{" "}
+                of <span className="font-semibold text-foreground">{completedTasks.length}</span> completed tasks
+              </div>
+
+              {totalPages > 1 && (
+                <div className="flex items-center gap-1">
+                  <button
+                    type="button"
+                    onClick={() => setCompletedPage((p) => Math.max(1, p - 1))}
+                    disabled={validPage <= 1}
+                    className="inline-flex items-center gap-1 rounded border border-border px-2 py-1 text-[11px] font-medium transition hover:border-garden hover:text-garden disabled:pointer-events-none disabled:opacity-40"
+                    title="Previous page"
+                  >
+                    <ChevronLeft className="h-3 w-3" />
+                    Prev
+                  </button>
+
+                  <div className="flex items-center gap-1 px-1">
+                    {pageNumbers.map((p, idx) =>
+                      typeof p === "number" ? (
+                        <button
+                          key={p}
+                          type="button"
+                          onClick={() => setCompletedPage(p)}
+                          className={`min-w-[24px] rounded border px-1.5 py-0.5 text-center text-[11px] font-medium transition ${
+                            p === validPage
+                              ? "border-emerald-500/40 bg-emerald-500/15 font-bold text-emerald-400"
+                              : "border-transparent text-muted-foreground hover:border-border hover:text-foreground"
+                          }`}
+                        >
+                          {p}
+                        </button>
+                      ) : (
+                        <span key={`ellipsis-${idx}`} className="px-1 text-muted-foreground/40">
+                          …
+                        </span>
+                      )
+                    )}
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={() => setCompletedPage((p) => Math.min(totalPages, p + 1))}
+                    disabled={validPage >= totalPages}
+                    className="inline-flex items-center gap-1 rounded border border-border px-2 py-1 text-[11px] font-medium transition hover:border-garden hover:text-garden disabled:pointer-events-none disabled:opacity-40"
+                    title="Next page"
+                  >
+                    Next
+                    <ChevronRight className="h-3 w-3" />
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         </div>
