@@ -1,8 +1,8 @@
 {
-  "exportedAt": "2026-08-21T04:41:42.566Z",
+  "exportedAt": "2026-08-21T04:47:27.477Z",
   "stats": {
-    "total": 16,
-    "pending": 16,
+    "total": 11,
+    "pending": 11,
     "completed": 0,
     "overdue": 0
   },
@@ -16,7 +16,7 @@
       "priority": "H",
       "due": "20260820T180000Z",
       "entry": "20260821T044139Z",
-      "urgency": 16.0037,
+      "urgency": 16.0055,
       "overdue": false
     },
     {
@@ -28,7 +28,7 @@
       "priority": "H",
       "due": "20260820T180000Z",
       "entry": "20260821T044139Z",
-      "urgency": 16.0037,
+      "urgency": 16.0055,
       "overdue": false
     },
     {
@@ -40,7 +40,7 @@
       "priority": "H",
       "due": "20260820T180000Z",
       "entry": "20260821T044139Z",
-      "urgency": 16.0037,
+      "urgency": 16.0055,
       "overdue": false
     },
     {
@@ -52,7 +52,7 @@
       "priority": "H",
       "due": "20260820T180000Z",
       "entry": "20260821T044139Z",
-      "urgency": 16.0037,
+      "urgency": 16.0055,
       "overdue": false
     },
     {
@@ -64,7 +64,7 @@
       "priority": "H",
       "due": "20260820T180000Z",
       "entry": "20260821T044140Z",
-      "urgency": 16.0037,
+      "urgency": 16.0055,
       "overdue": false
     },
     {
@@ -76,7 +76,7 @@
       "priority": "H",
       "due": "20260820T180000Z",
       "entry": "20260821T044140Z",
-      "urgency": 16.0037,
+      "urgency": 16.0055,
       "overdue": false
     },
     {
@@ -88,7 +88,7 @@
       "priority": "H",
       "due": "20260820T180000Z",
       "entry": "20260821T044140Z",
-      "urgency": 16.0037,
+      "urgency": 16.0055,
       "overdue": false
     },
     {
@@ -100,35 +100,11 @@
       "priority": "H",
       "due": "20260820T180000Z",
       "entry": "20260821T044141Z",
-      "urgency": 16.0037,
+      "urgency": 16.0055,
       "overdue": false
     },
     {
       "id": 10,
-      "uuid": "afa09d76-fde4-43eb-9fb9-67696f3c3add",
-      "description": "Namaz",
-      "project": "afterlife",
-      "tags": [],
-      "priority": "H",
-      "due": "20260820T180000Z",
-      "entry": "20260821T044141Z",
-      "urgency": 16.0037,
-      "overdue": false
-    },
-    {
-      "id": 11,
-      "uuid": "b1fdbd27-0c9a-4844-88a3-ab5e32ddf20b",
-      "description": "Cooking Meal",
-      "project": "self",
-      "tags": [],
-      "priority": "H",
-      "due": "20260820T180000Z",
-      "entry": "20260821T044142Z",
-      "urgency": 16.0037,
-      "overdue": false
-    },
-    {
-      "id": 12,
       "uuid": "358e9d6f-a837-46c3-9ad9-26bad76b5c2b",
       "description": "Calculus 1 - Introduction Resources",
       "project": "calculus",
@@ -136,7 +112,7 @@
       "priority": "H",
       "due": "20260820T180000Z",
       "entry": "20260821T044142Z",
-      "urgency": 16.0037,
+      "urgency": 16.0055,
       "overdue": false
     },
     {
@@ -148,35 +124,11 @@
       "priority": "M",
       "due": "20260820T180000Z",
       "entry": "20260821T044139Z",
-      "urgency": 13.9037,
+      "urgency": 13.9055,
       "overdue": false
     },
     {
-      "id": 13,
-      "uuid": "820eec05-e9ca-4c57-8cf1-2702f84dddb3",
-      "description": "Speak 01",
-      "project": "self",
-      "tags": [],
-      "priority": "M",
-      "due": "20260820T180000Z",
-      "entry": "20260821T044142Z",
-      "urgency": 13.9037,
-      "overdue": false
-    },
-    {
-      "id": 14,
-      "uuid": "291a0b1d-9681-4f2e-bb22-45bc68848229",
-      "description": "Running & Exercise",
-      "project": "self",
-      "tags": [],
-      "priority": "M",
-      "due": "20260820T180000Z",
-      "entry": "20260821T044142Z",
-      "urgency": 13.9037,
-      "overdue": false
-    },
-    {
-      "id": 15,
+      "id": 11,
       "uuid": "6a316615-4dea-4cec-8402-964ac6f3152c",
       "description": "MSMZD - Learning",
       "project": "self",
@@ -184,19 +136,7 @@
       "priority": "M",
       "due": "20260820T180000Z",
       "entry": "20260821T044142Z",
-      "urgency": 13.9037,
-      "overdue": false
-    },
-    {
-      "id": 16,
-      "uuid": "8079d3ee-1d51-4d4e-aa35-c6d14d6e2876",
-      "description": "CC - Project Searching",
-      "project": "passive",
-      "tags": [],
-      "priority": "M",
-      "due": "20260820T180000Z",
-      "entry": "20260821T044142Z",
-      "urgency": 13.9037,
+      "urgency": 13.9055,
       "overdue": false
     }
   ],
