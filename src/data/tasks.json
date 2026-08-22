@@ -1,38 +1,14 @@
 {
-  "exportedAt": "2026-08-21T04:47:27.477Z",
+  "exportedAt": "2026-08-22T04:06:51.064Z",
   "stats": {
     "total": 11,
-    "pending": 11,
-    "completed": 0,
-    "overdue": 0
+    "pending": 9,
+    "completed": 2,
+    "overdue": 9
   },
   "tasks": [
     {
-      "id": 1,
-      "uuid": "074784da-3d1c-425a-b8ef-67b7cab20421",
-      "description": "IP - Assignment",
-      "project": "university",
-      "tags": [],
-      "priority": "H",
-      "due": "20260820T180000Z",
-      "entry": "20260821T044139Z",
-      "urgency": 16.0055,
-      "overdue": false
-    },
-    {
-      "id": 3,
-      "uuid": "86f8f6b4-ea54-4c0e-905a-bf9f80562038",
-      "description": "CPP - Variables & Data Types",
-      "project": "cpp",
-      "tags": [],
-      "priority": "H",
-      "due": "20260820T180000Z",
-      "entry": "20260821T044139Z",
-      "urgency": 16.0055,
-      "overdue": false
-    },
-    {
-      "id": 4,
+      "id": 2,
       "uuid": "0c80277f-fd58-4ba8-8fca-46856b6cdb4f",
       "description": "CPP - Operators, Conditional Statements",
       "project": "cpp",
@@ -40,11 +16,11 @@
       "priority": "H",
       "due": "20260820T180000Z",
       "entry": "20260821T044139Z",
-      "urgency": 16.0055,
-      "overdue": false
+      "urgency": 16.4498,
+      "overdue": true
     },
     {
-      "id": 5,
+      "id": 3,
       "uuid": "f0678f01-683e-4cf5-a001-d82ef952cf3a",
       "description": "CPP - Loops, Patterns, Functions",
       "project": "cpp",
@@ -52,11 +28,11 @@
       "priority": "H",
       "due": "20260820T180000Z",
       "entry": "20260821T044139Z",
-      "urgency": 16.0055,
-      "overdue": false
+      "urgency": 16.4498,
+      "overdue": true
     },
     {
-      "id": 6,
+      "id": 4,
       "uuid": "a5e8589c-7429-45da-a3b5-78da54b81320",
       "description": "CPP - Binary Number System",
       "project": "cpp",
@@ -64,11 +40,11 @@
       "priority": "H",
       "due": "20260820T180000Z",
       "entry": "20260821T044140Z",
-      "urgency": 16.0055,
-      "overdue": false
+      "urgency": 16.4498,
+      "overdue": true
     },
     {
-      "id": 7,
+      "id": 5,
       "uuid": "3730f885-f758-4233-9369-6ccfc730d7ed",
       "description": "CPP - Introduction To Pointers",
       "project": "cpp",
@@ -76,11 +52,11 @@
       "priority": "H",
       "due": "20260820T180000Z",
       "entry": "20260821T044140Z",
-      "urgency": 16.0055,
-      "overdue": false
+      "urgency": 16.4498,
+      "overdue": true
     },
     {
-      "id": 8,
+      "id": 6,
       "uuid": "8a21168b-9bf3-4c9f-a439-1fd8a1087587",
       "description": "CPP - Array (Part I, II)",
       "project": "cpp",
@@ -88,11 +64,11 @@
       "priority": "H",
       "due": "20260820T180000Z",
       "entry": "20260821T044140Z",
-      "urgency": 16.0055,
-      "overdue": false
+      "urgency": 16.4498,
+      "overdue": true
     },
     {
-      "id": 9,
+      "id": 7,
       "uuid": "55809d9a-6071-4a64-9599-85e6627fcb0a",
       "description": "NMA - Lecture 1 & Lecture 2",
       "project": "university",
@@ -100,11 +76,11 @@
       "priority": "H",
       "due": "20260820T180000Z",
       "entry": "20260821T044141Z",
-      "urgency": 16.0055,
-      "overdue": false
+      "urgency": 16.4498,
+      "overdue": true
     },
     {
-      "id": 10,
+      "id": 8,
       "uuid": "358e9d6f-a837-46c3-9ad9-26bad76b5c2b",
       "description": "Calculus 1 - Introduction Resources",
       "project": "calculus",
@@ -112,11 +88,11 @@
       "priority": "H",
       "due": "20260820T180000Z",
       "entry": "20260821T044142Z",
-      "urgency": 16.0055,
-      "overdue": false
+      "urgency": 16.4498,
+      "overdue": true
     },
     {
-      "id": 2,
+      "id": 1,
       "uuid": "d2f838a3-dd1f-4e81-b90e-bfc6f93727ac",
       "description": "JS - Numbers & Math, Strings",
       "project": "js",
@@ -124,11 +100,11 @@
       "priority": "M",
       "due": "20260820T180000Z",
       "entry": "20260821T044139Z",
-      "urgency": 13.9055,
-      "overdue": false
+      "urgency": 14.3498,
+      "overdue": true
     },
     {
-      "id": 11,
+      "id": 9,
       "uuid": "6a316615-4dea-4cec-8402-964ac6f3152c",
       "description": "MSMZD - Learning",
       "project": "self",
@@ -136,9 +112,40 @@
       "priority": "M",
       "due": "20260820T180000Z",
       "entry": "20260821T044142Z",
-      "urgency": 13.9055,
-      "overdue": false
+      "urgency": 14.3498,
+      "overdue": true
     }
   ],
-  "completedTasks": []
+  "completedTasks": [
+    {
+      "id": 0,
+      "uuid": "074784da-3d1c-425a-b8ef-67b7cab20421",
+      "description": "IP - Assignment",
+      "project": "university",
+      "tags": [],
+      "priority": "H",
+      "due": "20260820T180000Z",
+      "entry": "20260821T044139Z",
+      "end": "20260822T040650Z",
+      "urgency": 16.4498,
+      "wasMissed": true,
+      "xpAwarded": 0,
+      "xpPenalty": -350
+    },
+    {
+      "id": 0,
+      "uuid": "86f8f6b4-ea54-4c0e-905a-bf9f80562038",
+      "description": "CPP - Variables & Data Types",
+      "project": "cpp",
+      "tags": [],
+      "priority": "H",
+      "due": "20260820T180000Z",
+      "entry": "20260821T044139Z",
+      "end": "20260822T040650Z",
+      "urgency": 16.4498,
+      "wasMissed": true,
+      "xpAwarded": 0,
+      "xpPenalty": -350
+    }
+  ]
 }

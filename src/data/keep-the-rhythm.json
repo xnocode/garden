@@ -19299,7 +19299,7 @@
       },
       {
         "date": "2026-08-17",
-        "filePath": "Untitled.md",
+        "filePath": "cpp-introduction.md",
         "wordCountStart": 0,
         "charCountStart": 0,
         "changes": [
@@ -19342,7 +19342,7 @@
       },
       {
         "date": "2026-08-18",
-        "filePath": "Untitled.md",
+        "filePath": "cpp-introduction.md",
         "wordCountStart": 185,
         "charCountStart": 1388,
         "changes": [
@@ -19389,7 +19389,7 @@
       },
       {
         "date": "2026-08-19",
-        "filePath": "Untitled.md",
+        "filePath": "cpp-introduction.md",
         "wordCountStart": 0,
         "charCountStart": 0,
         "changes": [
@@ -19579,7 +19579,7 @@
       },
       {
         "date": "2026-08-20",
-        "filePath": "Untitled.md",
+        "filePath": "cpp-introduction.md",
         "wordCountStart": 20,
         "charCountStart": 150,
         "changes": [
@@ -20072,11 +20072,83 @@
         "filePath": "taskworrior.md",
         "wordCountStart": 17,
         "charCountStart": 142,
-        "changes": [],
+        "changes": [
+          {
+            "timeKey": "12:45",
+            "w": 0,
+            "c": 0
+          }
+        ],
         "id": 1228
+      },
+      {
+        "date": "2026-08-21",
+        "filePath": "cpp-introduction.md",
+        "wordCountStart": 0,
+        "charCountStart": 0,
+        "changes": [
+          {
+            "timeKey": "11:00",
+            "w": 59,
+            "c": 437
+          },
+          {
+            "timeKey": "11:30",
+            "w": 100,
+            "c": 1839
+          },
+          {
+            "timeKey": "11:35",
+            "w": 1,
+            "c": 14
+          },
+          {
+            "timeKey": "12:00",
+            "w": -160,
+            "c": -2290
+          }
+        ],
+        "id": 1229
+      },
+      {
+        "date": "2026-08-21",
+        "filePath": "cpp-variables-and-data-types.md",
+        "wordCountStart": 0,
+        "charCountStart": 0,
+        "changes": [
+          {
+            "timeKey": "11:35",
+            "w": 25,
+            "c": 179
+          },
+          {
+            "timeKey": "11:40",
+            "w": 143,
+            "c": 965
+          },
+          {
+            "timeKey": "11:55",
+            "w": -19,
+            "c": -119
+          },
+          {
+            "timeKey": "12:00",
+            "w": -149,
+            "c": -1025
+          }
+        ],
+        "id": 1230
+      },
+      {
+        "date": "2026-08-22",
+        "filePath": "taskworrior.md",
+        "wordCountStart": 17,
+        "charCountStart": 142,
+        "changes": [],
+        "id": 1231
       }
     ],
-    "wholeVaultWordCount": 42474,
-    "wholeVaultCharCount": 347209
+    "wholeVaultWordCount": 42783,
+    "wholeVaultCharCount": 350524
   }
 }
