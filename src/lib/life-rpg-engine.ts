@@ -33,6 +33,7 @@ export interface CompletedTaskData {
   xpAwarded: number;
   xpPenalty?: number;  // negative value; only present on missed (overdue-completed) tasks
   daysLate?: number;   // how many full days past due; 0 if on time
+  daysEarly?: number;  // how many full days before due; 0 if not early
   wasMissed?: boolean;
 }
 

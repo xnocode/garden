@@ -47,6 +47,7 @@ export interface CompletedTaskData {
   xpAwarded: number;
   xpPenalty?: number;  // negative; only on missed (overdue-completed) tasks
   daysLate?: number;
+  daysEarly?: number;
   wasMissed?: boolean;
 }
 
@@ -124,32 +125,46 @@ function priorityColor(p: string | null): string {
 }
 
 /** Projected XP for a still-pending task:
- *  - On time → positive reward based on priority
- *  - Overdue  → negative penalty scaled by days late (+50%/day, capped 10×)
+ *  - Overdue   → negative penalty scaled by days late (+50%/day, capped 10×)
+ *  - On due day→ base reward (no bonus/penalty)
+ *  - Early     → positive reward boosted by days early (+30%/day, capped 3×)
  */
-function calcPendingXp(task: TaskData): { xp: number; daysLate: number } {
+function calcPendingXp(task: TaskData): { xp: number; daysLate: number; daysEarly: number } {
   // Base reward
   let base = 150;
   if (task.priority === "H") base += 100;
   else if (task.priority === "M") base += 50;
   else if (task.priority === "L") base += 20;
 
-  if (!task.overdue || !task.due) return { xp: base, daysLate: 0 };
+  // ── Overdue path ──
+  if (task.overdue && task.due) {
+    const m = task.due.match(/^(\d{4})(\d{2})(\d{2})T(\d{2})(\d{2})(\d{2})Z$/);
+    if (!m) return { xp: base, daysLate: 0, daysEarly: 0 };
+    const dueDate = new Date(`${m[1]}-${m[2]}-${m[3]}T${m[4]}:${m[5]}:${m[6]}Z`);
+    const daysLate = Math.max(0, Math.floor((Date.now() - dueDate.getTime()) / 86_400_000));
+    let penaltyBase = 200;
+    if (task.priority === "H") penaltyBase += 150;
+    else if (task.priority === "M") penaltyBase += 50;
+    else if (task.priority === "L") penaltyBase += 20;
+    const scale = Math.min(10, 1 + daysLate * 0.5);
+    return { xp: -Math.round(penaltyBase * scale), daysLate, daysEarly: 0 };
+  }
 
-  // Compute days late from due date to now
-  const m = task.due.match(/^(\d{4})(\d{2})(\d{2})T(\d{2})(\d{2})(\d{2})Z$/);
-  if (!m) return { xp: base, daysLate: 0 };
-  const dueDate = new Date(`${m[1]}-${m[2]}-${m[3]}T${m[4]}:${m[5]}:${m[6]}Z`);
-  const daysLate = Math.max(0, Math.floor((Date.now() - dueDate.getTime()) / 86_400_000));
+  // ── Early path: task has a future due date ──
+  if (!task.overdue && task.due) {
+    const m = task.due.match(/^(\d{4})(\d{2})(\d{2})T(\d{2})(\d{2})(\d{2})Z$/);
+    if (m) {
+      const dueDate = new Date(`${m[1]}-${m[2]}-${m[3]}T${m[4]}:${m[5]}:${m[6]}Z`);
+      const daysEarly = Math.max(0, Math.floor((dueDate.getTime() - Date.now()) / 86_400_000));
+      if (daysEarly > 0) {
+        const scale = Math.min(3, 1 + daysEarly * 0.3);
+        return { xp: Math.round(base * scale), daysLate: 0, daysEarly };
+      }
+    }
+  }
 
-  // Penalty base
-  let penaltyBase = 200;
-  if (task.priority === "H") penaltyBase += 150;
-  else if (task.priority === "M") penaltyBase += 50;
-  else if (task.priority === "L") penaltyBase += 20;
-
-  const scale = Math.min(10, 1 + daysLate * 0.5);
-  return { xp: -Math.round(penaltyBase * scale), daysLate };
+  // On due day or no due date — plain base
+  return { xp: base, daysLate: 0, daysEarly: 0 };
 }
 
 /* ── component ── */
@@ -384,17 +399,26 @@ export function TaskwarriorView({ data, writingStats }: { data: TaskSnapshot; wr
                       </td>
                       <td className="whitespace-nowrap px-2.5 sm:px-4 py-2 sm:py-2.5 text-right">
                         {(() => {
-                          const { xp, daysLate } = calcPendingXp(task);
-                          return xp >= 0 ? (
-                            <span className="inline-flex items-center gap-1 rounded border border-emerald-500/30 bg-emerald-500/10 px-2 py-0.5 font-mono text-[11px] font-bold text-emerald-400">
-                              +{xp}
-                            </span>
-                          ) : (
+                          const { xp, daysLate, daysEarly } = calcPendingXp(task);
+                          if (xp < 0) return (
                             <span
                               className="inline-flex items-center gap-1 rounded border border-red-500/40 bg-red-500/10 px-2 py-0.5 font-mono text-[11px] font-bold text-red-400"
                               title={`${daysLate}d late — penalty scales +50%/day`}
                             >
                               {xp}
+                            </span>
+                          );
+                          if (daysEarly > 0) return (
+                            <span
+                              className="inline-flex items-center gap-1 rounded border border-amber-400/40 bg-amber-400/10 px-2 py-0.5 font-mono text-[11px] font-bold text-amber-300"
+                              title={`${daysEarly}d early — bonus scales +30%/day`}
+                            >
+                              +{xp} ⚡
+                            </span>
+                          );
+                          return (
+                            <span className="inline-flex items-center gap-1 rounded border border-emerald-500/30 bg-emerald-500/10 px-2 py-0.5 font-mono text-[11px] font-bold text-emerald-400">
+                              +{xp}
                             </span>
                           );
                         })()}
@@ -493,6 +517,14 @@ export function TaskwarriorView({ data, writingStats }: { data: TaskSnapshot; wr
                             LATE
                           </span>
                         )}
+                        {!task.wasMissed && (task.daysEarly ?? 0) > 0 && (
+                          <span
+                            className="inline-flex items-center rounded border border-amber-400/30 bg-amber-400/10 px-1 py-0.5 text-[9px] font-bold uppercase tracking-wider text-amber-300"
+                            title={`Completed ${task.daysEarly}d early`}
+                          >
+                            EARLY ⚡
+                          </span>
+                        )}
                         <span className={`line-through decoration-muted-foreground/40 ${ task.wasMissed ? "text-red-400/70" : "text-muted-foreground/80 hover:text-foreground" } transition-colors`}>
                           {task.description}
                         </span>
@@ -502,6 +534,13 @@ export function TaskwarriorView({ data, writingStats }: { data: TaskSnapshot; wr
                       {task.wasMissed ? (
                         <span className="inline-flex items-center gap-1 rounded border border-red-500/40 bg-red-500/10 px-2 py-0.5 font-mono text-[11px] font-bold text-red-400 shadow-sm">
                           {task.xpPenalty ?? 0} XP
+                        </span>
+                      ) : (task.daysEarly ?? 0) > 0 ? (
+                        <span
+                          className="inline-flex items-center gap-1 rounded border border-amber-400/40 bg-amber-400/10 px-2 py-0.5 font-mono text-[11px] font-bold text-amber-300 shadow-sm"
+                          title={`${task.daysEarly}d early — +30%/day bonus`}
+                        >
+                          +{task.xpAwarded} XP ⚡
                         </span>
                       ) : (
                         <span className="inline-flex items-center gap-1 rounded border border-emerald-500/30 bg-emerald-500/10 px-2 py-0.5 font-mono text-[11px] font-bold text-emerald-400 shadow-sm">

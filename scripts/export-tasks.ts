@@ -213,13 +213,30 @@ async function main() {
     overdue,
   });
 
-  // Calculate XP awarded for completing a task on time
-  function calculateCompletedTaskXp(t: RawTask): number {
-    let xp = 150; // base task completion XP
-    if (t.priority === "H") xp += 100; // 250 XP for high priority
-    else if (t.priority === "M") xp += 50; // 200 XP for medium priority
-    else if (t.priority === "L") xp += 20; // 170 XP for low priority
-    return xp;
+  // Calculate XP awarded for completing a task.
+  // Early bird bonus: +30% per day before due date, capped at 3×.
+  //   0 days early (on due day): 1.0× base
+  //   1 day early             : 1.3× base
+  //   2 days early            : 1.6× base
+  //   5 days early            : 2.5× base
+  //   7+ days early           : 3.0× base  (hard cap)
+  function calcDaysEarly(dueStr?: string, endStr?: string): number {
+    if (!dueStr || !endStr) return 0;
+    const due = parseTWDate(dueStr);
+    const end = parseTWDate(endStr);
+    if (!due || !end) return 0;
+    const diffMs = due.getTime() - end.getTime();
+    return Math.max(0, Math.floor(diffMs / (1000 * 60 * 60 * 24)));
+  }
+
+  function calculateCompletedTaskXp(t: RawTask, daysEarly: number): number {
+    let base = 150;
+    if (t.priority === "H") base += 100; // 250 base for high
+    else if (t.priority === "M") base += 50; // 200 base for medium
+    else if (t.priority === "L") base += 20; // 170 base for low
+    // Early bird scale: +30% per day, hard cap at 3×
+    const scale = Math.min(3, 1 + daysEarly * 0.3);
+    return Math.round(base * scale);
   }
 
   // Calculate XP penalty for completing a task AFTER its due date (missed).
@@ -270,7 +287,10 @@ async function main() {
       const dueDhakaDate = t.due ? formatTWDueDateInDhaka(t.due) : null;
       const wasMissed = !!(dueDhakaDate && endDhakaDate && endDhakaDate > dueDhakaDate);
       const endStr = t.end || t.modified;
-      const daysLate = wasMissed ? calcDaysLate(t.due, endStr) : 0;
+      const daysLate  = wasMissed ? calcDaysLate(t.due, endStr) : 0;
+      const daysEarly = (!wasMissed && dueDhakaDate && endDhakaDate && endDhakaDate < dueDhakaDate)
+        ? calcDaysEarly(t.due, endStr)
+        : 0;
       return {
         id: t.id,
         uuid: t.uuid,
@@ -283,8 +303,9 @@ async function main() {
         end: endStr || null,
         urgency: t.urgency ?? 0,
         wasMissed,
-        daysLate: wasMissed ? daysLate : 0,
-        xpAwarded: wasMissed ? 0 : calculateCompletedTaskXp(t),
+        daysLate:  wasMissed  ? daysLate  : 0,
+        daysEarly: !wasMissed ? daysEarly : 0,
+        xpAwarded: wasMissed ? 0 : calculateCompletedTaskXp(t, daysEarly),
         xpPenalty: wasMissed ? calculateMissedTaskXpPenalty(t, daysLate) : 0,
       };
     });
