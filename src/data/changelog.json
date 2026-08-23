@@ -1,5 +1,41 @@
 [
   {
+    "version": "v1.4.0",
+    "date": "2026-08-23",
+    "title": "Dynamic XP Scaling — Early Bird & Late Penalty",
+    "badge": "RPG",
+    "category": "feature",
+    "changes": [
+      "XP penalty now scales +50% per day late (capped 10×) — the longer you wait, the more you lose",
+      "Early bird bonus rewards completing tasks ahead of schedule: +30% per day early, capped at 3× base XP",
+      "Pending task table now shows live projected XP — gold ⚡ if early, green if on-time, red if overdue"
+    ]
+  },
+  {
+    "version": "v1.3.0",
+    "date": "2026-08-21",
+    "title": "Telegram Task Management & AI Digest",
+    "badge": "BOT",
+    "category": "feature",
+    "changes": [
+      "Add and complete Taskwarrior tasks remotely via Telegram bot commands",
+      "AI-powered daily digest summarizing notes, tasks, and writing activity",
+      "Improved Telegram webhook pipeline with task sync and skip-ci automation"
+    ]
+  },
+  {
+    "version": "v1.2.0",
+    "date": "2026-08-18",
+    "title": "AI Model Switcher & Search Improvements",
+    "badge": "AI",
+    "category": "ai",
+    "changes": [
+      "Multi-model AI backend with switchable providers for search and Q&A",
+      "Improved AI search modal with streaming responses and better context handling",
+      "Rate limiting, prompt hardening, and response quality improvements"
+    ]
+  },
+  {
     "version": "v1.1.0",
     "date": "2026-08-15",
     "title": "Collections & Reading Paths",
