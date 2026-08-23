@@ -222,14 +222,30 @@ async function main() {
     return xp;
   }
 
-  // Calculate XP penalty for completing a task AFTER its due date (missed)
-  // Penalty is harsher than the reward to enforce real accountability.
-  function calculateMissedTaskXpPenalty(t: RawTask): number {
-    let penalty = 200; // base penalty (vs 150 base reward)
-    if (t.priority === "H") penalty += 150; // -350 XP (vs +250 reward)
-    else if (t.priority === "M") penalty += 50;  // -250 XP (vs +200 reward)
-    else if (t.priority === "L") penalty += 20;  // -220 XP (vs +170 reward)
-    return -penalty; // always negative
+  // Calculate XP penalty for completing a task AFTER its due date (missed).
+  // Penalty scales with how many days late: +50% per day, capped at 10×.
+  //   0 days late : 1.0× base  (same-day grace: technically overdue but just)
+  //   1 day late  : 1.5× base
+  //   2 days late : 2.0× base
+  //   5 days late : 3.5× base
+  //  18+ days late: 10× base  (hard cap)
+  function calcDaysLate(dueStr?: string, endStr?: string): number {
+    if (!dueStr || !endStr) return 0;
+    const due = parseTWDate(dueStr);
+    const end = parseTWDate(endStr);
+    if (!due || !end) return 0;
+    const diffMs = end.getTime() - due.getTime();
+    return Math.max(0, Math.floor(diffMs / (1000 * 60 * 60 * 24)));
+  }
+
+  function calculateMissedTaskXpPenalty(t: RawTask, daysLate: number): number {
+    let base = 200; // base penalty
+    if (t.priority === "H") base += 150; // 350 base for high
+    else if (t.priority === "M") base += 50;  // 250 base for medium
+    else if (t.priority === "L") base += 20;  // 220 base for low
+    // Scale: +50% per day late, hard cap at 10×
+    const scale = Math.min(10, 1 + daysLate * 0.5);
+    return -Math.round(base * scale);
   }
 
   // Categorize and sort ALL pending tasks:
@@ -253,6 +269,8 @@ async function main() {
       const endDhakaDate = t.end ? formatTWDueDateInDhaka(t.end) : (t.modified ? formatTWDueDateInDhaka(t.modified) : null);
       const dueDhakaDate = t.due ? formatTWDueDateInDhaka(t.due) : null;
       const wasMissed = !!(dueDhakaDate && endDhakaDate && endDhakaDate > dueDhakaDate);
+      const endStr = t.end || t.modified;
+      const daysLate = wasMissed ? calcDaysLate(t.due, endStr) : 0;
       return {
         id: t.id,
         uuid: t.uuid,
@@ -262,11 +280,12 @@ async function main() {
         priority: t.priority || null,
         due: t.due || null,
         entry: t.entry || null,
-        end: t.end || t.modified || null,
+        end: endStr || null,
         urgency: t.urgency ?? 0,
         wasMissed,
+        daysLate: wasMissed ? daysLate : 0,
         xpAwarded: wasMissed ? 0 : calculateCompletedTaskXp(t),
-        xpPenalty: wasMissed ? calculateMissedTaskXpPenalty(t) : 0,
+        xpPenalty: wasMissed ? calculateMissedTaskXpPenalty(t, daysLate) : 0,
       };
     });
 

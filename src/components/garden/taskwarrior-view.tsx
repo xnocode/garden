@@ -46,6 +46,7 @@ export interface CompletedTaskData {
   urgency?: number;
   xpAwarded: number;
   xpPenalty?: number;  // negative; only on missed (overdue-completed) tasks
+  daysLate?: number;
   wasMissed?: boolean;
 }
 
@@ -120,6 +121,35 @@ function priorityColor(p: string | null): string {
   if (p === "M") return "text-amber-400";
   if (p === "L") return "text-blue-400";
   return "text-muted-foreground/40";
+}
+
+/** Projected XP for a still-pending task:
+ *  - On time → positive reward based on priority
+ *  - Overdue  → negative penalty scaled by days late (+50%/day, capped 10×)
+ */
+function calcPendingXp(task: TaskData): { xp: number; daysLate: number } {
+  // Base reward
+  let base = 150;
+  if (task.priority === "H") base += 100;
+  else if (task.priority === "M") base += 50;
+  else if (task.priority === "L") base += 20;
+
+  if (!task.overdue || !task.due) return { xp: base, daysLate: 0 };
+
+  // Compute days late from due date to now
+  const m = task.due.match(/^(\d{4})(\d{2})(\d{2})T(\d{2})(\d{2})(\d{2})Z$/);
+  if (!m) return { xp: base, daysLate: 0 };
+  const dueDate = new Date(`${m[1]}-${m[2]}-${m[3]}T${m[4]}:${m[5]}:${m[6]}Z`);
+  const daysLate = Math.max(0, Math.floor((Date.now() - dueDate.getTime()) / 86_400_000));
+
+  // Penalty base
+  let penaltyBase = 200;
+  if (task.priority === "H") penaltyBase += 150;
+  else if (task.priority === "M") penaltyBase += 50;
+  else if (task.priority === "L") penaltyBase += 20;
+
+  const scale = Math.min(10, 1 + daysLate * 0.5);
+  return { xp: -Math.round(penaltyBase * scale), daysLate };
 }
 
 /* ── component ── */
@@ -297,6 +327,9 @@ export function TaskwarriorView({ data, writingStats }: { data: TaskSnapshot; wr
                     <th className="whitespace-nowrap px-2.5 sm:px-4 py-2.5 text-right text-[10px] sm:text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
                       Urg
                     </th>
+                    <th className="whitespace-nowrap px-2.5 sm:px-4 py-2.5 text-right text-[10px] sm:text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+                      XP
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
@@ -348,6 +381,23 @@ export function TaskwarriorView({ data, writingStats }: { data: TaskSnapshot; wr
                         )}`}
                       >
                         {task.urgency.toFixed(1)}
+                      </td>
+                      <td className="whitespace-nowrap px-2.5 sm:px-4 py-2 sm:py-2.5 text-right">
+                        {(() => {
+                          const { xp, daysLate } = calcPendingXp(task);
+                          return xp >= 0 ? (
+                            <span className="inline-flex items-center gap-1 rounded border border-emerald-500/30 bg-emerald-500/10 px-2 py-0.5 font-mono text-[11px] font-bold text-emerald-400">
+                              +{xp}
+                            </span>
+                          ) : (
+                            <span
+                              className="inline-flex items-center gap-1 rounded border border-red-500/40 bg-red-500/10 px-2 py-0.5 font-mono text-[11px] font-bold text-red-400"
+                              title={`${daysLate}d late — penalty scales +50%/day`}
+                            >
+                              {xp}
+                            </span>
+                          );
+                        })()}
                       </td>
                     </tr>
                   ))}
