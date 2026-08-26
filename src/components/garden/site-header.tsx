@@ -13,6 +13,7 @@ import { UserMenu } from "@/components/auth/user-menu";
 const NAV_ITEMS = [
   { label: "Garden", href: "/", key: "home" },
   { label: "Index", href: "/?view=index", key: "index" },
+  { label: "Notebooks", href: "/?view=notebooks", key: "notebooks" },
   { label: "Graph", href: "/?view=graph", key: "graph" },
   { label: "Tags", href: "/?view=tags", key: "tags" },
   { label: "Collections", href: "/?view=series", key: "series" },

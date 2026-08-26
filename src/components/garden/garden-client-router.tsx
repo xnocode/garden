@@ -22,6 +22,7 @@ import {
   ColophonView,
   SeriesListView,
   SeriesView,
+  NotebookShelfView,
 } from "@/components/garden/views";
 import { TaskwarriorView } from "@/components/garden/taskwarrior-view";
 import { ChangelogView } from "@/components/garden/changelog-view";
@@ -129,6 +130,9 @@ export function GardenClientRouter({ data }: Props) {
   } else if (view === "index") {
     content = <IndexView notes={data.notes} />;
     mainWidthClass = "max-w-5xl";
+  } else if (view === "notebooks") {
+    content = <NotebookShelfView notes={data.notes} />;
+    mainWidthClass = "max-w-[1600px]";
   } else if (view === "graph") {
     content = <GraphPage graph={data.graph} />;
     showExplorer = false;

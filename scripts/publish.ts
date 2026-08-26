@@ -36,6 +36,8 @@ import {
   type WikiLinkTarget,
 } from "../src/lib/markdown";
 import { fetchUrlPreviews, findUrlsInMarkdown } from "../src/lib/url-preview";
+import { processNotebook } from "../src/lib/notebook-pipeline";
+import type { NotebookManifest, PaperTheme } from "../src/lib/notes";
 
 // Database sync — only used for private notes (admin-only via API).
 // Public/members notes live in the static JSON; the DB mirror exists so the
@@ -79,6 +81,11 @@ interface ParsedFile {
   date?: Date;
   updatedAt?: Date;
   visibility: "public" | "members" | "private";
+  type?: "note" | "notebook";
+  pdf?: string;
+  paperTheme?: PaperTheme;
+  cover?: string;
+  notebook?: NotebookManifest;
   content: string;
   raw: string;
   prevSlug?: string | null;
@@ -164,6 +171,16 @@ async function parsePass(files: string[]): Promise<ParsedFile[]> {
         ? "members"
         : "public";
 
+    const rawType = (data.type ?? "").toString().toLowerCase().trim();
+    const pdfSource = typeof data.pdf === "string" && data.pdf.trim() ? data.pdf.trim() : undefined;
+    const isNotebook = rawType === "notebook" || Boolean(pdfSource);
+    const type: "note" | "notebook" = isNotebook ? "notebook" : "note";
+    const rawTheme = (data.paper_theme ?? data.paperTheme ?? data.theme ?? "warm-grid").toString().trim();
+    const paperTheme: PaperTheme = ["clean-white", "warm-grid", "sepia-ruled", "dark-ink"].includes(rawTheme)
+      ? (rawTheme as PaperTheme)
+      : "warm-grid";
+    const cover = typeof data.cover === "string" && data.cover.trim() ? data.cover.trim() : undefined;
+
     parsed.push({
       path: relPath,
       slug,
@@ -179,6 +196,10 @@ async function parsePass(files: string[]): Promise<ParsedFile[]> {
       date: todate(dateVal),
       updatedAt: todate(updatedVal),
       visibility,
+      type,
+      pdf: pdfSource,
+      paperTheme,
+      cover,
       content,
       raw,
       prevSlug: typeof data.prev === "string" ? slugify(data.prev) : null,
@@ -322,6 +343,27 @@ async function publish() {
     urlPreviews = await fetchUrlPreviews(Array.from(allUrls));
   }
   ctx.urlPreviews = urlPreviews;
+
+  // --- Notebook processing pass ---
+  for (const p of publishable) {
+    if (p.pdf || p.type === "notebook") {
+      try {
+        console.log(`  📓 processing notebook: ${p.slug} (${p.pdf || "local"})`);
+        const manifest = await processNotebook({
+          slug: p.slug,
+          title: p.title,
+          pdfSource: p.pdf || p.slug,
+          paperTheme: p.paperTheme || "warm-grid",
+          cover: p.cover,
+          vaultPath: CONTENT_DIR,
+        });
+        p.notebook = manifest;
+        p.type = "notebook";
+      } catch (err: any) {
+        console.warn(`  ⚠️  notebook conversion warning for ${p.slug}: ${err.message}`);
+      }
+    }
+  }
 
   // --- Pass 1: render all notes without transclusion inlining ---
   // This produces the base HTML bodies we'll inline in pass 2.
@@ -520,6 +562,8 @@ async function exportJsonData(rendered: RenderedNote[]) {
       links: r.links,
       wordCount: r.wordCount,
       visibility: r.visibility,
+      type: r.type || (r.notebook ? "notebook" : "note"),
+      notebook: r.notebook ?? null,
       publishDate: r.date ? r.date.toISOString() : null,
       createdAt: (r.date ?? new Date()).toISOString(),
       updatedAt: (r.updatedAt ?? new Date()).toISOString(),

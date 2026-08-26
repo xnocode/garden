@@ -4,6 +4,38 @@ import path from "node:path";
 
 // --- Types ---
 
+export type PaperTheme = "clean-white" | "warm-grid" | "sepia-ruled" | "dark-ink";
+
+export interface NotebookTextItem {
+  text: string;
+  x: number; // percentage 0 - 100
+  y: number; // percentage 0 - 100
+  width: number; // percentage 0 - 100
+  height: number; // percentage 0 - 100
+}
+
+export interface NotebookPage {
+  pageNumber: number;
+  image: string;
+  image2x: string;
+  thumb: string;
+  width: number;
+  height: number;
+  aspectRatio: number;
+  textLayer?: NotebookTextItem[];
+}
+
+export interface NotebookManifest {
+  slug: string;
+  title: string;
+  pdfUrl?: string;
+  pageCount: number;
+  aspectRatio: number;
+  theme: PaperTheme;
+  pages: NotebookPage[];
+  coverImage?: string;
+}
+
 interface NoteRecord {
   slug: string;
   title: string;
@@ -17,6 +49,8 @@ interface NoteRecord {
   links: WikiLinkTarget[];
   wordCount: number;
   visibility?: "public" | "members" | "private";
+  type?: "note" | "notebook";
+  notebook?: NotebookManifest;
   publishDate: string | null;
   createdAt: string;
   updatedAt: string;
@@ -41,6 +75,8 @@ export interface NoteSummary {
   aliases: string[];
   wordCount: number;
   visibility?: "public" | "members" | "private";
+  type?: "note" | "notebook";
+  notebook?: NotebookManifest;
   publishDate: string | null;
   createdAt: string;
   updatedAt: string;
@@ -163,6 +199,8 @@ function toSummary(n: NoteRecord): NoteSummary {
     aliases: n.aliases,
     wordCount: n.wordCount,
     visibility: n.visibility || "public",
+    type: n.type || (n.notebook ? "notebook" : "note"),
+    notebook: n.notebook,
     publishDate: n.publishDate,
     createdAt: n.createdAt,
     updatedAt: n.updatedAt,
@@ -548,3 +586,8 @@ export async function getOnThisDay(): Promise<NoteSummary[]> {
       (b.publishDate ?? "").localeCompare(a.publishDate ?? "")
     );
 }
+
+export async function listNotebooks(): Promise<NoteSummary[]> {
+  return NOTES.filter((n) => n.type === "notebook" || !!n.notebook).map(toSummary);
+}
+

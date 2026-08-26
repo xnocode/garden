@@ -4,6 +4,7 @@ import type { NoteSummary, TagInfo, GraphData, SeriesEntry } from "@/lib/notes";
 import { NoteCard } from "./note-card";
 import { GraphPageClient } from "./graph-page-client";
 import { formatDate } from "./note-card";
+export { NotebookShelfView } from "./notebook-shelf";
 
 // ----------------------------------------------------------------------------
 // Index view — alphabetical listing of all notes
