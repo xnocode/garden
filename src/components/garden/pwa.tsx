@@ -4,14 +4,74 @@ import { useEffect, useState } from "react";
 import { Download, Share, PlusSquare, X, Smartphone } from "lucide-react";
 
 /* ------------------------------------------------------------------ */
-/* Service worker registration (production only)                       */
+/* Service worker registration & Chunk Error Auto-Recovery            */
 /* ------------------------------------------------------------------ */
+export async function clearGardenCachesAndReload() {
+  try {
+    if ("caches" in window) {
+      const keys = await caches.keys();
+      await Promise.all(keys.map((k) => caches.delete(k)));
+    }
+    if ("serviceWorker" in navigator) {
+      const registrations = await navigator.serviceWorker.getRegistrations();
+      await Promise.all(registrations.map((r) => r.unregister()));
+    }
+  } catch {
+    /* ignore */
+  }
+  window.location.reload();
+}
+
 export function PwaRegister() {
   useEffect(() => {
-    if (process.env.NODE_ENV !== "production") return;
-    if (!("serviceWorker" in navigator)) return;
-    navigator.serviceWorker.register("/sw.js").catch(() => {});
+    // 1. Register service worker in production
+    if (process.env.NODE_ENV === "production" && "serviceWorker" in navigator) {
+      navigator.serviceWorker
+        .register("/sw.js")
+        .then((reg) => {
+          // Check for SW updates periodically
+          reg.update().catch(() => {});
+        })
+        .catch(() => {});
+    }
+
+    // 2. Global chunk load error handler (auto-reloads once on stale deployments)
+    const isChunkError = (err: any) => {
+      const message = err?.message || String(err || "");
+      const name = err?.name || "";
+      return (
+        name === "ChunkLoadError" ||
+        message.includes("Loading chunk") ||
+        message.includes("Failed to fetch dynamically imported module") ||
+        message.includes("error loading dynamically imported module")
+      );
+    };
+
+    const handleChunkError = (err: any) => {
+      if (!isChunkError(err)) return;
+      const reloadKey = "garden_chunk_reload";
+      const lastReload = sessionStorage.getItem(reloadKey);
+      const now = Date.now();
+
+      // Only auto-reload once within a 15-second window to prevent infinite reload loops
+      if (!lastReload || now - parseInt(lastReload, 10) > 15000) {
+        sessionStorage.setItem(reloadKey, String(now));
+        clearGardenCachesAndReload();
+      }
+    };
+
+    const onError = (e: ErrorEvent) => handleChunkError(e.error || e.message);
+    const onUnhandledRejection = (e: PromiseRejectionEvent) => handleChunkError(e.reason);
+
+    window.addEventListener("error", onError);
+    window.addEventListener("unhandledrejection", onUnhandledRejection);
+
+    return () => {
+      window.removeEventListener("error", onError);
+      window.removeEventListener("unhandledrejection", onUnhandledRejection);
+    };
   }, []);
+
   return null;
 }
 

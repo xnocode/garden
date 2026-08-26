@@ -2,15 +2,15 @@
  * Garden service worker — offline engine for the PWA.
  *
  * Strategy:
- *  - Navigation requests: stale-while-revalidate — serve the cached app shell
- *    instantly, refresh it in the background so new deploys appear on the
- *    next visit. Offline: cached shell (all notes live inside it).
+ *  - Navigation requests: network-first with cached shell fallback.
+ *    Always serves fresh HTML on live network to guarantee chunks match,
+ *    falling back to cached app shell when offline.
  *  - /_next/static + /content-assets: cache-first (immutable, content-hashed).
  *  - /api/: network-only (auth, private notes, comments — never cached).
  *
- * Bump CACHE_VERSION to invalidate old caches on deploy.
+ * CACHE_VERSION is updated to invalidate outdated app shells.
  */
-const CACHE_VERSION = "garden-v2";
+const CACHE_VERSION = "garden-v3";
 const SHELL_CACHE = `${CACHE_VERSION}-shell`;
 const ASSET_CACHE = `${CACHE_VERSION}-assets`;
 const SHELL_URL = "/";
@@ -39,6 +39,28 @@ self.addEventListener("activate", (event) => {
       .then(() => self.clients.claim())
   );
 });
+
+self.addEventListener("message", (event) => {
+  if (event.data && event.data.type === "CLEAR_ALL_CACHES") {
+    caches.keys().then((keys) => Promise.all(keys.map((k) => caches.delete(k))));
+  }
+});
+
+async function networkFirstWithFallback(request, cacheName, fallbackUrl) {
+  try {
+    const networkResponse = await fetch(request);
+    if (networkResponse && networkResponse.ok) {
+      const cache = await caches.open(cacheName);
+      cache.put(fallbackUrl, networkResponse.clone());
+      return networkResponse;
+    }
+  } catch {
+    // Offline or network failure — fallback to cached shell
+  }
+  const cache = await caches.open(cacheName);
+  const cached = await cache.match(fallbackUrl);
+  return cached || caches.match(fallbackUrl);
+}
 
 async function staleWhileRevalidate(request, cacheName) {
   const cache = await caches.open(cacheName);
@@ -85,9 +107,9 @@ self.addEventListener("fetch", (event) => {
     return;
   }
 
-  // Page navigations — instant from cache, refresh in background.
+  // Page navigations — network-first for fresh bundles, falling back to cached shell offline.
   if (request.mode === "navigate") {
-    event.respondWith(staleWhileRevalidate(SHELL_URL, SHELL_CACHE));
+    event.respondWith(networkFirstWithFallback(request, SHELL_CACHE, SHELL_URL));
     return;
   }
 
