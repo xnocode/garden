@@ -30,7 +30,6 @@ import { CodeBlockRunner } from "./code-block-runner";
 import { useSession } from "next-auth/react";
 import { NoteGatekeeper } from "./note-gatekeeper";
 import { CommentsSection } from "./comments-section";
-import { NotebookViewer } from "./notebook-viewer";
 
 
 interface PreviewData {
@@ -103,7 +102,6 @@ export function NoteView({ note }: { note: NoteDetail }) {
   const hoverSlug = useRef<string | null>(null);
   const contentRef = useRef<HTMLDivElement>(null);
   const [loadingRandom, setLoadingRandom] = useState(false);
-  const [viewMode, setViewMode] = useState<"flipbook" | "article">("flipbook");
 
   const userRole = (session?.user as any)?.role || "guest";
   const isAdmin = userRole === "admin";
@@ -550,17 +548,7 @@ export function NoteView({ note }: { note: NoteDetail }) {
           </div>
         )}
         {/* Action bar */}
-        <div className="mt-5 flex items-center gap-1.5 border-t border-border/50 pt-4 flex-wrap">
-          {note.notebook && (
-            <button
-              onClick={() => setViewMode((m) => (m === "flipbook" ? "article" : "flipbook"))}
-              className="inline-flex items-center gap-1.5 rounded-md border border-garden/40 bg-garden/10 px-2.5 py-1.5 text-xs font-medium text-garden hover:bg-garden/20 transition-all mr-1"
-              title={viewMode === "flipbook" ? "Switch to standard article layout" : "Switch to 3D interactive flipbook"}
-            >
-              {viewMode === "flipbook" ? <FileText className="h-3.5 w-3.5" /> : <BookOpen className="h-3.5 w-3.5" />}
-              <span>{viewMode === "flipbook" ? "Article View" : "3D Flipbook"}</span>
-            </button>
-          )}
+        <div className="mt-5 flex items-center gap-1.5 border-t border-border/50 pt-4">
           <button
             onClick={copyLink}
             className="inline-flex items-center gap-1.5 rounded-md border border-border bg-surface/50 px-2.5 py-1.5 text-xs font-medium text-muted-foreground transition-all hover:border-garden/40 hover:text-foreground"
@@ -619,75 +607,6 @@ export function NoteView({ note }: { note: NoteDetail }) {
           visibility={noteVisibility as "members" | "private"}
           noteTitle={note.title}
         />
-      ) : note.notebook && viewMode === "flipbook" ? (
-        <>
-          <NotebookViewer
-            manifest={note.notebook}
-            noteTitle={note.title}
-            noteContent={note.content}
-            noteHtml={html}
-            onToggleViewMode={() => setViewMode("article")}
-          />
-
-          {/* Prev / Next */}
-          <nav className="mt-12 grid grid-cols-1 gap-3 border-t border-border pt-6 sm:grid-cols-2">
-            {note.prev ? (
-              <GardenLink
-                href={`/?p=${encodeURIComponent(note.prev.slug)}`}
-                className="group flex items-center gap-3 rounded-lg border border-border bg-surface/30 p-4 transition-colors hover:border-garden/40"
-              >
-                <ChevronLeft className="h-5 w-5 text-muted-foreground group-hover:text-garden" />
-                <span className="min-w-0">
-                  <span className="block text-[11px] uppercase tracking-wider text-muted-foreground">
-                    Previous
-                  </span>
-                  <span className="block truncate font-medium text-foreground group-hover:text-garden">
-                    {note.prev.title}
-                  </span>
-                </span>
-              </GardenLink>
-            ) : (
-              <div />
-            )}
-            {note.next ? (
-              <GardenLink
-                href={`/?p=${encodeURIComponent(note.next.slug)}`}
-                className="group flex items-center justify-end gap-3 rounded-lg border border-border bg-surface/30 p-4 text-right transition-colors hover:border-garden/40"
-              >
-                <span className="min-w-0">
-                  <span className="block text-[11px] uppercase tracking-wider text-muted-foreground">
-                    Next
-                  </span>
-                  <span className="block truncate font-medium text-foreground group-hover:text-garden">
-                    {note.next.title}
-                  </span>
-                </span>
-                <ChevronRight className="h-5 w-5 text-muted-foreground group-hover:text-garden" />
-              </GardenLink>
-            ) : (
-              <div />
-            )}
-          </nav>
-
-          {/* Related notes */}
-          {note.related.length > 0 && (
-            <div className="mt-8">
-              <RelatedNotes notes={note.related} />
-            </div>
-          )}
-
-          {/* Backlinks */}
-          {note.backlinks.length > 0 && (
-            <div className="mt-8">
-              <Backlinks backlinks={note.backlinks} currentSlug={note.slug} />
-            </div>
-          )}
-
-          {/* Native In-House Discussion / Comments Section */}
-          <div className="mt-8">
-            <CommentsSection noteSlug={note.slug} />
-          </div>
-        </>
       ) : (
         <>
           <div className="grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_220px] gap-8">
