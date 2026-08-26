@@ -1,5 +1,5 @@
 {
-  "exportedAt": "2026-08-26T21:30:18.437Z",
+  "exportedAt": "2026-08-26T21:30:49.828Z",
   "stats": {
     "total": 11,
     "pending": 9,
@@ -16,7 +16,7 @@
       "priority": "H",
       "due": "20260820T180000Z",
       "entry": "20260821T044139Z",
-      "urgency": 18.637,
+      "urgency": 18.6372,
       "overdue": true
     },
     {
@@ -28,7 +28,7 @@
       "priority": "H",
       "due": "20260820T180000Z",
       "entry": "20260821T044139Z",
-      "urgency": 18.637,
+      "urgency": 18.6372,
       "overdue": true
     },
     {
@@ -40,7 +40,7 @@
       "priority": "H",
       "due": "20260820T180000Z",
       "entry": "20260821T044140Z",
-      "urgency": 18.637,
+      "urgency": 18.6372,
       "overdue": true
     },
     {
@@ -52,7 +52,7 @@
       "priority": "H",
       "due": "20260820T180000Z",
       "entry": "20260821T044140Z",
-      "urgency": 18.637,
+      "urgency": 18.6372,
       "overdue": true
     },
     {
@@ -64,7 +64,7 @@
       "priority": "H",
       "due": "20260820T180000Z",
       "entry": "20260821T044140Z",
-      "urgency": 18.637,
+      "urgency": 18.6372,
       "overdue": true
     },
     {
@@ -76,7 +76,7 @@
       "priority": "H",
       "due": "20260820T180000Z",
       "entry": "20260821T044141Z",
-      "urgency": 18.637,
+      "urgency": 18.6372,
       "overdue": true
     },
     {
@@ -88,7 +88,7 @@
       "priority": "H",
       "due": "20260820T180000Z",
       "entry": "20260821T044142Z",
-      "urgency": 18.637,
+      "urgency": 18.6372,
       "overdue": true
     },
     {
@@ -100,7 +100,7 @@
       "priority": "M",
       "due": "20260820T180000Z",
       "entry": "20260821T044139Z",
-      "urgency": 16.537,
+      "urgency": 16.5372,
       "overdue": true
     },
     {
@@ -112,7 +112,7 @@
       "priority": "M",
       "due": "20260820T180000Z",
       "entry": "20260821T044142Z",
-      "urgency": 16.537,
+      "urgency": 16.5372,
       "overdue": true
     }
   ],
@@ -127,7 +127,7 @@
       "due": "20260820T180000Z",
       "entry": "20260821T044139Z",
       "end": "20260822T040650Z",
-      "urgency": 18.637,
+      "urgency": 18.6372,
       "wasMissed": true,
       "daysLate": 1,
       "daysEarly": 0,
@@ -144,7 +144,7 @@
       "due": "20260820T180000Z",
       "entry": "20260821T044139Z",
       "end": "20260822T040650Z",
-      "urgency": 18.637,
+      "urgency": 18.6372,
       "wasMissed": true,
       "daysLate": 1,
       "daysEarly": 0,
