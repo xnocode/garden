@@ -134,7 +134,7 @@ export interface ExplorerNode {
 
 // Static JSON bundled at build time (used as fallback / for graph/tags/stats)
 import notesData from "@/data/notes.json";
-const STATIC_NOTES: NoteRecord[] = notesData as NoteRecord[];
+const STATIC_NOTES: NoteRecord[] = notesData as unknown as NoteRecord[];
 
    // For all public queries, serve instantly from STATIC_NOTES in 0ms
    const NOTES: NoteRecord[] = STATIC_NOTES;
