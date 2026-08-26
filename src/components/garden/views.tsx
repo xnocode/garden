@@ -4,6 +4,40 @@ import type { NoteSummary, TagInfo, GraphData, SeriesEntry } from "@/lib/notes";
 import { NoteCard } from "./note-card";
 import { GraphPageClient } from "./graph-page-client";
 import { formatDate } from "./note-card";
+import { BookGallery } from "./book-gallery";
+import type { BookItem } from "@/lib/notes";
+
+export function LibraryView({ notes, books }: { notes: NoteSummary[]; books?: BookItem[] }) {
+  const allBooks: BookItem[] = [];
+  if (books && books.length > 0) {
+    allBooks.push(...books);
+  } else {
+    for (const n of notes) {
+      if (n.books && Array.isArray(n.books) && n.books.length > 0) {
+        for (const b of n.books) {
+          allBooks.push({
+            ...b,
+            noteSlug: b.noteSlug || n.slug,
+            author: b.author || n.author || undefined,
+          });
+        }
+      } else if (n.pdfUrl) {
+        allBooks.push({
+          title: n.title,
+          link: n.pdfUrl,
+          cover: n.coverImage,
+          author: n.author || undefined,
+          description: n.description || undefined,
+          category: n.tags?.[0] || "General",
+          tags: n.tags,
+          noteSlug: n.slug,
+        });
+      }
+    }
+  }
+
+  return <BookGallery books={allBooks} />;
+}
 
 // ----------------------------------------------------------------------------
 // Index view — alphabetical listing of all notes

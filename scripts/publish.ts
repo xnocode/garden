@@ -36,6 +36,7 @@ import {
   type WikiLinkTarget,
 } from "../src/lib/markdown";
 import { fetchUrlPreviews, findUrlsInMarkdown } from "../src/lib/url-preview";
+import type { BookItem } from "../src/lib/notes";
 
 // Database sync — only used for private notes (admin-only via API).
 // Public/members notes live in the static JSON; the DB mirror exists so the
@@ -79,6 +80,10 @@ interface ParsedFile {
   date?: Date;
   updatedAt?: Date;
   visibility: "public" | "members" | "private";
+  type?: string;
+  pdfUrl?: string;
+  coverImage?: string;
+  books?: BookItem[];
   content: string;
   raw: string;
   prevSlug?: string | null;
@@ -164,6 +169,39 @@ async function parsePass(files: string[]): Promise<ParsedFile[]> {
         ? "members"
         : "public";
 
+    // Parse books array or single pdf/link fields
+    let books: BookItem[] | undefined = undefined;
+    if (Array.isArray(data.books)) {
+      books = data.books
+        .filter((b: any) => b && typeof b === "object" && (b.title || b.link || b.url || b.pdf))
+        .map((b: any) => ({
+          title: String(b.title || "Untitled Book"),
+          link: String(b.link || b.url || b.pdf || ""),
+          cover: b.cover ? String(b.cover) : undefined,
+          author: b.author ? String(b.author) : undefined,
+          category: b.category ? String(b.category) : undefined,
+          description: b.description ? String(b.description) : undefined,
+          tags: Array.isArray(b.tags) ? b.tags.map(String) : undefined,
+          noteSlug: slug,
+        }));
+    }
+
+    const pdfUrl =
+      typeof data.pdf === "string" && data.pdf.trim()
+        ? data.pdf.trim()
+        : typeof data.link === "string" && data.link.trim()
+        ? data.link.trim()
+        : undefined;
+
+    const coverImage =
+      typeof data.cover === "string" && data.cover.trim()
+        ? data.cover.trim()
+        : typeof data.image === "string" && data.image.trim()
+        ? data.image.trim()
+        : undefined;
+
+    const type = typeof data.type === "string" && data.type.trim() ? data.type.trim() : undefined;
+
     parsed.push({
       path: relPath,
       slug,
@@ -179,6 +217,10 @@ async function parsePass(files: string[]): Promise<ParsedFile[]> {
       date: todate(dateVal),
       updatedAt: todate(updatedVal),
       visibility,
+      type,
+      pdfUrl,
+      coverImage,
+      books,
       content,
       raw,
       prevSlug: typeof data.prev === "string" ? slugify(data.prev) : null,
@@ -520,6 +562,10 @@ async function exportJsonData(rendered: RenderedNote[]) {
       links: r.links,
       wordCount: r.wordCount,
       visibility: r.visibility,
+      type: r.type ?? null,
+      pdfUrl: r.pdfUrl ?? null,
+      coverImage: r.coverImage ?? null,
+      books: r.books ?? null,
       publishDate: r.date ? r.date.toISOString() : null,
       createdAt: (r.date ?? new Date()).toISOString(),
       updatedAt: (r.updatedAt ?? new Date()).toISOString(),

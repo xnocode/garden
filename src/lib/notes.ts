@@ -4,6 +4,17 @@ import path from "node:path";
 
 // --- Types ---
 
+export interface BookItem {
+  title: string;
+  link: string; // Google Drive or cloud URL
+  cover?: string; // Image path or URL
+  author?: string;
+  category?: string;
+  description?: string;
+  tags?: string[];
+  noteSlug?: string;
+}
+
 interface NoteRecord {
   slug: string;
   title: string;
@@ -17,6 +28,10 @@ interface NoteRecord {
   links: WikiLinkTarget[];
   wordCount: number;
   visibility?: "public" | "members" | "private";
+  type?: string;
+  pdfUrl?: string;
+  coverImage?: string;
+  books?: BookItem[];
   publishDate: string | null;
   createdAt: string;
   updatedAt: string;
@@ -41,6 +56,10 @@ export interface NoteSummary {
   aliases: string[];
   wordCount: number;
   visibility?: "public" | "members" | "private";
+  type?: string;
+  pdfUrl?: string;
+  coverImage?: string;
+  books?: BookItem[];
   publishDate: string | null;
   createdAt: string;
   updatedAt: string;
@@ -163,6 +182,10 @@ function toSummary(n: NoteRecord): NoteSummary {
     aliases: n.aliases,
     wordCount: n.wordCount,
     visibility: n.visibility || "public",
+    type: n.type,
+    pdfUrl: n.pdfUrl,
+    coverImage: n.coverImage,
+    books: n.books,
     publishDate: n.publishDate,
     createdAt: n.createdAt,
     updatedAt: n.updatedAt,
@@ -548,3 +571,31 @@ export async function getOnThisDay(): Promise<NoteSummary[]> {
       (b.publishDate ?? "").localeCompare(a.publishDate ?? "")
     );
 }
+
+export async function listAllBooks(): Promise<BookItem[]> {
+  const all: BookItem[] = [];
+  for (const n of NOTES) {
+    if (n.books && Array.isArray(n.books) && n.books.length > 0) {
+      for (const b of n.books) {
+        all.push({
+          ...b,
+          noteSlug: b.noteSlug || n.slug,
+          author: b.author || n.author || undefined,
+        });
+      }
+    } else if (n.pdfUrl) {
+      all.push({
+        title: n.title,
+        link: n.pdfUrl,
+        cover: n.coverImage,
+        author: n.author || undefined,
+        description: n.description || undefined,
+        category: n.tags?.[0] || "General",
+        tags: n.tags,
+        noteSlug: n.slug,
+      });
+    }
+  }
+  return all;
+}
+
