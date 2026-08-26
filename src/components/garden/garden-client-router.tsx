@@ -22,7 +22,6 @@ import {
   ColophonView,
   SeriesListView,
   SeriesView,
-  LibraryView,
 } from "@/components/garden/views";
 import { TaskwarriorView } from "@/components/garden/taskwarrior-view";
 import { ChangelogView } from "@/components/garden/changelog-view";
@@ -166,10 +165,6 @@ export function GardenClientRouter({ data }: Props) {
   } else if (view === "private") {
     content = <PrivateNotesView />;
     mainWidthClass = "max-w-3xl";
-  } else if (view === "library" || view === "books") {
-    content = <LibraryView notes={data.notes} />;
-    showExplorer = false;
-    mainWidthClass = "max-w-6xl";
   } else if (q) {
     content = <SearchView q={q} results={searchResults} />;
     mainWidthClass = "max-w-3xl";
