@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import type { BookItem } from "@/lib/notes";
 import { parseCloudUrl } from "@/lib/cloud-pdf";
 import {
@@ -26,13 +27,18 @@ interface BookReaderModalProps {
 }
 
 export function BookReaderModal({ book, onClose }: BookReaderModalProps) {
+  const [mounted, setMounted] = useState(false);
   const [copied, setCopied] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [iframeLoaded, setIframeLoaded] = useState(false);
   const [iframeKey, setIframeKey] = useState(0);
   const [activeTab, setActiveTab] = useState<"reader" | "details">("reader");
 
-  // Close on Escape
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  // Close on Escape & Lock body scroll
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
@@ -49,7 +55,7 @@ export function BookReaderModal({ book, onClose }: BookReaderModalProps) {
     };
   }, [book, onClose]);
 
-  if (!book) return null;
+  if (!mounted || !book) return null;
 
   const cloud = parseCloudUrl(book.link);
   const directLink = cloud.directPdfUrl || book.link;
@@ -70,21 +76,29 @@ export function BookReaderModal({ book, onClose }: BookReaderModalProps) {
     }
   };
 
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 md:p-6 bg-black/80 backdrop-blur-md animate-in fade-in duration-200">
+  const modalContent = (
+    <div
+      role="dialog"
+      aria-modal="true"
+      className="fixed inset-0 z-[9999] flex items-center justify-center p-3 sm:p-5 md:p-6 bg-black/80 backdrop-blur-md animate-in fade-in duration-200"
+    >
       {/* Backdrop click to close */}
-      <div className="absolute inset-0" onClick={onClose} />
+      <div
+        className="absolute inset-0 cursor-default"
+        onClick={onClose}
+        aria-hidden="true"
+      />
 
-      {/* Modal Container */}
+      {/* Modal Card Container */}
       <div
         className={`relative z-10 w-full bg-background border border-border rounded-2xl shadow-2xl overflow-hidden flex flex-col transition-all duration-300 ${
           isFullscreen
             ? "h-[98vh] max-w-[98vw]"
-            : "h-[92vh] max-h-[900px] max-w-6xl"
+            : "h-[88vh] max-h-[850px] max-w-6xl"
         }`}
       >
         {/* ── MODAL HEADER BAR ─────────────────────────────────────────── */}
-        <div className="flex items-center justify-between px-4 sm:px-6 py-3.5 border-b border-border bg-surface/90 backdrop-blur-md">
+        <div className="flex items-center justify-between px-4 sm:px-6 py-3.5 border-b border-border bg-surface/95 backdrop-blur-md shrink-0">
           <div className="flex items-center gap-3 min-w-0 pr-4">
             <span className="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-garden/10 text-garden border border-garden/30 shrink-0 shadow-xs">
               <BookOpen className="h-4 w-4" />
@@ -201,7 +215,7 @@ export function BookReaderModal({ book, onClose }: BookReaderModalProps) {
           >
             {/* Book Cover Preview Thumbnail */}
             {book.cover && (
-              <div className="relative w-full max-w-[210px] mx-auto aspect-[3/4] rounded-2xl overflow-hidden shadow-xl border border-border bg-surface-2">
+              <div className="relative w-full max-w-[190px] mx-auto aspect-[3/4] rounded-2xl overflow-hidden shadow-xl border border-border bg-surface-2">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={book.cover}
@@ -271,7 +285,7 @@ export function BookReaderModal({ book, onClose }: BookReaderModalProps) {
               <span className="font-mono text-[10px] font-semibold uppercase tracking-widest text-garden">
                 {book.category || "Notebook & Reference"}
               </span>
-              <h3 className="mt-1 font-serif text-xl sm:text-2xl font-bold text-heading leading-snug">
+              <h3 className="mt-1 font-serif text-xl font-bold text-heading leading-snug">
                 {book.title}
               </h3>
               {book.author && (
@@ -317,12 +331,12 @@ export function BookReaderModal({ book, onClose }: BookReaderModalProps) {
 
           {/* ── RIGHT PANE: EMBEDDED PDF READER & CLOUD PREVIEW ───────── */}
           <div
-            className={`lg:col-span-8 bg-surface-2 flex flex-col min-h-[400px] lg:min-h-0 relative ${
-              activeTab === "reader" ? "block" : "hidden lg:block"
+            className={`lg:col-span-8 bg-surface-2 flex flex-col min-h-0 h-full relative ${
+              activeTab === "reader" ? "flex" : "hidden lg:flex"
             }`}
           >
             {/* Top Reader Status Bar */}
-            <div className="flex items-center justify-between px-4 py-2 bg-surface/50 border-b border-border text-xs text-muted-foreground">
+            <div className="flex items-center justify-between px-4 py-2 bg-surface/70 border-b border-border text-xs text-muted-foreground shrink-0">
               <div className="flex items-center gap-2 font-mono text-[11px]">
                 <Eye className="h-3.5 w-3.5 text-garden" />
                 <span>PDF Document Preview</span>
@@ -354,7 +368,7 @@ export function BookReaderModal({ book, onClose }: BookReaderModalProps) {
 
             {/* Embedded Iframe Reader */}
             {cloud.embedUrl ? (
-              <div className="relative w-full h-full flex-1 min-h-[450px]">
+              <div className="relative w-full h-full flex-1 min-h-0">
                 {!iframeLoaded && (
                   <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-surface z-10">
                     <div className="h-8 w-8 animate-spin rounded-full border-2 border-garden border-t-transparent" />
@@ -409,4 +423,6 @@ export function BookReaderModal({ book, onClose }: BookReaderModalProps) {
       </div>
     </div>
   );
+
+  return createPortal(modalContent, document.body);
 }
