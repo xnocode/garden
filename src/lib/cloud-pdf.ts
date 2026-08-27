@@ -8,21 +8,23 @@ export interface CloudFileInfo {
   provider: "google-drive" | "onedrive" | "dropbox" | "mega" | "box" | "icloud" | "direct-pdf" | "generic";
   providerName: string;
   originalUrl: string;
+  directPdfUrl: string;
   embedUrl: string | null;
   downloadUrl: string | null;
   isDirectPdf: boolean;
 }
 
 /**
- * Detects the cloud provider and constructs an embed-friendly URL and download URL.
+ * Detects the cloud provider and constructs an embed-friendly URL, direct PDF URL, and download URL.
  */
 export function parseCloudUrl(rawUrl: string): CloudFileInfo {
   const url = (rawUrl || "").trim();
   if (!url) {
     return {
       provider: "generic",
-      providerName: "Link",
+      providerName: "Document Link",
       originalUrl: "",
+      directPdfUrl: "",
       embedUrl: null,
       downloadUrl: null,
       isDirectPdf: false,
@@ -34,25 +36,32 @@ export function parseCloudUrl(rawUrl: string): CloudFileInfo {
   // 1. Google Drive
   // Format: https://drive.google.com/file/d/<ID>/view... or https://drive.google.com/open?id=<ID>
   if (/drive\.google\.com|docs\.google\.com/i.test(url)) {
-    const fileIdMatch = url.match(/\/file\/d\/([a-zA-Z0-9_-]+)/) || url.match(/[?&]id=([a-zA-Z0-9_-]+)/);
+    const fileIdMatch =
+      url.match(/\/file\/d\/([a-zA-Z0-9_-]+)/) ||
+      url.match(/[?&]id=([a-zA-Z0-9_-]+)/) ||
+      url.match(/\/d\/([a-zA-Z0-9_-]+)/);
+
     if (fileIdMatch && fileIdMatch[1]) {
       const fileId = fileIdMatch[1];
+      const directUrl = `https://drive.google.com/file/d/${fileId}/view?usp=sharing`;
       return {
         provider: "google-drive",
         providerName: "Google Drive",
         originalUrl: url,
+        directPdfUrl: directUrl,
         embedUrl: `https://drive.google.com/file/d/${fileId}/preview`,
         downloadUrl: `https://drive.google.com/uc?export=download&id=${fileId}`,
-        isDirectPdf,
+        isDirectPdf: true,
       };
     }
     return {
       provider: "google-drive",
       providerName: "Google Drive",
       originalUrl: url,
+      directPdfUrl: url,
       embedUrl: url.replace(/\/view(\?.*)?$/, "/preview"),
       downloadUrl: url,
-      isDirectPdf,
+      isDirectPdf: true,
     };
   }
 
@@ -72,6 +81,7 @@ export function parseCloudUrl(rawUrl: string): CloudFileInfo {
       provider: "dropbox",
       providerName: "Dropbox",
       originalUrl: url,
+      directPdfUrl: downloadUrl,
       embedUrl: `https://docs.google.com/viewer?url=${encodeURIComponent(embedUrl)}&embedded=true`,
       downloadUrl,
       isDirectPdf: true,
@@ -85,6 +95,7 @@ export function parseCloudUrl(rawUrl: string): CloudFileInfo {
       provider: "onedrive",
       providerName: "OneDrive",
       originalUrl: url,
+      directPdfUrl: url,
       embedUrl: url.includes("embed") ? url : null,
       downloadUrl: url,
       isDirectPdf,
@@ -99,6 +110,7 @@ export function parseCloudUrl(rawUrl: string): CloudFileInfo {
       provider: "mega",
       providerName: "MEGA",
       originalUrl: url,
+      directPdfUrl: url,
       embedUrl: embedUrl.includes("/embed/") ? embedUrl : null,
       downloadUrl: url,
       isDirectPdf,
@@ -111,6 +123,7 @@ export function parseCloudUrl(rawUrl: string): CloudFileInfo {
       provider: "box",
       providerName: "Box",
       originalUrl: url,
+      directPdfUrl: url,
       embedUrl: url.replace(/\/s\//, "/embed/s/"),
       downloadUrl: url,
       isDirectPdf,
@@ -123,6 +136,7 @@ export function parseCloudUrl(rawUrl: string): CloudFileInfo {
       provider: "direct-pdf",
       providerName: "PDF Document",
       originalUrl: url,
+      directPdfUrl: url,
       embedUrl: url,
       downloadUrl: url,
       isDirectPdf: true,
@@ -132,8 +146,9 @@ export function parseCloudUrl(rawUrl: string): CloudFileInfo {
   // Generic link
   return {
     provider: "generic",
-    providerName: "Cloud Storage",
+    providerName: "Cloud Document",
     originalUrl: url,
+    directPdfUrl: url,
     embedUrl: null,
     downloadUrl: url,
     isDirectPdf,

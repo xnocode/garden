@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import type { BookItem } from "@/lib/notes";
 import { parseCloudUrl } from "@/lib/cloud-pdf";
-import { ExternalLink, BookOpen, FileText, Sparkles, Layers } from "lucide-react";
+import { ExternalLink, BookOpen, Layers, Sparkles, ArrowUpRight } from "lucide-react";
 
 interface NotebookCardProps {
   book: BookItem;
@@ -29,6 +29,13 @@ export function NotebookCard({ book, onClick, index = 0 }: NotebookCardProps) {
   const hasCoverImage = Boolean(book.cover && !imageError);
   const coverBg = book.color || palette.bg;
 
+  const handleDirectLinkClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (book.link) {
+      window.open(book.link, "_blank", "noopener,noreferrer");
+    }
+  };
+
   return (
     <div
       onClick={onClick}
@@ -45,6 +52,19 @@ export function NotebookCard({ book, onClick, index = 0 }: NotebookCardProps) {
       {/* ── 3D STANDING NOTEBOOK CONTAINER ────────────────────────────────── */}
       <div className="relative w-48 sm:w-56 h-72 sm:h-80 flex items-center justify-center transition-all duration-500 transform group-hover:-translate-y-2.5 group-hover:rotate-[-0.5deg]">
         
+        {/* Direct Link Icon Badge (Top Right) */}
+        {book.link && (
+          <button
+            type="button"
+            onClick={handleDirectLinkClick}
+            className="absolute -top-2 -right-2 z-40 h-8 w-8 rounded-full bg-surface border border-border shadow-lg flex items-center justify-center text-muted-foreground hover:text-garden hover:border-garden/50 hover:bg-garden/10 transition-all opacity-90 group-hover:opacity-100 group-hover:scale-110"
+            title={`Open PDF directly in ${cloudInfo.providerName}`}
+            aria-label="Open PDF in new tab"
+          >
+            <ArrowUpRight className="h-4 w-4" />
+          </button>
+        )}
+
         {/* Layer 1: Leftmost open parchment pages (peeking behind for realistic depth) */}
         <div
           className="absolute -left-3 sm:-left-4 top-3 bottom-4 w-12 rounded-l-xl rounded-r-md border border-black/10 dark:border-white/5 shadow-md transform -rotate-[2.5deg] transition-transform duration-500 group-hover:-rotate-[4deg] group-hover:-translate-x-1"
@@ -179,15 +199,21 @@ export function NotebookCard({ book, onClick, index = 0 }: NotebookCardProps) {
           )}
 
           {/* Quick Click Hint Overlay on Hover */}
-          <div className="absolute inset-0 z-30 bg-black/45 backdrop-blur-[2px] opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col items-center justify-center gap-2 p-3 text-center">
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-garden px-3 py-1.5 text-xs font-semibold text-garden-foreground shadow-lg transform translate-y-1 group-hover:translate-y-0 transition-transform duration-300">
+          <div className="absolute inset-0 z-30 bg-black/50 backdrop-blur-[2px] opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col items-center justify-center gap-2.5 p-3 text-center">
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-garden px-3.5 py-1.5 text-xs font-semibold text-garden-foreground shadow-lg transform translate-y-1 group-hover:translate-y-0 transition-transform duration-300">
               <BookOpen className="h-3.5 w-3.5" />
-              View Details & PDF
+              View Book Details
             </span>
-            <span className="text-[10px] text-white/90 flex items-center gap-1">
-              <ExternalLink className="h-3 w-3" />
-              {cloudInfo.providerName}
-            </span>
+            {book.link && (
+              <button
+                type="button"
+                onClick={handleDirectLinkClick}
+                className="inline-flex items-center gap-1 text-[11px] font-mono text-white/95 bg-white/20 hover:bg-white/30 px-2.5 py-1 rounded-full backdrop-blur-sm transition-colors"
+              >
+                <ArrowUpRight className="h-3 w-3 text-garden-foreground" />
+                Open PDF Directly
+              </button>
+            )}
           </div>
         </div>
 

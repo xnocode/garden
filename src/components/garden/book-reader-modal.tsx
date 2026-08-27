@@ -15,9 +15,9 @@ import {
   Cloud,
   Download,
   Tag,
-  Calendar,
-  Layers,
   ArrowUpRight,
+  RefreshCw,
+  Eye,
 } from "lucide-react";
 
 interface BookReaderModalProps {
@@ -29,6 +29,8 @@ export function BookReaderModal({ book, onClose }: BookReaderModalProps) {
   const [copied, setCopied] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [iframeLoaded, setIframeLoaded] = useState(false);
+  const [iframeKey, setIframeKey] = useState(0);
+  const [activeTab, setActiveTab] = useState<"reader" | "details">("reader");
 
   // Close on Escape
   useEffect(() => {
@@ -38,6 +40,8 @@ export function BookReaderModal({ book, onClose }: BookReaderModalProps) {
     if (book) {
       window.addEventListener("keydown", handleKeyDown);
       document.body.style.overflow = "hidden";
+      setIframeLoaded(false);
+      setIframeKey((k) => k + 1);
     }
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
@@ -48,6 +52,7 @@ export function BookReaderModal({ book, onClose }: BookReaderModalProps) {
   if (!book) return null;
 
   const cloud = parseCloudUrl(book.link);
+  const directLink = cloud.directPdfUrl || book.link;
 
   const copyCloudLink = async () => {
     try {
@@ -59,8 +64,14 @@ export function BookReaderModal({ book, onClose }: BookReaderModalProps) {
     }
   };
 
+  const openDirectLink = () => {
+    if (directLink) {
+      window.open(directLink, "_blank", "noopener,noreferrer");
+    }
+  };
+
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 md:p-6 bg-black/75 backdrop-blur-md animate-in fade-in duration-200">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 md:p-6 bg-black/80 backdrop-blur-md animate-in fade-in duration-200">
       {/* Backdrop click to close */}
       <div className="absolute inset-0" onClick={onClose} />
 
@@ -69,13 +80,13 @@ export function BookReaderModal({ book, onClose }: BookReaderModalProps) {
         className={`relative z-10 w-full bg-background border border-border rounded-2xl shadow-2xl overflow-hidden flex flex-col transition-all duration-300 ${
           isFullscreen
             ? "h-[98vh] max-w-[98vw]"
-            : "h-[90vh] max-h-[850px] max-w-5xl"
+            : "h-[92vh] max-h-[900px] max-w-6xl"
         }`}
       >
         {/* ── MODAL HEADER BAR ─────────────────────────────────────────── */}
-        <div className="flex items-center justify-between px-4 sm:px-6 py-3.5 border-b border-border bg-surface/80 backdrop-blur-md">
-          <div className="flex items-center gap-2.5 min-w-0 pr-4">
-            <span className="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-garden/10 text-garden border border-garden/30 shrink-0">
+        <div className="flex items-center justify-between px-4 sm:px-6 py-3.5 border-b border-border bg-surface/90 backdrop-blur-md">
+          <div className="flex items-center gap-3 min-w-0 pr-4">
+            <span className="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-garden/10 text-garden border border-garden/30 shrink-0 shadow-xs">
               <BookOpen className="h-4 w-4" />
             </span>
             <div className="min-w-0">
@@ -90,25 +101,54 @@ export function BookReaderModal({ book, onClose }: BookReaderModalProps) {
                     <span className="font-mono text-garden">{book.category}</span>
                   </>
                 )}
+                {book.pages && (
+                  <>
+                    <span className="opacity-40">·</span>
+                    <span className="font-mono text-[11px]">{book.pages}</span>
+                  </>
+                )}
               </div>
             </div>
           </div>
 
-          <div className="flex items-center gap-1.5 shrink-0">
-            {/* Direct Open Link Icon Button */}
-            {book.link && (
-              <a
-                href={book.link}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-1.5 rounded-lg bg-garden px-3 py-1.5 text-xs font-semibold text-garden-foreground shadow-sm hover:bg-garden-hover transition-colors"
-                title={`Open PDF directly in ${cloud.providerName}`}
+          <div className="flex items-center gap-2 shrink-0">
+            {/* Mobile View Toggle */}
+            <div className="flex lg:hidden rounded-lg border border-border bg-surface p-0.5">
+              <button
+                type="button"
+                onClick={() => setActiveTab("reader")}
+                className={`px-2.5 py-1 text-xs rounded-md font-medium transition-colors ${
+                  activeTab === "reader"
+                    ? "bg-garden text-garden-foreground"
+                    : "text-muted-foreground hover:text-foreground"
+                }`}
               >
-                <ArrowUpRight className="h-3.5 w-3.5" />
-                <span className="hidden sm:inline">Open in {cloud.providerName}</span>
-                <span className="sm:hidden">Open</span>
-              </a>
-            )}
+                PDF
+              </button>
+              <button
+                type="button"
+                onClick={() => setActiveTab("details")}
+                className={`px-2.5 py-1 text-xs rounded-md font-medium transition-colors ${
+                  activeTab === "details"
+                    ? "bg-garden text-garden-foreground"
+                    : "text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                Details
+              </button>
+            </div>
+
+            {/* Direct Open Link Icon Button */}
+            <button
+              type="button"
+              onClick={openDirectLink}
+              className="inline-flex items-center gap-1.5 rounded-lg bg-garden px-3 py-1.5 text-xs font-semibold text-garden-foreground shadow-sm hover:bg-garden-hover transition-colors"
+              title={`Open PDF directly in ${cloud.providerName}`}
+            >
+              <ArrowUpRight className="h-3.5 w-3.5" />
+              <span className="hidden sm:inline">Open in {cloud.providerName}</span>
+              <span className="sm:hidden">Open</span>
+            </button>
 
             {/* Copy Link */}
             <button
@@ -153,20 +193,78 @@ export function BookReaderModal({ book, onClose }: BookReaderModalProps) {
         {/* ── MODAL BODY: SPLIT VIEW ──────────────────────────────────── */}
         <div className="flex-1 min-h-0 grid grid-cols-1 lg:grid-cols-12 divide-y lg:divide-y-0 lg:divide-x divide-border overflow-hidden">
           
-          {/* ── LEFT PANE: BOOK DETAILS & METADATA ─────────────────────── */}
-          <div className="lg:col-span-4 p-5 sm:p-6 overflow-y-auto space-y-6 bg-surface/30">
+          {/* ── LEFT PANE: BOOK DETAILS, SYNOPSIS & SIDE LINK PANEL ────── */}
+          <div
+            className={`lg:col-span-4 p-5 sm:p-6 overflow-y-auto space-y-6 bg-surface/30 ${
+              activeTab === "details" ? "block" : "hidden lg:block"
+            }`}
+          >
             {/* Book Cover Preview Thumbnail */}
             {book.cover && (
-              <div className="relative w-full max-w-[200px] mx-auto aspect-[3/4] rounded-xl overflow-hidden shadow-lg border border-border">
+              <div className="relative w-full max-w-[210px] mx-auto aspect-[3/4] rounded-2xl overflow-hidden shadow-xl border border-border bg-surface-2">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={book.cover}
                   alt={book.title}
                   className="w-full h-full object-cover"
                 />
-                <div className="absolute inset-0 ring-1 ring-inset ring-black/10 dark:ring-white/10 rounded-xl pointer-events-none" />
+                <div className="absolute inset-0 ring-1 ring-inset ring-black/10 dark:ring-white/10 rounded-2xl pointer-events-none" />
               </div>
             )}
+
+            {/* ── PROMINENT SIDE LINK ICON BOX ──────────────────────────── */}
+            <div className="rounded-2xl border border-garden/30 bg-garden/10 p-4 space-y-3 shadow-sm">
+              <div className="flex items-center justify-between">
+                <span className="font-mono text-[10px] font-bold uppercase tracking-wider text-garden flex items-center gap-1.5">
+                  <Cloud className="h-3.5 w-3.5" />
+                  {cloud.providerName}
+                </span>
+                <span className="text-[10px] font-mono text-muted-foreground">
+                  PDF Document
+                </span>
+              </div>
+
+              <button
+                type="button"
+                onClick={openDirectLink}
+                className="w-full flex items-center justify-center gap-2 rounded-xl bg-garden px-4 py-2.5 text-xs sm:text-sm font-semibold text-garden-foreground hover:bg-garden-hover shadow-md transition-all transform hover:scale-[1.02]"
+              >
+                <ArrowUpRight className="h-4 w-4" />
+                Open PDF in {cloud.providerName}
+              </button>
+
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={copyCloudLink}
+                  className="flex-1 flex items-center justify-center gap-1.5 rounded-lg border border-border bg-surface py-1.5 text-xs text-muted-foreground hover:text-foreground hover:border-garden/40 transition-colors"
+                >
+                  {copied ? (
+                    <>
+                      <Check className="h-3 w-3 text-garden" />
+                      Copied!
+                    </>
+                  ) : (
+                    <>
+                      <Copy className="h-3 w-3" />
+                      Copy Link
+                    </>
+                  )}
+                </button>
+
+                {cloud.downloadUrl && (
+                  <a
+                    href={cloud.downloadUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex-1 flex items-center justify-center gap-1.5 rounded-lg border border-border bg-surface py-1.5 text-xs text-muted-foreground hover:text-foreground hover:border-garden/40 transition-colors"
+                  >
+                    <Download className="h-3 w-3" />
+                    Download
+                  </a>
+                )}
+              </div>
+            </div>
 
             {/* Title & Author Info */}
             <div>
@@ -196,29 +294,6 @@ export function BookReaderModal({ book, onClose }: BookReaderModalProps) {
               </div>
             )}
 
-            {/* Metadata Badges */}
-            <div className="grid grid-cols-2 gap-2 text-xs">
-              {book.pages && (
-                <div className="rounded-lg border border-border bg-surface/40 p-2.5">
-                  <div className="text-[10px] uppercase font-mono text-muted-foreground">
-                    Volume
-                  </div>
-                  <div className="mt-0.5 font-medium text-foreground">
-                    {book.pages}
-                  </div>
-                </div>
-              )}
-              <div className="rounded-lg border border-border bg-surface/40 p-2.5">
-                <div className="text-[10px] uppercase font-mono text-muted-foreground">
-                  Storage
-                </div>
-                <div className="mt-0.5 font-medium text-foreground flex items-center gap-1">
-                  <Cloud className="h-3 w-3 text-garden" />
-                  {cloud.providerName}
-                </div>
-              </div>
-            </div>
-
             {/* Tags */}
             {book.tags && book.tags.length > 0 && (
               <div>
@@ -238,55 +313,75 @@ export function BookReaderModal({ book, onClose }: BookReaderModalProps) {
                 </div>
               </div>
             )}
-
-            {/* Action Buttons Box */}
-            <div className="pt-2 space-y-2">
-              <a
-                href={book.link}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-full flex items-center justify-center gap-2 rounded-xl bg-garden px-4 py-2.5 text-sm font-semibold text-garden-foreground hover:bg-garden-hover shadow-md transition-colors"
-              >
-                <ExternalLink className="h-4 w-4" />
-                Open in {cloud.providerName}
-              </a>
-
-              {cloud.downloadUrl && (
-                <a
-                  href={cloud.downloadUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-full flex items-center justify-center gap-2 rounded-xl border border-border bg-surface px-4 py-2 text-xs font-medium text-muted-foreground hover:text-foreground hover:border-garden/40 transition-colors"
-                >
-                  <Download className="h-3.5 w-3.5" />
-                  Download Source Document
-                </a>
-              )}
-            </div>
           </div>
 
-          {/* ── RIGHT PANE: EMBEDDED PDF READER ────────────────────────── */}
-          <div className="lg:col-span-8 bg-surface-2 flex flex-col min-h-[350px] lg:min-h-0 relative">
+          {/* ── RIGHT PANE: EMBEDDED PDF READER & CLOUD PREVIEW ───────── */}
+          <div
+            className={`lg:col-span-8 bg-surface-2 flex flex-col min-h-[400px] lg:min-h-0 relative ${
+              activeTab === "reader" ? "block" : "hidden lg:block"
+            }`}
+          >
+            {/* Top Reader Status Bar */}
+            <div className="flex items-center justify-between px-4 py-2 bg-surface/50 border-b border-border text-xs text-muted-foreground">
+              <div className="flex items-center gap-2 font-mono text-[11px]">
+                <Eye className="h-3.5 w-3.5 text-garden" />
+                <span>PDF Document Preview</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIframeLoaded(false);
+                    setIframeKey((k) => k + 1);
+                  }}
+                  className="hover:text-foreground inline-flex items-center gap-1 text-[11px]"
+                  title="Reload viewer"
+                >
+                  <RefreshCw className="h-3 w-3" />
+                  Reload
+                </button>
+                <span>·</span>
+                <button
+                  type="button"
+                  onClick={openDirectLink}
+                  className="text-garden hover:underline inline-flex items-center gap-1 font-medium text-[11px]"
+                >
+                  <ExternalLink className="h-3 w-3" />
+                  Open in New Tab
+                </button>
+              </div>
+            </div>
+
+            {/* Embedded Iframe Reader */}
             {cloud.embedUrl ? (
-              <div className="relative w-full h-full flex-1">
+              <div className="relative w-full h-full flex-1 min-h-[450px]">
                 {!iframeLoaded && (
                   <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-surface z-10">
                     <div className="h-8 w-8 animate-spin rounded-full border-2 border-garden border-t-transparent" />
                     <p className="text-xs font-mono text-muted-foreground">
-                      Loading {cloud.providerName} reader…
+                      Connecting to {cloud.providerName} reader…
                     </p>
+                    <button
+                      type="button"
+                      onClick={openDirectLink}
+                      className="mt-2 text-xs text-garden underline font-medium"
+                    >
+                      Click here to open directly in {cloud.providerName}
+                    </button>
                   </div>
                 )}
                 <iframe
+                  key={iframeKey}
                   src={cloud.embedUrl}
                   title={book.title}
                   className="w-full h-full border-0"
-                  allow="autoplay; encrypted-media"
+                  allow="autoplay; encrypted-media; fullscreen; clipboard-read; clipboard-write;"
+                  sandbox="allow-scripts allow-same-origin allow-popups allow-forms allow-presentation"
                   onLoad={() => setIframeLoaded(true)}
                 />
               </div>
             ) : (
-              /* Cloud fallback when direct iframe embed is restricted by provider */
+              /* Cloud fallback if embed is restricted */
               <div className="flex-1 flex flex-col items-center justify-center p-8 text-center space-y-4">
                 <div className="h-16 w-16 rounded-2xl bg-garden/10 border border-garden/30 text-garden flex items-center justify-center shadow-lg">
                   <Cloud className="h-8 w-8" />
@@ -296,18 +391,17 @@ export function BookReaderModal({ book, onClose }: BookReaderModalProps) {
                     Document hosted on {cloud.providerName}
                   </h4>
                   <p className="mt-2 text-xs text-muted-foreground leading-relaxed">
-                    This manuscript or notebook is securely hosted on {cloud.providerName}. Click below to view the original PDF document in full resolution.
+                    This manuscript or notebook is securely hosted on {cloud.providerName}. Click below to open and view the original PDF document in full resolution.
                   </p>
                 </div>
-                <a
-                  href={book.link}
-                  target="_blank"
-                  rel="noopener noreferrer"
+                <button
+                  type="button"
+                  onClick={openDirectLink}
                   className="inline-flex items-center gap-2 rounded-xl bg-garden px-5 py-2.5 text-sm font-semibold text-garden-foreground hover:bg-garden-hover shadow-md transition-all transform hover:scale-105"
                 >
                   <ExternalLink className="h-4 w-4" />
                   View on {cloud.providerName}
-                </a>
+                </button>
               </div>
             )}
           </div>
