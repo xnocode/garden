@@ -6,7 +6,6 @@ import type { BookItem } from "@/lib/notes";
 import { parseCloudUrl } from "@/lib/cloud-pdf";
 import {
   X,
-  ExternalLink,
   BookOpen,
   FileText,
   Copy,
@@ -19,7 +18,6 @@ import {
   ArrowUpRight,
   RefreshCw,
   Eye,
-  Layers,
   Sparkles,
 } from "lucide-react";
 
@@ -158,24 +156,12 @@ export function BookReaderModal({ book, onClose }: BookReaderModalProps) {
               </button>
             </div>
 
-            {/* Direct Open Link Icon Button */}
-            <button
-              type="button"
-              onClick={openDirectLink}
-              className="inline-flex items-center gap-1.5 rounded-lg bg-garden px-3 py-1.5 text-xs font-semibold text-garden-foreground shadow-sm hover:bg-garden-hover transition-colors"
-              title={`Open PDF directly in ${cloud.providerName}`}
-            >
-              <ArrowUpRight className="h-3.5 w-3.5" />
-              <span className="hidden sm:inline">Open in {cloud.providerName}</span>
-              <span className="sm:hidden">Open</span>
-            </button>
-
             {/* Copy Link */}
             <button
               type="button"
               onClick={copyCloudLink}
               className="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-border bg-surface hover:bg-surface-2 text-muted-foreground hover:text-foreground transition-colors"
-              title="Copy PDF / Cloud link"
+              title="Copy link"
             >
               {copied ? (
                 <Check className="h-3.5 w-3.5 text-garden" />
@@ -264,7 +250,7 @@ export function BookReaderModal({ book, onClose }: BookReaderModalProps) {
               )}
             </div>
 
-            {/* ── PROMINENT SIDE LINK ICON BOX ──────────────────────────── */}
+            {/* ── PROMINENT SIDE LINK ICON BOX (DYNAMIC PLATFORM NAME) ───── */}
             <div className="rounded-2xl border border-garden/30 bg-garden/10 p-4 space-y-3 shadow-sm">
               <div className="flex items-center justify-between">
                 <span className="font-mono text-[10px] font-bold uppercase tracking-wider text-garden flex items-center gap-1.5">
@@ -272,7 +258,7 @@ export function BookReaderModal({ book, onClose }: BookReaderModalProps) {
                   {cloud.providerName}
                 </span>
                 <span className="text-[10px] font-mono text-muted-foreground">
-                  PDF Document
+                  Cloud Resource
                 </span>
               </div>
 
@@ -282,7 +268,7 @@ export function BookReaderModal({ book, onClose }: BookReaderModalProps) {
                 className="w-full flex items-center justify-center gap-2 rounded-xl bg-garden px-4 py-2.5 text-xs sm:text-sm font-semibold text-garden-foreground hover:bg-garden-hover shadow-md transition-all transform hover:scale-[1.02]"
               >
                 <ArrowUpRight className="h-4 w-4" />
-                Open PDF in {cloud.providerName}
+                Open in {cloud.providerName}
               </button>
 
               <div className="flex items-center gap-2">
@@ -377,31 +363,20 @@ export function BookReaderModal({ book, onClose }: BookReaderModalProps) {
             <div className="flex items-center justify-between px-4 py-2 bg-surface/70 border-b border-border text-xs text-muted-foreground shrink-0">
               <div className="flex items-center gap-2 font-mono text-[11px]">
                 <Eye className="h-3.5 w-3.5 text-garden" />
-                <span>PDF Document Preview</span>
+                <span>Document Preview</span>
               </div>
-              <div className="flex items-center gap-2">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setIframeLoaded(false);
-                    setIframeKey((k) => k + 1);
-                  }}
-                  className="hover:text-foreground inline-flex items-center gap-1 text-[11px]"
-                  title="Reload viewer"
-                >
-                  <RefreshCw className="h-3 w-3" />
-                  Reload
-                </button>
-                <span>·</span>
-                <button
-                  type="button"
-                  onClick={openDirectLink}
-                  className="text-garden hover:underline inline-flex items-center gap-1 font-medium text-[11px]"
-                >
-                  <ExternalLink className="h-3 w-3" />
-                  Open in New Tab
-                </button>
-              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  setIframeLoaded(false);
+                  setIframeKey((k) => k + 1);
+                }}
+                className="hover:text-foreground inline-flex items-center gap-1 text-[11px]"
+                title="Reload viewer"
+              >
+                <RefreshCw className="h-3 w-3" />
+                Reload
+              </button>
             </div>
 
             {/* Embedded Iframe Reader */}
@@ -418,7 +393,7 @@ export function BookReaderModal({ book, onClose }: BookReaderModalProps) {
                       onClick={openDirectLink}
                       className="mt-2 text-xs text-garden underline font-medium"
                     >
-                      Click here to open directly in {cloud.providerName}
+                      Click here to open in {cloud.providerName}
                     </button>
                   </div>
                 )}
@@ -443,7 +418,7 @@ export function BookReaderModal({ book, onClose }: BookReaderModalProps) {
                     Document hosted on {cloud.providerName}
                   </h4>
                   <p className="mt-2 text-xs text-muted-foreground leading-relaxed">
-                    This manuscript or notebook is securely hosted on {cloud.providerName}. Click below to open and view the original PDF document in full resolution.
+                    This manuscript or notebook is hosted on {cloud.providerName}. Click below to open and view the document directly.
                   </p>
                 </div>
                 <button
@@ -451,8 +426,8 @@ export function BookReaderModal({ book, onClose }: BookReaderModalProps) {
                   onClick={openDirectLink}
                   className="inline-flex items-center gap-2 rounded-xl bg-garden px-5 py-2.5 text-sm font-semibold text-garden-foreground hover:bg-garden-hover shadow-md transition-all transform hover:scale-105"
                 >
-                  <ExternalLink className="h-4 w-4" />
-                  View on {cloud.providerName}
+                  <ArrowUpRight className="h-4 w-4" />
+                  Open in {cloud.providerName}
                 </button>
               </div>
             )}

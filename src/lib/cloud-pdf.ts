@@ -15,6 +15,37 @@ export interface CloudFileInfo {
 }
 
 /**
+ * Extracts a human-readable platform or service name from any URL.
+ */
+function getHostnameBrand(urlStr: string): string {
+  try {
+    const parsed = new URL(urlStr);
+    const host = parsed.hostname.toLowerCase().replace(/^www\./, "");
+    if (host.includes("google")) return "Google Drive";
+    if (host.includes("onedrive") || host.includes("1drv.ms") || host.includes("live.com")) return "OneDrive";
+    if (host.includes("dropbox")) return "Dropbox";
+    if (host.includes("mega.nz") || host.includes("mega.io")) return "MEGA";
+    if (host.includes("box.com")) return "Box";
+    if (host.includes("icloud.com")) return "iCloud";
+    if (host.includes("mediafire.com")) return "MediaFire";
+    if (host.includes("notion.so") || host.includes("notion.site")) return "Notion";
+    if (host.includes("github.com") || host.includes("github.io")) return "GitHub";
+    if (host.includes("archive.org")) return "Internet Archive";
+    if (host.includes("pcloud.com")) return "pCloud";
+    if (host.includes("scribd.com")) return "Scribd";
+    if (host.includes("slideshare.net")) return "SlideShare";
+    if (host.includes("cloudinary.com")) return "Cloudinary";
+
+    // Fallback: capitalize domain name
+    const domainParts = host.split(".");
+    const mainDomain = domainParts.length > 1 ? domainParts[domainParts.length - 2] : domainParts[0];
+    return mainDomain.charAt(0).toUpperCase() + mainDomain.slice(1);
+  } catch {
+    return "Cloud Storage";
+  }
+}
+
+/**
  * Detects the cloud provider and constructs an embed-friendly URL, direct PDF URL, and download URL.
  */
 export function parseCloudUrl(rawUrl: string): CloudFileInfo {
@@ -32,6 +63,7 @@ export function parseCloudUrl(rawUrl: string): CloudFileInfo {
   }
 
   const isDirectPdf = /\.pdf($|\?)/i.test(url);
+  const brandName = getHostnameBrand(url);
 
   // 1. Google Drive
   // Format: https://drive.google.com/file/d/<ID>/view... or https://drive.google.com/open?id=<ID>
@@ -134,7 +166,7 @@ export function parseCloudUrl(rawUrl: string): CloudFileInfo {
   if (isDirectPdf) {
     return {
       provider: "direct-pdf",
-      providerName: "PDF Document",
+      providerName: brandName !== "Cloud Storage" ? brandName : "PDF Document",
       originalUrl: url,
       directPdfUrl: url,
       embedUrl: url,
@@ -143,10 +175,10 @@ export function parseCloudUrl(rawUrl: string): CloudFileInfo {
     };
   }
 
-  // Generic link
+  // Generic cloud link
   return {
     provider: "generic",
-    providerName: "Cloud Document",
+    providerName: brandName,
     originalUrl: url,
     directPdfUrl: url,
     embedUrl: null,
