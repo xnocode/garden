@@ -4,7 +4,7 @@ import React, { useState, useMemo } from "react";
 import type { BookItem } from "@/lib/notes";
 import { NotebookCard } from "./notebook-card";
 import { BookReaderModal } from "./book-reader-modal";
-import { Search, BookMarked, Filter, Sparkles, BookOpen } from "lucide-react";
+import { Search, BookOpen } from "lucide-react";
 
 interface BooksGalleryProps {
   books: BookItem[];
@@ -19,63 +19,24 @@ export function BooksGallery({
 }: BooksGalleryProps) {
   const [selectedBook, setSelectedBook] = useState<BookItem | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState<string>("all");
 
-  // Extract unique categories
-  const categories = useMemo(() => {
-    const set = new Set<string>();
-    for (const b of books) {
-      if (b.category) set.add(b.category);
-    }
-    return ["all", ...Array.from(set).sort()];
-  }, [books]);
-
-  // Filter books by category and search
+  // Filter books by search
   const filteredBooks = useMemo(() => {
     const q = searchQuery.trim().toLowerCase();
+    if (!q) return books;
     return books.filter((b) => {
-      const matchCategory =
-        selectedCategory === "all" ||
-        (b.category && b.category.toLowerCase() === selectedCategory.toLowerCase());
-
-      if (!matchCategory) return false;
-      if (!q) return true;
-
       const titleMatch = b.title.toLowerCase().includes(q);
       const descMatch = (b.description || "").toLowerCase().includes(q);
       const authorMatch = (b.author || "").toLowerCase().includes(q);
       const tagMatch = b.tags?.some((t) => t.toLowerCase().includes(q));
-
       return titleMatch || descMatch || authorMatch || tagMatch;
     });
-  }, [books, searchQuery, selectedCategory]);
+  }, [books, searchQuery]);
 
   return (
     <section className="my-8 space-y-8">
-      {/* ── GALLERY CONTROLS BAR ────────────────────────────────────────── */}
-      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 border-b border-border/70 pb-5">
-        {/* Category Pills */}
-        <div className="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0 scrollbar-none">
-          {categories.map((cat) => {
-            const isActive = selectedCategory.toLowerCase() === cat.toLowerCase();
-            return (
-              <button
-                key={cat}
-                type="button"
-                onClick={() => setSelectedCategory(cat)}
-                className={`rounded-full px-3 py-1 text-xs font-medium font-mono capitalize transition-all shrink-0 ${
-                  isActive
-                    ? "bg-garden text-garden-foreground font-semibold shadow-xs"
-                    : "bg-surface/60 border border-border text-muted-foreground hover:border-garden/40 hover:text-foreground"
-                }`}
-              >
-                {cat === "all" ? "All Manuscripts" : cat}
-              </button>
-            );
-          })}
-        </div>
-
-        {/* Search Filter Input */}
+      {/* ── SEARCH BAR ───────────────────────────────────────────────────── */}
+      <div className="flex justify-end border-b border-border/70 pb-5">
         <div className="relative min-w-[200px] sm:w-64">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
           <input
@@ -104,7 +65,7 @@ export function BooksGallery({
             No notebooks found
           </p>
           <p className="mt-1 text-xs text-muted-foreground">
-            Try adjusting your search query or category filter.
+            Try adjusting your search query.
           </p>
         </div>
       ) : (
