@@ -40,14 +40,14 @@ export function NotebookCard({ book, onClick, index = 0 }: NotebookCardProps) {
           onClick();
         }
       }}
-      className="group relative flex flex-col items-center cursor-pointer select-none py-6 px-3 transition-all duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-garden"
+      className="group relative flex flex-col items-center cursor-pointer select-none py-4 px-2 transition-transform duration-200 active:scale-[0.98] focus:outline-none focus-visible:ring-2 focus-visible:ring-garden transform-gpu"
     >
       {/* ── 3D STANDING NOTEBOOK CONTAINER ────────────────────────────────── */}
-      <div className="relative w-48 sm:w-56 h-72 sm:h-80 flex items-center justify-center transition-all duration-500 transform group-hover:-translate-y-2.5 group-hover:rotate-[-0.5deg]">
+      <div className="relative w-48 sm:w-56 h-72 sm:h-80 flex items-center justify-center transition-transform duration-300 transform-gpu group-hover:-translate-y-2">
         
         {/* Layer 1: Leftmost open parchment pages (peeking behind for realistic depth) */}
         <div
-          className="absolute -left-3 sm:-left-4 top-3 bottom-4 w-12 rounded-l-xl rounded-r-md border border-black/10 dark:border-white/5 shadow-md transform -rotate-[2.5deg] transition-transform duration-500 group-hover:-rotate-[4deg] group-hover:-translate-x-1"
+          className="absolute -left-3 sm:-left-4 top-3 bottom-4 w-12 rounded-l-xl rounded-r-md border border-black/10 dark:border-white/5 shadow-md transform -rotate-[2.5deg] transition-transform duration-300 transform-gpu group-hover:-rotate-[3.5deg]"
           style={{
             backgroundColor: "#f2ebd9",
             backgroundImage: "linear-gradient(to right, rgba(0,0,0,0.08), rgba(255,255,255,0.4) 30%, rgba(0,0,0,0.03))",
@@ -64,7 +64,7 @@ export function NotebookCard({ book, onClick, index = 0 }: NotebookCardProps) {
 
         {/* Layer 2: Right/Backing cream notebook pages block */}
         <div
-          className="absolute -right-2 sm:-right-3 top-2.5 bottom-3.5 w-16 rounded-r-2xl rounded-l-sm border-r-2 border-y border-black/10 dark:border-white/5 shadow-lg transform rotate-[1.5deg] transition-transform duration-500 group-hover:rotate-[3deg] group-hover:translate-x-1"
+          className="absolute -right-2 sm:-right-3 top-2.5 bottom-3.5 w-16 rounded-r-2xl rounded-l-sm border-r-2 border-y border-black/10 dark:border-white/5 shadow-lg transform rotate-[1.5deg] transition-transform duration-300 transform-gpu group-hover:rotate-[2.5deg]"
           style={{
             backgroundColor: "#faf6ed",
             backgroundImage: "linear-gradient(to right, rgba(0,0,0,0.04), rgba(255,255,255,0.6) 20%, rgba(0,0,0,0.08) 95%)",
@@ -78,7 +78,7 @@ export function NotebookCard({ book, onClick, index = 0 }: NotebookCardProps) {
 
         {/* Layer 3: Main Standing Hardcover Book */}
         <div
-          className="relative w-full h-full rounded-2xl rounded-l-md overflow-hidden shadow-2xl transition-all duration-500 border border-black/15 dark:border-white/10 flex flex-col group-hover:shadow-[0_20px_35px_-8px_rgba(0,0,0,0.4)]"
+          className="relative w-full h-full rounded-2xl rounded-l-md overflow-hidden shadow-xl transition-shadow duration-300 border border-black/15 dark:border-white/10 flex flex-col transform-gpu group-hover:shadow-2xl"
           style={{
             backgroundColor: coverBg,
           }}
@@ -98,7 +98,7 @@ export function NotebookCard({ book, onClick, index = 0 }: NotebookCardProps) {
                 alt={book.title}
                 referrerPolicy="no-referrer"
                 onError={() => setImageError(true)}
-                className="w-full h-full object-cover object-center transition-transform duration-700 group-hover:scale-[1.03]"
+                className="w-full h-full object-cover object-center"
                 loading="lazy"
               />
 
@@ -180,8 +180,8 @@ export function NotebookCard({ book, onClick, index = 0 }: NotebookCardProps) {
           )}
 
           {/* Quick Click Hint Overlay on Hover */}
-          <div className="absolute inset-0 z-30 bg-black/50 backdrop-blur-[2px] opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col items-center justify-center gap-2 p-3 text-center">
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-garden px-4 py-2 text-xs font-semibold text-garden-foreground shadow-lg transform translate-y-1 group-hover:translate-y-0 transition-transform duration-300">
+          <div className="absolute inset-0 z-30 bg-black/45 backdrop-blur-xs opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex flex-col items-center justify-center gap-2 p-3 text-center">
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-garden px-4 py-2 text-xs font-semibold text-garden-foreground shadow-lg transform translate-y-1 group-hover:translate-y-0 transition-transform duration-200">
               <BookOpen className="h-3.5 w-3.5" />
               View Book Details
             </span>
@@ -192,9 +192,9 @@ export function NotebookCard({ book, onClick, index = 0 }: NotebookCardProps) {
         </div>
 
         {/* Layer 4: Stationery Pen at Base */}
-        <div className="absolute -bottom-2.5 left-1/2 -translate-x-1/2 w-40 sm:w-44 h-3 z-30 pointer-events-none drop-shadow-md">
+        <div className="absolute -bottom-2.5 left-1/2 -translate-x-1/2 w-40 sm:w-44 h-3 z-30 pointer-events-none drop-shadow-sm">
           {/* Pen Body (Silver Metallic) */}
-          <div className="relative h-2 w-full rounded-full bg-gradient-to-b from-gray-200 via-gray-100 to-gray-400 dark:from-zinc-400 dark:via-zinc-300 dark:to-zinc-600 shadow-sm flex items-center justify-between px-1">
+          <div className="relative h-2 w-full rounded-full bg-gradient-to-b from-gray-200 via-gray-100 to-gray-400 dark:from-zinc-400 dark:via-zinc-300 dark:to-zinc-600 shadow-xs flex items-center justify-between px-1">
             {/* Pen Clip */}
             <div className="absolute left-6 top-[-3px] w-8 h-[2px] bg-gradient-to-r from-gray-300 via-gray-50 to-gray-400 rounded-sm shadow-xs" />
             {/* Pen Tip (Left) */}
@@ -207,7 +207,7 @@ export function NotebookCard({ book, onClick, index = 0 }: NotebookCardProps) {
         </div>
 
         {/* Realistic Contact / Floor Drop Shadow */}
-        <div className="absolute -bottom-5 left-2 right-2 h-4 rounded-[100%] bg-black/40 dark:bg-black/70 blur-md pointer-events-none transform scale-95 group-hover:scale-105 group-hover:bg-black/50 transition-all duration-500" />
+        <div className="absolute -bottom-4 left-3 right-3 h-3 rounded-[100%] bg-black/35 dark:bg-black/60 blur-sm pointer-events-none transform scale-95 group-hover:scale-105 transition-transform duration-300" />
       </div>
 
       {/* ── NOTEBOOK TITLE & METADATA LABELS (BELOW) ────────────────────── */}

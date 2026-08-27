@@ -30,6 +30,7 @@ export function BookReaderModal({ book, onClose }: BookReaderModalProps) {
   const [mounted, setMounted] = useState(false);
   const [copied, setCopied] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [iframeReady, setIframeReady] = useState(false);
   const [iframeLoaded, setIframeLoaded] = useState(false);
   const [iframeKey, setIframeKey] = useState(0);
   const [coverError, setCoverError] = useState(false);
@@ -39,6 +40,22 @@ export function BookReaderModal({ book, onClose }: BookReaderModalProps) {
     setMounted(true);
   }, []);
 
+  // Defer iframe mounting slightly so modal transition opens instantly with 0 lag
+  useEffect(() => {
+    if (book) {
+      setIframeLoaded(false);
+      setCoverError(false);
+      setIframeReady(false);
+      setIframeKey((k) => k + 1);
+      const timer = setTimeout(() => {
+        setIframeReady(true);
+      }, 60);
+      return () => clearTimeout(timer);
+    } else {
+      setIframeReady(false);
+    }
+  }, [book]);
+
   // Close on Escape & Lock body scroll
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -47,9 +64,6 @@ export function BookReaderModal({ book, onClose }: BookReaderModalProps) {
     if (book) {
       window.addEventListener("keydown", handleKeyDown);
       document.body.style.overflow = "hidden";
-      setIframeLoaded(false);
-      setCoverError(false);
-      setIframeKey((k) => k + 1);
     }
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
@@ -84,7 +98,7 @@ export function BookReaderModal({ book, onClose }: BookReaderModalProps) {
     <div
       role="dialog"
       aria-modal="true"
-      className="fixed inset-0 z-[9999] flex items-center justify-center p-3 sm:p-5 md:p-6 bg-black/80 backdrop-blur-md animate-in fade-in duration-200"
+      className="fixed inset-0 z-[9999] flex items-center justify-center p-3 sm:p-5 md:p-6 bg-black/75 backdrop-blur-xs animate-in fade-in duration-150 transform-gpu"
     >
       {/* Backdrop click to close */}
       <div
@@ -95,14 +109,14 @@ export function BookReaderModal({ book, onClose }: BookReaderModalProps) {
 
       {/* Modal Card Container */}
       <div
-        className={`relative z-10 w-full bg-background border border-border rounded-2xl shadow-2xl overflow-hidden flex flex-col transition-all duration-300 ${
+        className={`relative z-10 w-full bg-background border border-border rounded-2xl shadow-2xl overflow-hidden flex flex-col transition-all duration-200 transform-gpu ${
           isFullscreen
             ? "h-[98vh] max-w-[98vw]"
             : "h-[88vh] max-h-[850px] max-w-6xl"
         }`}
       >
         {/* ── MODAL HEADER BAR ─────────────────────────────────────────── */}
-        <div className="flex items-center justify-between px-4 sm:px-6 py-3.5 border-b border-border bg-surface/95 backdrop-blur-md shrink-0">
+        <div className="flex items-center justify-between px-4 sm:px-6 py-3.5 border-b border-border bg-surface/95 backdrop-blur-sm shrink-0">
           <div className="flex items-center gap-3 min-w-0 pr-4">
             <span className="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-garden/10 text-garden border border-garden/30 shrink-0 shadow-xs">
               <BookOpen className="h-4 w-4" />
@@ -206,7 +220,7 @@ export function BookReaderModal({ book, onClose }: BookReaderModalProps) {
             }`}
           >
             {/* Book Cover Preview Thumbnail or Styled Hardcover Fallback */}
-            <div className="relative w-full max-w-[190px] mx-auto aspect-[3/4] rounded-2xl overflow-hidden shadow-xl border border-border bg-surface-2 flex flex-col">
+            <div className="relative w-full max-w-[190px] mx-auto aspect-[3/4] rounded-2xl overflow-hidden shadow-xl border border-border bg-surface-2 flex flex-col transform-gpu">
               {hasValidCover ? (
                 <>
                   {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -250,7 +264,7 @@ export function BookReaderModal({ book, onClose }: BookReaderModalProps) {
               )}
             </div>
 
-            {/* ── PROMINENT SIDE LINK ICON BOX (DYNAMIC PLATFORM NAME) ───── */}
+            {/* ── PROMINENT SIDE LINK ICON BOX ──────────────────────────── */}
             <div className="rounded-2xl border border-garden/30 bg-garden/10 p-4 space-y-3 shadow-sm">
               <div className="flex items-center justify-between">
                 <span className="font-mono text-[10px] font-bold uppercase tracking-wider text-garden flex items-center gap-1.5">
@@ -265,7 +279,7 @@ export function BookReaderModal({ book, onClose }: BookReaderModalProps) {
               <button
                 type="button"
                 onClick={openDirectLink}
-                className="w-full flex items-center justify-center gap-2 rounded-xl bg-garden px-4 py-2.5 text-xs sm:text-sm font-semibold text-garden-foreground hover:bg-garden-hover shadow-md transition-all transform hover:scale-[1.02]"
+                className="w-full flex items-center justify-center gap-2 rounded-xl bg-garden px-4 py-2.5 text-xs sm:text-sm font-semibold text-garden-foreground hover:bg-garden-hover shadow-md transition-all transform hover:scale-[1.01] active:scale-[0.99]"
               >
                 <ArrowUpRight className="h-4 w-4" />
                 Open in {cloud.providerName}
@@ -382,30 +396,33 @@ export function BookReaderModal({ book, onClose }: BookReaderModalProps) {
             {/* Embedded Iframe Reader */}
             {cloud.embedUrl ? (
               <div className="relative w-full h-full flex-1 min-h-0">
-                {!iframeLoaded && (
-                  <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-surface z-10">
-                    <div className="h-8 w-8 animate-spin rounded-full border-2 border-garden border-t-transparent" />
+                {(!iframeLoaded || !iframeReady) && (
+                  <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-surface z-10 transition-opacity duration-200">
+                    <div className="h-7 w-7 animate-spin rounded-full border-2 border-garden border-t-transparent" />
                     <p className="text-xs font-mono text-muted-foreground">
                       Connecting to {cloud.providerName} reader…
                     </p>
                     <button
                       type="button"
                       onClick={openDirectLink}
-                      className="mt-2 text-xs text-garden underline font-medium"
+                      className="mt-1 text-xs text-garden underline font-medium"
                     >
                       Click here to open in {cloud.providerName}
                     </button>
                   </div>
                 )}
-                <iframe
-                  key={iframeKey}
-                  src={cloud.embedUrl}
-                  title={book.title}
-                  className="w-full h-full border-0"
-                  allow="autoplay; encrypted-media; fullscreen; clipboard-read; clipboard-write;"
-                  sandbox="allow-scripts allow-same-origin allow-popups allow-forms allow-presentation"
-                  onLoad={() => setIframeLoaded(true)}
-                />
+                {iframeReady && (
+                  <iframe
+                    key={iframeKey}
+                    src={cloud.embedUrl}
+                    title={book.title}
+                    className="w-full h-full border-0"
+                    loading="lazy"
+                    allow="autoplay; encrypted-media; fullscreen; clipboard-read; clipboard-write;"
+                    sandbox="allow-scripts allow-same-origin allow-popups allow-forms allow-presentation"
+                    onLoad={() => setIframeLoaded(true)}
+                  />
+                )}
               </div>
             ) : (
               /* Cloud fallback if embed is restricted */
