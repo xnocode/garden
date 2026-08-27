@@ -69,7 +69,7 @@ export function BooksGallery({
                     : "bg-surface/60 border border-border text-muted-foreground hover:border-garden/40 hover:text-foreground"
                 }`}
               >
-                {cat === "all" ? "All Books" : cat}
+                {cat === "all" ? "All Manuscripts" : cat}
               </button>
             );
           })}

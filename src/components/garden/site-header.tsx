@@ -12,7 +12,7 @@ import { UserMenu } from "@/components/auth/user-menu";
 
 const NAV_ITEMS = [
   { label: "Garden", href: "/", key: "home" },
-  { label: "Books", href: "/?p=books", key: "books" },
+  { label: "Manuscripts", href: "/?p=books", key: "books" },
   { label: "Index", href: "/?view=index", key: "index" },
   { label: "Graph", href: "/?view=graph", key: "graph" },
   { label: "Tags", href: "/?view=tags", key: "tags" },

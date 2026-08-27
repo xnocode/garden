@@ -1,7 +1,7 @@
 ---
-title: "Books & Manuscripts Library"
-description: "A personal collection of handwritten notebooks, lecture slides, scanned papers, and digital books — all accessible via Google Drive or cloud PDF links."
-tags: [library, books, reference, manuscripts]
+title: "Manuscripts & Notebooks"
+description: "A personal collection of handwritten notebooks, lecture notes, scanned manuscripts, and digital study materials — all shared via cloud storage and accessible through the interactive gallery."
+tags: [manuscripts, notebooks, notes, reference, library]
 author: "Ridoy"
 date: 2026-08-27
 visibility: public
@@ -23,7 +23,7 @@ books:
     link: "https://drive.google.com/file/d/1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgVE2upms/view?usp=sharing"
     pages: "96 pages"
     color: "#363a3e"
-    description: "Illustrated eco-design notebook with contemporary architectural sights of Copenhagen, waterfront studies, and Nordic minimalism."
+    description: "Illustrated notebook with contemporary architectural sights of Copenhagen, waterfront studies, and Nordic minimalism."
     tags: [copenhagen, nordic, design]
 
   - title: "Quantum Field Theory & Particle Derivations"
@@ -53,39 +53,52 @@ books:
     link: "https://drive.google.com/file/d/1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgVE2upms/view?usp=sharing"
     pages: "135 pages"
     color: "#7e5265"
-    description: "Root-finding algorithms, polynomial interpolation, numerical integration, ODE solving, and error analysis with step-by-step worked proofs."
+    description: "Root-finding algorithms, polynomial interpolation, numerical integration, ODE solving, and error analysis with worked proofs."
     tags: [mathematics, numerical-analysis, algorithms]
 ---
 
-# Books & Manuscripts Library
+# Manuscripts & Notebooks
 
-Welcome to my personal digital library of handwritten notebooks, physical scans, lecture series, and digital textbooks — all stored in **Google Drive** or cloud storage and accessible directly via the interactive 3D notebook gallery above.
+This is my personal library of handwritten study notes, lecture manuscripts, and digital notebooks — all shared directly via cloud storage and displayed as an interactive 3D gallery above.
 
-## How to Manage Your Books from this Markdown File
+Each notebook represents real notes I've taken — lecture derivations, design sketches, study guides, and personal research. Click any notebook to open it and read the full document.
 
-To add, edit, or remove books, simply update the `books:` YAML frontmatter at the top of this file (`content/books.md`):
+## How to Add Your Own Notebooks
+
+To add a new notebook or manuscript, edit the `books:` section in the YAML frontmatter at the top of this file (`content/books.md`):
 
 ```yaml
 books:
-  - title: "Your Book Title"
-    author: "Author Name"
-    category: "Physics"
-    cover: "https://example.com/cover.jpg" # URL or local asset path
-    link: "https://drive.google.com/file/d/YOUR_DRIVE_ID/view" # Cloud PDF link
-    pages: "120 pages" # optional
-    color: "#86bfa8" # optional hardcover accent color
-    description: "Short description or synopsis of the notebook."
+  - title: "Your Notebook Title"
+    author: "Your Name"
+    category: "Physics"          # used for filtering (e.g. Mathematics, Architecture)
+    cover: "https://..."         # direct image URL for the book cover
+    link: "https://drive.google.com/file/d/YOUR_ID/view"  # cloud PDF link
+    pages: "120 pages"           # optional — shown on the card
+    color: "#86bfa8"             # optional — fallback hardcover accent color
+    description: "Brief synopsis or overview of what this notebook contains."
     tags: [notes, derivations, reference]
 ```
 
-### Supported Cloud Storage Providers
-- **Google Drive**: Shareable links (`/view`, `/preview`, `/file/d/...`) automatically open in the embedded reader.
-- **OneDrive / 1drv.ms**: Shareable links with direct preview support.
-- **Dropbox**: Direct link with preview and download support.
-- **MEGA / Box / iCloud**: Direct cloud link integration.
-- **Direct PDF URLs**: Any `.pdf` URL will render natively in the browser reader.
+Then run `bun run deploy` to publish the changes.
 
-### Updating a Document Without Changing the Link
-1. Right-click the file in **Google Drive**.
-2. Select **File information → Manage versions → Upload new version**.
-3. The link remains unchanged, and your digital garden displays the updated PDF instantly.
+## Supported Cloud Storage Providers
+
+Upload your PDF to any of these and paste the share link:
+
+| Provider | Example Link Format |
+|---|---|
+| **Google Drive** | `https://drive.google.com/file/d/ID/view` |
+| **OneDrive** | `https://onedrive.live.com/...` or `https://1drv.ms/...` |
+| **Dropbox** | `https://www.dropbox.com/s/...` |
+| **MEGA** | `https://mega.nz/file/...` |
+| **Box** | `https://app.box.com/s/...` |
+| **Direct PDF** | Any `.pdf` URL |
+
+## Updating a Document Without Changing the Link
+
+If you need to update the content of a notebook without breaking the existing link:
+
+1. Right-click the file in **Google Drive**
+2. Select **File information → Manage versions → Upload new version**
+3. The share link stays the same — your garden instantly reflects the updated PDF

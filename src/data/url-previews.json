@@ -148,5 +148,85 @@
       "image": null,
       "siteName": null
     }
+  ],
+  [
+    "https://",
+    {
+      "url": "https://",
+      "title": null,
+      "description": null,
+      "image": null,
+      "siteName": null
+    }
+  ],
+  [
+    "https://drive.google.com/file/d/YOUR_ID/view",
+    {
+      "url": "https://drive.google.com/file/d/YOUR_ID/view",
+      "title": null,
+      "description": null,
+      "image": null,
+      "siteName": null
+    }
+  ],
+  [
+    "https://drive.google.com/file/d/ID/view`",
+    {
+      "url": "https://drive.google.com/file/d/ID/view`",
+      "title": null,
+      "description": null,
+      "image": null,
+      "siteName": null
+    }
+  ],
+  [
+    "https://onedrive.live.com/...`",
+    {
+      "url": "https://onedrive.live.com/...`",
+      "title": null,
+      "description": null,
+      "image": null,
+      "siteName": null
+    }
+  ],
+  [
+    "https://1drv.ms/...`",
+    {
+      "url": "https://1drv.ms/...`",
+      "title": null,
+      "description": null,
+      "image": null,
+      "siteName": null
+    }
+  ],
+  [
+    "https://www.dropbox.com/s/...`",
+    {
+      "url": "https://www.dropbox.com/s/...`",
+      "title": "Dropbox - Error - Simplify your life",
+      "description": null,
+      "image": null,
+      "siteName": "dropbox.com"
+    }
+  ],
+  [
+    "https://mega.nz/file/...`",
+    {
+      "url": "https://mega.nz/file/...`",
+      "title": null,
+      "description": null,
+      "image": null,
+      "siteName": null
+    }
+  ],
+  [
+    "https://app.box.com/s/...`",
+    {
+      "url": "https://app.box.com/s/...`",
+      "title": null,
+      "description": null,
+      "image": null,
+      "siteName": null
+    }
   ]
 ]
