@@ -177,11 +177,15 @@ async function parsePass(files: string[]): Promise<ParsedFile[]> {
         .map((b: any) => ({
           title: String(b.title || "Untitled Book"),
           link: String(b.link || b.url || b.pdf || ""),
-          cover: b.cover ? String(b.cover) : undefined,
+          cover: b.cover ? String(b.cover) : b.image ? String(b.image) : undefined,
           author: b.author ? String(b.author) : undefined,
           category: b.category ? String(b.category) : undefined,
           description: b.description ? String(b.description) : undefined,
           tags: Array.isArray(b.tags) ? b.tags.map(String) : undefined,
+          pages: b.pages ? String(b.pages) : undefined,
+          color: b.color ? String(b.color) : undefined,
+          format: b.format ? String(b.format) : undefined,
+          publishYear: b.publishYear || b.year ? String(b.publishYear || b.year) : undefined,
           noteSlug: slug,
         }));
     }

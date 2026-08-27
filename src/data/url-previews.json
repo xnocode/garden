@@ -138,5 +138,15 @@
       "image": null,
       "siteName": null
     }
+  ],
+  [
+    "https://drive.google.com/file/d/YOUR_DRIVE_ID/view",
+    {
+      "url": "https://drive.google.com/file/d/YOUR_DRIVE_ID/view",
+      "title": null,
+      "description": null,
+      "image": null,
+      "siteName": null
+    }
   ]
 ]

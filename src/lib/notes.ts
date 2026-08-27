@@ -12,6 +12,10 @@ export interface BookItem {
   category?: string;
   description?: string;
   tags?: string[];
+  pages?: string;
+  color?: string;
+  format?: string;
+  publishYear?: string | number;
   noteSlug?: string;
 }
 

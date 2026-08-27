@@ -12,6 +12,7 @@ import { UserMenu } from "@/components/auth/user-menu";
 
 const NAV_ITEMS = [
   { label: "Garden", href: "/", key: "home" },
+  { label: "Books", href: "/?p=books", key: "books" },
   { label: "Index", href: "/?view=index", key: "index" },
   { label: "Graph", href: "/?view=graph", key: "graph" },
   { label: "Tags", href: "/?view=tags", key: "tags" },
@@ -26,8 +27,8 @@ function useActiveKey(): string {
   const p = sp.get("p");
   const view = sp.get("view");
   const tag = sp.get("tag");
-  if (p) return p === "about" ? "about" : "note";
-  if (view) return view;
+  if (p) return p === "books" ? "books" : p === "about" ? "about" : "note";
+  if (view) return view === "books" ? "books" : view;
   if (tag) return "tags";
   return "home";
 }

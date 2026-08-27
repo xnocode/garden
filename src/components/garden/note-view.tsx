@@ -30,6 +30,7 @@ import { CodeBlockRunner } from "./code-block-runner";
 import { useSession } from "next-auth/react";
 import { NoteGatekeeper } from "./note-gatekeeper";
 import { CommentsSection } from "./comments-section";
+import { BooksGallery } from "./books-gallery";
 
 
 interface PreviewData {
@@ -609,6 +610,12 @@ export function NoteView({ note }: { note: NoteDetail }) {
         />
       ) : (
         <>
+          {note.books && note.books.length > 0 && (
+            <div className="mb-10 not-prose">
+              <BooksGallery books={note.books} />
+            </div>
+          )}
+
           <div className="grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_220px] gap-8">
             <div className="min-w-0">
               <div
