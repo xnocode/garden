@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 import { usePathname, useSearchParams } from "next/navigation";
+import { useSession } from "next-auth/react";
 import { GardenLink } from "./garden-link";
 import { useUIStore } from "@/lib/ui-store";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
@@ -11,9 +12,11 @@ import { Sprout } from "lucide-react";
 
 const NAV_ITEMS = [
   { label: "Garden", href: "/", key: "home" },
+  { label: "Manuscripts", href: "/?p=books", key: "books" },
   { label: "Index", href: "/?view=index", key: "index" },
   { label: "Graph", href: "/?view=graph", key: "graph" },
   { label: "Tags", href: "/?view=tags", key: "tags" },
+  { label: "Collections", href: "/?view=series", key: "series" },
   { label: "Rhythm", href: "/?view=rhythm", key: "rhythm" },
   { label: "Taskwarrior", href: "/?view=tasks", key: "tasks" },
   { label: "About", href: "/?p=about", key: "about" },
@@ -24,8 +27,8 @@ function useActiveKey(): string {
   const p = sp.get("p");
   const view = sp.get("view");
   const tag = sp.get("tag");
-  if (p) return p === "about" ? "about" : "note";
-  if (view) return view;
+  if (p) return p === "books" ? "books" : p === "about" ? "about" : "note";
+  if (view) return view === "books" ? "books" : view;
   if (tag) return "tags";
   return "home";
 }
@@ -43,6 +46,11 @@ export function MobileSidebar({
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const active = useActiveKey();
+  const { data: session } = useSession();
+  const isAdmin = (session?.user as any)?.role === "admin";
+  const navItems = isAdmin
+    ? [...NAV_ITEMS, { label: "Private", href: "/?view=private", key: "private" }]
+    : NAV_ITEMS;
 
   useEffect(() => {
     setMobileNavOpen(false);
@@ -64,8 +72,10 @@ export function MobileSidebar({
             Navigation
           </span>
           <nav className="flex flex-col gap-0.5 mt-1">
-            {NAV_ITEMS.map((item) => {
-              const isActive = item.key === active;
+            {navItems.map((item) => {
+              const isActive =
+                item.key === active ||
+                (item.key === "home" && active === "home");
               return (
                 <GardenLink
                   key={item.key}
