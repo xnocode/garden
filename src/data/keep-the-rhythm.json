@@ -20152,11 +20152,31 @@
         "filePath": "books.md",
         "wordCountStart": 266,
         "charCountStart": 2074,
-        "changes": [],
+        "changes": [
+          {
+            "timeKey": "23:05",
+            "w": 85,
+            "c": 1051
+          }
+        ],
         "id": 1232
+      },
+      {
+        "date": "2026-08-27",
+        "filePath": "manuscripts-and-notebooks.md",
+        "wordCountStart": 0,
+        "charCountStart": 0,
+        "changes": [
+          {
+            "timeKey": "23:05",
+            "w": 309,
+            "c": 2120
+          }
+        ],
+        "id": 1233
       }
     ],
-    "wholeVaultWordCount": 42783,
-    "wholeVaultCharCount": 350524
+    "wholeVaultWordCount": 43177,
+    "wholeVaultCharCount": 353695
   }
 }
