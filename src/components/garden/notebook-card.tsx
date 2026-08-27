@@ -116,6 +116,7 @@ export function NotebookCard({ book, onClick, index = 0 }: NotebookCardProps) {
               <img
                 src={book.cover!}
                 alt={book.title}
+                referrerPolicy="no-referrer"
                 onError={() => setImageError(true)}
                 className="w-full h-full object-cover object-center transition-transform duration-700 group-hover:scale-[1.03]"
                 loading="lazy"

@@ -19,6 +19,8 @@ import {
   ArrowUpRight,
   RefreshCw,
   Eye,
+  Layers,
+  Sparkles,
 } from "lucide-react";
 
 interface BookReaderModalProps {
@@ -32,6 +34,7 @@ export function BookReaderModal({ book, onClose }: BookReaderModalProps) {
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [iframeLoaded, setIframeLoaded] = useState(false);
   const [iframeKey, setIframeKey] = useState(0);
+  const [coverError, setCoverError] = useState(false);
   const [activeTab, setActiveTab] = useState<"reader" | "details">("reader");
 
   useEffect(() => {
@@ -47,6 +50,7 @@ export function BookReaderModal({ book, onClose }: BookReaderModalProps) {
       window.addEventListener("keydown", handleKeyDown);
       document.body.style.overflow = "hidden";
       setIframeLoaded(false);
+      setCoverError(false);
       setIframeKey((k) => k + 1);
     }
     return () => {
@@ -59,6 +63,8 @@ export function BookReaderModal({ book, onClose }: BookReaderModalProps) {
 
   const cloud = parseCloudUrl(book.link);
   const directLink = cloud.directPdfUrl || book.link;
+  const hasValidCover = Boolean(book.cover && !coverError);
+  const coverBg = book.color || "#363a3e";
 
   const copyCloudLink = async () => {
     try {
@@ -213,18 +219,50 @@ export function BookReaderModal({ book, onClose }: BookReaderModalProps) {
               activeTab === "details" ? "block" : "hidden lg:block"
             }`}
           >
-            {/* Book Cover Preview Thumbnail */}
-            {book.cover && (
-              <div className="relative w-full max-w-[190px] mx-auto aspect-[3/4] rounded-2xl overflow-hidden shadow-xl border border-border bg-surface-2">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={book.cover}
-                  alt={book.title}
-                  className="w-full h-full object-cover"
-                />
-                <div className="absolute inset-0 ring-1 ring-inset ring-black/10 dark:ring-white/10 rounded-2xl pointer-events-none" />
-              </div>
-            )}
+            {/* Book Cover Preview Thumbnail or Styled Hardcover Fallback */}
+            <div className="relative w-full max-w-[190px] mx-auto aspect-[3/4] rounded-2xl overflow-hidden shadow-xl border border-border bg-surface-2 flex flex-col">
+              {hasValidCover ? (
+                <>
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={book.cover!}
+                    alt={book.title}
+                    referrerPolicy="no-referrer"
+                    onError={() => setCoverError(true)}
+                    className="w-full h-full object-cover"
+                  />
+                  <div className="absolute inset-0 ring-1 ring-inset ring-black/10 dark:ring-white/10 rounded-2xl pointer-events-none" />
+                </>
+              ) : (
+                <div
+                  className="w-full h-full p-4 flex flex-col justify-between text-white"
+                  style={{ backgroundColor: coverBg }}
+                >
+                  <div className="w-2.5 h-full absolute left-0 top-0 bottom-0 bg-black/25 pointer-events-none" />
+                  <div>
+                    <span className="text-[9px] uppercase tracking-widest font-mono opacity-80">
+                      {book.category || "Notebook"}
+                    </span>
+                    <h4 className="font-serif text-sm font-bold leading-tight mt-1 line-clamp-3">
+                      {book.title}
+                    </h4>
+                  </div>
+                  <div className="py-2 px-3 rounded-lg bg-black/20 backdrop-blur-xs text-[10px] space-y-1">
+                    <p className="line-clamp-2 italic opacity-90">
+                      {book.description || "Manuscript & Derivations"}
+                    </p>
+                    <div className="flex items-center justify-between text-[9px] font-mono opacity-75">
+                      <span>{book.pages || "Notes"}</span>
+                      <span>{book.author || "Archive"}</span>
+                    </div>
+                  </div>
+                  <div className="flex items-center justify-between text-[9px] font-mono opacity-70">
+                    <span>Garden Library</span>
+                    <Sparkles className="h-3 w-3" />
+                  </div>
+                </div>
+              )}
+            </div>
 
             {/* ── PROMINENT SIDE LINK ICON BOX ──────────────────────────── */}
             <div className="rounded-2xl border border-garden/30 bg-garden/10 p-4 space-y-3 shadow-sm">
