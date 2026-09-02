@@ -411,7 +411,6 @@ $$
 
 <u>Round Off Error:</u>
 --> **Bisection Method** 
-
 $20.79532839\ldots$
 
 - Take 3 digit ❌
@@ -431,7 +430,7 @@ If we take the first 3 terms: $e^x\approx1+x+\frac{x^2}{2!}$
 
 For $x=0.75$;
 
-$1+0.75+\frac{(0.75)^2}{2!}=1+0.75+0.28125=2.03125$
+$1+0.75+0.75^2=1+0.75+0.5625=2.3125$
 
 This is the truncated value, so the difference from the full series is the truncation error.
 

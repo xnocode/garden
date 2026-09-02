@@ -20222,12 +20222,22 @@
             "timeKey": "11:35",
             "w": 0,
             "c": 2
+          },
+          {
+            "timeKey": "11:40",
+            "w": 0,
+            "c": -1
+          },
+          {
+            "timeKey": "11:45",
+            "w": -2,
+            "c": -15
           }
         ],
         "id": 1238
       }
     ],
-    "wholeVaultWordCount": 43177,
-    "wholeVaultCharCount": 353699
+    "wholeVaultWordCount": 43175,
+    "wholeVaultCharCount": 353683
   }
 }
