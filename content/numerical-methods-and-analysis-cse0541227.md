@@ -157,6 +157,8 @@ So, $f(x_m)\times f(x_l)=-4.375\times(-19)=83.125>0$
 The root lies between $x_m$ and $x_u$.
 
 $$x_l=x_m=2.5$$
+
+
 $$x_u=4$$
 
 <u>Iteration 2:</u>
