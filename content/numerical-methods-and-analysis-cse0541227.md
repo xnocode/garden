@@ -410,7 +410,9 @@ $$
 ## Lecture 3
 
 <u>Round Off Error:</u>
---> **Bisection Method** $20.79532839\ldots$
+--> **Bisection Method** 
+
+$20.79532839\ldots$
 
 - Take 3 digit ❌
 - Take 5 digit ✓
