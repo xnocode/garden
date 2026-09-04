@@ -1,5 +1,5 @@
 {
-  "exportedAt": "2026-09-04T19:54:27.736Z",
+  "exportedAt": "2026-09-04T19:59:23.205Z",
   "stats": {
     "total": 9,
     "pending": 9,
@@ -16,7 +16,7 @@
       "priority": "H",
       "due": "20260904T180000Z",
       "entry": "20260904T195127Z",
-      "urgency": 15.8363,
+      "urgency": 15.8379,
       "overdue": false
     },
     {
@@ -28,7 +28,7 @@
       "priority": "H",
       "due": "20260904T180000Z",
       "entry": "20260904T195128Z",
-      "urgency": 15.8363,
+      "urgency": 15.8379,
       "overdue": false
     },
     {
@@ -40,7 +40,19 @@
       "priority": "H",
       "due": "20260904T180000Z",
       "entry": "20260904T195128Z",
-      "urgency": 15.8363,
+      "urgency": 15.8379,
+      "overdue": false
+    },
+    {
+      "id": 4,
+      "uuid": "647d390a-1a17-4356-b0a0-184fe02136cb",
+      "description": "CPP - Variables & Data Types",
+      "project": "cpp",
+      "tags": [],
+      "priority": "H",
+      "due": "20260904T180000Z",
+      "entry": "20260904T195128Z",
+      "urgency": 15.8379,
       "overdue": false
     },
     {
@@ -52,7 +64,7 @@
       "priority": "H",
       "due": "20260904T180000Z",
       "entry": "20260904T195128Z",
-      "urgency": 15.8363,
+      "urgency": 15.8379,
       "overdue": false
     },
     {
@@ -64,7 +76,7 @@
       "priority": "H",
       "due": "20260904T180000Z",
       "entry": "20260904T195128Z",
-      "urgency": 15.8363,
+      "urgency": 15.8379,
       "overdue": false
     },
     {
@@ -76,7 +88,7 @@
       "priority": "H",
       "due": "20260904T180000Z",
       "entry": "20260904T195128Z",
-      "urgency": 15.8363,
+      "urgency": 15.8379,
       "overdue": false
     },
     {
@@ -88,7 +100,7 @@
       "priority": "H",
       "due": "20260904T180000Z",
       "entry": "20260904T195129Z",
-      "urgency": 15.8363,
+      "urgency": 15.8379,
       "overdue": false
     },
     {
@@ -100,19 +112,7 @@
       "priority": "H",
       "due": "20260904T180000Z",
       "entry": "20260904T195129Z",
-      "urgency": 15.8363,
-      "overdue": false
-    },
-    {
-      "id": 4,
-      "uuid": "647d390a-1a17-4356-b0a0-184fe02136cb",
-      "description": "CPP - Variables & Data Types",
-      "project": "cpp",
-      "tags": [],
-      "priority": "H",
-      "due": "20260905T180000Z",
-      "entry": "20260904T195128Z",
-      "urgency": 15.3792,
+      "urgency": 15.8379,
       "overdue": false
     }
   ],
