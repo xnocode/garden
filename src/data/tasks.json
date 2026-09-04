@@ -1,11 +1,120 @@
 {
-  "exportedAt": "2026-09-02T05:46:32.994Z",
+  "exportedAt": "2026-09-04T19:51:29.757Z",
   "stats": {
-    "total": 0,
-    "pending": 0,
+    "total": 9,
+    "pending": 9,
     "completed": 0,
     "overdue": 0
   },
-  "tasks": [],
+  "tasks": [
+    {
+      "id": 1,
+      "uuid": "61638d75-804c-495f-9f84-264707b3b391",
+      "description": "CPP - Introduction",
+      "project": "cpp",
+      "tags": [],
+      "priority": "H",
+      "due": "20260904T180000Z",
+      "entry": "20260904T195127Z",
+      "urgency": 15.8354,
+      "overdue": false
+    },
+    {
+      "id": 2,
+      "uuid": "0537f590-f837-4a5c-8c9c-d22d053efc51",
+      "description": "CPP - Installation",
+      "project": "cpp",
+      "tags": [],
+      "priority": "H",
+      "due": "20260904T180000Z",
+      "entry": "20260904T195128Z",
+      "urgency": 15.8354,
+      "overdue": false
+    },
+    {
+      "id": 3,
+      "uuid": "d1a10983-7478-4461-98fb-87b7bafe9309",
+      "description": "CPP - Flowcharts & Pseudocode",
+      "project": "cpp",
+      "tags": [],
+      "priority": "H",
+      "due": "20260904T180000Z",
+      "entry": "20260904T195128Z",
+      "urgency": 15.8354,
+      "overdue": false
+    },
+    {
+      "id": 5,
+      "uuid": "d2f964de-a1f4-4621-9267-a6841b43d10d",
+      "description": "CPP - Operators",
+      "project": "cpp",
+      "tags": [],
+      "priority": "H",
+      "due": "20260904T180000Z",
+      "entry": "20260904T195128Z",
+      "urgency": 15.8354,
+      "overdue": false
+    },
+    {
+      "id": 6,
+      "uuid": "a0e1e106-feba-471e-9613-b2619f562ff4",
+      "description": "CPP - Conditional Statements",
+      "project": "cpp",
+      "tags": [],
+      "priority": "H",
+      "due": "20260904T180000Z",
+      "entry": "20260904T195128Z",
+      "urgency": 15.8354,
+      "overdue": false
+    },
+    {
+      "id": 7,
+      "uuid": "66b2c243-c023-47ba-ae0b-dda0e489f81f",
+      "description": "CPP - Loops",
+      "project": "cpp",
+      "tags": [],
+      "priority": "H",
+      "due": "20260904T180000Z",
+      "entry": "20260904T195128Z",
+      "urgency": 15.8354,
+      "overdue": false
+    },
+    {
+      "id": 8,
+      "uuid": "50ee3afe-c136-434d-b88c-76bd5c704d6d",
+      "description": "CPP - Patterns",
+      "project": "cpp",
+      "tags": [],
+      "priority": "H",
+      "due": "20260904T180000Z",
+      "entry": "20260904T195129Z",
+      "urgency": 15.8354,
+      "overdue": false
+    },
+    {
+      "id": 9,
+      "uuid": "be02a90e-2471-4506-8f8a-f61b0c478f88",
+      "description": "Chapter 2 - Complex Variables, Fourier Analysis",
+      "project": "university",
+      "tags": [],
+      "priority": "H",
+      "due": "20260904T180000Z",
+      "entry": "20260904T195129Z",
+      "urgency": 15.8354,
+      "overdue": false
+    },
+    {
+      "id": 4,
+      "uuid": "647d390a-1a17-4356-b0a0-184fe02136cb",
+      "description": "CPP - Variables & Data Types",
+      "project": "cpp",
+      "tags": [],
+      "priority": "H",
+      "due": "20260905T180000Z",
+      "entry": "20260904T195128Z",
+      "urgency": 15.3782,
+      "overdue": false
+    }
+  ],
   "completedTasks": []
 }

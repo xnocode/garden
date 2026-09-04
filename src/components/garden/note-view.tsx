@@ -235,37 +235,48 @@ export function NoteView({ note }: { note: NoteDetail }) {
       pre.appendChild(btn);
     });
 
-    // 3. Mermaid rendering
+    // 3. Mermaid rendering (isolated per diagram with fallback handling)
     // NOTE: loaded via CDN <script> instead of `import("mermaid")` — Turbopack
-    // (dev and Next 16 builds) hangs on the dynamic package import without
-    // ever fetching the chunk, so diagrams silently never render.
-    let mermaidCleanup: (() => void) | null = null;
+    // hangs on dynamic package import without fetching chunks.
     const mermaidDivs = root.querySelectorAll(".mermaid");
     if (mermaidDivs.length > 0) {
       loadMermaidFromCDN()
         .then((mermaid) => {
+          const isDark =
+            document.documentElement.classList.contains("dark") ||
+            !document.documentElement.classList.contains("light");
+
           mermaid.initialize({
             startOnLoad: false,
             securityLevel: "loose",
-            theme: "dark",
-            themeVariables: {
-              background: "#0a0a0c",
-              primaryColor: "#84a59d",
-              primaryTextColor: "#e8e8ea",
-              primaryBorderColor: "#84a59d",
-              lineColor: "#84a59d",
-              secondaryColor: "#161619",
-              tertiaryColor: "#101013",
-              fontFamily: "var(--font-mono)",
-            },
+            theme: isDark ? "dark" : "default",
+            themeVariables: isDark
+              ? {
+                  background: "#0a0a0c",
+                  primaryColor: "#84a59d",
+                  primaryTextColor: "#e8e8ea",
+                  primaryBorderColor: "#84a59d",
+                  lineColor: "#84a59d",
+                  secondaryColor: "#161619",
+                  tertiaryColor: "#101013",
+                  fontFamily: "var(--font-mono)",
+                }
+              : {
+                  background: "#ffffff",
+                  primaryColor: "#4a7c6f",
+                  primaryTextColor: "#1a1a1e",
+                  primaryBorderColor: "#4a7c6f",
+                  lineColor: "#4a7c6f",
+                  secondaryColor: "#f4f4f6",
+                  tertiaryColor: "#eaebee",
+                  fontFamily: "var(--font-mono)",
+                },
           });
-          // Re-query LIVE nodes: React may have replaced the content div's
-          // children (hydration re-sets dangerouslySetInnerHTML) between the
-          // effect and the async script load — the captured NodeList would
-          // then point at detached, invisible nodes.
-          const liveDivs = root.querySelectorAll(
-            ".mermaid:not([data-processed])"
-          );
+
+          // Re-query live unprocessed nodes
+          const liveDivs = Array.from(
+            root.querySelectorAll(".mermaid:not([data-processed])")
+          ) as HTMLElement[];
           if (liveDivs.length === 0) return;
 
           // Double defense: normalize unicode spaces directly on DOM nodes
@@ -273,20 +284,22 @@ export function NoteView({ note }: { note: NoteDetail }) {
             if (el.textContent) {
               el.textContent = el.textContent
                 .replace(/[\u00a0\u1680\u2000-\u200a\u202f\u205f\u3000]/g, " ")
-                .replace(/[\u200b\u200c\u200d\u200e\u200f\ufeff]/g, "");
+                .replace(/[\u200b\u200c\u200d\u200e\u200f\ufeff]/g, "")
+                .trim();
             }
           });
 
-          // suppressErrors: one invalid diagram must not kill the whole
-          // batch — bad ones render mermaid's syntax-error card instead.
-          mermaid
-            .run({
-              nodes: Array.from(liveDivs) as any,
-              suppressErrors: true,
-            })
-            .catch((err: unknown) =>
-              console.error("mermaid render failed:", err)
-            );
+          // Render each diagram individually so one broken diagram never breaks others
+          Promise.allSettled(
+            liveDivs.map((div) =>
+              mermaid.run({
+                nodes: [div],
+                suppressErrors: true,
+              })
+            )
+          ).catch((err: unknown) =>
+            console.error("mermaid rendering error:", err)
+          );
         })
         .catch((err: unknown) => console.error("mermaid load failed:", err));
     }

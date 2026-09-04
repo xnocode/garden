@@ -1256,8 +1256,13 @@ select option {
 
 .mermaid svg {
   max-width: 100%;
+  min-width: min(100%, 320px);
   height: auto;
   overflow: visible;
+}
+
+.mermaid svg text {
+  font-family: var(--font-mono), monospace !important;
 }
 
 /* Obsidian dark-theme parity: prevent dark strokes or text from disappearing against dark backgrounds */
@@ -1278,5 +1283,6 @@ select option {
 .dark .mermaid svg [fill="black"]:not(text) {
   fill: var(--surface-2, #161619) !important;
 }
+
 
 
