@@ -169,7 +169,9 @@ export function TaskwarriorView({ data, writingStats }: { data: TaskSnapshot; wr
   const isAdmin = (session?.user as any)?.role === "admin";
 
   const [taskData, setTaskData] = useState<TaskSnapshot>(data);
-  const [isPublic, setIsPublic] = useState<boolean>(false);
+  // Initialise from SSR data so blur/visibility is correct on first paint.
+  // page.tsx already pre-masks descriptions when tasks are private.
+  const [isPublic, setIsPublic] = useState<boolean>(!data.isBlurred);
   const [isPageToggling, setIsPageToggling] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
 
@@ -231,9 +233,7 @@ export function TaskwarriorView({ data, writingStats }: { data: TaskSnapshot; wr
   }, [isPageToggling, isPublic]);
 
   const { stats, tasks = [], exportedAt, completedTasks = [] } = taskData;
-  // Only apply blur once we know the real privacy state — prevents a 1-second
-  // flash of blurred content before the API fetch resolves.
-  const isBlurred = isMounted && !isPublic && !isAdmin;
+  const isBlurred = !isPublic && !isAdmin;
 
   const completionRate =
     stats.total > 0 ? Math.round((stats.completed / stats.total) * 100) : 0;
@@ -413,11 +413,7 @@ export function TaskwarriorView({ data, writingStats }: { data: TaskSnapshot; wr
           </span>
         </div>
 
-        {!isMounted ? (
-          <div className="flex items-center justify-center rounded-lg border border-dashed border-border bg-surface/10 py-12">
-            <Loader2 className="h-5 w-5 animate-spin text-muted-foreground/40" />
-          </div>
-        ) : tasks.length > 0 ? (
+        {tasks.length > 0 ? (
           <div className="space-y-1.5">
             <div className="flex items-center justify-between px-1 text-[10px] font-mono text-muted-foreground/50 sm:hidden">
               <span>Tasks Queue</span>
@@ -579,11 +575,7 @@ export function TaskwarriorView({ data, writingStats }: { data: TaskSnapshot; wr
           </span>
         </div>
 
-        {!isMounted ? (
-          <div className="flex items-center justify-center rounded-lg border border-dashed border-border bg-surface/10 py-10">
-            <Loader2 className="h-5 w-5 animate-spin text-muted-foreground/40" />
-          </div>
-        ) : completedTasks && completedTasks.length > 0 ? (
+        {completedTasks && completedTasks.length > 0 ? (
           <div className="overflow-x-auto rounded-lg border border-border bg-[#0c0c0f] touch-pan-x scrollbar-thin">
             <table className="w-full border-collapse font-mono text-xs sm:text-sm">
               <thead>
