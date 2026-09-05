@@ -1,9 +1,9 @@
 /**
- * telegram-task-coach.ts — AI Daily Task Planner & Neural Study Guide
- * Helps the user pick realistic daily tasks and applies active recall & practice techniques.
+ * telegram-task-coach.ts — Strategic AI Roadmap & Next Action Mentor
+ * Sequences learning paths, identifies missing milestones, and provides execution blueprints.
  */
 
-import { getTasksFromGitHub } from "./telegram-file-handler";
+import { getTasksFromGitHub, addPendingTasksToGitHub } from "./telegram-file-handler";
 import { listNotes } from "@/lib/notes";
 import { geminiUrl } from "./ai-models";
 
@@ -21,10 +21,40 @@ function formatTWDueDate(dateStr: string | null): string {
 }
 
 /**
- * Generates an intelligent next-day task plan with an actionable Neural Study Method
- * for the primary task.
+ * Converts Markdown formatting to valid Telegram HTML.
  */
-export async function getAiNextDayGuidance(customQuery?: string): Promise<{ text: string; primaryTaskId?: number }> {
+export function sanitizeTelegramHtml(text: string): string {
+  if (!text) return "";
+
+  let cleaned = text
+    // Normalize headers
+    .replace(/^###?\s+(.+)$/gm, "<b>$1</b>")
+    .replace(/^##\s+(.+)$/gm, "<b>$1</b>")
+    .replace(/^#\s+(.+)$/gm, "<b>$1</b>")
+    // Convert bold markdown **text** or __text__ to <b>text</b>
+    .replace(/\*\*(.*?)\*\*/g, "<b>$1</b>")
+    .replace(/__(.*?)__/g, "<b>$1</b>")
+    // Convert italic markdown *text* or _text_ (excluding inside words)
+    .replace(/(^|\s)\*(.*?)\*(\s|$)/g, "$1<i>$2</i>$3")
+    .replace(/(^|\s)_(.*?)_(\s|$)/g, "$1<i>$2</i>$3")
+    // Convert inline code `code` to <code>code</code>
+    .replace(/`([^`]+)`/g, "<code>$1</code>");
+
+  return cleaned.trim();
+}
+
+export interface StrategicRoadmapResult {
+  text: string;
+  suggestedTasks: string[];
+}
+
+/**
+ * Analyzes active tasks, digital garden context, and learning curriculum to determine:
+ * 1. Immediate Next Step (in logical order)
+ * 2. Step-by-step How-To execution blueprint (code/exercise/note)
+ * 3. Missing Milestone Tasks that should be added to the roadmap
+ */
+export async function getAiNextStrategicRoadmap(customQuery?: string): Promise<StrategicRoadmapResult> {
   const today = new Intl.DateTimeFormat("en-CA", {
     timeZone: "Asia/Dhaka",
     year: "numeric",
@@ -35,70 +65,75 @@ export async function getAiNextDayGuidance(customQuery?: string): Promise<{ text
   const tasksSnapshot = await getTasksFromGitHub().catch(() => null);
   const tasks = tasksSnapshot?.tasks || [];
 
-  if (tasks.length === 0) {
-    return {
-      text:
-        `🎉 <b>No pending tasks found in Taskwarrior!</b>\n\n` +
-        `You have a clean slate! Add new tasks with:\n` +
-        `<code>/task Title of task due:tomorrow priority:H</code>\n` +
-        `or scan a notebook page with <code>/scantask</code>.`,
-    };
-  }
-
   // Fetch recent notes from the garden for study context
   const notes = await listNotes().catch(() => []);
-  const recentNotes = notes.slice(0, 6).map((n) => n.title).join(", ") || "None";
+  const recentNotes = notes.slice(0, 8).map((n) => n.title).join(", ") || "None";
 
   // Build task list summary
-  const taskList = tasks
-    .map((t, idx) => {
-      const dueStr = t.due ? `due: ${formatTWDueDate(t.due)}` : "no date";
-      const prioStr = t.priority ? `[Priority ${t.priority}]` : "";
-      const overdueStr = t.overdue ? "[OVERDUE]" : "";
-      return `#${idx + 1}: "${t.description}" (project: ${t.project || "general"}, ${dueStr}, ${prioStr} ${overdueStr})`;
-    })
-    .join("\n");
+  const taskList = tasks.length > 0
+    ? tasks.map((t, idx) => {
+        const dueStr = t.due ? `due: ${formatTWDueDate(t.due)}` : "no date";
+        const prioStr = t.priority ? `[Priority ${t.priority}]` : "";
+        return `Task #${idx + 1}: "${t.description}" (Project: ${t.project || "general"}, ${dueStr}, ${prioStr})`;
+      }).join("\n")
+    : "No active tasks in Taskwarrior yet.";
 
   const geminiKey = (process.env.GEMINI_API_KEY || process.env.GOOGLE_AI_KEY || "").trim();
   const groqKey = (process.env.GROQ_API_KEY || "").trim();
 
-  const systemPrompt = `You are a world-class cognitive science study coach and daily task strategist for Ridoy's digital garden ("xnocode").
+  const systemPrompt = `You are a world-class strategic engineering mentor and computer science learning advisor for Ridoy's digital garden ("xnocode").
 
-Your core philosophy:
-1. THE 1+2 RULE: Never assign more than 3 tasks for a day. Pick 1 Primary Focus (The Big Win) + 2 Quick Wins (15-30m each).
-2. NEURAL STUDY PROTOCOL for the Primary Task:
-   - Step 1: 15-Min Focused Input (What specific sub-concept to learn).
-   - Step 2: 5-Min Active Recall (Closed-screen memory test question).
-   - Step 3: 20-Min Output/Build (Concrete code, script, or Obsidian note to produce).
-3. ZERO-GUILT DEFERRAL: Explicitly mention which tasks to safely ignore/postpone for tomorrow.
-4. Output in clean Telegram HTML formatting: <b>bold</b>, <code>code</code>, <i>italic</i>. Use emojis. Avoid markdown asterisks (no **).`;
+Your Mission:
+Analyze the student's current active tasks, study tracks (e.g. C++ track, University Math / Fourier Analysis, Algorithms), and garden notes to create a clear, sequenced ROADMAP & IMMEDIATE NEXT ACTION PLAN.
+
+You must solve 3 problems for the student:
+1. WHAT TO DO NEXT: Sequence their chaotic/scattered task list into logical order (e.g. Intro -> Install -> Variables -> Control Flow -> Practice). Pick the EXACT next task they should do right now.
+2. HOW TO DO IT: Provide a concrete, step-by-step execution blueprint (Concepts to understand, the exact 15-20 line code exercise to write and compile, and the Obsidian note to write).
+3. MISSING TASKS TO ADD: Identify what critical learning milestones they FORGOT to add to their task list (e.g. Functions, Memory/Pointers, Arrays, Mini Projects) and format them with [SUGGESTED_TASK: <task description>].
+
+Formatting Rules:
+- Output clean Telegram HTML: <b>bold</b>, <code>code</code>, <i>italic</i>. Use clean emojis.
+- Do NOT use markdown asterisks (no **).
+- For each suggested missing task, put a line at the very end like:
+  [SUGGESTED_TASK: CPP - Functions & Scope priority:H project:cpp]
+  [SUGGESTED_TASK: CPP - Mini Project: Number Guessing Game priority:M project:cpp]`;
 
   const userPrompt = `Current Date: ${today}
-User's Active Tasks (${tasks.length} total):
+Student's Current Active Tasks:
 ${taskList}
 
-Recent Garden Notes:
+Recent Published Garden Notes:
 ${recentNotes}
 
-${customQuery ? `User's Special Request/Constraint: "${customQuery}"` : "Please create tomorrow's recommended plan and study guide."}
+${customQuery ? `Student's Specific Focus or Question: "${customQuery}"` : "Analyze my study tracks and tell me: What should I do next in order, how to do it step-by-step, and what missing tasks should I add to my roadmap?"}
 
-Generate tomorrow's plan following this structure:
-🎯 <b>AI Next-Day Plan &amp; Study Guide</b>
+Format the response like this:
+🗺️ <b>Strategic Roadmap &amp; Next Action Plan</b>
 
-🌟 <b>1. PRIMARY FOCUS (The Big Win):</b>
-• [Task # and Description] <i>(Est. ~45m)</i>
+🧭 <b>1. Current Learning Track &amp; Stage:</b>
+[1-2 sentences on what track they are on, e.g. C++ Programming Track: Stage 1 Foundations]
 
-🧠 <b>How to Study &amp; Finish This (AI Neural Method):</b>
-• <b>📖 Input (15m):</b> [Specific concept to read/watch]
-• <b>⚡ Active Recall (5m):</b> [Closed-book memory recall question]
-• <b>🛠️ Output/Build (20m):</b> [What to build/code or write in notes]
+🌟 <b>2. EXACT NEXT TASK TO DO NOW:</b>
+• <b>[Task Name &amp; Number]</b> <i>(Estimated Time: ~45 mins)</i>
+💡 <i>Why this first: [Brief reason why this comes before others]</i>
 
-⚡ <b>2. QUICK WINS (Manageable, Low Friction):</b>
-• [Task # and Description] <i>(15-20m)</i>
-• [Task # and Description] <i>(15-20m)</i>
+🛠️ <b>3. Step-by-Step Execution Blueprint:</b>
+• <b>📖 Concept (15m):</b> [The specific core concept to understand]
+• <b>💻 Code Exercise (20m):</b> [The exact working code or problem to practice in compiler]
+• <b>📝 Garden Note (10m):</b> [What note title and 2 key takeaways to write in Obsidian]
 
-🧘 <b>Safe to Postpone for Tomorrow:</b>
-<i>[1-2 sentences on why the remaining tasks can wait without guilt]</i>`;
+⚡ <b>4. The Sequenced Path (What comes after):</b>
+1. [Next sequential task]
+2. [Following sequential task]
+
+💡 <b>5. Missing Tasks You Need to Add (Gaps in Roadmap):</b>
+• <b>[Suggested Task 1]</b> — [Why it's essential]
+• <b>[Suggested Task 2]</b> — [Why it's essential]
+
+[SUGGESTED_TASK: <Task 1 with priority and project>]
+[SUGGESTED_TASK: <Task 2 with priority and project>]`;
+
+  let responseText = "";
 
   // 1. Try Gemini
   if (geminiKey) {
@@ -107,27 +142,23 @@ Generate tomorrow's plan following this structure:
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          contents: [
-            {
-              parts: [{ text: `${systemPrompt}\n\n${userPrompt}` }],
-            },
-          ],
-          generationConfig: { temperature: 0.7, maxOutputTokens: 800 },
+          contents: [{ parts: [{ text: `${systemPrompt}\n\n${userPrompt}` }] }],
+          generationConfig: { temperature: 0.6, maxOutputTokens: 1400 },
         }),
       });
 
       if (res.ok) {
         const data = await res.json();
-        const text = data?.candidates?.[0]?.content?.parts?.[0]?.text;
-        if (text) return { text: text.trim() };
+        const rawText = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+        if (rawText) responseText = rawText;
       }
     } catch (err: any) {
-      console.warn("Gemini task coach failed:", err.message);
+      console.warn("Gemini strategic roadmap failed:", err.message);
     }
   }
 
   // 2. Try Groq Llama Fallback
-  if (groqKey) {
+  if (!responseText && groqKey) {
     try {
       const gRes = await fetch("https://api.groq.com/openai/v1/chat/completions", {
         method: "POST",
@@ -141,39 +172,61 @@ Generate tomorrow's plan following this structure:
             { role: "system", content: systemPrompt },
             { role: "user", content: userPrompt },
           ],
-          temperature: 0.7,
-          max_tokens: 800,
+          temperature: 0.6,
+          max_tokens: 1400,
         }),
       });
 
       if (gRes.ok) {
         const gData = await gRes.json();
         const content = gData?.choices?.[0]?.message?.content;
-        if (content) return { text: content.trim() };
+        if (content) responseText = content;
       }
     } catch (err: any) {
-      console.warn("Groq task coach failed:", err.message);
+      console.warn("Groq strategic roadmap failed:", err.message);
     }
   }
 
-  // 3. Deterministic Fallback if AI offline
-  const topTask = tasks[0];
-  const secTask1 = tasks[1];
-  const secTask2 = tasks[2];
+  // Parse suggested tasks from [SUGGESTED_TASK: ...] tags
+  const suggestedTasks: string[] = [];
+  if (responseText) {
+    const matches = responseText.matchAll(/\[SUGGESTED_TASK:\s*(.+?)\]/g);
+    for (const match of matches) {
+      if (match[1]) {
+        suggestedTasks.push(match[1].trim());
+      }
+    }
+    // Remove the raw metadata tags from user-facing text
+    responseText = responseText.replace(/\[SUGGESTED_TASK:\s*.+?\]/g, "").trim();
+    return {
+      text: sanitizeTelegramHtml(responseText),
+      suggestedTasks,
+    };
+  }
 
+  // 3. Fallback Roadmap
   return {
     text:
-      `🎯 <b>AI Next-Day Plan — ${today}</b>\n\n` +
-      `🌟 <b>1. PRIMARY FOCUS (The Big Win):</b>\n` +
-      `• <b>#1 ${topTask.description}</b> ${topTask.priority ? `[Priority ${topTask.priority}]` : ""}\n\n` +
-      `🧠 <b>How to Study &amp; Finish This (AI Neural Method):</b>\n` +
-      `• <b>📖 Input (15m):</b> Read the single core subtopic with focus.\n` +
-      `• <b>⚡ Active Recall (5m):</b> Close the screen and explain the concept on paper from memory.\n` +
-      `• <b>🛠️ Output/Build (20m):</b> Write a working code snippet or a concise Obsidian note.\n\n` +
-      `⚡ <b>2. QUICK WINS:</b>\n` +
-      (secTask1 ? `• #${2} ${secTask1.description}\n` : "") +
-      (secTask2 ? `• #${3} ${secTask2.description}\n` : "") +
-      `\n🧘 <b>Safe to Postpone:</b> Remaining tasks can rest in your backlog without guilt!`,
+      `🗺️ <b>Strategic Roadmap &amp; Next Action Plan</b>\n\n` +
+      `🧭 <b>1. Current Learning Track:</b> C++ Foundations\n\n` +
+      `🌟 <b>2. EXACT NEXT TASK TO DO NOW:</b>\n` +
+      `• <b>CPP - Variables &amp; Data Types</b> <i>(Est. ~45 mins)</i>\n` +
+      `💡 <i>Why this first: Sets up fundamental memory understanding before writing logic.</i>\n\n` +
+      `🛠️ <b>3. Step-by-Step Execution Blueprint:</b>\n` +
+      `• <b>📖 Concept (15m):</b> Primitive types (int, double, char, bool) and memory size.\n` +
+      `• <b>💻 Code Exercise (20m):</b> Write a small C++ program calculating user input values.\n` +
+      `• <b>📝 Garden Note (10m):</b> Document <code>Variables &amp; Memory Allocation in C++</code> in Obsidian.\n\n` +
+      `⚡ <b>4. Sequenced Next Steps:</b>\n` +
+      `1. CPP - Operators &amp; Expressions\n` +
+      `2. CPP - Conditional Statements (if/else, switch)\n` +
+      `3. CPP - Loops (for, while)\n\n` +
+      `💡 <b>5. Missing Tasks You Need to Add:</b>\n` +
+      `• <b>CPP - Functions &amp; Pass-by-Reference</b>\n` +
+      `• <b>CPP - Arrays &amp; Vectors Practice</b>`,
+    suggestedTasks: [
+      "CPP - Functions & Scope priority:H project:cpp",
+      "CPP - Arrays & Vectors priority:H project:cpp",
+    ],
   };
 }
 
@@ -184,15 +237,15 @@ export async function getTaskStudyBlueprint(topicOrTask: string): Promise<string
   const geminiKey = (process.env.GEMINI_API_KEY || process.env.GOOGLE_AI_KEY || "").trim();
   const groqKey = (process.env.GROQ_API_KEY || "").trim();
 
-  const systemPrompt = `You are a cognitive learning coach. Given a study topic or task, break it down into the 3-step AI Neural Learning Protocol (Total 40 minutes):
-1. 📖 Step 1: Input & Concept Focus (15 mins) — exactly what sub-concept to absorb.
-2. ⚡ Step 2: Active Recall Test (5 mins) — exact closed-screen recall questions to test memory.
-3. 🛠️ Step 3: 30/70 Practice & Build (20 mins) — exact concrete mini-project, code snippet, or note to create.
+  const systemPrompt = `You are an elite cognitive learning coach. Given a study topic or task, break it down into an executive 3-step AI Neural Learning Protocol (Total 40 minutes):
+1. 📖 Step 1: Input & Concept Focus (15 mins) — exactly what specific sub-concept to absorb without distractions.
+2. ⚡ Step 2: Active Recall Test (5 mins) — exact closed-screen recall questions to test memory from scratch.
+3. 🛠️ Step 3: 30/70 Practice & Build (20 mins) — exact concrete mini-project, code snippet, or Obsidian note to produce.
 4. 🧠 Long-Term Memory Anchor — 1 practical analogy or memory hook.
 
-Format in clean Telegram HTML (<b>bold</b>, <code>code</code>, <i>italic</i>). Do NOT use markdown asterisks (**).`;
+Format in clean Telegram HTML (<b>bold</b>, <code>code</code>, <i>italic</i>). Do NOT use markdown asterisks.`;
 
-  const userPrompt = `Topic/Task to study: "${topicOrTask}"`;
+  const userPrompt = `Topic or Task to study: "${topicOrTask}"`;
 
   if (geminiKey) {
     try {
@@ -201,14 +254,14 @@ Format in clean Telegram HTML (<b>bold</b>, <code>code</code>, <i>italic</i>). D
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           contents: [{ parts: [{ text: `${systemPrompt}\n\n${userPrompt}` }] }],
-          generationConfig: { temperature: 0.7, maxOutputTokens: 600 },
+          generationConfig: { temperature: 0.6, maxOutputTokens: 900 },
         }),
       });
 
       if (res.ok) {
         const data = await res.json();
-        const text = data?.candidates?.[0]?.content?.parts?.[0]?.text;
-        if (text) return text.trim();
+        const rawText = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+        if (rawText) return sanitizeTelegramHtml(rawText);
       }
     } catch (err: any) {
       console.warn("Gemini study blueprint failed:", err.message);
@@ -229,15 +282,15 @@ Format in clean Telegram HTML (<b>bold</b>, <code>code</code>, <i>italic</i>). D
             { role: "system", content: systemPrompt },
             { role: "user", content: userPrompt },
           ],
-          temperature: 0.7,
-          max_tokens: 600,
+          temperature: 0.6,
+          max_tokens: 900,
         }),
       });
 
       if (gRes.ok) {
         const gData = await gRes.json();
         const content = gData?.choices?.[0]?.message?.content;
-        if (content) return content.trim();
+        if (content) return sanitizeTelegramHtml(content);
       }
     } catch (err: any) {
       console.warn("Groq study blueprint failed:", err.message);
@@ -254,4 +307,12 @@ Format in clean Telegram HTML (<b>bold</b>, <code>code</code>, <i>italic</i>). D
     `Write 2 working code examples or an Obsidian note with <code>[[wikilinks]]</code>.\n\n` +
     `💡 <i>"Mastery comes from retrieval practice, not passive review."</i>`
   );
+}
+
+/**
+ * Backward compatibility helper for daily plan
+ */
+export async function getAiNextDayGuidance(customQuery?: string): Promise<{ text: string }> {
+  const result = await getAiNextStrategicRoadmap(customQuery);
+  return { text: result.text };
 }

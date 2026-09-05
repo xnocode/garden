@@ -720,6 +720,18 @@ export interface TaskSnapshot {
  * This reflects tasks as of the last `bun run deploy`.
  */
 export async function getTasksFromGitHub(): Promise<TaskSnapshot | null> {
+  // 1. Try local filesystem snapshot first for zero-latency, reliable access
+  try {
+    const fs = await import("fs/promises");
+    const path = await import("path");
+    const localRaw = await fs.readFile(path.join(process.cwd(), "src/data/tasks.json"), "utf8");
+    if (localRaw) {
+      const parsed = JSON.parse(localRaw) as TaskSnapshot;
+      if (parsed && Array.isArray(parsed.tasks)) return parsed;
+    }
+  } catch {}
+
+  // 2. Try GitHub API
   const token = (process.env.GITHUB_TOKEN || process.env.GH_TOKEN || "").trim();
   const repo = process.env.NEXT_PUBLIC_GISCUS_REPO || "xnocode/garden";
   const tasksUrl = new URL(`https://api.github.com/repos/${repo}/contents/src/data/tasks.json`);

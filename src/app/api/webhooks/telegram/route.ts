@@ -20,7 +20,7 @@ import { askGardenKnowledgeBase } from "@/lib/telegram-ask";
 import { processBrainDumpToNote } from "@/lib/telegram-dump";
 import { processPdfToNote } from "@/lib/telegram-pdf";
 import { getMorningDigest } from "@/lib/telegram-digest";
-import { getAiNextDayGuidance, getTaskStudyBlueprint } from "@/lib/telegram-task-coach";
+import { getAiNextStrategicRoadmap, getAiNextDayGuidance, getTaskStudyBlueprint } from "@/lib/telegram-task-coach";
 import { scanNotebookForNewTasks, scanNotebookForCompletedTasks } from "@/lib/notebook-scanner";
 import { geminiUrl } from "@/lib/ai-models";
 
@@ -79,6 +79,22 @@ async function sendMsg(
       body: JSON.stringify(body),
     });
     const data = await res.json();
+    if (!data?.ok) {
+      // If Telegram rejected HTML (e.g. invalid tag or unescaped character), fallback to clean plain text
+      const plainText = text.replace(/<[^>]+>/g, "").replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">");
+      const fallbackRes = await tgFetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          chat_id: chatId,
+          text: plainText,
+          disable_web_page_preview: true,
+          reply_markup: markup || MAIN_KEYBOARD,
+        }),
+      });
+      const fallbackData = await fallbackRes.json();
+      return fallbackData?.result?.message_id || null;
+    }
     return data?.result?.message_id || null;
   } catch {
     return null;
@@ -293,6 +309,7 @@ function registerCommands(token: string) {
   lastCommandsRegisteredAt = now;
 
   const commands = [
+    { command: "next",     description: "🗺️ Strategic roadmap: what to do next & missing tasks" },
     { command: "guide",    description: "🎯 AI daily plan & neural study guide" },
     { command: "study",    description: "🧠 AI 3-step active recall study coach" },
     { command: "scantask", description: "📸 Scan notebook page → add tasks" },
@@ -385,6 +402,32 @@ export async function POST(req: Request) {
         await handleScanPhotoAdd(token, chatId, fileId);
       } else {
         await handleScanPhotoDone(token, chatId, fileId);
+      }
+      return NextResponse.json({ ok: true });
+    }
+
+    // ➕ Inline button callback to add a suggested roadmap task
+    if (text.startsWith("add_task_")) {
+      const rawEnc = text.replace("add_task_", "").trim();
+      const taskDesc = decodeURIComponent(rawEnc).trim();
+      if (taskDesc) {
+        await sendMsg(token, chatId, `⏳ Adding <b>${escapeHtml(taskDesc)}</b> to Taskwarrior queue…`);
+        after(async () => {
+          try {
+            const res = await addPendingTasksToGitHub([taskDesc]);
+            if (res.success) {
+              await sendMsg(
+                token,
+                chatId,
+                `📌 <b>Suggested Task Queued for Taskwarrior!</b>\n\n• <code>${escapeHtml(taskDesc)}</code>\n\n<i>Next <code>bun run deploy</code> will import it into WSL Taskwarrior &amp; update website live!</i>`
+              );
+            } else {
+              await sendMsg(token, chatId, `❌ Failed to queue task: ${escapeHtml(res.message)}`);
+            }
+          } catch (err: any) {
+            await sendMsg(token, chatId, `❌ Error: ${escapeHtml(err.message)}`);
+          }
+        });
       }
       return NextResponse.json({ ok: true });
     }
@@ -889,41 +932,61 @@ export async function POST(req: Request) {
     }
 
     // ═══════════════════════════════════════════════════════════════════
-    // 🎯 AI DAILY PLAN & NEURAL STUDY GUIDE — /guide, /plan, /tomorrow
+    // 🗺️ AI STRATEGIC ROADMAP & NEXT ACTION PLAN — /next, /plan, /roadmap
     // ═══════════════════════════════════════════════════════════════════
     if (
-      text.startsWith("/guide") ||
+      text.startsWith("/next") ||
+      text.startsWith("/roadmap") ||
       text.startsWith("/plan") ||
+      text.startsWith("/guide") ||
       text.startsWith("/tomorrow") ||
-      text.startsWith("/nextday") ||
-      rawText.includes("Daily Guide") ||
-      rawText.includes("AI Plan") ||
+      text.startsWith("/whatnext") ||
+      rawText.includes("Next Action") ||
+      rawText.includes("Roadmap") ||
+      text === "roadmap_plan" ||
       text === "guide_plan"
     ) {
-      const customQuery = text.replace(/^\/(guide|plan|tomorrow|nextday)/i, "").trim();
+      const customQuery = text.replace(/^\/(next|roadmap|plan|guide|tomorrow|whatnext)/i, "").trim();
       await sendMsg(
         token,
         chatId,
-        `🧠 <b>Analyzing your tasks &amp; designing tomorrow's study plan...</b>\n<i>Applying 1+2 rule &amp; Neural Active Recall protocol...</i>`
+        `🗺️ <b>Analyzing your active tasks &amp; building next action roadmap...</b>\n<i>Sequencing tracks, finding missing milestones &amp; preparing execution guide...</i>`
       );
 
       after(async () => {
         try {
-          const res = await getAiNextDayGuidance(customQuery || undefined);
-          const buttons: any[] = [
-            [
-              { text: "📋 View Tasks (/mytasks)", callback_data: "/mytasks" },
-              { text: "✅ Complete Task (/done)", callback_data: "/done" },
-            ],
-            [
-              { text: "🧠 Study Breakdown for #1", callback_data: "study_task_1" },
-              { text: "🔄 Refresh Plan", callback_data: "guide_plan" },
-            ],
-          ];
+          const res = await getAiNextStrategicRoadmap(customQuery || undefined);
+          const buttons: any[] = [];
+
+          // Add interactive one-tap buttons to queue suggested missing tasks
+          if (res.suggestedTasks && res.suggestedTasks.length > 0) {
+            for (const st of res.suggestedTasks) {
+              const cleanTitle = st.replace(/\s*(priority|due|project):[^\s]+/gi, "").trim();
+              const callbackParam = encodeURIComponent(st);
+              // Telegram callback_data limit is 64 bytes
+              const safeCb = callbackParam.length <= 50 ? callbackParam : encodeURIComponent(cleanTitle).slice(0, 50);
+              buttons.push([
+                {
+                  text: `➕ Add: ${cleanTitle.slice(0, 28)}`,
+                  callback_data: `add_task_${safeCb}`,
+                },
+              ]);
+            }
+          }
+
+          buttons.push([
+            { text: "🧠 How to Study #1", callback_data: "study_task_1" },
+            { text: "📋 View Tasks (/mytasks)", callback_data: "/mytasks" },
+          ]);
+
+          buttons.push([
+            { text: "✅ Complete Task (/done)", callback_data: "/done" },
+            { text: "🔄 Refresh Roadmap", callback_data: "roadmap_plan" },
+          ]);
 
           await sendMsg(token, chatId, res.text, { inline_keyboard: buttons });
         } catch (err: any) {
-          await sendMsg(token, chatId, `❌ <b>Guide Error:</b> ${escapeHtml(err.message)}`);
+          await sendMsg(token, chatId, `❌ <b>Roadmap Error:</b> ${escapeHtml(err.message)}`);
         }
       });
 
@@ -1377,10 +1440,10 @@ export async function POST(req: Request) {
     if (text.startsWith("/start") || text.startsWith("/help") || rawText.includes("Help")) {
       await sendMsg(token, chatId,
         `💡 <b>Garden Bot — Complete Command &amp; Usage Guide</b>\n\n` +
-        `🎯 <b>1. AI Task Planner &amp; Study Guide</b>\n` +
-        `• <code>/guide</code> (or <code>/plan</code>) — AI selects tomorrow's 1+2 tasks with a 3-step Neural Study blueprint.\n` +
-        `  <i>Example:</i> <code>/guide</code> or <code>/guide I only have 2 hours tomorrow</code>\n` +
-        `• <code>/study &lt;topic or task #&gt;</code> — Generates an active recall &amp; practice routine.\n` +
+        `🎯 <b>1. Strategic Roadmap &amp; AI Study Guide</b>\n` +
+        `• <code>/next</code> (or <code>/roadmap</code>, <code>/plan</code>) — AI analyzes your track, sequences what to do next, suggests missing milestones &amp; provides execution steps.\n` +
+        `  <i>Example:</i> <code>/next</code> or <code>/next focusing on C++ and Math</code>\n` +
+        `• <code>/study &lt;topic or task #&gt;</code> — Generates a 3-step active recall &amp; practice routine.\n` +
         `  <i>Example:</i> <code>/study 1</code> or <code>/study Python loops</code>\n` +
         `• <code>/digest</code> — Morning summary of today's tasks, notes, and AI focus tip.\n\n` +
         `🧠 <b>2. Ask AI About Notes &amp; Tasks</b>\n` +
