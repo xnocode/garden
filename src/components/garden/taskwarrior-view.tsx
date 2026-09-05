@@ -578,21 +578,24 @@ export function TaskwarriorView({ data, writingStats }: { data: TaskSnapshot; wr
       </div>
 
       {/* ── Completed Tasks (XP Harvested) with 10-Item Pagination ── */}
-      {completedTasks && completedTasks.length > 0 && (
-        <div className="space-y-3 pt-2">
-          <div className="flex flex-wrap items-center justify-between gap-2">
-            <div className="flex items-center gap-2">
-              <CheckCircle2 className="h-4 w-4 text-emerald-400" />
-              <h2 className="font-serif text-lg font-semibold text-heading">
-                Completed Tasks
-              </h2>
-            </div>
-            <span className="font-mono text-xs text-emerald-400/80 flex items-center gap-1">
-              <Trophy className="h-3.5 w-3.5" />
-              XP Harvested · <span className="text-red-400/80">red = penalty</span>
+      <div className="space-y-3 pt-2">
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <div className="flex items-center gap-2">
+            <CheckCircle2 className="h-4 w-4 text-emerald-400" />
+            <h2 className="font-serif text-lg font-semibold text-heading">
+              Completed Tasks
+            </h2>
+            <span className="rounded-full bg-surface-2 px-2 py-0.5 font-mono text-xs text-muted-foreground">
+              {completedTasks.length}
             </span>
           </div>
+          <span className="font-mono text-xs text-emerald-400/80 flex items-center gap-1">
+            <Trophy className="h-3.5 w-3.5" />
+            XP Harvested · <span className="text-red-400/80">red = penalty</span>
+          </span>
+        </div>
 
+        {completedTasks && completedTasks.length > 0 ? (
           <div className="overflow-x-auto rounded-lg border border-border bg-[#0c0c0f] touch-pan-x scrollbar-thin">
             <table className="w-full border-collapse font-mono text-xs sm:text-sm">
               <thead>
@@ -755,8 +758,16 @@ export function TaskwarriorView({ data, writingStats }: { data: TaskSnapshot; wr
               )}
             </div>
           </div>
-        </div>
-      )}
+        ) : (
+          <div className="flex flex-col items-center justify-center rounded-lg border border-dashed border-border bg-surface/10 py-10 text-center">
+            <CheckCircle2 className="h-8 w-8 text-emerald-400/30" />
+            <p className="mt-2.5 font-serif text-sm text-heading">No completed tasks recorded yet</p>
+            <p className="mt-1 text-xs text-muted-foreground/60">
+              Finished tasks from Taskwarrior will appear here with harvested XP and completion timing.
+            </p>
+          </div>
+        )}
+      </div>
 
       {/* Updated at */}
       <div className="mt-6 flex items-center justify-center gap-1.5 text-[11px] text-muted-foreground/35">
