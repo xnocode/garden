@@ -11,6 +11,9 @@ import {
   Flame,
   ChevronLeft,
   ChevronRight,
+  Globe,
+  Lock,
+  Loader2,
 } from "lucide-react";
 import {
   calculatePlayerProfile,
@@ -167,8 +170,8 @@ export function TaskwarriorView({ data, writingStats }: { data: TaskSnapshot; wr
 
   const [taskData, setTaskData] = useState<TaskSnapshot>(data);
   const [isPublic, setIsPublic] = useState<boolean>(false);
-  const [isToggling, setIsToggling] = useState(false);
-  const [toastMessage, setToastMessage] = useState<string | null>(null);
+  const [isPageToggling, setIsPageToggling] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
 
   // Fetch live tasks & visibility settings
   const refreshTasks = useCallback(async () => {
@@ -189,6 +192,8 @@ export function TaskwarriorView({ data, writingStats }: { data: TaskSnapshot; wr
       }
     } catch {
       // Use fallback
+    } finally {
+      setIsMounted(true);
     }
   }, []);
 
@@ -203,8 +208,32 @@ export function TaskwarriorView({ data, writingStats }: { data: TaskSnapshot; wr
     };
   }, [refreshTasks, session]);
 
+  // Inline page-level toggle (admin only)
+  const handlePageToggle = useCallback(async () => {
+    if (isPageToggling) return;
+    setIsPageToggling(true);
+    const nextVal = !isPublic;
+    try {
+      const res = await fetch("/api/tasks/settings", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ publicTasks: nextVal }),
+      });
+      if (res.ok) {
+        setIsPublic(nextVal);
+        window.dispatchEvent(new CustomEvent("taskwarrior-privacy-changed"));
+      }
+    } catch {
+      // ignore
+    } finally {
+      setIsPageToggling(false);
+    }
+  }, [isPageToggling, isPublic]);
+
   const { stats, tasks = [], exportedAt, completedTasks = [] } = taskData;
-  const isBlurred = !isPublic && !isAdmin;
+  // Only apply blur once we know the real privacy state — prevents a 1-second
+  // flash of blurred content before the API fetch resolves.
+  const isBlurred = isMounted && !isPublic && !isAdmin;
 
   const completionRate =
     stats.total > 0 ? Math.round((stats.completed / stats.total) * 100) : 0;
@@ -250,10 +279,48 @@ export function TaskwarriorView({ data, writingStats }: { data: TaskSnapshot; wr
     <div className="garden-fade-in mx-auto max-w-4xl space-y-8">
       {/* ── Page Header ── */}
       <header className="border-b border-border pb-6">
-        <h1 className="flex items-center gap-3 font-serif text-3xl font-semibold text-heading">
-          <ListChecks className="h-7 w-7 text-garden" />
-          Taskwarrior
-        </h1>
+        <div className="flex items-start justify-between gap-4">
+          <h1 className="flex items-center gap-3 font-serif text-3xl font-semibold text-heading">
+            <ListChecks className="h-7 w-7 text-garden" />
+            Taskwarrior
+          </h1>
+
+          {/* Privacy toggle — admin only */}
+          {isAdmin && (
+            <button
+              type="button"
+              onClick={handlePageToggle}
+              disabled={isPageToggling}
+              className={`group mt-1 inline-flex items-center gap-2 rounded-xl border px-3 py-1.5 text-xs font-semibold transition-all ${
+                isPublic
+                  ? "border-emerald-500/40 bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20"
+                  : "border-amber-500/40 bg-amber-500/10 text-amber-400 hover:bg-amber-500/20"
+              } disabled:pointer-events-none disabled:opacity-60`}
+              title={isPublic ? "Tasks are public — click to make private" : "Tasks are private — click to make public"}
+            >
+              {isPageToggling ? (
+                <Loader2 className="h-3.5 w-3.5 animate-spin" />
+              ) : isPublic ? (
+                <Globe className="h-3.5 w-3.5" />
+              ) : (
+                <Lock className="h-3.5 w-3.5" />
+              )}
+              <span className="hidden sm:inline">{isPublic ? "Public" : "Private"}</span>
+              {/* Pill toggle track */}
+              <span
+                className={`relative inline-flex h-4 w-7 items-center rounded-full transition-colors ${
+                  isPublic ? "bg-emerald-500" : "bg-surface-2 border border-border"
+                }`}
+              >
+                <span
+                  className={`inline-block h-3 w-3 transform rounded-full bg-white shadow transition-transform ${
+                    isPublic ? "translate-x-3.5" : "translate-x-0.5"
+                  }`}
+                />
+              </span>
+            </button>
+          )}
+        </div>
         <p className="mt-2 text-muted-foreground">
           Task completion, study projects, and workflow — tracked with taskwarrior.
         </p>
@@ -346,7 +413,11 @@ export function TaskwarriorView({ data, writingStats }: { data: TaskSnapshot; wr
           </span>
         </div>
 
-        {tasks.length > 0 ? (
+        {!isMounted ? (
+          <div className="flex items-center justify-center rounded-lg border border-dashed border-border bg-surface/10 py-12">
+            <Loader2 className="h-5 w-5 animate-spin text-muted-foreground/40" />
+          </div>
+        ) : tasks.length > 0 ? (
           <div className="space-y-1.5">
             <div className="flex items-center justify-between px-1 text-[10px] font-mono text-muted-foreground/50 sm:hidden">
               <span>Tasks Queue</span>
@@ -508,7 +579,11 @@ export function TaskwarriorView({ data, writingStats }: { data: TaskSnapshot; wr
           </span>
         </div>
 
-        {completedTasks && completedTasks.length > 0 ? (
+        {!isMounted ? (
+          <div className="flex items-center justify-center rounded-lg border border-dashed border-border bg-surface/10 py-10">
+            <Loader2 className="h-5 w-5 animate-spin text-muted-foreground/40" />
+          </div>
+        ) : completedTasks && completedTasks.length > 0 ? (
           <div className="overflow-x-auto rounded-lg border border-border bg-[#0c0c0f] touch-pan-x scrollbar-thin">
             <table className="w-full border-collapse font-mono text-xs sm:text-sm">
               <thead>
