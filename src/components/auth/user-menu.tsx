@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect, useCallback } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useSession, signOut } from "next-auth/react";
 import {
   LogIn,
@@ -11,10 +11,6 @@ import {
   Plus,
   FileText,
   Edit3,
-  ListChecks,
-  Lock,
-  Globe,
-  Loader2,
 } from "lucide-react";
 import { AuthModal } from "./auth-modal";
 import { AdminQuickPost } from "@/components/admin/admin-quick-post";
@@ -24,57 +20,11 @@ export function UserMenu() {
   const [modalOpen, setModalOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [quickPostOpen, setQuickPostOpen] = useState(false);
-  const [isPublicTasks, setIsPublicTasks] = useState(false);
-  const [isTogglingTasks, setIsTogglingTasks] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   const user = session?.user;
   const role = (user as any)?.role || "member";
   const isAdmin = role === "admin";
-
-  // Fetch current taskwarrior privacy setting for admin
-  const fetchTaskPrivacy = useCallback(async () => {
-    if (!isAdmin) return;
-    try {
-      const res = await fetch("/api/tasks/settings");
-      if (res.ok) {
-        const data = await res.json();
-        setIsPublicTasks(Boolean(data.publicTasks));
-      }
-    } catch {
-      // ignore
-    }
-  }, [isAdmin]);
-
-  useEffect(() => {
-    if (isAdmin) {
-      fetchTaskPrivacy();
-    }
-  }, [isAdmin, fetchTaskPrivacy]);
-
-  const handleToggleTaskPrivacy = async (e: React.MouseEvent) => {
-    e.stopPropagation();
-    if (isTogglingTasks) return;
-    setIsTogglingTasks(true);
-    const nextVal = !isPublicTasks;
-
-    try {
-      const res = await fetch("/api/tasks/settings", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ publicTasks: nextVal }),
-      });
-
-      if (res.ok) {
-        setIsPublicTasks(nextVal);
-        window.dispatchEvent(new CustomEvent("taskwarrior-privacy-changed"));
-      }
-    } catch {
-      // ignore
-    } finally {
-      setIsTogglingTasks(false);
-    }
-  };
 
   // Close dropdown on outside click
   useEffect(() => {
@@ -213,47 +163,8 @@ export function UserMenu() {
                     <span>My Saved Drafts</span>
                   </button>
 
-                  {/* Taskwarrior Privacy Toggle Switch */}
-                  <div
-                    onClick={handleToggleTaskPrivacy}
-                    className="flex w-full cursor-pointer items-center justify-between rounded-lg px-3 py-2 text-xs font-medium text-foreground transition-colors hover:bg-surface-2 hover:text-garden select-none"
-                    role="button"
-                    tabIndex={0}
-                  >
-                    <div className="flex items-center gap-2">
-                      <ListChecks className="h-3.5 w-3.5 text-emerald-400" />
-                      <span>Taskwarrior</span>
-                    </div>
 
-                    <div className="flex items-center gap-1.5">
-                      {isTogglingTasks ? (
-                        <Loader2 className="h-3 w-3 animate-spin text-muted-foreground" />
-                      ) : isPublicTasks ? (
-                        <span className="inline-flex items-center gap-0.5 text-[10px] font-semibold text-emerald-400">
-                          <Globe className="h-2.5 w-2.5" />
-                          Public
-                        </span>
-                      ) : (
-                        <span className="inline-flex items-center gap-0.5 text-[10px] font-semibold text-amber-400">
-                          <Lock className="h-2.5 w-2.5" />
-                          Private
-                        </span>
-                      )}
 
-                      {/* Animated Toggle Switch */}
-                      <div
-                        className={`relative inline-flex h-4 w-7 items-center rounded-full transition-colors ${
-                          isPublicTasks ? "bg-emerald-500" : "bg-surface-2 border border-border"
-                        }`}
-                      >
-                        <span
-                          className={`inline-block h-3 w-3 transform rounded-full bg-white transition-transform ${
-                            isPublicTasks ? "translate-x-3.5" : "translate-x-0.5"
-                          }`}
-                        />
-                      </div>
-                    </div>
-                  </div>
                 </div>
               )}
 
