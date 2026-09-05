@@ -160,7 +160,8 @@ function calcPendingXp(task: TaskData, isOverdue: boolean = false): { xp: number
     if (task.priority === "H") penaltyBase += 150;
     else if (task.priority === "M") penaltyBase += 50;
     else if (task.priority === "L") penaltyBase += 20;
-    const scale = Math.min(10, 1 + daysLate * 0.5);
+    const extraDays = Math.max(0, daysLate - 1);
+    const scale = Math.min(10, 1 + extraDays * 0.5);
     return { xp: -Math.round(penaltyBase * scale), daysLate, daysEarly: 0 };
   }
 

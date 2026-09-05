@@ -260,8 +260,9 @@ async function main() {
     if (t.priority === "H") base += 150; // 350 base for high
     else if (t.priority === "M") base += 50;  // 250 base for medium
     else if (t.priority === "L") base += 20;  // 220 base for low
-    // Scale: +50% per day late, hard cap at 10×
-    const scale = Math.min(10, 1 + daysLate * 0.5);
+    // Scale: 1.0× on Day 1 late, then +50% per extra day late, hard cap at 10×
+    const extraDays = Math.max(0, daysLate - 1);
+    const scale = Math.min(10, 1 + extraDays * 0.5);
     return -Math.round(base * scale);
   }
 
