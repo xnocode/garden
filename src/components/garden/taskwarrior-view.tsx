@@ -343,7 +343,7 @@ export function TaskwarriorView({ data, writingStats }: { data: TaskSnapshot; wr
           </div>
           <div className="mt-2.5 sm:mt-3 space-y-1">
             <div className="flex justify-between text-[9px] sm:text-[10px] font-mono text-muted-foreground">
-              <span>→ Lvl {profile.level + 1}</span>
+              <span>XP Progressing</span>
               <span className="font-semibold text-garden">{profile.levelProgressPct}%</span>
             </div>
             <div className="h-1.5 w-full overflow-hidden rounded-full bg-surface-2">
@@ -353,7 +353,7 @@ export function TaskwarriorView({ data, writingStats }: { data: TaskSnapshot; wr
               />
             </div>
             <div className="text-[9px] sm:text-[10px] font-mono text-muted-foreground/50">
-              {(profile.nextLevelXp - profile.currentLevelXp).toLocaleString()} XP to next level
+              {profile.currentLevelXp.toLocaleString()} / {profile.nextLevelXp.toLocaleString()} XP
             </div>
           </div>
         </div>
