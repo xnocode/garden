@@ -415,7 +415,7 @@ export function TaskwarriorView({ data, writingStats }: { data: TaskSnapshot; wr
           </span>
         </div>
 
-        {sessionStatus === "loading" ? (
+        {sessionStatus === "loading" || !isMounted ? (
           <div className="flex items-center justify-center rounded-lg border border-dashed border-border bg-surface/10 py-12">
             <div className="h-5 w-5 animate-spin rounded-full border-2 border-border border-t-garden" />
           </div>
@@ -581,7 +581,7 @@ export function TaskwarriorView({ data, writingStats }: { data: TaskSnapshot; wr
           </span>
         </div>
 
-        {sessionStatus === "loading" ? (
+        {sessionStatus === "loading" || !isMounted ? (
           <div className="flex items-center justify-center rounded-lg border border-dashed border-border bg-surface/10 py-10">
             <div className="h-5 w-5 animate-spin rounded-full border-2 border-border border-t-garden" />
           </div>
