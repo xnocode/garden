@@ -20,6 +20,7 @@ import { askGardenKnowledgeBase } from "@/lib/telegram-ask";
 import { processBrainDumpToNote } from "@/lib/telegram-dump";
 import { processPdfToNote } from "@/lib/telegram-pdf";
 import { getMorningDigest } from "@/lib/telegram-digest";
+import { getAiNextDayGuidance, getTaskStudyBlueprint } from "@/lib/telegram-task-coach";
 import { scanNotebookForNewTasks, scanNotebookForCompletedTasks } from "@/lib/notebook-scanner";
 import { geminiUrl } from "@/lib/ai-models";
 
@@ -292,6 +293,8 @@ function registerCommands(token: string) {
   lastCommandsRegisteredAt = now;
 
   const commands = [
+    { command: "guide",    description: "🎯 AI daily plan & neural study guide" },
+    { command: "study",    description: "🧠 AI 3-step active recall study coach" },
     { command: "scantask", description: "📸 Scan notebook page → add tasks" },
     { command: "scandone", description: "✅ Scan notebook page → mark done" },
     { command: "mytasks",  description: "📋 View your pending task list" },
@@ -885,6 +888,119 @@ export async function POST(req: Request) {
       return NextResponse.json({ ok: true, ask: true });
     }
 
+    // ═══════════════════════════════════════════════════════════════════
+    // 🎯 AI DAILY PLAN & NEURAL STUDY GUIDE — /guide, /plan, /tomorrow
+    // ═══════════════════════════════════════════════════════════════════
+    if (
+      text.startsWith("/guide") ||
+      text.startsWith("/plan") ||
+      text.startsWith("/tomorrow") ||
+      text.startsWith("/nextday") ||
+      rawText.includes("Daily Guide") ||
+      rawText.includes("AI Plan") ||
+      text === "guide_plan"
+    ) {
+      const customQuery = text.replace(/^\/(guide|plan|tomorrow|nextday)/i, "").trim();
+      await sendMsg(
+        token,
+        chatId,
+        `🧠 <b>Analyzing your tasks &amp; designing tomorrow's study plan...</b>\n<i>Applying 1+2 rule &amp; Neural Active Recall protocol...</i>`
+      );
+
+      after(async () => {
+        try {
+          const res = await getAiNextDayGuidance(customQuery || undefined);
+          const buttons: any[] = [
+            [
+              { text: "📋 View Tasks (/mytasks)", callback_data: "/mytasks" },
+              { text: "✅ Complete Task (/done)", callback_data: "/done" },
+            ],
+            [
+              { text: "🧠 Study Breakdown for #1", callback_data: "study_task_1" },
+              { text: "🔄 Refresh Plan", callback_data: "guide_plan" },
+            ],
+          ];
+
+          await sendMsg(token, chatId, res.text, { inline_keyboard: buttons });
+        } catch (err: any) {
+          await sendMsg(token, chatId, `❌ <b>Guide Error:</b> ${escapeHtml(err.message)}`);
+        }
+      });
+
+      return NextResponse.json({ ok: true });
+    }
+
+    // ═══════════════════════════════════════════════════════════════════
+    // 🧠 AI ACTIVE RECALL STUDY COACH — /study <topic or task #>
+    // ═══════════════════════════════════════════════════════════════════
+    if (text.startsWith("/study") || text.startsWith("study_")) {
+      const rawPayload = text.startsWith("study_")
+        ? text.replace(/^study_task_?/, "").trim()
+        : text.replace(/^\/study/i, "").trim();
+
+      await sendMsg(token, chatId, `🧠 <b>Generating 3-Step Neural Study Blueprint...</b>`);
+
+      after(async () => {
+        try {
+          let targetTopic = rawPayload;
+
+          // If payload is a numeric task position, lookup task description
+          const pos = parseInt(rawPayload, 10);
+          if (!isNaN(pos) && pos > 0) {
+            const snapshot = await getTasksFromGitHub();
+            const task = snapshot?.tasks?.[pos - 1];
+            if (task) {
+              targetTopic = `${task.description} (Project: ${task.project || "general"})`;
+            }
+          }
+
+          if (!targetTopic) {
+            // Default to #1 task or general study guide
+            const snapshot = await getTasksFromGitHub();
+            const task = snapshot?.tasks?.[0];
+            targetTopic = task ? task.description : "Effective Programming & Concept Mastery";
+          }
+
+          const blueprint = await getTaskStudyBlueprint(targetTopic);
+          await sendMsg(token, chatId, blueprint, {
+            inline_keyboard: [
+              [
+                { text: "🎯 Tomorrow's Plan", callback_data: "guide_plan" },
+                { text: "📋 My Tasks", callback_data: "/mytasks" },
+              ],
+            ],
+          });
+        } catch (err: any) {
+          await sendMsg(token, chatId, `❌ <b>Study Coach Error:</b> ${escapeHtml(err.message)}`);
+        }
+      });
+
+      return NextResponse.json({ ok: true });
+    }
+
+    // ═══════════════════════════════════════════════════════════════════
+    // ☀️ MORNING DIGEST — /digest
+    // ═══════════════════════════════════════════════════════════════════
+    if (text.startsWith("/digest") || rawText.includes("Morning Digest")) {
+      await sendMsg(token, chatId, `☀️ <b>Preparing your Morning Digest...</b>`);
+      after(async () => {
+        try {
+          const digest = await getMorningDigest();
+          await sendMsg(token, chatId, digest, {
+            inline_keyboard: [
+              [
+                { text: "🎯 Plan Tomorrow (/guide)", callback_data: "guide_plan" },
+                { text: "📋 View Tasks", callback_data: "/mytasks" },
+              ],
+            ],
+          });
+        } catch (err: any) {
+          await sendMsg(token, chatId, `❌ <b>Digest Error:</b> ${escapeHtml(err.message)}`);
+        }
+      });
+      return NextResponse.json({ ok: true });
+    }
+
     // ═══════════════════════════════════════
     // 💬 COMMANDS & BUTTONS
     // ═══════════════════════════════════════
@@ -1260,29 +1376,46 @@ export async function POST(req: Request) {
 
     if (text.startsWith("/start") || text.startsWith("/help") || rawText.includes("Help")) {
       await sendMsg(token, chatId,
-        `💡 <b>Garden Bot — Complete AI &amp; Command Guide</b>\n\n` +
-        `🧠 <b>1. Ask Your Garden AI:</b>\n` +
-        `• <code>/ask What notes do I have about Python?</code>\n\n` +
-        `📸 <b>2. Pen &amp; Paper Notebook Scanner:</b>\n` +
-        `• <code>/scantask</code> (or <code>/scan</code>) → send photo → AI extracts handwritten tasks &amp; metadata to Taskwarrior\n` +
-        `• <code>/scandone</code> (or <code>/scancheck</code>) → send photo → AI detects ticked boxes &amp; marks matching tasks done\n` +
-        `• Or send any notebook photo directly for interactive choices!\n\n` +
-        `🎙️ <b>3. Voice Capturing:</b>\n` +
-        `• <code>/voice</code> → then send voice → AI creates a <b>published note</b>\n` +
-        `• <code>/vtask</code> → then send voice → AI creates a <b>Taskwarrior task</b>\n` +
-        `• Or just send a voice directly — defaults to creating a note.\n\n` +
-        `💬 <b>4. Raw Brain Dump:</b>\n` +
-        `• <code>/dump Messy thoughts &amp; notes go here...</code>\n\n` +
-        `📌 <b>5. Taskwarrior Tasks:</b>\n` +
-        `• Add: <code>/task Buy milk due:today priority:H</code>\n` +
-        `• Multi: <code>/tasks\n- Task 1 due:today\n- Task 2 due:tomorrow</code>\n` +
-        `• View: <code>/mytasks</code> — See pending task list with IDs\n` +
-        `• Done: <code>/done 2</code> — Mark task #2 as complete\n\n` +
-        `📚 <b>6. Manage Notes:</b>\n` +
-        `• <code>/note Title\nBody... #tag</code> — Write text note directly\n` +
-        `• <code>.md File Upload</code> — Publish or update existing note\n` +
-        `• <code>.pdf File Upload</code> — AI converts PDF to note\n` +
-        `• <code>/list</code>, <code>/search</code>, <code>/stats</code>, <code>/tags</code>, <code>/delete</code>`
+        `💡 <b>Garden Bot — Complete Command &amp; Usage Guide</b>\n\n` +
+        `🎯 <b>1. AI Task Planner &amp; Study Guide</b>\n` +
+        `• <code>/guide</code> (or <code>/plan</code>) — AI selects tomorrow's 1+2 tasks with a 3-step Neural Study blueprint.\n` +
+        `  <i>Example:</i> <code>/guide</code> or <code>/guide I only have 2 hours tomorrow</code>\n` +
+        `• <code>/study &lt;topic or task #&gt;</code> — Generates an active recall &amp; practice routine.\n` +
+        `  <i>Example:</i> <code>/study 1</code> or <code>/study Python loops</code>\n` +
+        `• <code>/digest</code> — Morning summary of today's tasks, notes, and AI focus tip.\n\n` +
+        `🧠 <b>2. Ask AI About Notes &amp; Tasks</b>\n` +
+        `• <code>/ask &lt;question&gt;</code> — AI searches your notes and answers with references.\n` +
+        `  <i>Example:</i> <code>/ask What did I write about database indexing?</code>\n\n` +
+        `📌 <b>3. Taskwarrior Task Management</b>\n` +
+        `• <code>/mytasks</code> — View active pending tasks with numbers and IDs.\n` +
+        `• <code>/task &lt;description&gt;</code> — Add a single task with priority and due date.\n` +
+        `  <i>Example:</i> <code>/task Study algorithms due:tomorrow priority:H project:study</code>\n` +
+        `• <code>/tasks</code> — Add multiple tasks at once (one per line with <code>-</code>).\n` +
+        `• <code>/done &lt;number&gt;</code> — Mark task completed by its list number.\n` +
+        `  <i>Example:</i> <code>/done 1</code>\n\n` +
+        `📸 <b>4. Pen &amp; Paper Notebook Scanner</b>\n` +
+        `• <code>/scantask</code> — Send a photo of your notebook page → AI adds new tasks.\n` +
+        `• <code>/scandone</code> — Send a photo → AI detects ticked boxes &amp; marks matching tasks done.\n` +
+        `  <i>Or simply send any notebook photo directly for interactive choices!</i>\n\n` +
+        `🎙️ <b>5. Voice Capture</b>\n` +
+        `• <code>/vtask</code> then send voice → AI creates a Taskwarrior task.\n` +
+        `• <code>/voice</code> then send voice → AI transcribes &amp; publishes as a note.\n` +
+        `  <i>Sending a voice directly defaults to creating a published note.</i>\n\n` +
+        `📝 <b>6. Notes &amp; Writing</b>\n` +
+        `• <code>/note &lt;Title&gt;\\n&lt;Body&gt;</code> — Create a published note directly.\n` +
+        `• <code>/dump &lt;messy thoughts&gt;</code> — AI turns raw brain dump into a clean structured note.\n` +
+        `• <code>/append &lt;Title&gt; | &lt;text&gt;</code> — Append content to an existing note.\n` +
+        `• Upload <code>.md</code> file — Publishes or updates the note.\n` +
+        `• Upload <code>.pdf</code> file — AI converts PDF into a formatted garden note.\n\n` +
+        `🔍 <b>7. Browse &amp; Search</b>\n` +
+        `• <code>/list</code> (or <code>/list 2</code>) — Browse published notes page by page.\n` +
+        `• <code>/search &lt;keyword&gt;</code> — Search notes by title or content.\n` +
+        `• <code>/tags</code> — List all tags in the garden.\n` +
+        `• <code>/tag &lt;name&gt;</code> — View all notes under a tag (e.g. <code>/tag python</code>).\n` +
+        `• <code>/stats</code> — See total notes, word counts, and top tags.\n` +
+        `• <code>/delete &lt;slug&gt;</code> — Delete a note by filename.\n\n` +
+        `🛑 <b>8. Utilities</b>\n` +
+        `• <code>/cancel</code> (or <code>/stop</code>) — Reset and cancel any pending voice/photo mode.`
       );
       return NextResponse.json({ ok: true });
     }
