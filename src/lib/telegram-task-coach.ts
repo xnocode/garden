@@ -52,7 +52,14 @@ export function markdownToTelegramHtml(text: string): string {
     return `__TG_CODE_BLOCK_${idx}__`;
   });
 
-  // 3. In non-code text, safely escape HTML characters
+  // 3. Convert markdown list bullets (* or - at start of line) to • so they are never mistaken for italic tags
+  processed = processed.replace(/^[\*\-]\s+/gm, "• ");
+  processed = processed.replace(/^\s{2,}[\*\-]\s+/gm, "    • ");
+
+  // 4. Convert horizontal dividers (---, ***, ___)
+  processed = processed.replace(/^[-*_]{3,}\s*$/gm, "───────────────────────────");
+
+  // 5. In non-code text, safely escape HTML characters
   // Escape & that isn't already part of standard entities
   processed = processed.replace(/&(?!amp;|lt;|gt;|quot;)/g, "&amp;");
 
@@ -82,24 +89,24 @@ export function markdownToTelegramHtml(text: string): string {
       .replace(/<\/em>/gi, "</i>");
   });
 
-  // 4. Convert Markdown formatting in text:
+  // 6. Convert Markdown formatting in text (strictly single-line to avoid multi-line eating):
   // - Headers (# Header, ## Header, ### Header)
   processed = processed.replace(/^###?\s+(.+)$/gm, "<b>$1</b>");
   processed = processed.replace(/^##\s+(.+)$/gm, "<b>$1</b>");
   processed = processed.replace(/^#\s+(.+)$/gm, "<b>$1</b>");
 
-  // - Bold markdown **text** or __text__
-  processed = processed.replace(/\*\*(.*?)\*\*/g, "<b>$1</b>");
-  processed = processed.replace(/__(.*?)__/g, "<b>$1</b>");
+  // - Bold markdown **text** or __text__ (non-greedy, single line)
+  processed = processed.replace(/\*\*([^\n*]+?)\*\*/g, "<b>$1</b>");
+  processed = processed.replace(/__([^\n_]+?)__/g, "<b>$1</b>");
 
-  // - Italic markdown *text* or _text_
-  processed = processed.replace(/(^|\s)\*(.*?)\*(\s|$)/g, "$1<i>$2</i>$3");
-  processed = processed.replace(/(^|\s)_(.*?)_(\s|$)/g, "$1<i>$2</i>$3");
+  // - Italic markdown *text* or _text_ (non-greedy, single line)
+  processed = processed.replace(/(^|[^\w*])\*([^\n*]+?)\*([^\w*]|$)/g, "$1<i>$2</i>$3");
+  processed = processed.replace(/(^|[^\w_])_([^\n_]+?)_([^\w_]|$)/g, "$1<i>$2</i>$3");
 
   // - Markdown links [text](url)
   processed = processed.replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g, '<a href="$2">$1</a>');
 
-  // 5. Restore code blocks
+  // 7. Restore code blocks
   processed = processed.replace(/__TG_CODE_BLOCK_(\d+)__/g, (_match, idxStr) => {
     return codeBlocks[parseInt(idxStr, 10)] || "";
   });
@@ -134,9 +141,10 @@ export async function getAiNextStrategicRoadmap(customQuery?: string): Promise<S
   const tasksSnapshot = await getTasksFromGitHub().catch(() => null);
   const tasks = tasksSnapshot?.tasks || [];
 
-  // Fetch recent notes from the garden for study context
+  // Fetch recent notes and existing garden tags for knowledge compounding
   const notes = await listNotes().catch(() => []);
-  const recentNotes = notes.slice(0, 8).map((n) => n.title).join(", ") || "None";
+  const recentNotes = notes.slice(0, 10).map((n) => `[[${n.title}]] (${n.tags?.map(t => `#${t}`).join(" ") || "no tags"})`).join(", ") || "None";
+  const allTags = Array.from(new Set(notes.flatMap(n => n.tags || []))).slice(0, 15).map(t => `#${t}`).join(" ");
 
   // Build task list summary
   const taskList = tasks.length > 0
@@ -150,60 +158,68 @@ export async function getAiNextStrategicRoadmap(customQuery?: string): Promise<S
   const geminiKey = (process.env.GEMINI_API_KEY || process.env.GOOGLE_AI_KEY || "").trim();
   const groqKey = (process.env.GROQ_API_KEY || "").trim();
 
-  const systemPrompt = `You are a world-class strategic engineering mentor and computer science learning advisor for Ridoy's digital garden ("xnocode").
+  const systemPrompt = `You are a world-class principal software engineer and cognitive learning mentor for Ridoy's digital garden ("xnocode").
 
 Your Mission:
-Analyze the student's current active tasks, study tracks (e.g. C++ track, University Math / Fourier Analysis, Algorithms), and garden notes to create a clear, comprehensive, and highly actionable BATTLE PLAN & EXECUTION GUIDE.
+Design an intelligent, highly disciplined, and continuous BATTLE PLAN & LEARNING GUIDE for the student's daily study session.
 
-You must provide a structured, mentor-grade response:
-1. TRACK & GOAL: Identify their active learning sprint and overall goal.
-2. IMMEDIATE ACTION (DO THIS NOW): Pick the single most important next task. Provide:
-   - Why this must be done first.
-   - Core Concept to grasp (15m).
-   - Practical Code Exercise (20m): A concise, practical ~5-10 line code snippet to write, compile, and run.
-   - Digital Garden Note (10m): Exact note title (with [[wikilinks]]), tags, and key takeaways to record in Obsidian.
-3. SEQUENCED ROADMAP: Order their remaining pending tasks into logical milestones (Phase 1 -> Phase 2 -> Phase 3).
-4. MISSING MILESTONES: Identify 2-3 critical missing topics they forgot to add to their roadmap. Format each at the very end as:
-   [SUGGESTED_TASK: <Task Description> priority:H/M/L project:<project>]
+Core Pedagogical Principles you MUST enforce:
+1. STRICT PREREQUISITE SEQUENCING (No Skipping):
+   - Review active tasks in order. Foundation and setup must precede advanced topics (e.g. Task #1 Intro/Setup before Variables; Variables before Conditionals; Conditionals before Loops).
+   - If earlier tasks in a track are pending, pick the TRUE root prerequisite as today's exact task.
+2. 3-STAGE COMPOUNDING LEARNING LOOP (Total ~45 mins):
+   - Phase A: Core Mental Model (15m) — Concrete theory and mental model, avoiding passive reading.
+   - Phase B: Active Practice & Edge Cases (20m) — A practical, concise 5-10 line code snippet to write, test, and observe in compiler.
+   - Phase C: Digital Garden Compounding (10m) — Exact Obsidian note with [[wikilinks]], #tags, connecting new knowledge to their existing garden notes.
+3. CONTINUITY:
+   - Provide "Tomorrow's On-Ramp" (the exact milestone that unlocks next).
+4. ACADEMIC & TRACK BALANCING:
+   - Balance the main programming track (C++) with University studies (Semester 4: Fourier Analysis, DSA-II, Software Engineering).
 
 Formatting Rules:
-- Put all code snippets inside standard markdown code blocks (e.g. \`\`\`cpp ... \`\`\`). Keep code concise (~5-10 lines).
+- Put all code snippets inside standard markdown code blocks (\`\`\`cpp ... \`\`\`). Keep code concise (~5-10 lines).
 - Use clean Markdown (**bold**, *italic*, \`inline code\`). Use clean emojis.
-- Make the advice practical, direct, and motivating.`;
+- For missing critical milestones, put lines at the very end like:
+  [SUGGESTED_TASK: CPP - Functions & Scope priority:H project:cpp]
+  [SUGGESTED_TASK: CPP - Pointers & Memory Management priority:H project:cpp]`;
 
   const userPrompt = `Current Date: ${today}
 Student's Current Active Tasks:
 ${taskList}
 
-Recent Published Garden Notes:
-${recentNotes}
+Digital Garden Existing Tags & Knowledge Base:
+Tags: ${allTags || "#cpp #university #aiml #garden"}
+Recent Notes in Garden: ${recentNotes}
 
-${customQuery ? `Student's Focus / Request: "${customQuery}"` : "Analyze my active tasks and give me a complete, actionable battle plan: what to execute right now step-by-step, the sequenced path forward, and missing milestones to add."}
+${customQuery ? `Student's Focus / Request: "${customQuery}"` : "Analyze my tasks and provide an executive, deep learning guide: What exact prerequisite task must I do right now, the 3-stage practice loop, how it connects to my garden, and the sequenced path forward."}
 
 Format the response cleanly:
-🗺️ **Strategic Action Plan & Roadmap**
+🗺️ **Strategic Action Plan & Execution Blueprint**
 
 🧭 **1. Current Focus & Sprint Goal:**
-[Summary of current track & milestones, e.g. C++ Programming Fundamentals & University Math]
+[1-2 sentences on current sprint focus, e.g. C++ Programming Track: Stage 1 Foundations & University Math]
 
 🌟 **2. EXACT TASK TO DO RIGHT NOW:**
 • **[Task Name & Number]** *(Est: ~45 mins)*
-💡 *Why this first:* [Clear reason why this builds prerequisite knowledge]
+💡 *Why this first:* [Clear reason why this foundational step comes before following tasks]
 
 🛠️ **3. Step-by-Step Execution Guide:**
-• 📖 **Core Concept (15m):** [Key principles to understand without distraction]
-• 💻 **Code / Practice Exercise (20m):**
+• 📖 **Phase A: Mental Model (15m):** [Core concept to internalize without distraction]
+• 💻 **Phase B: Active Practice & Code Exercise (20m):**
 \`\`\`cpp
 // 5-10 lines runnable code exercise
 \`\`\`
-• 📝 **Digital Garden Note (10m):** Write note \`[[Note Title]]\` with tags \`#tag1 #tag2\` covering 2 main takeaways.
+• 📝 **Phase C: Digital Garden Note (10m):** Write note \`[[Note Title]]\` with tags \`#tag1 #tag2\` covering 2 main takeaways.
 
-⚡ **4. Sequenced Roadmap (What comes next):**
+⚡ **4. Sequenced Roadmap (Chronological Milestones):**
 1. ⏩ **[Next Task]** — [1-sentence goal]
 2. ⏩ **[Following Task]** — [1-sentence goal]
 3. ⏩ **[Future Task]** — [1-sentence goal]
 
-💡 **5. Missing Milestones to Add:**
+🎯 **5. Tomorrow's On-Ramp:**
+[1 clear sentence stating the exact checkpoint/trigger to start tomorrow's session]
+
+💡 **6. Missing Milestones to Add:**
 • **[Suggested Task 1]** — [Why it's essential for mastery]
 • **[Suggested Task 2]** — [Why it's essential for mastery]
 
@@ -284,15 +300,15 @@ Format the response cleanly:
   // 3. Fallback Roadmap
   return {
     text: markdownToTelegramHtml(
-      `🗺️ **Strategic Action Plan & Roadmap**\n\n` +
+      `🗺️ **Strategic Action Plan & Execution Blueprint**\n\n` +
       `🧭 **1. Current Focus & Sprint Goal:**\n` +
       `Mastering **C++ Programming Foundations** (Variables, Operators, Control Flow) alongside **University Math**.\n\n` +
       `🌟 **2. EXACT TASK TO DO RIGHT NOW:**\n` +
       `• **Task #1: CPP - Introduction & Setup** *(Est: ~30 mins)*\n` +
       `💡 *Why this first:* Validates your build environment (compiler, debugger) before writing application logic.\n\n` +
       `🛠️ **3. Step-by-Step Execution Guide:**\n` +
-      `• 📖 **Core Concept (10m):** Compilation pipeline (source -> preprocessor -> compiler -> linker -> binary).\n` +
-      `• 💻 **Code / Practice Exercise (15m):**\n` +
+      `• 📖 **Phase A: Mental Model (15m):** Compilation pipeline (source -> preprocessor -> compiler -> linker -> binary).\n` +
+      `• 💻 **Phase B: Active Practice & Code Exercise (20m):**\n` +
       `\`\`\`cpp\n` +
       `#include <iostream>\n` +
       `int main() {\n` +
@@ -300,13 +316,16 @@ Format the response cleanly:
       `    return 0;\n` +
       `}\n` +
       `\`\`\`\n` +
-      `• 📝 **Digital Garden Note (10m):** Create \`[[C++ Compilation Model]]\` with tags \`#cpp #foundations\`.\n\n` +
-      `⚡ **4. Sequenced Roadmap:**\n` +
+      `• 📝 **Phase C: Digital Garden Note (10m):** Create \`[[C++ Compilation Model]]\` with tags \`#cpp #foundations\`.\n\n` +
+      `⚡ **4. Sequenced Roadmap (Chronological Milestones):**\n` +
       `1. ⏩ **CPP - Variables & Data Types** — Memory sizes and type safety.\n` +
       `2. ⏩ **CPP - Operators & Logic** — Arithmetic, relational, and bitwise expressions.\n` +
       `3. ⏩ **CPP - Conditional Statements & Loops** — Branching, iteration, and control flow.\n` +
       `4. ⏩ **University Math: Fourier Analysis** — Complex variables and frequency domain.\n\n` +
-      `💡 **5. Missing Milestones to Add:**\n` +
+      `🎯 **5. Tomorrow's On-Ramp:**\n` +
+      `Open \`variables.cpp\` and verify primitive data type byte limits using \`sizeof()\`.` +
+      `\n\n` +
+      `💡 **6. Missing Milestones to Add:**\n` +
       `• **CPP - Functions & Scope** — Modular programming and stack frames.\n` +
       `• **CPP - Pointers & Memory Management** — Direct memory addressing and references.`
     ),
