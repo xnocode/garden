@@ -38,23 +38,16 @@ export async function GET() {
       });
     }
 
-    // Mask task descriptions with frosted glass placeholder for public viewers when private
-    const sampleMasks = [
-      "Task Entry •••••••••••••••••",
-      "Confidential Item ••••••••••••••••••••••",
-      "Private Focus ••••••••••••••",
-      "Workflow Objective ••••••••••••••••••••••••",
-      "Study Module •••••••••••••••••••",
-    ];
-
-    const maskedPendingTasks = (taskData.tasks || []).map((t, idx) => ({
+    const maskedPendingTasks = (taskData.tasks || []).map((t) => ({
       ...t,
-      description: sampleMasks[idx % sampleMasks.length],
+      description: "",
+      project: t.project ? "" : null,
     }));
 
-    const maskedCompletedTasks = (taskData.completedTasks || []).map((t, idx) => ({
+    const maskedCompletedTasks = (taskData.completedTasks || []).map((t) => ({
       ...t,
-      description: sampleMasks[(idx + 2) % sampleMasks.length],
+      description: "",
+      project: t.project ? "" : null,
     }));
 
     return NextResponse.json({

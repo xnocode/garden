@@ -9,13 +9,8 @@ import {
   Circle,
   Trophy,
   Flame,
-  Shield,
   ChevronLeft,
   ChevronRight,
-  Lock,
-  Globe,
-  Loader2,
-  Sparkles,
 } from "lucide-react";
 import {
   calculatePlayerProfile,
@@ -199,34 +194,14 @@ export function TaskwarriorView({ data, writingStats }: { data: TaskSnapshot; wr
 
   useEffect(() => {
     refreshTasks();
+    const handlePrivacyChange = () => {
+      refreshTasks();
+    };
+    window.addEventListener("taskwarrior-privacy-changed", handlePrivacyChange);
+    return () => {
+      window.removeEventListener("taskwarrior-privacy-changed", handlePrivacyChange);
+    };
   }, [refreshTasks, session]);
-
-  // Handle visibility toggle by admin
-  const handleToggleVisibility = async () => {
-    if (!isAdmin || isToggling) return;
-    setIsToggling(true);
-    const nextVal = !isPublic;
-
-    try {
-      const res = await fetch("/api/tasks/settings", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ publicTasks: nextVal }),
-      });
-
-      if (res.ok) {
-        setIsPublic(nextVal);
-        setToastMessage(nextVal ? "Task list is now public" : "Task list is now private");
-        setTimeout(() => setToastMessage(null), 3000);
-        await refreshTasks();
-      }
-    } catch {
-      setToastMessage("Failed to update visibility setting.");
-      setTimeout(() => setToastMessage(null), 3000);
-    } finally {
-      setIsToggling(false);
-    }
-  };
 
   const { stats, tasks = [], exportedAt, completedTasks = [] } = taskData;
   const isBlurred = !isPublic && !isAdmin;
@@ -282,71 +257,6 @@ export function TaskwarriorView({ data, writingStats }: { data: TaskSnapshot; wr
         <p className="mt-2 text-muted-foreground">
           Task completion, study projects, and workflow — tracked with taskwarrior.
         </p>
-
-        {/* ── Admin Privacy Control Bar (Only rendered for Admin) ── */}
-        {isAdmin && (
-          <div className="mt-6 rounded-2xl border border-garden/30 bg-surface/80 p-4 backdrop-blur-md shadow-sm">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-              <div className="flex items-center gap-3">
-                <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-garden/15 text-garden flex-shrink-0 ring-1 ring-garden/30">
-                  <Shield className="h-4.5 w-4.5" />
-                </div>
-                <div>
-                  <div className="flex items-center gap-2">
-                    <span className="font-serif text-sm font-bold text-heading">
-                      Task Visibility
-                    </span>
-                    {isPublic ? (
-                      <span className="inline-flex items-center gap-1 rounded-full border border-emerald-500/30 bg-emerald-500/15 px-2 py-0.5 text-[10px] font-semibold text-emerald-400">
-                        <Globe className="h-3 w-3" />
-                        Public
-                      </span>
-                    ) : (
-                      <span className="inline-flex items-center gap-1 rounded-full border border-amber-500/30 bg-amber-500/15 px-2 py-0.5 text-[10px] font-semibold text-amber-400">
-                        <Lock className="h-3 w-3" />
-                        Private (Glass Blurring for Visitors)
-                      </span>
-                    )}
-                  </div>
-                  <p className="mt-0.5 text-xs text-muted-foreground">
-                    {isPublic
-                      ? "Task descriptions are fully public to all visitors."
-                      : "Task descriptions are blurred with frosted glass for visitors. Only you see them clearly."}
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex items-center gap-2 self-end sm:self-center">
-                <button
-                  type="button"
-                  disabled={isToggling}
-                  onClick={handleToggleVisibility}
-                  className={`inline-flex items-center gap-2 rounded-xl px-3.5 py-1.5 text-xs font-semibold shadow-sm transition-all active:scale-[0.98] ${
-                    isPublic
-                      ? "border border-border bg-surface-2 hover:border-amber-400/50 hover:text-amber-300 text-foreground"
-                      : "bg-garden text-garden-foreground hover:opacity-90 ring-1 ring-garden/40"
-                  }`}
-                >
-                  {isToggling ? (
-                    <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                  ) : isPublic ? (
-                    <Lock className="h-3.5 w-3.5 text-amber-400" />
-                  ) : (
-                    <Globe className="h-3.5 w-3.5" />
-                  )}
-                  <span>{isPublic ? "Set to Private" : "Set to Public"}</span>
-                </button>
-              </div>
-            </div>
-
-            {toastMessage && (
-              <div className="mt-3 flex items-center gap-2 rounded-lg bg-garden/15 px-3 py-1.5 text-xs font-medium text-garden animate-in fade-in duration-200">
-                <Sparkles className="h-3.5 w-3.5 flex-shrink-0" />
-                <span>{toastMessage}</span>
-              </div>
-            )}
-          </div>
-        )}
       </header>
 
       {/* ── Metric Summary Grid ── */}
@@ -500,7 +410,11 @@ export function TaskwarriorView({ data, writingStats }: { data: TaskSnapshot; wr
                         {priorityLabel(task.priority)}
                       </td>
                       <td className="whitespace-nowrap px-4 py-2 sm:py-2.5 text-garden">
-                        {task.project || ""}
+                        {isBlurred ? (
+                          <span className="inline-block h-3.5 w-14 select-none rounded bg-garden/15 backdrop-blur-md opacity-70 filter blur-[2px]" />
+                        ) : (
+                          task.project || ""
+                        )}
                       </td>
                       <td className={`whitespace-nowrap px-2.5 sm:px-4 py-2 sm:py-2.5 ${ task.overdue ? "text-red-400 font-semibold" : "text-amber-300/80" }`}>
                         {formatDueDate(task.due)}
@@ -513,11 +427,10 @@ export function TaskwarriorView({ data, writingStats }: { data: TaskSnapshot; wr
                             </span>
                           )}
                           {isBlurred ? (
-                            <span className="relative inline-flex items-center">
-                              <span className="select-none rounded-md bg-surface-2/60 px-3 py-1 font-mono text-[11px] text-muted-foreground/30 backdrop-blur-md filter blur-[5px]">
-                                {task.description || "Encrypted Task Entry •••••••••••••"}
-                              </span>
-                            </span>
+                            <span
+                              className="inline-block h-3.5 select-none rounded bg-surface-2/70 backdrop-blur-md opacity-60 filter blur-[2px]"
+                              style={{ width: `${80 + ((task.id * 31) % 120)}px`, maxWidth: "100%" }}
+                            />
                           ) : (
                             <span>{task.description}</span>
                           )}
@@ -644,7 +557,11 @@ export function TaskwarriorView({ data, writingStats }: { data: TaskSnapshot; wr
                       {priorityLabel(task.priority)}
                     </td>
                     <td className="whitespace-nowrap px-4 py-2 sm:py-2.5 text-garden">
-                      {task.project || ""}
+                      {isBlurred ? (
+                        <span className="inline-block h-3.5 w-14 select-none rounded bg-garden/15 backdrop-blur-md opacity-70 filter blur-[2px]" />
+                      ) : (
+                        task.project || ""
+                      )}
                     </td>
                     <td className="px-2.5 sm:px-4 py-2 sm:py-2.5 text-foreground/90 min-w-[200px] sm:min-w-0">
                       <span className="flex items-center gap-2">
@@ -662,11 +579,10 @@ export function TaskwarriorView({ data, writingStats }: { data: TaskSnapshot; wr
                           </span>
                         )}
                         {isBlurred ? (
-                          <span className="relative inline-flex items-center">
-                            <span className="select-none rounded-md bg-surface-2/60 px-3 py-1 font-mono text-[11px] text-muted-foreground/30 backdrop-blur-md filter blur-[5px]">
-                              {task.description || "Encrypted Completed Entry •••••••••"}
-                            </span>
-                          </span>
+                          <span
+                            className="inline-block h-3.5 select-none rounded bg-surface-2/70 backdrop-blur-md opacity-60 filter blur-[2px]"
+                            style={{ width: `${90 + (((task.id || i + 1) * 29) % 110)}px`, maxWidth: "100%" }}
+                          />
                         ) : (
                           <span className={`line-through decoration-muted-foreground/40 ${ task.wasMissed ? "text-red-400/70" : "text-muted-foreground/80 hover:text-foreground" } transition-colors`}>
                             {task.description}

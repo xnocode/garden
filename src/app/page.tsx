@@ -88,23 +88,18 @@ export default async function Page() {
     const { isTaskwarriorPublic } = await import("@/lib/settings");
     const isPublic = await isTaskwarriorPublic();
     if (!isPublic && taskData) {
-      const sampleMasks = [
-        "Task Entry •••••••••••••••••",
-        "Confidential Item ••••••••••••••••••••••",
-        "Private Focus ••••••••••••••",
-        "Workflow Objective ••••••••••••••••••••••••",
-        "Study Module •••••••••••••••••••",
-      ];
       taskData = {
         ...taskData,
         isBlurred: true,
-        tasks: (taskData.tasks || []).map((t: any, idx: number) => ({
+        tasks: (taskData.tasks || []).map((t: any) => ({
           ...t,
-          description: sampleMasks[idx % sampleMasks.length],
+          description: "",
+          project: t.project ? "" : null,
         })),
-        completedTasks: (taskData.completedTasks || []).map((t: any, idx: number) => ({
+        completedTasks: (taskData.completedTasks || []).map((t: any) => ({
           ...t,
-          description: sampleMasks[(idx + 2) % sampleMasks.length],
+          description: "",
+          project: t.project ? "" : null,
         })),
       };
     }
