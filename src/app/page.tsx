@@ -84,6 +84,41 @@ export default async function Page() {
     ]);
     taskData = JSON.parse(taskRaw) ?? taskData;
     changelogEntries = JSON.parse(changelogRaw) ?? [];
+
+    const { isTaskwarriorPublic } = await import("@/lib/settings");
+    const isPublic = await isTaskwarriorPublic();
+    if (!isPublic && taskData) {
+      taskData = {
+        ...taskData,
+        isBlurred: true,
+        tasks: (taskData.tasks || []).map((t: any, idx: number) => ({
+          id: idx + 1,
+          uuid: `masked-${idx}`,
+          description: "Private Task Item ••••••••••••••••••••••••",
+          project: "private",
+          tags: [],
+          priority: null,
+          due: null,
+          entry: t.entry || null,
+          urgency: 0,
+          overdue: false,
+        })),
+        completedTasks: (taskData.completedTasks || []).map((t: any, idx: number) => ({
+          id: idx + 1,
+          uuid: `masked-done-${idx}`,
+          description: "Completed Task ••••••••••••••••••••••••",
+          project: "private",
+          tags: [],
+          priority: null,
+          due: null,
+          entry: null,
+          end: t.end || null,
+          urgency: 0,
+          xpAwarded: 150,
+          wasMissed: false,
+        })),
+      };
+    }
   } catch { /* use defaults */ }
 
   const appData = {

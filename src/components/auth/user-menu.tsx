@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import { useSession, signOut } from "next-auth/react";
-import { LogIn, LogOut, Crown, ShieldCheck, User, Plus, FileText, Edit3 } from "lucide-react";
+import { LogIn, LogOut, Crown, ShieldCheck, User, Plus, FileText, Edit3, ListChecks } from "lucide-react";
 import { AuthModal } from "./auth-modal";
 import { AdminQuickPost } from "@/components/admin/admin-quick-post";
 
@@ -153,6 +153,15 @@ export function UserMenu() {
                     <FileText className="h-3.5 w-3.5 text-sky-400" />
                     <span>My Saved Drafts</span>
                   </button>
+
+                  <a
+                    href="/?view=tasks"
+                    onClick={() => setDropdownOpen(false)}
+                    className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-xs font-medium text-foreground transition-colors hover:bg-surface-2 hover:text-garden"
+                  >
+                    <ListChecks className="h-3.5 w-3.5 text-emerald-400" />
+                    <span>Taskwarrior & Privacy</span>
+                  </a>
                 </div>
               )}
 
