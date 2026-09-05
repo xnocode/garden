@@ -100,6 +100,23 @@ function formatDueDate(dateStr: string | null): string {
   }).format(d);
 }
 
+function getDhakaTodayStr(): string {
+  return new Intl.DateTimeFormat("en-CA", {
+    timeZone: "Asia/Dhaka",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).format(new Date());
+}
+
+function checkIsOverdue(task: TaskData, todayDhakaStr: string): boolean {
+  if (task.overdue) return true;
+  if (!task.due) return false;
+  const dueDhakaStr = formatDueDate(task.due);
+  if (!dueDhakaStr) return false;
+  return dueDhakaStr < todayDhakaStr;
+}
+
 function urgencyColor(urg: number): string {
   if (urg >= 10) return "text-red-400";
   if (urg >= 5) return "text-amber-400";
@@ -124,15 +141,17 @@ function priorityColor(p: string | null): string {
  *  - On due day→ base reward (no bonus/penalty)
  *  - Early     → positive reward boosted by days early (+30%/day, capped 3×)
  */
-function calcPendingXp(task: TaskData): { xp: number; daysLate: number; daysEarly: number } {
+function calcPendingXp(task: TaskData, isOverdue: boolean = false): { xp: number; daysLate: number; daysEarly: number } {
   // Base reward
   let base = 150;
   if (task.priority === "H") base += 100;
   else if (task.priority === "M") base += 50;
   else if (task.priority === "L") base += 20;
 
+  const effectiveOverdue = Boolean(task.overdue || isOverdue);
+
   // ── Overdue path ──
-  if (task.overdue && task.due) {
+  if (effectiveOverdue && task.due) {
     const m = task.due.match(/^(\d{4})(\d{2})(\d{2})T(\d{2})(\d{2})(\d{2})Z$/);
     if (!m) return { xp: base, daysLate: 0, daysEarly: 0 };
     const dueDate = new Date(`${m[1]}-${m[2]}-${m[3]}T${m[4]}:${m[5]}:${m[6]}Z`);
@@ -146,7 +165,7 @@ function calcPendingXp(task: TaskData): { xp: number; daysLate: number; daysEarl
   }
 
   // ── Early path: task has a future due date ──
-  if (!task.overdue && task.due) {
+  if (!effectiveOverdue && task.due) {
     const m = task.due.match(/^(\d{4})(\d{2})(\d{2})T(\d{2})(\d{2})(\d{2})Z$/);
     if (m) {
       const dueDate = new Date(`${m[1]}-${m[2]}-${m[3]}T${m[4]}:${m[5]}:${m[6]}Z`);
@@ -233,6 +252,33 @@ export function TaskwarriorView({ data, writingStats }: { data: TaskSnapshot; wr
   }, [isPageToggling, isPublic]);
 
   const { stats, tasks = [], exportedAt, completedTasks = [] } = taskData;
+
+  // Dynamically evaluate overdue status in Dhaka time
+  const { processedTasks, effectiveOverdueCount } = useMemo(() => {
+    const todayDhaka = getDhakaTodayStr();
+    let overdueCount = 0;
+    const list = tasks.map((task) => {
+      const isOverdue = checkIsOverdue(task, todayDhaka);
+      if (isOverdue) overdueCount++;
+      return {
+        ...task,
+        overdue: isOverdue,
+      };
+    });
+
+    // Sort: overdue tasks first (by urgency desc), then on-schedule tasks (by urgency desc)
+    list.sort((a, b) => {
+      if (a.overdue && !b.overdue) return -1;
+      if (!a.overdue && b.overdue) return 1;
+      return (b.urgency || 0) - (a.urgency || 0);
+    });
+
+    return {
+      processedTasks: list,
+      effectiveOverdueCount: Math.max(stats.overdue ?? 0, overdueCount),
+    };
+  }, [tasks, stats.overdue]);
+
   // Don't apply blur while the session is still resolving — prevents a flash
   // of blurred rows for admins whose session loads after first paint.
   const isBlurred = sessionStatus !== "loading" && !isPublic && !isAdmin;
@@ -382,7 +428,7 @@ export function TaskwarriorView({ data, writingStats }: { data: TaskSnapshot; wr
             {stats.pending}
           </div>
           <div className="mt-1 text-[10px] sm:text-[11px] text-muted-foreground/70 truncate">
-            {(stats.overdue ?? 0) > 0 ? `${stats.overdue} missed` : "all on track"}
+            {effectiveOverdueCount > 0 ? `${effectiveOverdueCount} missed` : "all on track"}
           </div>
         </div>
 
@@ -410,11 +456,11 @@ export function TaskwarriorView({ data, writingStats }: { data: TaskSnapshot; wr
               Pending Tasks
             </h2>
             <span className="rounded-full bg-surface-2 px-2 py-0.5 font-mono text-xs text-muted-foreground">
-              {tasks.length}
+              {processedTasks.length}
             </span>
           </div>
           <span className="font-mono text-xs text-muted-foreground/60">
-            {(stats.overdue ?? 0) > 0 ? `${stats.overdue} overdue` : "all on schedule"}
+            {effectiveOverdueCount > 0 ? `${effectiveOverdueCount} overdue` : "all on schedule"}
           </span>
         </div>
 
@@ -422,7 +468,7 @@ export function TaskwarriorView({ data, writingStats }: { data: TaskSnapshot; wr
           <div className="flex items-center justify-center rounded-lg border border-dashed border-border bg-surface/10 py-12">
             <div className="h-5 w-5 animate-spin rounded-full border-2 border-border border-t-garden" />
           </div>
-        ) : tasks.length > 0 ? (
+        ) : processedTasks.length > 0 ? (
           <div className="space-y-1.5">
             <div className="flex items-center justify-between px-1 text-[10px] font-mono text-muted-foreground/50 sm:hidden">
               <span>Tasks Queue</span>
@@ -459,7 +505,7 @@ export function TaskwarriorView({ data, writingStats }: { data: TaskSnapshot; wr
                   </tr>
                 </thead>
                 <tbody>
-                  {tasks.map((task, i) => (
+                  {processedTasks.map((task, i) => (
                     <tr
                       key={task.id}
                       className={`border-b transition-colors ${
@@ -521,7 +567,7 @@ export function TaskwarriorView({ data, writingStats }: { data: TaskSnapshot; wr
                       </td>
                       <td className="whitespace-nowrap px-2.5 sm:px-4 py-2 sm:py-2.5 text-right">
                         {(() => {
-                          const { xp, daysLate, daysEarly } = calcPendingXp(task);
+                          const { xp, daysLate, daysEarly } = calcPendingXp(task, Boolean(task.overdue));
                           if (xp < 0) return (
                             <span
                               className="inline-flex items-center gap-1 rounded border border-red-500/40 bg-red-500/10 px-2 py-0.5 font-mono text-[11px] font-bold text-red-400"
@@ -551,7 +597,7 @@ export function TaskwarriorView({ data, writingStats }: { data: TaskSnapshot; wr
               </table>
               {/* Task count footer like real taskwarrior */}
               <div className="border-t border-border bg-surface/20 px-3 sm:px-4 py-2 text-[11px] sm:text-xs text-muted-foreground/60 font-mono">
-                {tasks.length} pending task{tasks.length !== 1 ? "s" : ""}
+                {processedTasks.length} pending task{processedTasks.length !== 1 ? "s" : ""}
               </div>
             </div>
           </div>
