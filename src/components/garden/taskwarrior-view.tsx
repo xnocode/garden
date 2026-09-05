@@ -343,7 +343,7 @@ export function TaskwarriorView({ data, writingStats }: { data: TaskSnapshot; wr
           </div>
           <div className="mt-2.5 sm:mt-3 space-y-1">
             <div className="flex justify-between text-[9px] sm:text-[10px] font-mono text-muted-foreground">
-              <span>XP Progress</span>
+              <span>→ Lvl {profile.level + 1}</span>
               <span className="font-semibold text-garden">{profile.levelProgressPct}%</span>
             </div>
             <div className="h-1.5 w-full overflow-hidden rounded-full bg-surface-2">
@@ -351,6 +351,9 @@ export function TaskwarriorView({ data, writingStats }: { data: TaskSnapshot; wr
                 className="h-full rounded-full bg-gradient-to-r from-garden to-emerald-400 transition-all duration-700"
                 style={{ width: `${profile.levelProgressPct}%` }}
               />
+            </div>
+            <div className="text-[9px] sm:text-[10px] font-mono text-muted-foreground/50">
+              {(profile.nextLevelXp - profile.currentLevelXp).toLocaleString()} XP to next level
             </div>
           </div>
         </div>
