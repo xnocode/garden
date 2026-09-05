@@ -1,10 +1,10 @@
 {
-  "exportedAt": "2026-09-05T18:58:35.751Z",
+  "exportedAt": "2026-09-05T19:00:39.525Z",
   "stats": {
     "total": 9,
     "pending": 9,
     "completed": 0,
-    "overdue": 9
+    "overdue": 0
   },
   "tasks": [
     {
@@ -14,10 +14,10 @@
       "project": "cpp",
       "tags": [],
       "priority": "H",
-      "due": "20260904T180000Z",
+      "due": "20260905T180000Z",
       "entry": "20260904T195127Z",
-      "urgency": 16.2757,
-      "overdue": true
+      "urgency": 15.8193,
+      "overdue": false
     },
     {
       "id": 2,
@@ -26,10 +26,10 @@
       "project": "cpp",
       "tags": [],
       "priority": "H",
-      "due": "20260904T180000Z",
+      "due": "20260905T180000Z",
       "entry": "20260904T195128Z",
-      "urgency": 16.2757,
-      "overdue": true
+      "urgency": 15.8193,
+      "overdue": false
     },
     {
       "id": 3,
@@ -38,10 +38,10 @@
       "project": "cpp",
       "tags": [],
       "priority": "H",
-      "due": "20260904T180000Z",
+      "due": "20260905T180000Z",
       "entry": "20260904T195128Z",
-      "urgency": 16.2757,
-      "overdue": true
+      "urgency": 15.8193,
+      "overdue": false
     },
     {
       "id": 4,
@@ -50,10 +50,10 @@
       "project": "cpp",
       "tags": [],
       "priority": "H",
-      "due": "20260904T180000Z",
+      "due": "20260905T180000Z",
       "entry": "20260904T195128Z",
-      "urgency": 16.2757,
-      "overdue": true
+      "urgency": 15.8193,
+      "overdue": false
     },
     {
       "id": 5,
@@ -62,10 +62,10 @@
       "project": "cpp",
       "tags": [],
       "priority": "H",
-      "due": "20260904T180000Z",
+      "due": "20260905T180000Z",
       "entry": "20260904T195128Z",
-      "urgency": 16.2757,
-      "overdue": true
+      "urgency": 15.8193,
+      "overdue": false
     },
     {
       "id": 6,
@@ -74,10 +74,10 @@
       "project": "cpp",
       "tags": [],
       "priority": "H",
-      "due": "20260904T180000Z",
+      "due": "20260905T180000Z",
       "entry": "20260904T195128Z",
-      "urgency": 16.2757,
-      "overdue": true
+      "urgency": 15.8193,
+      "overdue": false
     },
     {
       "id": 7,
@@ -86,10 +86,10 @@
       "project": "cpp",
       "tags": [],
       "priority": "H",
-      "due": "20260904T180000Z",
+      "due": "20260905T180000Z",
       "entry": "20260904T195128Z",
-      "urgency": 16.2757,
-      "overdue": true
+      "urgency": 15.8193,
+      "overdue": false
     },
     {
       "id": 8,
@@ -98,10 +98,10 @@
       "project": "cpp",
       "tags": [],
       "priority": "H",
-      "due": "20260904T180000Z",
+      "due": "20260905T180000Z",
       "entry": "20260904T195129Z",
-      "urgency": 16.2757,
-      "overdue": true
+      "urgency": 15.8193,
+      "overdue": false
     },
     {
       "id": 9,
@@ -110,10 +110,10 @@
       "project": "university",
       "tags": [],
       "priority": "H",
-      "due": "20260904T180000Z",
+      "due": "20260905T180000Z",
       "entry": "20260904T195129Z",
-      "urgency": 16.2757,
-      "overdue": true
+      "urgency": 15.8193,
+      "overdue": false
     }
   ],
   "completedTasks": []
