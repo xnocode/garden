@@ -38,33 +38,23 @@ export async function GET() {
       });
     }
 
-    // Mask task descriptions and specific details for public viewers when private
+    // Mask task descriptions with frosted glass placeholder for public viewers when private
+    const sampleMasks = [
+      "Task Entry •••••••••••••••••",
+      "Confidential Item ••••••••••••••••••••••",
+      "Private Focus ••••••••••••••",
+      "Workflow Objective ••••••••••••••••••••••••",
+      "Study Module •••••••••••••••••••",
+    ];
+
     const maskedPendingTasks = (taskData.tasks || []).map((t, idx) => ({
-      id: idx + 1,
-      uuid: `masked-${idx}`,
-      description: "Private Task Item ••••••••••••••••••••••••",
-      project: "private",
-      tags: [],
-      priority: null,
-      due: null,
-      entry: t.entry || null,
-      urgency: 0,
-      overdue: false,
+      ...t,
+      description: sampleMasks[idx % sampleMasks.length],
     }));
 
     const maskedCompletedTasks = (taskData.completedTasks || []).map((t, idx) => ({
-      id: idx + 1,
-      uuid: `masked-done-${idx}`,
-      description: "Completed Task ••••••••••••••••••••••••",
-      project: "private",
-      tags: [],
-      priority: null,
-      due: null,
-      entry: null,
-      end: t.end || null,
-      urgency: 0,
-      xpAwarded: 150,
-      wasMissed: false,
+      ...t,
+      description: sampleMasks[(idx + 2) % sampleMasks.length],
     }));
 
     return NextResponse.json({
