@@ -119,224 +119,6 @@ export function markdownToTelegramHtml(text: string): string {
  */
 export const sanitizeTelegramHtml = markdownToTelegramHtml;
 
-export interface StrategicRoadmapResult {
-  text: string;
-  suggestedTasks: string[];
-}
-
-/**
- * Analyzes active tasks, digital garden context, and learning curriculum to determine:
- * 1. Immediate Next Step (in logical order)
- * 2. Step-by-step How-To execution blueprint (code/exercise/note)
- * 3. Missing Milestone Tasks that should be added to the roadmap
- */
-export async function getAiNextStrategicRoadmap(customQuery?: string): Promise<StrategicRoadmapResult> {
-  const today = new Intl.DateTimeFormat("en-CA", {
-    timeZone: "Asia/Dhaka",
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-  }).format(new Date());
-
-  const tasksSnapshot = await getTasksFromGitHub().catch(() => null);
-  const tasks = tasksSnapshot?.tasks || [];
-
-  // Fetch recent notes and existing garden tags for knowledge compounding
-  const notes = await listNotes().catch(() => []);
-  const recentNotes = notes.slice(0, 10).map((n) => `[[${n.title}]] (${n.tags?.map(t => `#${t}`).join(" ") || "no tags"})`).join(", ") || "None";
-  const allTags = Array.from(new Set(notes.flatMap(n => n.tags || []))).slice(0, 15).map(t => `#${t}`).join(" ");
-
-  // Build task list summary
-  const taskList = tasks.length > 0
-    ? tasks.map((t, idx) => {
-        const dueStr = t.due ? `due: ${formatTWDueDate(t.due)}` : "no date";
-        const prioStr = t.priority ? `[Priority ${t.priority}]` : "";
-        return `Task #${idx + 1}: "${t.description}" (Project: ${t.project || "general"}, ${dueStr}, ${prioStr})`;
-      }).join("\n")
-    : "No active tasks in Taskwarrior yet.";
-
-  const geminiKey = (process.env.GEMINI_API_KEY || process.env.GOOGLE_AI_KEY || "").trim();
-  const groqKey = (process.env.GROQ_API_KEY || "").trim();
-
-  const systemPrompt = `You are a world-class principal software engineer and cognitive learning mentor for Ridoy's digital garden ("xnocode").
-
-Your Mission:
-Design an intelligent, highly disciplined, and continuous BATTLE PLAN & LEARNING GUIDE for the student's daily study session.
-
-Core Pedagogical Principles you MUST enforce:
-1. STRICT PREREQUISITE SEQUENCING (No Skipping):
-   - Review active tasks in order. Foundation and setup must precede advanced topics (e.g. Task #1 Intro/Setup before Variables; Variables before Conditionals; Conditionals before Loops).
-   - If earlier tasks in a track are pending, pick the TRUE root prerequisite as today's exact task.
-2. 3-STAGE COMPOUNDING LEARNING LOOP (Total ~45 mins):
-   - Phase A: Core Mental Model (15m) — Concrete theory and mental model, avoiding passive reading.
-   - Phase B: Active Practice & Edge Cases (20m) — A practical, concise 5-10 line code snippet to write, test, and observe in compiler.
-   - Phase C: Digital Garden Compounding (10m) — Exact Obsidian note with [[wikilinks]], #tags, connecting new knowledge to their existing garden notes.
-3. CONTINUITY:
-   - Provide "Tomorrow's On-Ramp" (the exact milestone that unlocks next).
-4. ACADEMIC & TRACK BALANCING:
-   - Balance the main programming track (C++) with University studies (Semester 4: Fourier Analysis, DSA-II, Software Engineering).
-
-Formatting Rules:
-- Put all code snippets inside standard markdown code blocks (\`\`\`cpp ... \`\`\`). Keep code concise (~5-10 lines).
-- Use clean Markdown (**bold**, *italic*, \`inline code\`). Use clean emojis.
-- For missing critical milestones, put lines at the very end like:
-  [SUGGESTED_TASK: CPP - Functions & Scope priority:H project:cpp]
-  [SUGGESTED_TASK: CPP - Pointers & Memory Management priority:H project:cpp]`;
-
-  const userPrompt = `Current Date: ${today}
-Student's Current Active Tasks:
-${taskList}
-
-Digital Garden Existing Tags & Knowledge Base:
-Tags: ${allTags || "#cpp #university #aiml #garden"}
-Recent Notes in Garden: ${recentNotes}
-
-${customQuery ? `Student's Focus / Request: "${customQuery}"` : "Analyze my tasks and provide an executive, deep learning guide: What exact prerequisite task must I do right now, the 3-stage practice loop, how it connects to my garden, and the sequenced path forward."}
-
-Format the response cleanly:
-🗺️ **Strategic Action Plan & Execution Blueprint**
-
-🧭 **1. Current Focus & Sprint Goal:**
-[1-2 sentences on current sprint focus, e.g. C++ Programming Track: Stage 1 Foundations & University Math]
-
-🌟 **2. EXACT TASK TO DO RIGHT NOW:**
-• **[Task Name & Number]** *(Est: ~45 mins)*
-💡 *Why this first:* [Clear reason why this foundational step comes before following tasks]
-
-🛠️ **3. Step-by-Step Execution Guide:**
-• 📖 **Phase A: Mental Model (15m):** [Core concept to internalize without distraction]
-• 💻 **Phase B: Active Practice & Code Exercise (20m):**
-\`\`\`cpp
-// 5-10 lines runnable code exercise
-\`\`\`
-• 📝 **Phase C: Digital Garden Note (10m):** Write note \`[[Note Title]]\` with tags \`#tag1 #tag2\` covering 2 main takeaways.
-
-⚡ **4. Sequenced Roadmap (Chronological Milestones):**
-1. ⏩ **[Next Task]** — [1-sentence goal]
-2. ⏩ **[Following Task]** — [1-sentence goal]
-3. ⏩ **[Future Task]** — [1-sentence goal]
-
-🎯 **5. Tomorrow's On-Ramp:**
-[1 clear sentence stating the exact checkpoint/trigger to start tomorrow's session]
-
-💡 **6. Missing Milestones to Add:**
-• **[Suggested Task 1]** — [Why it's essential for mastery]
-• **[Suggested Task 2]** — [Why it's essential for mastery]
-
-[SUGGESTED_TASK: <Task 1 with priority and project>]
-[SUGGESTED_TASK: <Task 2 with priority and project>]`;
-
-  let responseText = "";
-
-  // 1. Try Gemini
-  if (geminiKey) {
-    try {
-      const res = await fetch(geminiUrl(geminiKey), {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          contents: [{ parts: [{ text: `${systemPrompt}\n\n${userPrompt}` }] }],
-          generationConfig: { temperature: 0.5, maxOutputTokens: 1500 },
-        }),
-      });
-
-      if (res.ok) {
-        const data = await res.json();
-        const rawText = data?.candidates?.[0]?.content?.parts?.[0]?.text;
-        if (rawText) responseText = rawText;
-      }
-    } catch (err: any) {
-      console.warn("Gemini strategic roadmap failed:", err.message);
-    }
-  }
-
-  // 2. Try Groq Llama Fallback
-  if (!responseText && groqKey) {
-    try {
-      const gRes = await fetch("https://api.groq.com/openai/v1/chat/completions", {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${groqKey}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          model: "llama-3.3-70b-versatile",
-          messages: [
-            { role: "system", content: systemPrompt },
-            { role: "user", content: userPrompt },
-          ],
-          temperature: 0.5,
-          max_tokens: 1500,
-        }),
-      });
-
-      if (gRes.ok) {
-        const gData = await gRes.json();
-        const content = gData?.choices?.[0]?.message?.content;
-        if (content) responseText = content;
-      }
-    } catch (err: any) {
-      console.warn("Groq strategic roadmap failed:", err.message);
-    }
-  }
-
-  // Parse suggested tasks from [SUGGESTED_TASK: ...] tags
-  const suggestedTasks: string[] = [];
-  if (responseText) {
-    const matches = responseText.matchAll(/\[SUGGESTED_TASK:\s*(.+?)\]/g);
-    for (const match of matches) {
-      if (match[1]) {
-        suggestedTasks.push(match[1].trim());
-      }
-    }
-    // Remove the raw metadata tags from user-facing text
-    responseText = responseText.replace(/\[SUGGESTED_TASK:\s*.+?\]/g, "").trim();
-    return {
-      text: markdownToTelegramHtml(responseText),
-      suggestedTasks,
-    };
-  }
-
-  // 3. Fallback Roadmap
-  return {
-    text: markdownToTelegramHtml(
-      `🗺️ **Strategic Action Plan & Execution Blueprint**\n\n` +
-      `🧭 **1. Current Focus & Sprint Goal:**\n` +
-      `Mastering **C++ Programming Foundations** (Variables, Operators, Control Flow) alongside **University Math**.\n\n` +
-      `🌟 **2. EXACT TASK TO DO RIGHT NOW:**\n` +
-      `• **Task #1: CPP - Introduction & Setup** *(Est: ~30 mins)*\n` +
-      `💡 *Why this first:* Validates your build environment (compiler, debugger) before writing application logic.\n\n` +
-      `🛠️ **3. Step-by-Step Execution Guide:**\n` +
-      `• 📖 **Phase A: Mental Model (15m):** Compilation pipeline (source -> preprocessor -> compiler -> linker -> binary).\n` +
-      `• 💻 **Phase B: Active Practice & Code Exercise (20m):**\n` +
-      `\`\`\`cpp\n` +
-      `#include <iostream>\n` +
-      `int main() {\n` +
-      `    std::cout << "C++ Environment Ready!" << std::endl;\n` +
-      `    return 0;\n` +
-      `}\n` +
-      `\`\`\`\n` +
-      `• 📝 **Phase C: Digital Garden Note (10m):** Create \`[[C++ Compilation Model]]\` with tags \`#cpp #foundations\`.\n\n` +
-      `⚡ **4. Sequenced Roadmap (Chronological Milestones):**\n` +
-      `1. ⏩ **CPP - Variables & Data Types** — Memory sizes and type safety.\n` +
-      `2. ⏩ **CPP - Operators & Logic** — Arithmetic, relational, and bitwise expressions.\n` +
-      `3. ⏩ **CPP - Conditional Statements & Loops** — Branching, iteration, and control flow.\n` +
-      `4. ⏩ **University Math: Fourier Analysis** — Complex variables and frequency domain.\n\n` +
-      `🎯 **5. Tomorrow's On-Ramp:**\n` +
-      `Open \`variables.cpp\` and verify primitive data type byte limits using \`sizeof()\`.` +
-      `\n\n` +
-      `💡 **6. Missing Milestones to Add:**\n` +
-      `• **CPP - Functions & Scope** — Modular programming and stack frames.\n` +
-      `• **CPP - Pointers & Memory Management** — Direct memory addressing and references.`
-    ),
-    suggestedTasks: [
-      "CPP - Functions & Scope priority:H project:cpp",
-      "CPP - Pointers & References priority:H project:cpp",
-      "CPP - Mini Project: Number Guessing Game priority:M project:cpp",
-    ],
-  };
-}
-
 /**
  * Generates an on-demand 3-step Neural Study Blueprint for any given topic or task.
  */
@@ -368,7 +150,7 @@ Format using clean Markdown (**bold**, *italic*, \`code\`, and \`\`\` code block
       if (res.ok) {
         const data = await res.json();
         const rawText = data?.candidates?.[0]?.content?.parts?.[0]?.text;
-        if (rawText) return sanitizeTelegramHtml(rawText);
+        if (rawText) return markdownToTelegramHtml(rawText);
       }
     } catch (err: any) {
       console.warn("Gemini study blueprint failed:", err.message);
@@ -397,7 +179,7 @@ Format using clean Markdown (**bold**, *italic*, \`code\`, and \`\`\` code block
       if (gRes.ok) {
         const gData = await gRes.json();
         const content = gData?.choices?.[0]?.message?.content;
-        if (content) return sanitizeTelegramHtml(content);
+        if (content) return markdownToTelegramHtml(content);
       }
     } catch (err: any) {
       console.warn("Groq study blueprint failed:", err.message);
@@ -414,12 +196,4 @@ Format using clean Markdown (**bold**, *italic*, \`code\`, and \`\`\` code block
     `Write 2 working code examples or an Obsidian note with <code>[[wikilinks]]</code>.\n\n` +
     `💡 <i>"Mastery comes from retrieval practice, not passive review."</i>`
   );
-}
-
-/**
- * Backward compatibility helper for daily plan
- */
-export async function getAiNextDayGuidance(customQuery?: string): Promise<{ text: string }> {
-  const result = await getAiNextStrategicRoadmap(customQuery);
-  return { text: result.text };
 }

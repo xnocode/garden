@@ -20,7 +20,7 @@ import { askGardenKnowledgeBase } from "@/lib/telegram-ask";
 import { processBrainDumpToNote } from "@/lib/telegram-dump";
 import { processPdfToNote } from "@/lib/telegram-pdf";
 import { getMorningDigest } from "@/lib/telegram-digest";
-import { getAiNextStrategicRoadmap, getAiNextDayGuidance, getTaskStudyBlueprint } from "@/lib/telegram-task-coach";
+import { getTaskStudyBlueprint } from "@/lib/telegram-task-coach";
 import { scanNotebookForNewTasks, scanNotebookForCompletedTasks } from "@/lib/notebook-scanner";
 import { geminiUrl } from "@/lib/ai-models";
 
@@ -943,67 +943,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ ok: true, ask: true });
     }
 
-    // ═══════════════════════════════════════════════════════════════════
-    // 🗺️ AI STRATEGIC ROADMAP & NEXT ACTION PLAN — /next, /plan, /roadmap
-    // ═══════════════════════════════════════════════════════════════════
-    if (
-      text.startsWith("/next") ||
-      text.startsWith("/roadmap") ||
-      text.startsWith("/plan") ||
-      text.startsWith("/guide") ||
-      text.startsWith("/tomorrow") ||
-      text.startsWith("/whatnext") ||
-      rawText.includes("Next Action") ||
-      rawText.includes("Roadmap") ||
-      text === "roadmap_plan" ||
-      text === "guide_plan"
-    ) {
-      const customQuery = text.replace(/^\/(next|roadmap|plan|guide|tomorrow|whatnext)/i, "").trim();
-      await sendMsg(
-        token,
-        chatId,
-        `🗺️ <b>Analyzing your active tasks &amp; building next action roadmap...</b>\n<i>Sequencing tracks, finding missing milestones &amp; preparing execution guide...</i>`
-      );
 
-      after(async () => {
-        try {
-          const res = await getAiNextStrategicRoadmap(customQuery || undefined);
-          const buttons: any[] = [];
-
-          // Add interactive one-tap buttons to queue suggested missing tasks
-          if (res.suggestedTasks && res.suggestedTasks.length > 0) {
-            for (const st of res.suggestedTasks) {
-              const cleanTitle = st.replace(/\s*(priority|due|project):[^\s]+/gi, "").trim();
-              const callbackParam = encodeURIComponent(st);
-              // Telegram callback_data limit is 64 bytes
-              const safeCb = callbackParam.length <= 50 ? callbackParam : encodeURIComponent(cleanTitle).slice(0, 50);
-              buttons.push([
-                {
-                  text: `➕ Add: ${cleanTitle.slice(0, 28)}`,
-                  callback_data: `add_task_${safeCb}`,
-                },
-              ]);
-            }
-          }
-
-          buttons.push([
-            { text: "🧠 How to Study #1", callback_data: "study_task_1" },
-            { text: "📋 View Tasks (/mytasks)", callback_data: "/mytasks" },
-          ]);
-
-          buttons.push([
-            { text: "✅ Complete Task (/done)", callback_data: "/done" },
-            { text: "🔄 Refresh Roadmap", callback_data: "roadmap_plan" },
-          ]);
-
-          await sendMsg(token, chatId, res.text, { inline_keyboard: buttons });
-        } catch (err: any) {
-          await sendMsg(token, chatId, `❌ <b>Roadmap Error:</b> ${escapeHtml(err.message)}`);
-        }
-      });
-
-      return NextResponse.json({ ok: true });
-    }
 
     // ═══════════════════════════════════════════════════════════════════
     // 🧠 AI ACTIVE RECALL STUDY COACH — /study <topic or task #>
@@ -1452,44 +1392,41 @@ export async function POST(req: Request) {
     if (text.startsWith("/start") || text.startsWith("/help") || rawText.includes("Help")) {
       await sendMsg(token, chatId,
         `💡 <b>Garden Bot — Complete Command &amp; Usage Guide</b>\n\n` +
-        `🎯 <b>1. Strategic Roadmap &amp; AI Study Guide</b>\n` +
-        `• <code>/next</code> (or <code>/roadmap</code>, <code>/plan</code>) — AI analyzes your track, sequences what to do next, suggests missing milestones &amp; provides execution steps.\n` +
-        `  <i>Example:</i> <code>/next</code> or <code>/next focusing on C++ and Math</code>\n` +
+        `🧠 <b>1. AI Intelligence &amp; Study Tools</b>\n` +
+        `• <code>/ask &lt;question&gt;</code> — AI searches your garden notes and tasks to answer with references.\n` +
+        `  <i>Example:</i> <code>/ask What did I write about Fourier Analysis?</code>\n` +
         `• <code>/study &lt;topic or task #&gt;</code> — Generates a 3-step active recall &amp; practice routine.\n` +
-        `  <i>Example:</i> <code>/study 1</code> or <code>/study Python loops</code>\n` +
+        `  <i>Example:</i> <code>/study 1</code> or <code>/study C++ pointers</code>\n` +
         `• <code>/digest</code> — Morning summary of today's tasks, notes, and AI focus tip.\n\n` +
-        `🧠 <b>2. Ask AI About Notes &amp; Tasks</b>\n` +
-        `• <code>/ask &lt;question&gt;</code> — AI searches your notes and answers with references.\n` +
-        `  <i>Example:</i> <code>/ask What did I write about database indexing?</code>\n\n` +
-        `📌 <b>3. Taskwarrior Task Management</b>\n` +
-        `• <code>/mytasks</code> — View active pending tasks with numbers and IDs.\n` +
+        `📌 <b>2. Taskwarrior Task Management</b>\n` +
+        `• <code>/mytasks</code> — View active pending tasks with list numbers and priorities.\n` +
         `• <code>/task &lt;description&gt;</code> — Add a single task with priority and due date.\n` +
         `  <i>Example:</i> <code>/task Study algorithms due:tomorrow priority:H project:study</code>\n` +
         `• <code>/tasks</code> — Add multiple tasks at once (one per line with <code>-</code>).\n` +
         `• <code>/done &lt;number&gt;</code> — Mark task completed by its list number.\n` +
         `  <i>Example:</i> <code>/done 1</code>\n\n` +
-        `📸 <b>4. Pen &amp; Paper Notebook Scanner</b>\n` +
-        `• <code>/scantask</code> — Send a photo of your notebook page → AI adds new tasks.\n` +
-        `• <code>/scandone</code> — Send a photo → AI detects ticked boxes &amp; marks matching tasks done.\n` +
-        `  <i>Or simply send any notebook photo directly for interactive choices!</i>\n\n` +
-        `🎙️ <b>5. Voice Capture</b>\n` +
+        `📸 <b>3. Pen &amp; Paper Notebook Scanner</b>\n` +
+        `• <code>/scantask</code> — Send a notebook photo → AI detects &amp; queues handwritten tasks.\n` +
+        `• <code>/scandone</code> — Send a notebook photo → AI detects ticked checkboxes &amp; marks tasks done.\n` +
+        `  <i>Or simply send any notebook photo directly for interactive options!</i>\n\n` +
+        `🎙️ <b>4. Voice Capture</b>\n` +
         `• <code>/vtask</code> then send voice → AI creates a Taskwarrior task.\n` +
-        `• <code>/voice</code> then send voice → AI transcribes &amp; publishes as a note.\n` +
-        `  <i>Sending a voice directly defaults to creating a published note.</i>\n\n` +
-        `📝 <b>6. Notes &amp; Writing</b>\n` +
+        `• <code>/voice</code> then send voice → AI transcribes &amp; publishes as a garden note.\n` +
+        `  <i>Sending a voice message directly defaults to creating a published note.</i>\n\n` +
+        `📝 <b>5. Notes &amp; Publishing</b>\n` +
         `• <code>/note &lt;Title&gt;\\n&lt;Body&gt;</code> — Create a published note directly.\n` +
-        `• <code>/dump &lt;messy thoughts&gt;</code> — AI turns raw brain dump into a clean structured note.\n` +
+        `• <code>/dump &lt;thoughts&gt;</code> — AI turns raw brain dump into a clean structured Obsidian note.\n` +
         `• <code>/append &lt;Title&gt; | &lt;text&gt;</code> — Append content to an existing note.\n` +
-        `• Upload <code>.md</code> file — Publishes or updates the note.\n` +
+        `• Upload <code>.md</code> file — Publishes or updates note.\n` +
         `• Upload <code>.pdf</code> file — AI converts PDF into a formatted garden note.\n\n` +
-        `🔍 <b>7. Browse &amp; Search</b>\n` +
+        `🔍 <b>6. Browse &amp; Search</b>\n` +
         `• <code>/list</code> (or <code>/list 2</code>) — Browse published notes page by page.\n` +
         `• <code>/search &lt;keyword&gt;</code> — Search notes by title or content.\n` +
-        `• <code>/tags</code> — List all tags in the garden.\n` +
-        `• <code>/tag &lt;name&gt;</code> — View all notes under a tag (e.g. <code>/tag python</code>).\n` +
+        `• <code>/tags</code> — List all tags across your garden.\n` +
+        `• <code>/tag &lt;name&gt;</code> — View all notes under a tag (e.g. <code>/tag cpp</code>).\n` +
         `• <code>/stats</code> — See total notes, word counts, and top tags.\n` +
         `• <code>/delete &lt;slug&gt;</code> — Delete a note by filename.\n\n` +
-        `🛑 <b>8. Utilities</b>\n` +
+        `🛑 <b>7. Utilities</b>\n` +
         `• <code>/cancel</code> (or <code>/stop</code>) — Reset and cancel any pending voice/photo mode.`
       );
       return NextResponse.json({ ok: true });
