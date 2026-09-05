@@ -4,6 +4,7 @@
 
 import { searchTelegramNotes, getTasksFromGitHub } from "./telegram-file-handler";
 import { geminiUrl } from "./ai-models";
+import { markdownToTelegramHtml } from "./telegram-task-coach";
 
 export async function askGardenKnowledgeBase(question: string): Promise<string> {
   // 1. Retrieve top matching notes from garden
@@ -39,7 +40,7 @@ Answer the user's question accurately using the provided notes and tasks from th
 Rules:
 - Be concise, clear, and helpful.
 - Reference specific note titles when quoting information.
-- Use Telegram HTML formatting (<b>bold</b>, <code>code</code>, <i>italic</i>).
+- Format using clean Markdown (**bold**, *italic*, \`inline code\`, and \`\`\` code blocks). Keep code concise.
 - If the answer isn't in the context, give your best helpful response while stating that it wasn't directly found in the garden notes.`;
 
   const userPrompt = `Context from Garden:\n${contextText || "No matching notes found."}\n\nQuestion: ${question}`;
@@ -67,7 +68,7 @@ Rules:
       if (res.ok) {
         const data = await res.json();
         const text = data?.candidates?.[0]?.content?.parts?.[0]?.text;
-        if (text) return text.trim();
+        if (text) return markdownToTelegramHtml(text.trim());
       }
     } catch (err: any) {
       console.warn("Gemini ask failed:", err.message);
@@ -95,7 +96,7 @@ Rules:
       if (lRes.ok) {
         const lData = await lRes.json();
         const content = lData?.choices?.[0]?.message?.content;
-        if (content) return content.trim();
+        if (content) return markdownToTelegramHtml(content.trim());
       }
     } catch (err: any) {
       console.warn("Groq Llama ask failed:", err.message);

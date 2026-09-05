@@ -66,10 +66,13 @@ async function sendMsg(
   token: string, chatId: number | string, text: string, markup?: any
 ): Promise<number | null> {
   try {
+    const maxLen = 4000;
+    const safeText = text.length > maxLen ? text.slice(0, maxLen) + "\n\n<i>…(truncated)</i>" : text;
+
     const body: any = {
       chat_id: chatId,
       parse_mode: "HTML",
-      text,
+      text: safeText,
       disable_web_page_preview: true,
       reply_markup: markup || MAIN_KEYBOARD,
     };
@@ -80,14 +83,23 @@ async function sendMsg(
     });
     const data = await res.json();
     if (!data?.ok) {
-      // If Telegram rejected HTML (e.g. invalid tag or unescaped character), fallback to clean plain text
-      const plainText = text.replace(/<[^>]+>/g, "").replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">");
+      console.warn("Telegram sendMessage HTML rejected, falling back to plain text:", data?.description);
+      // Strip only valid HTML formatting tags and decode entities to raw text (preserves C++ code like #include <iostream>)
+      const plainText = text
+        .replace(/<\/?(b|strong|i|em|u|ins|s|strike|del|code|pre|a|blockquote|tg-spoiler|span)(\s+[^>]*)?>/gi, "")
+        .replace(/&lt;/g, "<")
+        .replace(/&gt;/g, ">")
+        .replace(/&amp;/g, "&")
+        .replace(/&quot;/g, '"');
+
+      const safePlainText = plainText.length > maxLen ? plainText.slice(0, maxLen) + "\n\n...(truncated)" : plainText;
+
       const fallbackRes = await tgFetch(`https://api.telegram.org/bot${token}/sendMessage`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           chat_id: chatId,
-          text: plainText,
+          text: safePlainText,
           disable_web_page_preview: true,
           reply_markup: markup || MAIN_KEYBOARD,
         }),
