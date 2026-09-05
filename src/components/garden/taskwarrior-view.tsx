@@ -415,7 +415,11 @@ export function TaskwarriorView({ data, writingStats }: { data: TaskSnapshot; wr
           </span>
         </div>
 
-        {tasks.length > 0 ? (
+        {sessionStatus === "loading" ? (
+          <div className="flex items-center justify-center rounded-lg border border-dashed border-border bg-surface/10 py-12">
+            <div className="h-5 w-5 animate-spin rounded-full border-2 border-border border-t-garden" />
+          </div>
+        ) : tasks.length > 0 ? (
           <div className="space-y-1.5">
             <div className="flex items-center justify-between px-1 text-[10px] font-mono text-muted-foreground/50 sm:hidden">
               <span>Tasks Queue</span>
@@ -577,7 +581,11 @@ export function TaskwarriorView({ data, writingStats }: { data: TaskSnapshot; wr
           </span>
         </div>
 
-        {completedTasks && completedTasks.length > 0 ? (
+        {sessionStatus === "loading" ? (
+          <div className="flex items-center justify-center rounded-lg border border-dashed border-border bg-surface/10 py-10">
+            <div className="h-5 w-5 animate-spin rounded-full border-2 border-border border-t-garden" />
+          </div>
+        ) : completedTasks && completedTasks.length > 0 ? (
           <div className="overflow-x-auto rounded-lg border border-border bg-[#0c0c0f] touch-pan-x scrollbar-thin">
             <table className="w-full border-collapse font-mono text-xs sm:text-sm">
               <thead>
