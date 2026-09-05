@@ -165,7 +165,7 @@ function calcPendingXp(task: TaskData): { xp: number; daysLate: number; daysEarl
 /* ── component ── */
 
 export function TaskwarriorView({ data, writingStats }: { data: TaskSnapshot; writingStats?: any }) {
-  const { data: session } = useSession();
+  const { data: session, status: sessionStatus } = useSession();
   const isAdmin = (session?.user as any)?.role === "admin";
 
   const [taskData, setTaskData] = useState<TaskSnapshot>(data);
@@ -233,7 +233,9 @@ export function TaskwarriorView({ data, writingStats }: { data: TaskSnapshot; wr
   }, [isPageToggling, isPublic]);
 
   const { stats, tasks = [], exportedAt, completedTasks = [] } = taskData;
-  const isBlurred = !isPublic && !isAdmin;
+  // Don't apply blur while the session is still resolving — prevents a flash
+  // of blurred rows for admins whose session loads after first paint.
+  const isBlurred = sessionStatus !== "loading" && !isPublic && !isAdmin;
 
   const completionRate =
     stats.total > 0 ? Math.round((stats.completed / stats.total) * 100) : 0;
