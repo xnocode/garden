@@ -6,7 +6,7 @@ visibility: public
 date: 2026-07-23
 tags:
   - university
-updatedAt: 2026-08-13
+updatedAt: 2026-09-07
 ---
 > **Date:** 23 July 2026
 ## Lecture 01
@@ -147,3 +147,7 @@ form.addEventListener("submit",function(event){
 })
 ```
 
+> Date: 20 August 2026
+## Lecture 5
+
+- Follow Classroom - Assignment
