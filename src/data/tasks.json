@@ -1,10 +1,10 @@
 {
-  "exportedAt": "2026-09-07T14:47:35.078Z",
+  "exportedAt": "2026-09-07T16:51:58.878Z",
   "stats": {
     "total": 9,
-    "pending": 9,
-    "completed": 0,
-    "overdue": 9
+    "pending": 8,
+    "completed": 1,
+    "overdue": 0
   },
   "tasks": [
     {
@@ -14,10 +14,10 @@
       "project": "cpp",
       "tags": [],
       "priority": "H",
-      "due": "20260905T180000Z",
+      "due": "20260907T180000Z",
       "entry": "20260904T195127Z",
-      "urgency": 16.6642,
-      "overdue": true
+      "urgency": 15.7894,
+      "overdue": false
     },
     {
       "id": 2,
@@ -26,10 +26,10 @@
       "project": "cpp",
       "tags": [],
       "priority": "H",
-      "due": "20260905T180000Z",
+      "due": "20260907T180000Z",
       "entry": "20260904T195128Z",
-      "urgency": 16.6642,
-      "overdue": true
+      "urgency": 15.7894,
+      "overdue": false
     },
     {
       "id": 3,
@@ -38,10 +38,10 @@
       "project": "cpp",
       "tags": [],
       "priority": "H",
-      "due": "20260905T180000Z",
+      "due": "20260907T180000Z",
       "entry": "20260904T195128Z",
-      "urgency": 16.6642,
-      "overdue": true
+      "urgency": 15.7894,
+      "overdue": false
     },
     {
       "id": 4,
@@ -50,10 +50,10 @@
       "project": "cpp",
       "tags": [],
       "priority": "H",
-      "due": "20260905T180000Z",
+      "due": "20260907T180000Z",
       "entry": "20260904T195128Z",
-      "urgency": 16.6642,
-      "overdue": true
+      "urgency": 15.7894,
+      "overdue": false
     },
     {
       "id": 5,
@@ -62,10 +62,10 @@
       "project": "cpp",
       "tags": [],
       "priority": "H",
-      "due": "20260905T180000Z",
+      "due": "20260907T180000Z",
       "entry": "20260904T195128Z",
-      "urgency": 16.6642,
-      "overdue": true
+      "urgency": 15.7894,
+      "overdue": false
     },
     {
       "id": 6,
@@ -74,10 +74,10 @@
       "project": "cpp",
       "tags": [],
       "priority": "H",
-      "due": "20260905T180000Z",
+      "due": "20260907T180000Z",
       "entry": "20260904T195128Z",
-      "urgency": 16.6642,
-      "overdue": true
+      "urgency": 15.7894,
+      "overdue": false
     },
     {
       "id": 7,
@@ -86,10 +86,10 @@
       "project": "cpp",
       "tags": [],
       "priority": "H",
-      "due": "20260905T180000Z",
+      "due": "20260907T180000Z",
       "entry": "20260904T195128Z",
-      "urgency": 16.6642,
-      "overdue": true
+      "urgency": 15.7894,
+      "overdue": false
     },
     {
       "id": 8,
@@ -98,23 +98,29 @@
       "project": "cpp",
       "tags": [],
       "priority": "H",
-      "due": "20260905T180000Z",
+      "due": "20260907T180000Z",
       "entry": "20260904T195129Z",
-      "urgency": 16.6642,
-      "overdue": true
-    },
+      "urgency": 15.7894,
+      "overdue": false
+    }
+  ],
+  "completedTasks": [
     {
-      "id": 9,
+      "id": 0,
       "uuid": "be02a90e-2471-4506-8f8a-f61b0c478f88",
       "description": "Chapter 2 - Complex Variables, Fourier Analysis",
       "project": "university",
       "tags": [],
       "priority": "H",
-      "due": "20260905T180000Z",
+      "due": "20260907T180000Z",
       "entry": "20260904T195129Z",
-      "urgency": 16.6642,
-      "overdue": true
+      "end": "20260907T165116Z",
+      "urgency": 15.7894,
+      "wasMissed": false,
+      "daysLate": 0,
+      "daysEarly": 0,
+      "xpAwarded": 250,
+      "xpPenalty": 0
     }
-  ],
-  "completedTasks": []
+  ]
 }
