@@ -50,7 +50,7 @@ This code actually remove everything from the web page and replace it with text 
 
 Now let's learn about more about JavaScript.
 
-- syntax is like a rules we have to follow when using a programming languae. In programming we have to follow it no matter what.
+- syntax is like a rules we have to follow when using a programming language. In programming we have to follow it no matter what.
 
 JavaScript have some much syntax. We will be learn my practice
 

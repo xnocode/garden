@@ -136,50 +136,64 @@ function priorityColor(p: string | null): string {
   return "text-muted-foreground/40";
 }
 
-/** Projected XP for a still-pending task:
+function calcCalendarDaysDiff(dateStrA: string, dateStrB: string): number {
+  if (!dateStrA || !dateStrB) return 0;
+  const [y1, m1, d1] = dateStrA.split("-").map(Number);
+  const [y2, m2, d2] = dateStrB.split("-").map(Number);
+  const utc1 = Date.UTC(y1, m1 - 1, d1);
+  const utc2 = Date.UTC(y2, m2 - 1, d2);
+  return Math.round((utc1 - utc2) / (1000 * 60 * 60 * 24));
+}
+
+/** Projected XP for completing a pending task TODAY:
  *  - Overdue   → negative penalty scaled by days late (+50%/day, capped 10×)
  *  - On due day→ base reward (no bonus/penalty)
  *  - Early     → positive reward boosted by days early (+30%/day, capped 3×)
  */
-function calcPendingXp(task: TaskData, isOverdue: boolean = false): { xp: number; daysLate: number; daysEarly: number } {
+function calcPendingXp(
+  task: TaskData,
+  isOverdue: boolean = false,
+  todayDhakaStr: string = getDhakaTodayStr()
+): { xp: number; daysLate: number; daysEarly: number; isDueToday: boolean } {
   // Base reward
   let base = 150;
   if (task.priority === "H") base += 100;
   else if (task.priority === "M") base += 50;
   else if (task.priority === "L") base += 20;
 
-  const effectiveOverdue = Boolean(task.overdue || isOverdue);
+  if (!task.due) {
+    return { xp: base, daysLate: 0, daysEarly: 0, isDueToday: false };
+  }
 
-  // ── Overdue path ──
-  if (effectiveOverdue && task.due) {
-    const m = task.due.match(/^(\d{4})(\d{2})(\d{2})T(\d{2})(\d{2})(\d{2})Z$/);
-    if (!m) return { xp: base, daysLate: 0, daysEarly: 0 };
-    const dueDate = new Date(`${m[1]}-${m[2]}-${m[3]}T${m[4]}:${m[5]}:${m[6]}Z`);
-    const daysLate = Math.max(0, Math.floor((Date.now() - dueDate.getTime()) / 86_400_000));
+  const dueDhakaStr = formatDueDate(task.due);
+  if (!dueDhakaStr) {
+    return { xp: base, daysLate: 0, daysEarly: 0, isDueToday: false };
+  }
+
+  const diffDays = calcCalendarDaysDiff(dueDhakaStr, todayDhakaStr);
+  const effectiveOverdue = Boolean(task.overdue || isOverdue || diffDays < 0);
+
+  // ── Overdue path (due date was in the past) ──
+  if (effectiveOverdue && diffDays < 0) {
+    const daysLate = Math.abs(diffDays);
     let penaltyBase = 200;
     if (task.priority === "H") penaltyBase += 150;
     else if (task.priority === "M") penaltyBase += 50;
     else if (task.priority === "L") penaltyBase += 20;
     const extraDays = Math.max(0, daysLate - 1);
     const scale = Math.min(10, 1 + extraDays * 0.5);
-    return { xp: -Math.round(penaltyBase * scale), daysLate, daysEarly: 0 };
+    return { xp: -Math.round(penaltyBase * scale), daysLate, daysEarly: 0, isDueToday: false };
   }
 
-  // ── Early path: task has a future due date ──
-  if (!effectiveOverdue && task.due) {
-    const m = task.due.match(/^(\d{4})(\d{2})(\d{2})T(\d{2})(\d{2})(\d{2})Z$/);
-    if (m) {
-      const dueDate = new Date(`${m[1]}-${m[2]}-${m[3]}T${m[4]}:${m[5]}:${m[6]}Z`);
-      const daysEarly = Math.max(0, Math.floor((dueDate.getTime() - Date.now()) / 86_400_000));
-      if (daysEarly > 0) {
-        const scale = Math.min(3, 1 + daysEarly * 0.3);
-        return { xp: Math.round(base * scale), daysLate: 0, daysEarly };
-      }
-    }
+  // ── Early path: deadline is in the future (diffDays > 0) ──
+  if (diffDays > 0) {
+    const daysEarly = diffDays;
+    const scale = Math.min(3, 1 + daysEarly * 0.3);
+    return { xp: Math.round(base * scale), daysLate: 0, daysEarly, isDueToday: false };
   }
 
-  // On due day or no due date — plain base
-  return { xp: base, daysLate: 0, daysEarly: 0 };
+  // ── On due day (diffDays === 0) ──
+  return { xp: base, daysLate: 0, daysEarly: 0, isDueToday: true };
 }
 
 /* ── component ── */
@@ -189,6 +203,16 @@ export function TaskwarriorView({ data, writingStats }: { data: TaskSnapshot; wr
   const isAdmin = (session?.user as any)?.role === "admin";
 
   const [taskData, setTaskData] = useState<TaskSnapshot>(data);
+  const [currentDhakaDate, setCurrentDhakaDate] = useState<string>(getDhakaTodayStr);
+
+  // Daily interval check so remaining days and 'Finish Today' XP auto-updates across midnight
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const today = getDhakaTodayStr();
+      setCurrentDhakaDate((prev) => (prev !== today ? today : prev));
+    }, 60_000);
+    return () => clearInterval(interval);
+  }, []);
   // Initialise from SSR data so blur/visibility is correct on first paint.
   // page.tsx already pre-masks descriptions when tasks are private.
   const [isPublic, setIsPublic] = useState<boolean>(!data.isBlurred);
@@ -256,10 +280,9 @@ export function TaskwarriorView({ data, writingStats }: { data: TaskSnapshot; wr
 
   // Dynamically evaluate overdue status in Dhaka time
   const { processedTasks, effectiveOverdueCount } = useMemo(() => {
-    const todayDhaka = getDhakaTodayStr();
     let overdueCount = 0;
     const list = tasks.map((task) => {
-      const isOverdue = checkIsOverdue(task, todayDhaka);
+      const isOverdue = checkIsOverdue(task, currentDhakaDate);
       if (isOverdue) overdueCount++;
       return {
         ...task,
@@ -278,7 +301,7 @@ export function TaskwarriorView({ data, writingStats }: { data: TaskSnapshot; wr
       processedTasks: list,
       effectiveOverdueCount: Math.max(stats.overdue ?? 0, overdueCount),
     };
-  }, [tasks, stats.overdue]);
+  }, [tasks, stats.overdue, currentDhakaDate]);
 
   // Don't apply blur while the session is still resolving — prevents a flash
   // of blurred rows for admins whose session loads after first paint.
@@ -500,8 +523,11 @@ export function TaskwarriorView({ data, writingStats }: { data: TaskSnapshot; wr
                     <th className="whitespace-nowrap px-2.5 sm:px-4 py-2.5 text-right text-[10px] sm:text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
                       Urg
                     </th>
-                    <th className="whitespace-nowrap px-2.5 sm:px-4 py-2.5 text-right text-[10px] sm:text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
-                      XP
+                    <th
+                      className="whitespace-nowrap px-2.5 sm:px-4 py-2.5 text-right text-[10px] sm:text-[11px] font-semibold uppercase tracking-wider text-muted-foreground"
+                      title="XP you will receive if completed today (auto-updates daily based on days before deadline)"
+                    >
+                      XP (Today)
                     </th>
                   </tr>
                 </thead>
@@ -568,25 +594,32 @@ export function TaskwarriorView({ data, writingStats }: { data: TaskSnapshot; wr
                       </td>
                       <td className="whitespace-nowrap px-2.5 sm:px-4 py-2 sm:py-2.5 text-right">
                         {(() => {
-                          const { xp, daysLate, daysEarly } = calcPendingXp(task, Boolean(task.overdue));
+                          const { xp, daysLate, daysEarly, isDueToday } = calcPendingXp(
+                            task,
+                            Boolean(task.overdue),
+                            currentDhakaDate
+                          );
                           if (xp < 0) return (
                             <span
                               className="inline-flex items-center gap-1 rounded border border-red-500/40 bg-red-500/10 px-2 py-0.5 font-mono text-[11px] font-bold text-red-400"
-                              title={`${daysLate}d late — penalty scales +50%/day`}
+                              title={`Overdue by ${daysLate}d — if completed today, penalty is ${xp} XP`}
                             >
                               {xp}
                             </span>
                           );
                           if (daysEarly > 0) return (
                             <span
-                              className="inline-flex items-center gap-1 rounded border border-amber-400/40 bg-amber-400/10 px-2 py-0.5 font-mono text-[11px] font-bold text-amber-300"
-                              title={`${daysEarly}d early — bonus scales +30%/day`}
+                              className="inline-flex items-center gap-1 rounded border border-amber-400/40 bg-amber-400/10 px-2 py-0.5 font-mono text-[11px] font-bold text-amber-300 shadow-sm"
+                              title={`Finish today: +${xp} XP (${daysEarly}d before deadline: +${Math.round(daysEarly * 30)}% Early Bird bonus)`}
                             >
                               +{xp} ⚡
                             </span>
                           );
                           return (
-                            <span className="inline-flex items-center gap-1 rounded border border-emerald-500/30 bg-emerald-500/10 px-2 py-0.5 font-mono text-[11px] font-bold text-emerald-400">
+                            <span
+                              className="inline-flex items-center gap-1 rounded border border-emerald-500/30 bg-emerald-500/10 px-2 py-0.5 font-mono text-[11px] font-bold text-emerald-400"
+                              title={isDueToday ? "Due today: standard on-time XP" : "Standard completion XP"}
+                            >
                               +{xp}
                             </span>
                           );

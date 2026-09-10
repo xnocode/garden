@@ -220,13 +220,21 @@ async function main() {
   //   2 days early            : 1.6× base
   //   5 days early            : 2.5× base
   //   7+ days early           : 3.0× base  (hard cap)
+  function calcCalendarDaysDiff(dateA?: string, dateB?: string): number {
+    if (!dateA || !dateB) return 0;
+    const dStrA = dateA.includes("T") ? formatTWDueDateInDhaka(dateA) : dateA;
+    const dStrB = dateB.includes("T") ? formatTWDueDateInDhaka(dateB) : dateB;
+    if (!dStrA || !dStrB) return 0;
+    const [y1, m1, d1] = dStrA.split("-").map(Number);
+    const [y2, m2, d2] = dStrB.split("-").map(Number);
+    const utc1 = Date.UTC(y1, m1 - 1, d1);
+    const utc2 = Date.UTC(y2, m2 - 1, d2);
+    return Math.round((utc1 - utc2) / (1000 * 60 * 60 * 24));
+  }
+
   function calcDaysEarly(dueStr?: string, endStr?: string): number {
     if (!dueStr || !endStr) return 0;
-    const due = parseTWDate(dueStr);
-    const end = parseTWDate(endStr);
-    if (!due || !end) return 0;
-    const diffMs = due.getTime() - end.getTime();
-    return Math.max(0, Math.floor(diffMs / (1000 * 60 * 60 * 24)));
+    return Math.max(0, calcCalendarDaysDiff(dueStr, endStr));
   }
 
   function calculateCompletedTaskXp(t: RawTask, daysEarly: number): number {
@@ -248,11 +256,7 @@ async function main() {
   //  18+ days late: 10× base  (hard cap)
   function calcDaysLate(dueStr?: string, endStr?: string): number {
     if (!dueStr || !endStr) return 0;
-    const due = parseTWDate(dueStr);
-    const end = parseTWDate(endStr);
-    if (!due || !end) return 0;
-    const diffMs = end.getTime() - due.getTime();
-    return Math.max(0, Math.floor(diffMs / (1000 * 60 * 60 * 24)));
+    return Math.max(0, calcCalendarDaysDiff(endStr, dueStr));
   }
 
   function calculateMissedTaskXpPenalty(t: RawTask, daysLate: number): number {

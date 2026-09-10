@@ -249,7 +249,17 @@ export function calculatePlayerProfile(
   const streakDays = writingStats?.currentStreak ?? 0;
 
   // XP calculation
-  let baseTaskXp = completedTasks * 150;
+  // Sum earned task XP (including early bird bonuses and priority multipliers)
+  const completedList = taskData.completedTasks ?? [];
+  let earnedTaskXp = 0;
+  if (completedList.length > 0) {
+    const listSum = completedList.reduce((sum, t) => sum + (t.xpAwarded ?? 150), 0);
+    const unlistedCount = Math.max(0, completedTasks - completedList.length);
+    earnedTaskXp = listSum + unlistedCount * 150;
+  } else {
+    earnedTaskXp = completedTasks * 150;
+  }
+
   let baseNoteXp = totalNotes * 50;
   let wordXp = Math.floor(totalWords / 10);
   let streakXp = streakDays * 100;
@@ -261,7 +271,7 @@ export function calculatePlayerProfile(
   );
 
   const nightOwlActive = isNightOwlHours();
-  const rawSubtotal = baseTaskXp + baseNoteXp + wordXp + streakXp + missedXpPenalty;
+  const rawSubtotal = earnedTaskXp + baseNoteXp + wordXp + streakXp + missedXpPenalty;
   const nightOwlBonus = nightOwlActive ? Math.floor(rawSubtotal * 0.25) : 0;
   const totalXp = Math.max(0, rawSubtotal + nightOwlBonus);
 
