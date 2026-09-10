@@ -323,6 +323,30 @@ export function TaskwarriorView({ data, writingStats }: { data: TaskSnapshot; wr
   // RPG Profile
   const profile = useMemo(() => calculatePlayerProfile(taskData as RpgTaskSnapshot, writingStats), [taskData, writingStats]);
 
+  // Pending Tasks Pagination (10 per page)
+  const [pendingPage, setPendingPage] = useState(1);
+  const PENDING_PAGE_SIZE = 10;
+  const totalPendingPages = Math.max(1, Math.ceil(processedTasks.length / PENDING_PAGE_SIZE));
+  const validPendingPage = Math.min(pendingPage, totalPendingPages);
+
+  const pagedPending = useMemo(() => {
+    const start = (validPendingPage - 1) * PENDING_PAGE_SIZE;
+    return processedTasks.slice(start, start + PENDING_PAGE_SIZE);
+  }, [processedTasks, validPendingPage]);
+
+  const pendingPageNumbers = useMemo(() => {
+    if (totalPendingPages <= 6) {
+      return Array.from({ length: totalPendingPages }, (_, i) => i + 1);
+    }
+    if (validPendingPage <= 3) {
+      return [1, 2, 3, 4, "…", totalPendingPages];
+    }
+    if (validPendingPage >= totalPendingPages - 2) {
+      return [1, "…", totalPendingPages - 3, totalPendingPages - 2, totalPendingPages - 1, totalPendingPages];
+    }
+    return [1, "…", validPendingPage - 1, validPendingPage, validPendingPage + 1, "…", totalPendingPages];
+  }, [validPendingPage, totalPendingPages]);
+
   // Completed Tasks Pagination (10 per page, newest first)
   const [completedPage, setCompletedPage] = useState(1);
   const COMPLETED_PAGE_SIZE = 10;
@@ -532,7 +556,7 @@ export function TaskwarriorView({ data, writingStats }: { data: TaskSnapshot; wr
                   </tr>
                 </thead>
                 <tbody>
-                  {processedTasks.map((task, i) => (
+                  {pagedPending.map((task, i) => (
                     <tr
                       key={task.id}
                       className={`border-b transition-colors ${
@@ -629,9 +653,65 @@ export function TaskwarriorView({ data, writingStats }: { data: TaskSnapshot; wr
                   ))}
                 </tbody>
               </table>
-              {/* Task count footer like real taskwarrior */}
-              <div className="border-t border-border bg-surface/20 px-3 sm:px-4 py-2 text-[11px] sm:text-xs text-muted-foreground/60 font-mono">
-                {processedTasks.length} pending task{processedTasks.length !== 1 ? "s" : ""}
+              {/* Pagination Controls & Item Range */}
+              <div className="border-t border-border bg-surface/20 px-3 sm:px-4 py-2.5 text-[11px] sm:text-xs text-muted-foreground/80 font-mono flex flex-wrap items-center justify-between gap-2">
+                <div>
+                  Showing{" "}
+                  <span className="font-semibold text-foreground">
+                    {(validPendingPage - 1) * PENDING_PAGE_SIZE + 1}–
+                    {Math.min(validPendingPage * PENDING_PAGE_SIZE, processedTasks.length)}
+                  </span>{" "}
+                  of <span className="font-semibold text-foreground">{processedTasks.length}</span> pending tasks
+                </div>
+
+                {totalPendingPages > 1 && (
+                  <div className="flex items-center gap-1">
+                    <button
+                      type="button"
+                      onClick={() => setPendingPage((p) => Math.max(1, p - 1))}
+                      disabled={validPendingPage <= 1}
+                      className="inline-flex items-center gap-1 rounded border border-border px-2 py-1 text-[11px] font-medium transition hover:border-garden hover:text-garden disabled:pointer-events-none disabled:opacity-40"
+                      title="Previous page"
+                    >
+                      <ChevronLeft className="h-3 w-3" />
+                      Prev
+                    </button>
+
+                    <div className="flex items-center gap-1 px-1">
+                      {pendingPageNumbers.map((p, idx) =>
+                        typeof p === "number" ? (
+                          <button
+                            key={p}
+                            type="button"
+                            onClick={() => setPendingPage(p)}
+                            className={`min-w-[24px] rounded border px-1.5 py-0.5 text-center text-[11px] font-medium transition ${
+                              p === validPendingPage
+                                ? "border-amber-500/40 bg-amber-500/15 font-bold text-amber-300"
+                                : "border-transparent text-muted-foreground hover:border-border hover:text-foreground"
+                            }`}
+                          >
+                            {p}
+                          </button>
+                        ) : (
+                          <span key={`ellipsis-pending-${idx}`} className="px-1 text-muted-foreground/40">
+                            …
+                          </span>
+                        )
+                      )}
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={() => setPendingPage((p) => Math.min(totalPendingPages, p + 1))}
+                      disabled={validPendingPage >= totalPendingPages}
+                      className="inline-flex items-center gap-1 rounded border border-border px-2 py-1 text-[11px] font-medium transition hover:border-garden hover:text-garden disabled:pointer-events-none disabled:opacity-40"
+                      title="Next page"
+                    >
+                      Next
+                      <ChevronRight className="h-3 w-3" />
+                    </button>
+                  </div>
+                )}
               </div>
             </div>
           </div>
