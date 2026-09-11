@@ -1,5 +1,5 @@
 {
-  "exportedAt": "2026-09-10T17:06:55.549Z",
+  "exportedAt": "2026-09-11T08:11:03.942Z",
   "stats": {
     "total": 55,
     "pending": 55,
@@ -16,7 +16,7 @@
       "priority": "H",
       "due": "20260910T180000Z",
       "entry": "20260910T163243Z",
-      "urgency": 15.7831,
+      "urgency": 16.0702,
       "overdue": false
     },
     {
@@ -28,7 +28,7 @@
       "priority": "H",
       "due": "20260912T180000Z",
       "entry": "20260910T163243Z",
-      "urgency": 14.8689,
+      "urgency": 15.1559,
       "overdue": false
     },
     {
@@ -40,7 +40,7 @@
       "priority": "H",
       "due": "20260914T180000Z",
       "entry": "20260910T163243Z",
-      "urgency": 13.9546,
+      "urgency": 14.2416,
       "overdue": false
     },
     {
@@ -52,7 +52,7 @@
       "priority": "H",
       "due": "20260916T180000Z",
       "entry": "20260910T163337Z",
-      "urgency": 13.0403,
+      "urgency": 13.3273,
       "overdue": false
     },
     {
@@ -64,7 +64,7 @@
       "priority": "H",
       "due": "20260918T180000Z",
       "entry": "20260910T163337Z",
-      "urgency": 12.126,
+      "urgency": 12.413,
       "overdue": false
     },
     {
@@ -76,7 +76,7 @@
       "priority": "H",
       "due": "20260920T180000Z",
       "entry": "20260910T163244Z",
-      "urgency": 11.2117,
+      "urgency": 11.4987,
       "overdue": false
     },
     {
@@ -88,7 +88,7 @@
       "priority": "H",
       "due": "20260922T180000Z",
       "entry": "20260910T163244Z",
-      "urgency": 10.2974,
+      "urgency": 10.5845,
       "overdue": false
     },
     {
@@ -100,7 +100,7 @@
       "priority": "H",
       "due": "20260924T180000Z",
       "entry": "20260910T163244Z",
-      "urgency": 9.4,
+      "urgency": 9.67017,
       "overdue": false
     },
     {
