@@ -20344,7 +20344,13 @@
         "filePath": "taskworrior.md",
         "wordCountStart": 17,
         "charCountStart": 142,
-        "changes": [],
+        "changes": [
+          {
+            "timeKey": "14:10",
+            "w": 0,
+            "c": 0
+          }
+        ],
         "id": 1249
       }
     ],
