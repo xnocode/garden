@@ -8,6 +8,8 @@ tags:
   - university
 updatedAt: 2026-07-23
 ---
+> The full notes may not be available here, so make sure to collect them from your classmates.
+
 > Date: 22 July 2026
 ## Lecture 01
 
