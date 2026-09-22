@@ -90,6 +90,13 @@ function runCmd(cmd: string): string {
   }
 }
 
+function taskCmd(args: string): string {
+  if (process.platform === "win32") {
+    return `wsl -- bash -c "TZ='Asia/Dhaka' task ${args} 2>/dev/null"`;
+  }
+  return `TZ='Asia/Dhaka' task ${args} 2>/dev/null`;
+}
+
 function parseTaskOutput(raw: string): RawTask[] {
   const trimmed = raw.trim();
   if (!trimmed) return [];
@@ -146,7 +153,7 @@ async function main() {
         console.log(`    ▸ Marking ${uuids.length} task(s) done from Telegram /done queue…`);
         for (const uuid of uuids) {
           // UUID is stable — never shifts when other tasks complete
-          const out = runCmd(`wsl -- bash -c "TZ='Asia/Dhaka' task rc.confirmation=off uuid:${uuid} done 2>/dev/null"`);
+          const out = runCmd(taskCmd(`rc.confirmation=off uuid:${uuid} done`));
           if (out.includes("Completed") || out.includes("completed")) {
             console.log(`      ✓ Marked done: ${uuid.slice(0, 8)}…`);
           } else if (out.includes("No matches") || out.includes("No tasks")) {
@@ -169,12 +176,12 @@ async function main() {
       const content = readFileSync(pendingFile, "utf8");
       const items: { raw: string; addedAt: string }[] = JSON.parse(content);
       if (Array.isArray(items) && items.length > 0) {
-        console.log(`    ▸ Importing ${items.length} pending task(s) from Telegram into WSL Taskwarrior…`);
+        console.log(`    ▸ Importing ${items.length} pending task(s) from Telegram into Taskwarrior…`);
         for (const item of items) {
           if (!item.raw) continue;
           const args = buildTaskAddArgs(item.raw);
-          runCmd(`wsl -- bash -c "TZ='Asia/Dhaka' task add ${args} 2>/dev/null"`);
-          console.log(`      ✓ Added to WSL: "${item.raw}"`);
+          runCmd(taskCmd(`add ${args}`));
+          console.log(`      ✓ Added: "${item.raw}"`);
         }
         // Clear queue after importing
         writeFileSync(pendingFile, "[]\n", "utf8");
@@ -184,14 +191,10 @@ async function main() {
     }
   }
 
-  const pendingRaw = runCmd(
-    'wsl -- bash -c "TZ=\'Asia/Dhaka\' task rc.json.array=on status:pending export 2>/dev/null"'
-  );
+  const pendingRaw = runCmd(taskCmd("rc.json.array=on status:pending export"));
   const pendingTasks = parseTaskOutput(pendingRaw);
 
-  const completedRaw = runCmd(
-    'wsl -- bash -c "TZ=\'Asia/Dhaka\' task rc.json.array=on status:completed export 2>/dev/null"'
-  );
+  const completedRaw = runCmd(taskCmd("rc.json.array=on status:completed export"));
   const completedTasks = parseTaskOutput(completedRaw);
 
   // Categorize pending tasks
