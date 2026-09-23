@@ -14,6 +14,7 @@ import {
   Globe,
   Lock,
   Loader2,
+  BarChart3,
 } from "lucide-react";
 import {
   calculatePlayerProfile,
@@ -938,8 +939,8 @@ export function TaskwarriorView({ data, writingStats }: { data: TaskSnapshot; wr
 }
 
 /* ─────────────────────────────────────────────────────────────────────────────
-   Admin-only Taskwarrior Analytics Panel
-   Strictly follows garden design system. ZERO SVG elements used.
+   Admin-only Taskwarrior Analytics
+   Seamlessly integrated native section matching the website's design.
    ───────────────────────────────────────────────────────────────────────────── */
 
 interface AnalyticsData {
@@ -949,34 +950,17 @@ interface AnalyticsData {
   ghistoryAnnual:  { year: string; month: string; added: number; completed: number; deleted: number }[];
   historyMonthly:  { year: string; month: string; added: number; completed: number; deleted: number; net: number; isAverage?: boolean }[];
   historyAnnual:   { year: string; month: string; added: number; completed: number; deleted: number; net: number; isAverage?: boolean }[];
-  burndownDaily:   { title: string; netFixRate: string; estimatedCompletion: string; dataPoints: { label: string; pending: number; started: number; done: number }[] };
-  burndownMonthly: { title: string; netFixRate: string; estimatedCompletion: string; dataPoints: { label: string; pending: number; started: number; done: number }[] };
-  burndownWeekly:  { title: string; netFixRate: string; estimatedCompletion: string; dataPoints: { label: string; pending: number; started: number; done: number }[] };
-  raw?: {
-    summary: string;
-    ghistoryMonthly: string;
-    ghistoryAnnual: string;
-    historyMonthly: string;
-    historyAnnual: string;
-    burndownDaily: string;
-    burndownMonthly: string;
-    burndownWeekly: string;
-  };
 }
 
-type BurndownMode = "daily" | "weekly" | "monthly";
-type HistoryMode  = "monthly" | "annual";
-type AnalyticsTab = "summary" | "ghistory" | "burndown";
+type AnalyticsTab = "summary" | "history" | "ghistory";
+type HistoryMode = "monthly" | "annual";
 
 function TaskwarriorAnalytics() {
-  const [analytics, setAnalytics]       = useState<AnalyticsData | null>(null);
-  const [loading, setLoading]           = useState(true);
-  const [error, setError]               = useState<string | null>(null);
-  const [open, setOpen]                 = useState(false);
-  const [activeTab, setActiveTab]       = useState<AnalyticsTab>("summary");
-  const [historyMode, setHistoryMode]   = useState<HistoryMode>("monthly");
-  const [burndownMode, setBurndownMode] = useState<BurndownMode>("daily");
-  const [viewFormat, setViewFormat]     = useState<"visual" | "terminal">("visual");
+  const [analytics, setAnalytics]     = useState<AnalyticsData | null>(null);
+  const [loading, setLoading]         = useState(true);
+  const [error, setError]             = useState<string | null>(null);
+  const [activeTab, setActiveTab]     = useState<AnalyticsTab>("summary");
+  const [historyMode, setHistoryMode] = useState<HistoryMode>("monthly");
 
   useEffect(() => {
     fetch("/api/tasks/analytics")
@@ -991,390 +975,239 @@ function TaskwarriorAnalytics() {
       });
   }, []);
 
-  const burndownData =
-    burndownMode === "daily"
-      ? analytics?.burndownDaily
-      : burndownMode === "weekly"
-      ? analytics?.burndownWeekly
-      : analytics?.burndownMonthly;
-
   const historyRows =
     historyMode === "monthly" ? analytics?.historyMonthly : analytics?.historyAnnual;
   const ghistoryRows =
     historyMode === "monthly" ? analytics?.ghistoryMonthly : analytics?.ghistoryAnnual;
 
-  const rawText =
-    activeTab === "summary"
-      ? historyMode === "monthly"
-        ? `${analytics?.raw?.summary || ""}\n\n${analytics?.raw?.historyMonthly || ""}`
-        : `${analytics?.raw?.summary || ""}\n\n${analytics?.raw?.historyAnnual || ""}`
-      : activeTab === "ghistory"
-      ? historyMode === "monthly"
-        ? analytics?.raw?.ghistoryMonthly || ""
-        : analytics?.raw?.ghistoryAnnual || ""
-      : burndownMode === "daily"
-      ? analytics?.raw?.burndownDaily || ""
-      : burndownMode === "weekly"
-      ? analytics?.raw?.burndownWeekly || ""
-      : analytics?.raw?.burndownMonthly || "";
-
   return (
-    <div className="mt-8 overflow-hidden rounded-xl border border-border bg-surface/20">
-      {/* ── Header ── */}
-      <button
-        type="button"
-        onClick={() => setOpen((prev) => !prev)}
-        className="flex w-full items-center justify-between px-4 py-3 sm:px-5 sm:py-3.5 text-left transition hover:bg-surface/30"
-      >
-        <div className="flex items-center gap-2.5 sm:gap-3">
-          <span className="inline-flex items-center rounded border border-garden/30 bg-garden/10 px-2 py-0.5 font-mono text-[10px] font-bold text-garden">
+    <div className="space-y-3">
+      {/* ── Section Header (Identical to Pending / Completed Tasks) ── */}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <BarChart3 className="h-4 w-4 text-garden" />
+          <h2 className="font-serif text-lg font-semibold text-heading">
+            Task Analytics
+          </h2>
+          <span className="rounded-full bg-garden/15 px-2 py-0.5 font-mono text-[10px] font-bold text-garden">
             ADMIN
           </span>
-          <span className="font-serif text-base font-semibold text-heading">
-            Task Analytics
-          </span>
-          <span className="hidden font-mono text-[11px] text-muted-foreground/60 sm:inline">
-            summary · history · ghistory · burndown
-          </span>
         </div>
 
-        <div className="flex items-center gap-3">
-          {analytics?.generatedAt && (
-            <span className="hidden font-mono text-[10px] text-muted-foreground/40 sm:inline">
-              Snapshot:{" "}
-              {new Date(analytics.generatedAt).toLocaleDateString("en-CA", {
-                timeZone: "Asia/Dhaka",
-              })}
-            </span>
-          )}
-          <span
-            className="inline-flex h-6 w-6 items-center justify-center rounded border border-border font-mono text-xs text-muted-foreground transition-transform duration-200"
-            style={{ transform: open ? "rotate(180deg)" : "rotate(0deg)" }}
-          >
-            ▾
+        {analytics?.generatedAt && (
+          <span className="font-mono text-xs text-muted-foreground/60">
+            Snapshot {new Date(analytics.generatedAt).toLocaleDateString("en-CA", {
+              timeZone: "Asia/Dhaka",
+            })}
           </span>
+        )}
+      </div>
+
+      {loading ? (
+        <div className="flex items-center justify-center rounded-lg border border-dashed border-border bg-surface/10 py-12">
+          <div className="h-5 w-5 animate-spin rounded-full border-2 border-border border-t-garden" />
         </div>
-      </button>
-
-      {/* ── Content ── */}
-      {open && (
-        <div className="border-t border-border">
-          {loading && (
-            <div className="flex items-center justify-center py-12 font-mono text-xs text-muted-foreground/60">
-              Loading Taskwarrior analytics…
+      ) : error ? (
+        <div className="rounded-lg border border-red-500/30 bg-red-500/10 p-3 font-mono text-xs text-red-400">
+          {error}
+        </div>
+      ) : analytics ? (
+        <div className="space-y-3">
+          {/* ── Tab Bar (matching Pending / Completed task filters) ── */}
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <div className="flex flex-wrap items-center gap-1.5">
+              {(
+                [
+                  { key: "summary", label: "Project Summary" },
+                  { key: "history", label: "History Table" },
+                  { key: "ghistory", label: "Graphical History" },
+                ] as const
+              ).map((t) => (
+                <button
+                  key={t.key}
+                  type="button"
+                  onClick={() => setActiveTab(t.key)}
+                  className={`rounded-lg border px-3 py-1 font-mono text-xs font-medium transition ${
+                    activeTab === t.key
+                      ? "border-garden/50 bg-garden/15 text-garden font-semibold shadow-xs"
+                      : "border-border bg-surface/20 text-muted-foreground hover:border-garden/30 hover:text-foreground"
+                  }`}
+                >
+                  {t.label}
+                </button>
+              ))}
             </div>
-          )}
 
-          {error && (
-            <div className="p-4">
-              <div className="rounded-lg border border-red-500/30 bg-red-500/10 p-3 font-mono text-xs text-red-400">
-                {error}
+            {/* Monthly / Annual mode toggle */}
+            {activeTab !== "summary" && (
+              <div className="flex items-center rounded-lg border border-border bg-surface/20 p-0.5 font-mono text-xs">
+                {(["monthly", "annual"] as const).map((m) => (
+                  <button
+                    key={m}
+                    type="button"
+                    onClick={() => setHistoryMode(m)}
+                    className={`rounded-md px-2.5 py-0.5 capitalize transition ${
+                      historyMode === m
+                        ? "bg-surface-2 font-medium text-foreground"
+                        : "text-muted-foreground hover:text-foreground"
+                    }`}
+                  >
+                    {m}
+                  </button>
+                ))}
               </div>
-            </div>
-          )}
+            )}
+          </div>
 
-          {analytics && !loading && (
-            <div>
-              {/* Tab Bar matching Taskwarrior filter pills */}
-              <div className="flex flex-wrap items-center justify-between gap-2 border-b border-border bg-surface/10 p-3 sm:p-4">
-                <div className="flex flex-wrap items-center gap-1.5">
-                  {(
-                    [
-                      { key: "summary", label: "Summary & History" },
-                      { key: "ghistory", label: "Graphical History" },
-                      { key: "burndown", label: "Burndown Chart" },
-                    ] as const
-                  ).map((t) => (
-                    <button
-                      key={t.key}
-                      type="button"
-                      onClick={() => setActiveTab(t.key)}
-                      className={`rounded-lg border px-3 py-1 font-mono text-xs font-medium transition ${
-                        activeTab === t.key
-                          ? "border-garden/50 bg-garden/15 text-garden font-semibold shadow-xs"
-                          : "border-border bg-surface/20 text-muted-foreground hover:border-garden/30 hover:text-foreground"
-                      }`}
-                    >
-                      {t.label}
-                    </button>
-                  ))}
-                </div>
-
-                {/* Sub controls: Period Toggle & View Format Toggle */}
-                <div className="flex flex-wrap items-center gap-2">
-                  {/* Monthly / Annual for summary & ghistory */}
-                  {(activeTab === "summary" || activeTab === "ghistory") && (
-                    <div className="flex items-center rounded-md border border-border bg-surface/30 p-0.5 font-mono text-[11px]">
-                      {(["monthly", "annual"] as const).map((m) => (
-                        <button
-                          key={m}
-                          type="button"
-                          onClick={() => setHistoryMode(m)}
-                          className={`rounded px-2 py-0.5 capitalize transition ${
-                            historyMode === m
-                              ? "bg-surface-2 font-medium text-foreground"
-                              : "text-muted-foreground/70 hover:text-foreground"
-                          }`}
-                        >
-                          {m}
-                        </button>
-                      ))}
-                    </div>
-                  )}
-
-                  {/* Daily / Weekly / Monthly for burndown */}
-                  {activeTab === "burndown" && (
-                    <div className="flex items-center rounded-md border border-border bg-surface/30 p-0.5 font-mono text-[11px]">
-                      {(["daily", "weekly", "monthly"] as const).map((m) => (
-                        <button
-                          key={m}
-                          type="button"
-                          onClick={() => setBurndownMode(m)}
-                          className={`rounded px-2 py-0.5 capitalize transition ${
-                            burndownMode === m
-                              ? "bg-surface-2 font-medium text-foreground"
-                              : "text-muted-foreground/70 hover:text-foreground"
-                          }`}
-                        >
-                          {m}
-                        </button>
-                      ))}
-                    </div>
-                  )}
-
-                  {/* Visual vs Terminal Toggle */}
-                  <div className="flex items-center rounded-md border border-border bg-surface/30 p-0.5 font-mono text-[11px]">
-                    <button
-                      type="button"
-                      onClick={() => setViewFormat("visual")}
-                      className={`rounded px-2 py-0.5 transition ${
-                        viewFormat === "visual"
-                          ? "bg-garden/20 font-medium text-garden"
-                          : "text-muted-foreground/70 hover:text-foreground"
-                      }`}
-                    >
-                      Visual
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setViewFormat("terminal")}
-                      className={`rounded px-2 py-0.5 transition ${
-                        viewFormat === "terminal"
-                          ? "bg-garden/20 font-medium text-garden"
-                          : "text-muted-foreground/70 hover:text-foreground"
-                      }`}
-                    >
-                      Terminal
-                    </button>
-                  </div>
-                </div>
+          {/* ── Tab 1: Project Summary (task summary) ── */}
+          {activeTab === "summary" && (
+            analytics.summary.length === 0 ? (
+              <div className="rounded-lg border border-dashed border-border bg-surface/10 py-8 text-center font-mono text-xs text-muted-foreground/60">
+                No project summary recorded.
               </div>
-
-              {/* Body */}
-              <div className="p-4 sm:p-5">
-                {viewFormat === "terminal" ? (
-                  <div className="space-y-2">
-                    <div className="font-mono text-[10px] text-muted-foreground/50">
-                      $ task{" "}
-                      {activeTab === "summary"
-                        ? `summary && task history.${historyMode}`
-                        : activeTab === "ghistory"
-                        ? `ghistory.${historyMode}`
-                        : `burndown.${burndownMode}`}
-                    </div>
-                    <pre className="overflow-x-auto rounded-xl border border-border/80 bg-[#09090c] p-4 font-mono text-xs leading-relaxed text-muted-foreground/90 whitespace-pre">
-                      {rawText || "No raw terminal output captured."}
-                    </pre>
-                  </div>
-                ) : (
-                  <>
-                    {/* ── TAB 1: Summary & History ── */}
-                    {activeTab === "summary" && (
-                      <div className="space-y-6">
-                        {/* Project Summary */}
-                        <div className="space-y-2.5">
-                          <div className="font-mono text-[11px] font-semibold tracking-wider uppercase text-muted-foreground/70">
-                            task summary
-                          </div>
-                          {analytics.summary.length === 0 ? (
-                            <p className="text-xs text-muted-foreground/50">
-                              No project summary data.
-                            </p>
-                          ) : (
-                            <div className="overflow-x-auto rounded-xl border border-border bg-surface/10">
-                              <table className="w-full border-collapse text-left font-mono text-xs">
-                                <thead>
-                                  <tr className="border-b border-border bg-surface/30 text-muted-foreground">
-                                    <th className="px-4 py-2.5 font-medium">Project</th>
-                                    <th className="px-4 py-2.5 font-medium text-right">
-                                      Remaining
-                                    </th>
-                                    <th className="px-4 py-2.5 font-medium text-right">
-                                      Avg Age
-                                    </th>
-                                    <th className="px-4 py-2.5 font-medium text-right">
-                                      Complete
-                                    </th>
-                                  </tr>
-                                </thead>
-                                <tbody>
-                                  {analytics.summary.map((p, i) => (
-                                    <tr
-                                      key={p.project || i}
-                                      className="border-b border-border/40 transition-colors last:border-0 hover:bg-surface/15"
-                                    >
-                                      <td className="px-4 py-2.5 font-medium text-garden">
-                                        {p.project}
-                                      </td>
-                                      <td className="px-4 py-2.5 text-right text-amber-400 font-semibold">
-                                        {p.remaining}
-                                      </td>
-                                      <td className="px-4 py-2.5 text-right text-muted-foreground">
-                                        {p.avgAge}
-                                      </td>
-                                      <td className="px-4 py-2.5 text-right">
-                                        <div className="flex items-center justify-end gap-2.5">
-                                          <div className="h-1.5 w-16 sm:w-24 overflow-hidden rounded-full bg-surface-2">
-                                            <div
-                                              className="h-full rounded-full bg-garden transition-all duration-500"
-                                              style={{ width: `${p.completePct}%` }}
-                                            />
-                                          </div>
-                                          <span className="font-semibold text-emerald-400 w-9 text-right">
-                                            {p.completePct}%
-                                          </span>
-                                        </div>
-                                      </td>
-                                    </tr>
-                                  ))}
-                                </tbody>
-                              </table>
+            ) : (
+              <div className="overflow-x-auto rounded-xl border border-border bg-surface/10">
+                <table className="w-full border-collapse text-left font-mono text-xs">
+                  <thead>
+                    <tr className="border-b border-border bg-surface/30 text-muted-foreground">
+                      <th className="px-3 sm:px-4 py-2 sm:py-2.5 font-medium">Project</th>
+                      <th className="px-3 sm:px-4 py-2 sm:py-2.5 text-right font-medium">Remaining</th>
+                      <th className="px-3 sm:px-4 py-2 sm:py-2.5 text-right font-medium">Avg Age</th>
+                      <th className="px-3 sm:px-4 py-2 sm:py-2.5 text-right font-medium">Completion</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {analytics.summary.map((p, i) => (
+                      <tr
+                        key={p.project || i}
+                        className="border-b border-border/40 transition-colors last:border-0 hover:bg-surface/15"
+                      >
+                        <td className="px-3 sm:px-4 py-2 sm:py-2.5 font-medium text-garden">
+                          {p.project}
+                        </td>
+                        <td className="px-3 sm:px-4 py-2 sm:py-2.5 text-right font-semibold text-amber-400">
+                          {p.remaining}
+                        </td>
+                        <td className="px-3 sm:px-4 py-2 sm:py-2.5 text-right text-muted-foreground">
+                          {p.avgAge}
+                        </td>
+                        <td className="px-3 sm:px-4 py-2 sm:py-2.5 text-right">
+                          <div className="flex items-center justify-end gap-2.5">
+                            <div className="h-1.5 w-16 sm:w-24 overflow-hidden rounded-full bg-surface-2">
+                              <div
+                                className="h-full rounded-full bg-garden transition-all duration-500"
+                                style={{ width: `${p.completePct}%` }}
+                              />
                             </div>
-                          )}
-                        </div>
-
-                        {/* History Table */}
-                        <div className="space-y-2.5">
-                          <div className="font-mono text-[11px] font-semibold tracking-wider uppercase text-muted-foreground/70">
-                            task history ({historyMode})
-                          </div>
-                          <div className="overflow-x-auto rounded-xl border border-border bg-surface/10">
-                            <table className="w-full border-collapse text-left font-mono text-xs">
-                              <thead>
-                                <tr className="border-b border-border bg-surface/30 text-muted-foreground">
-                                  <th className="px-4 py-2.5 font-medium">Period</th>
-                                  <th className="px-4 py-2.5 font-medium text-right text-blue-400/90">
-                                    Added (+)
-                                  </th>
-                                  <th className="px-4 py-2.5 font-medium text-right text-emerald-400/90">
-                                    Done (X)
-                                  </th>
-                                  <th className="px-4 py-2.5 font-medium text-right text-red-400/90">
-                                    Deleted (-)
-                                  </th>
-                                  <th className="px-4 py-2.5 font-medium text-right">Net</th>
-                                </tr>
-                              </thead>
-                              <tbody>
-                                {(historyRows || []).map((row, i) => {
-                                  const label =
-                                    historyMode === "annual"
-                                      ? row.isAverage
-                                        ? "Average"
-                                        : row.year
-                                      : row.isAverage
-                                      ? "Average"
-                                      : `${row.year} ${row.month}`.trim();
-                                  return (
-                                    <tr
-                                      key={i}
-                                      className={`border-b border-border/40 transition-colors last:border-0 ${
-                                        row.isAverage
-                                          ? "bg-surface/20 font-bold italic"
-                                          : "hover:bg-surface/15"
-                                      }`}
-                                    >
-                                      <td className="px-4 py-2.5 text-foreground/90">
-                                        {label}
-                                      </td>
-                                      <td className="px-4 py-2.5 text-right text-blue-400">
-                                        {row.added}
-                                      </td>
-                                      <td className="px-4 py-2.5 text-right text-emerald-400">
-                                        {row.completed}
-                                      </td>
-                                      <td className="px-4 py-2.5 text-right text-red-400">
-                                        {row.deleted}
-                                      </td>
-                                      <td
-                                        className={`px-4 py-2.5 text-right font-semibold ${
-                                          row.net >= 0 ? "text-amber-400" : "text-red-400"
-                                        }`}
-                                      >
-                                        {row.net > 0 ? `+${row.net}` : row.net}
-                                      </td>
-                                    </tr>
-                                  );
-                                })}
-                              </tbody>
-                            </table>
-                          </div>
-                        </div>
-                      </div>
-                    )}
-
-                    {/* ── TAB 2: Graphical History (ghistory) ── */}
-                    {activeTab === "ghistory" && (
-                      <div className="space-y-4">
-                        <div className="flex flex-wrap items-center justify-between gap-2">
-                          <div className="font-mono text-[11px] font-semibold tracking-wider uppercase text-muted-foreground/70">
-                            task ghistory ({historyMode})
-                          </div>
-                          {/* Legend */}
-                          <div className="flex items-center gap-3 font-mono text-[11px] text-muted-foreground/70">
-                            <span className="flex items-center gap-1.5">
-                              <span className="h-2.5 w-2.5 rounded-xs bg-blue-500/80" />
-                              <span>Added (+)</span>
-                            </span>
-                            <span className="flex items-center gap-1.5">
-                              <span className="h-2.5 w-2.5 rounded-xs bg-emerald-500/80" />
-                              <span>Completed (X)</span>
-                            </span>
-                            <span className="flex items-center gap-1.5">
-                              <span className="h-2.5 w-2.5 rounded-xs bg-red-500/80" />
-                              <span>Deleted (-)</span>
+                            <span className="w-9 text-right font-semibold text-emerald-400">
+                              {p.completePct}%
                             </span>
                           </div>
-                        </div>
-
-                        <GHistoryBarList rows={ghistoryRows || []} />
-                      </div>
-                    )}
-
-                    {/* ── TAB 3: Burndown ── */}
-                    {activeTab === "burndown" && burndownData && (
-                      <div className="space-y-4">
-                        <div className="font-mono text-[11px] font-semibold tracking-wider uppercase text-muted-foreground/70">
-                          task burndown ({burndownMode})
-                        </div>
-                        <BurndownChart burndown={burndownData} />
-                      </div>
-                    )}
-                  </>
-                )}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
+            )
+          )}
+
+          {/* ── Tab 2: History Table (task history) ── */}
+          {activeTab === "history" && (
+            <div className="overflow-x-auto rounded-xl border border-border bg-surface/10">
+              <table className="w-full border-collapse text-left font-mono text-xs">
+                <thead>
+                  <tr className="border-b border-border bg-surface/30 text-muted-foreground">
+                    <th className="px-3 sm:px-4 py-2 sm:py-2.5 font-medium">
+                      {historyMode === "annual" ? "Year" : "Period"}
+                    </th>
+                    <th className="px-3 sm:px-4 py-2 sm:py-2.5 text-right font-medium text-blue-400/90">
+                      Added (+)
+                    </th>
+                    <th className="px-3 sm:px-4 py-2 sm:py-2.5 text-right font-medium text-emerald-400/90">
+                      Done (X)
+                    </th>
+                    <th className="px-3 sm:px-4 py-2 sm:py-2.5 text-right font-medium text-red-400/90">
+                      Deleted (-)
+                    </th>
+                    <th className="px-3 sm:px-4 py-2 sm:py-2.5 text-right font-medium">Net</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {(historyRows || []).map((row, i) => {
+                    const label =
+                      historyMode === "annual"
+                        ? row.isAverage
+                          ? "Average"
+                          : row.year
+                        : row.isAverage
+                        ? "Average"
+                        : `${row.year} ${row.month}`.trim();
+                    return (
+                      <tr
+                        key={i}
+                        className={`border-b border-border/40 transition-colors last:border-0 ${
+                          row.isAverage
+                            ? "bg-surface/20 font-bold italic"
+                            : "hover:bg-surface/15"
+                        }`}
+                      >
+                        <td className="px-3 sm:px-4 py-2 sm:py-2.5 text-foreground/90">
+                          {label}
+                        </td>
+                        <td className="px-3 sm:px-4 py-2 sm:py-2.5 text-right text-blue-400">
+                          {row.added}
+                        </td>
+                        <td className="px-3 sm:px-4 py-2 sm:py-2.5 text-right text-emerald-400">
+                          {row.completed}
+                        </td>
+                        <td className="px-3 sm:px-4 py-2 sm:py-2.5 text-right text-red-400">
+                          {row.deleted}
+                        </td>
+                        <td
+                          className={`px-3 sm:px-4 py-2 sm:py-2.5 text-right font-semibold ${
+                            row.net >= 0 ? "text-amber-400" : "text-red-400"
+                          }`}
+                        >
+                          {row.net > 0 ? `+${row.net}` : row.net}
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          )}
+
+          {/* ── Tab 3: Graphical History (task ghistory) ── */}
+          {activeTab === "ghistory" && (
+            <div className="space-y-3">
+              {/* Legend */}
+              <div className="flex items-center gap-4 font-mono text-[11px] text-muted-foreground/70">
+                <span className="flex items-center gap-1.5">
+                  <span className="h-2 w-2 rounded-xs bg-blue-500/80" />
+                  <span>Added (+)</span>
+                </span>
+                <span className="flex items-center gap-1.5">
+                  <span className="h-2 w-2 rounded-xs bg-emerald-500/80" />
+                  <span>Completed (X)</span>
+                </span>
+                <span className="flex items-center gap-1.5">
+                  <span className="h-2 w-2 rounded-xs bg-red-500/80" />
+                  <span>Deleted (-)</span>
+                </span>
+              </div>
+
+              <GHistoryBarList rows={ghistoryRows || []} />
             </div>
           )}
         </div>
-      )}
+      ) : null}
     </div>
   );
 }
 
-/* ─────────────────────────────────────────────────────────────────────────────
-   Pure CSS Components (No SVGs)
-   ───────────────────────────────────────────────────────────────────────────── */
-
+/* ── Graphical History Bars (Pure CSS) ── */
 function GHistoryBarList({
   rows,
 }: {
@@ -1384,8 +1217,8 @@ function GHistoryBarList({
 
   if (rows.length === 0) {
     return (
-      <div className="rounded-lg border border-border bg-surface/10 py-8 text-center font-mono text-xs text-muted-foreground/60">
-        No ghistory data available.
+      <div className="rounded-lg border border-dashed border-border bg-surface/10 py-8 text-center font-mono text-xs text-muted-foreground/60">
+        No graphical history recorded.
       </div>
     );
   }
@@ -1397,7 +1230,7 @@ function GHistoryBarList({
         return (
           <div
             key={i}
-            className="rounded-xl border border-border bg-surface/10 p-3.5 sm:p-4 space-y-2"
+            className="rounded-xl border border-border bg-surface/10 p-3 sm:p-4 space-y-2"
           >
             <div className="font-mono text-xs font-semibold text-heading">{period}</div>
             <div className="space-y-1.5">
@@ -1427,7 +1260,7 @@ function HorizontalBar({
   return (
     <div className="flex items-center gap-2.5 font-mono text-xs">
       <span className="w-20 shrink-0 text-muted-foreground/60 text-[11px]">{label}</span>
-      <div className="relative h-3 flex-1 overflow-hidden rounded-xs bg-surface-2">
+      <div className="relative h-2.5 flex-1 overflow-hidden rounded-xs bg-surface-2">
         <div
           className={`h-full rounded-xs ${colorClass} transition-all duration-500`}
           style={{ width: `${pct}%` }}
@@ -1439,173 +1272,3 @@ function HorizontalBar({
     </div>
   );
 }
-
-function BurndownChart({
-  burndown,
-}: {
-  burndown: {
-    title: string;
-    netFixRate: string;
-    estimatedCompletion: string;
-    dataPoints: { label: string; pending: number; started: number; done: number }[];
-  };
-}) {
-  const points = burndown.dataPoints;
-  const maxTotal = Math.max(1, ...points.map((p) => p.pending + p.started + p.done));
-  const yMax = Math.ceil(maxTotal / 10) * 10 || 10;
-  const yMid = Math.round(yMax / 2);
-  const CHART_HEIGHT = 160;
-
-  if (points.length === 0) {
-    return (
-      <div className="rounded-lg border border-border bg-surface/10 py-10 text-center font-mono text-xs text-muted-foreground/60">
-        No burndown data available.
-      </div>
-    );
-  }
-
-  return (
-    <div className="space-y-3">
-      {/* Top metrics pill */}
-      <div className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-border bg-surface/20 px-4 py-2.5 font-mono text-xs">
-        <div className="flex flex-wrap items-center gap-4">
-          <span>
-            <span className="text-muted-foreground/70">Net Fix Rate:</span>{" "}
-            <span className="font-semibold text-garden">{burndown.netFixRate || "N/A"}</span>
-          </span>
-          <span>
-            <span className="text-muted-foreground/70">Estimated Completion:</span>{" "}
-            <span className="font-semibold text-amber-400">
-              {burndown.estimatedCompletion || "N/A"}
-            </span>
-          </span>
-        </div>
-
-        {/* Legend */}
-        <div className="flex items-center gap-3 text-[11px] text-muted-foreground/80">
-          <span className="flex items-center gap-1.5">
-            <span className="h-2.5 w-2.5 rounded-xs bg-amber-400/80" />
-            <span>Pending (X)</span>
-          </span>
-          <span className="flex items-center gap-1.5">
-            <span className="h-2.5 w-2.5 rounded-xs bg-blue-400/80" />
-            <span>Started (+)</span>
-          </span>
-          <span className="flex items-center gap-1.5">
-            <span className="h-2.5 w-2.5 rounded-xs bg-emerald-400/80" />
-            <span>Done (.)</span>
-          </span>
-        </div>
-      </div>
-
-      {/* Chart container with Y-axis */}
-      <div className="rounded-xl border border-border bg-surface/10 p-4">
-        <div className="flex">
-          {/* Y-axis labels */}
-          <div
-            className="flex flex-col justify-between pr-2.5 text-right font-mono text-[10px] text-muted-foreground/50 select-none shrink-0"
-            style={{ height: `${CHART_HEIGHT}px` }}
-          >
-            <span>{yMax}</span>
-            <span>{yMid}</span>
-            <span>0</span>
-          </div>
-
-          {/* Chart area */}
-          <div className="relative flex-1 overflow-x-auto pb-8">
-            {/* Guide lines */}
-            <div className="pointer-events-none absolute inset-x-0 top-0 border-b border-dashed border-border/30" />
-            <div
-              className="pointer-events-none absolute inset-x-0 border-b border-dashed border-border/30"
-              style={{ top: `${CHART_HEIGHT / 2}px` }}
-            />
-            <div
-              className="pointer-events-none absolute inset-x-0 border-b border-border/60"
-              style={{ top: `${CHART_HEIGHT}px` }}
-            />
-
-            {/* Bars container */}
-            <div
-              className="flex items-end gap-1.5 sm:gap-2 px-1"
-              style={{
-                height: `${CHART_HEIGHT}px`,
-                minWidth: `${Math.max(points.length * 36, 280)}px`,
-              }}
-            >
-              {points.map((p, idx) => {
-                const total = p.pending + p.started + p.done;
-                const pendingH = Math.round((p.pending / yMax) * CHART_HEIGHT);
-                const startedH = Math.round((p.started / yMax) * CHART_HEIGHT);
-                const doneH = Math.round((p.done / yMax) * CHART_HEIGHT);
-
-                return (
-                  <div
-                    key={idx}
-                    className="group relative flex flex-1 flex-col items-center justify-end"
-                    style={{ height: `${CHART_HEIGHT}px`, minWidth: "24px" }}
-                  >
-                    {/* Hover tooltip */}
-                    <div className="pointer-events-none absolute -top-11 z-20 hidden -translate-x-1/2 whitespace-nowrap rounded border border-border bg-surface px-2.5 py-1 font-mono text-[10px] text-foreground shadow-md group-hover:block left-1/2">
-                      <div className="font-semibold text-garden">{p.label}</div>
-                      <div className="text-muted-foreground">
-                        Pending: <span className="text-amber-400 font-semibold">{p.pending}</span> · Done:{" "}
-                        <span className="text-emerald-400 font-semibold">{p.done}</span> · Started:{" "}
-                        <span className="text-blue-400 font-semibold">{p.started}</span>
-                      </div>
-                    </div>
-
-                    {/* Stacked Bar Column */}
-                    <div
-                      className="relative w-full max-w-[28px] overflow-hidden rounded-xs bg-surface-2/40 flex flex-col justify-end"
-                      style={{ height: `${Math.max(2, pendingH + startedH + doneH)}px` }}
-                    >
-                      {total === 0 ? (
-                        <div className="h-0.5 w-full bg-border/40" />
-                      ) : (
-                        <>
-                          {p.done > 0 && (
-                            <div
-                              className="w-full bg-emerald-400/80 transition-all duration-300 hover:brightness-110"
-                              style={{ height: `${doneH}px` }}
-                              title={`Done: ${p.done}`}
-                            />
-                          )}
-                          {p.started > 0 && (
-                            <div
-                              className="w-full bg-blue-400/80 transition-all duration-300 hover:brightness-110"
-                              style={{ height: `${startedH}px` }}
-                              title={`Started: ${p.started}`}
-                            />
-                          )}
-                          {p.pending > 0 && (
-                            <div
-                              className="w-full bg-amber-400/80 transition-all duration-300 hover:brightness-110"
-                              style={{ height: `${pendingH}px` }}
-                              title={`Pending: ${p.pending}`}
-                            />
-                          )}
-                        </>
-                      )}
-                    </div>
-
-                    {/* X-axis label */}
-                    <div
-                      className="absolute top-[164px] font-mono text-[9px] text-muted-foreground/60 whitespace-nowrap"
-                      style={{
-                        transform: "rotate(-45deg)",
-                        transformOrigin: "top left",
-                      }}
-                    >
-                      {p.label}
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
