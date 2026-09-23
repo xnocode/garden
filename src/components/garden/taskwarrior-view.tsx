@@ -1230,7 +1230,7 @@ function GHistoryBarList({
               return (
                 <div
                   key={i}
-                  className="grid grid-cols-[4.5rem_5.5rem_1fr] items-center gap-3 py-1 font-mono text-xs hover:bg-surface/20 transition-colors"
+                  className="grid grid-cols-[4.5rem_5.5rem_1fr] items-center gap-3 py-1.5 font-mono text-xs hover:bg-surface/20 transition-colors"
                 >
                   <div className="font-semibold text-heading">
                     {showYear ? r.year : ""}
@@ -1240,39 +1240,48 @@ function GHistoryBarList({
                   </div>
 
                   {/* Dual-sided horizontal bar container */}
-                  <div className="relative flex h-6 w-full items-center bg-surface-2/20 rounded-xs overflow-hidden">
-                    {/* Left half: Added (Red) extending backwards to center */}
-                    <div className="relative flex h-full w-1/2 items-center justify-end border-r border-border/80">
+                  <div className="relative flex h-5 w-full items-center rounded-xs overflow-hidden border border-border/30 bg-surface-2/40">
+                    {/* Left half: Added (soft crimson) extending backwards to center */}
+                    <div className="relative flex h-full w-1/2 items-center justify-end border-r border-border/50">
                       {r.added > 0 && (
                         <div
-                          className="flex h-full items-center justify-end bg-red-600 px-1.5 transition-all duration-300"
-                          style={{ width: `${Math.min(100, Math.max(addedPct, 4))}%` }}
+                          className="flex h-full items-center justify-end px-1.5 transition-all duration-300"
+                          style={{
+                            width: `${Math.min(100, Math.max(addedPct, 4))}%`,
+                            backgroundColor: "#e06c75",
+                          }}
                         >
-                          <span className="font-mono text-[11px] font-bold text-white select-none whitespace-nowrap">
+                          <span className="font-mono text-[11px] font-bold text-white/90 select-none whitespace-nowrap">
                             {r.added}
                           </span>
                         </div>
                       )}
                     </div>
 
-                    {/* Right half: Completed (Green) + Deleted (Yellow) extending forward from center */}
+                    {/* Right half: Completed (sage-teal) + Deleted (warm gold) extending forward from center */}
                     <div className="relative flex h-full w-1/2 items-center justify-start">
                       {r.completed > 0 && (
                         <div
-                          className="flex h-full items-center justify-end bg-emerald-500 px-1 transition-all duration-300"
-                          style={{ width: `${Math.min(100, Math.max(completedPct, 3))}%` }}
+                          className="flex h-full items-center justify-end px-1 transition-all duration-300"
+                          style={{
+                            width: `${Math.min(100, Math.max(completedPct, 3))}%`,
+                            backgroundColor: "#84a59d",
+                          }}
                         >
-                          <span className="font-mono text-[11px] font-bold text-black select-none whitespace-nowrap">
+                          <span className="font-mono text-[11px] font-bold select-none whitespace-nowrap" style={{ color: "#0a0a0c" }}>
                             {r.completed}
                           </span>
                         </div>
                       )}
                       {r.deleted > 0 && (
                         <div
-                          className="flex h-full items-center justify-end bg-yellow-400 px-1 transition-all duration-300"
-                          style={{ width: `${Math.min(100, Math.max(deletedPct, 3))}%` }}
+                          className="flex h-full items-center justify-end px-1 transition-all duration-300"
+                          style={{
+                            width: `${Math.min(100, Math.max(deletedPct, 3))}%`,
+                            backgroundColor: "#e8b86d",
+                          }}
                         >
-                          <span className="font-mono text-[11px] font-bold text-black select-none whitespace-nowrap">
+                          <span className="font-mono text-[11px] font-bold select-none whitespace-nowrap" style={{ color: "#0a0a0c" }}>
                             {r.deleted}
                           </span>
                         </div>
@@ -1286,18 +1295,27 @@ function GHistoryBarList({
         </div>
       </div>
 
-      {/* Terminal Legend */}
-      <div className="flex flex-wrap items-center gap-1.5 font-mono text-xs text-muted-foreground/85 px-1 pt-1">
-        <span className="font-semibold text-heading">Legend:</span>
-        <span className="rounded-xs bg-red-600 px-1.5 py-0.5 font-bold text-white">
+      {/* Legend — matching site's muted pill chip style */}
+      <div className="flex flex-wrap items-center gap-1.5 font-mono text-xs px-1 pt-0.5">
+        <span className="text-muted-foreground/70 font-semibold">Legend:</span>
+        <span
+          className="rounded border px-2 py-0.5 text-[11px] font-semibold"
+          style={{ backgroundColor: "rgba(224,108,117,0.12)", borderColor: "rgba(224,108,117,0.3)", color: "#e06c75" }}
+        >
           Added
         </span>
-        <span className="text-muted-foreground/60">,</span>
-        <span className="rounded-xs bg-emerald-500 px-1.5 py-0.5 font-bold text-black">
+        <span className="text-muted-foreground/40">,</span>
+        <span
+          className="rounded border px-2 py-0.5 text-[11px] font-semibold"
+          style={{ backgroundColor: "rgba(132,165,157,0.12)", borderColor: "rgba(132,165,157,0.3)", color: "#84a59d" }}
+        >
           Completed
         </span>
-        <span className="text-muted-foreground/60">,</span>
-        <span className="rounded-xs bg-yellow-400 px-1.5 py-0.5 font-bold text-black">
+        <span className="text-muted-foreground/40">,</span>
+        <span
+          className="rounded border px-2 py-0.5 text-[11px] font-semibold"
+          style={{ backgroundColor: "rgba(232,184,109,0.12)", borderColor: "rgba(232,184,109,0.3)", color: "#e8b86d" }}
+        >
           Deleted
         </span>
       </div>
