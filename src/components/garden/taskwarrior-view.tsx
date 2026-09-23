@@ -989,9 +989,6 @@ function TaskwarriorAnalytics() {
           <h2 className="font-serif text-lg font-semibold text-heading">
             Task Analytics
           </h2>
-          <span className="rounded-full bg-garden/15 px-2 py-0.5 font-mono text-[10px] font-bold text-garden">
-            ADMIN
-          </span>
         </div>
 
         {analytics?.generatedAt && (
@@ -1181,25 +1178,7 @@ function TaskwarriorAnalytics() {
 
           {/* ── Tab 3: Graphical History (task ghistory) ── */}
           {activeTab === "ghistory" && (
-            <div className="space-y-3">
-              {/* Legend */}
-              <div className="flex items-center gap-4 font-mono text-[11px] text-muted-foreground/70">
-                <span className="flex items-center gap-1.5">
-                  <span className="h-2 w-2 rounded-xs bg-blue-500/80" />
-                  <span>Added (+)</span>
-                </span>
-                <span className="flex items-center gap-1.5">
-                  <span className="h-2 w-2 rounded-xs bg-emerald-500/80" />
-                  <span>Completed (X)</span>
-                </span>
-                <span className="flex items-center gap-1.5">
-                  <span className="h-2 w-2 rounded-xs bg-red-500/80" />
-                  <span>Deleted (-)</span>
-                </span>
-              </div>
-
-              <GHistoryBarList rows={ghistoryRows || []} />
-            </div>
+            <GHistoryBarList rows={ghistoryRows || []} />
           )}
         </div>
       ) : null}
@@ -1207,14 +1186,12 @@ function TaskwarriorAnalytics() {
   );
 }
 
-/* ── Graphical History Bars (Pure CSS) ── */
+/* ── Authentic Taskwarrior Graphical History (Diverging Horizontal Bars, Pure CSS) ── */
 function GHistoryBarList({
   rows,
 }: {
   rows: { year: string; month: string; added: number; completed: number; deleted: number }[];
 }) {
-  const maxVal = Math.max(1, ...rows.map((r) => Math.max(r.added, r.completed, r.deleted)));
-
   if (rows.length === 0) {
     return (
       <div className="rounded-lg border border-dashed border-border bg-surface/10 py-8 text-center font-mono text-xs text-muted-foreground/60">
@@ -1223,52 +1200,107 @@ function GHistoryBarList({
     );
   }
 
-  return (
-    <div className="space-y-2.5">
-      {rows.map((r, i) => {
-        const period = r.month ? `${r.year} ${r.month}` : r.year;
-        return (
-          <div
-            key={i}
-            className="rounded-xl border border-border bg-surface/10 p-3 sm:p-4 space-y-2"
-          >
-            <div className="font-mono text-xs font-semibold text-heading">{period}</div>
-            <div className="space-y-1.5">
-              <HorizontalBar label="Added" val={r.added} max={maxVal} colorClass="bg-blue-500/80" />
-              <HorizontalBar label="Completed" val={r.completed} max={maxVal} colorClass="bg-emerald-500/80" />
-              <HorizontalBar label="Deleted" val={r.deleted} max={maxVal} colorClass="bg-red-500/80" />
-            </div>
-          </div>
-        );
-      })}
-    </div>
+  // Dual-axis symmetric scaling: max value across inflow (added) and outflow (completed + deleted)
+  const maxVal = Math.max(
+    1,
+    ...rows.map((r) => Math.max(r.added, r.completed + r.deleted))
   );
-}
 
-function HorizontalBar({
-  label,
-  val,
-  max,
-  colorClass,
-}: {
-  label: string;
-  val: number;
-  max: number;
-  colorClass: string;
-}) {
-  const pct = max > 0 ? (val / max) * 100 : 0;
   return (
-    <div className="flex items-center gap-2.5 font-mono text-xs">
-      <span className="w-20 shrink-0 text-muted-foreground/60 text-[11px]">{label}</span>
-      <div className="relative h-2.5 flex-1 overflow-hidden rounded-xs bg-surface-2">
-        <div
-          className={`h-full rounded-xs ${colorClass} transition-all duration-500`}
-          style={{ width: `${pct}%` }}
-        />
+    <div className="space-y-3">
+      <div className="overflow-x-auto rounded-xl border border-border bg-surface/10 p-3 sm:p-4">
+        <div className="min-w-[560px]">
+          {/* Header */}
+          <div className="grid grid-cols-[4.5rem_5.5rem_1fr] items-center gap-3 border-b border-border/80 pb-2 font-mono text-xs font-semibold text-muted-foreground">
+            <div>Year</div>
+            <div>Month</div>
+            <div className="text-center font-mono">Number Added/Completed/Deleted</div>
+          </div>
+
+          {/* Rows */}
+          <div className="divide-y divide-border/20 pt-1.5">
+            {rows.map((r, i) => {
+              const prevYear = i > 0 ? rows[i - 1].year : null;
+              const showYear = i === 0 || r.year !== prevYear;
+
+              const addedPct = maxVal > 0 ? (r.added / maxVal) * 100 : 0;
+              const completedPct = maxVal > 0 ? (r.completed / maxVal) * 100 : 0;
+              const deletedPct = maxVal > 0 ? (r.deleted / maxVal) * 100 : 0;
+
+              return (
+                <div
+                  key={i}
+                  className="grid grid-cols-[4.5rem_5.5rem_1fr] items-center gap-3 py-1 font-mono text-xs hover:bg-surface/20 transition-colors"
+                >
+                  <div className="font-semibold text-heading">
+                    {showYear ? r.year : ""}
+                  </div>
+                  <div className="text-muted-foreground/90">
+                    {r.month || r.year}
+                  </div>
+
+                  {/* Dual-sided horizontal bar container */}
+                  <div className="relative flex h-6 w-full items-center bg-surface-2/20 rounded-xs overflow-hidden">
+                    {/* Left half: Added (Red) extending backwards to center */}
+                    <div className="relative flex h-full w-1/2 items-center justify-end border-r border-border/80">
+                      {r.added > 0 && (
+                        <div
+                          className="flex h-full items-center justify-end bg-red-600 px-1.5 transition-all duration-300"
+                          style={{ width: `${Math.min(100, Math.max(addedPct, 4))}%` }}
+                        >
+                          <span className="font-mono text-[11px] font-bold text-white select-none whitespace-nowrap">
+                            {r.added}
+                          </span>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Right half: Completed (Green) + Deleted (Yellow) extending forward from center */}
+                    <div className="relative flex h-full w-1/2 items-center justify-start">
+                      {r.completed > 0 && (
+                        <div
+                          className="flex h-full items-center justify-end bg-emerald-500 px-1 transition-all duration-300"
+                          style={{ width: `${Math.min(100, Math.max(completedPct, 3))}%` }}
+                        >
+                          <span className="font-mono text-[11px] font-bold text-black select-none whitespace-nowrap">
+                            {r.completed}
+                          </span>
+                        </div>
+                      )}
+                      {r.deleted > 0 && (
+                        <div
+                          className="flex h-full items-center justify-end bg-yellow-400 px-1 transition-all duration-300"
+                          style={{ width: `${Math.min(100, Math.max(deletedPct, 3))}%` }}
+                        >
+                          <span className="font-mono text-[11px] font-bold text-black select-none whitespace-nowrap">
+                            {r.deleted}
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
       </div>
-      <span className="w-7 text-right font-medium text-muted-foreground/90 text-[11px]">
-        {val}
-      </span>
+
+      {/* Terminal Legend */}
+      <div className="flex flex-wrap items-center gap-1.5 font-mono text-xs text-muted-foreground/85 px-1 pt-1">
+        <span className="font-semibold text-heading">Legend:</span>
+        <span className="rounded-xs bg-red-600 px-1.5 py-0.5 font-bold text-white">
+          Added
+        </span>
+        <span className="text-muted-foreground/60">,</span>
+        <span className="rounded-xs bg-emerald-500 px-1.5 py-0.5 font-bold text-black">
+          Completed
+        </span>
+        <span className="text-muted-foreground/60">,</span>
+        <span className="rounded-xs bg-yellow-400 px-1.5 py-0.5 font-bold text-black">
+          Deleted
+        </span>
+      </div>
     </div>
   );
 }
