@@ -80,6 +80,16 @@ export interface TaskAnalytics {
   burndownDaily: BurndownData;
   burndownMonthly: BurndownData;
   burndownWeekly: BurndownData;
+  raw?: {
+    summary: string;
+    ghistoryMonthly: string;
+    ghistoryAnnual: string;
+    historyMonthly: string;
+    historyAnnual: string;
+    burndownDaily: string;
+    burndownMonthly: string;
+    burndownWeekly: string;
+  };
 }
 
 // ─────────────────────────────────────────────
@@ -315,6 +325,16 @@ export async function generateTaskAnalytics(): Promise<TaskAnalytics> {
     burndownDaily:    parseBurndown(rawBurnDaily),
     burndownMonthly:  parseBurndown(rawBurnMonthly),
     burndownWeekly:   parseBurndown(rawBurnWeekly),
+    raw: {
+      summary: rawSummary,
+      ghistoryMonthly: rawGHistMonthly,
+      ghistoryAnnual: rawGHistAnnual,
+      historyMonthly: rawHistMonthly,
+      historyAnnual: rawHistAnnual,
+      burndownDaily: rawBurnDaily,
+      burndownMonthly: rawBurnMonthly,
+      burndownWeekly: rawBurnWeekly,
+    },
   };
 }
 
