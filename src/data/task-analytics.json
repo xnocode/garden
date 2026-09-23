@@ -1,0 +1,226 @@
+{
+  "generatedAt": "2026-09-23T17:23:45.794Z",
+  "summary": [
+    {
+      "project": "cpp",
+      "remaining": 49,
+      "avgAge": "9d",
+      "completePct": 10
+    }
+  ],
+  "ghistoryMonthly": [
+    {
+      "year": "2026",
+      "month": "July",
+      "added": 34,
+      "completed": 0,
+      "deleted": 23
+    },
+    {
+      "year": "2026",
+      "month": "August",
+      "added": 18,
+      "completed": 0,
+      "deleted": 23
+    },
+    {
+      "year": "2026",
+      "month": "September",
+      "added": 41,
+      "completed": 3,
+      "deleted": 11
+    }
+  ],
+  "ghistoryAnnual": [
+    {
+      "year": "2026",
+      "month": "",
+      "added": 45,
+      "completed": 1,
+      "deleted": 28
+    }
+  ],
+  "historyMonthly": [
+    {
+      "year": "2026",
+      "month": "July",
+      "added": 54,
+      "completed": 0,
+      "deleted": 37,
+      "net": 17
+    },
+    {
+      "year": "2026",
+      "month": "August",
+      "added": 28,
+      "completed": 0,
+      "deleted": 36,
+      "net": -8
+    },
+    {
+      "year": "2026",
+      "month": "September",
+      "added": 64,
+      "completed": 6,
+      "deleted": 18,
+      "net": 40
+    },
+    {
+      "year": "",
+      "month": "Average",
+      "added": 48,
+      "completed": 2,
+      "deleted": 30,
+      "net": 16,
+      "isAverage": true
+    }
+  ],
+  "historyAnnual": [
+    {
+      "year": "2026",
+      "month": "",
+      "added": 146,
+      "completed": 6,
+      "deleted": 91,
+      "net": 49
+    },
+    {
+      "year": "",
+      "month": "Average",
+      "added": 146,
+      "completed": 6,
+      "deleted": 91,
+      "net": 49,
+      "isAverage": true
+    }
+  ],
+  "burndownDaily": {
+    "title": "Daily Burndown",
+    "netFixRate": "1.0/d",
+    "estimatedCompletion": "2026-11-11 (6w)",
+    "dataPoints": [
+      {
+        "label": "Sep 10",
+        "pending": 12,
+        "started": 0,
+        "done": 0
+      },
+      {
+        "label": "Sep 11",
+        "pending": 11,
+        "started": 0,
+        "done": 1
+      },
+      {
+        "label": "Sep 12",
+        "pending": 11,
+        "started": 0,
+        "done": 1
+      },
+      {
+        "label": "Sep 13",
+        "pending": 11,
+        "started": 0,
+        "done": 1
+      },
+      {
+        "label": "Sep 14",
+        "pending": 11,
+        "started": 0,
+        "done": 1
+      },
+      {
+        "label": "Sep 15",
+        "pending": 11,
+        "started": 0,
+        "done": 1
+      },
+      {
+        "label": "Sep 16",
+        "pending": 11,
+        "started": 0,
+        "done": 1
+      },
+      {
+        "label": "Sep 17",
+        "pending": 11,
+        "started": 0,
+        "done": 1
+      },
+      {
+        "label": "Sep 18",
+        "pending": 11,
+        "started": 0,
+        "done": 1
+      },
+      {
+        "label": "Sep 19",
+        "pending": 11,
+        "started": 0,
+        "done": 1
+      },
+      {
+        "label": "Sep 20",
+        "pending": 11,
+        "started": 0,
+        "done": 1
+      },
+      {
+        "label": "Sep 21",
+        "pending": 11,
+        "started": 0,
+        "done": 1
+      },
+      {
+        "label": "Sep 22",
+        "pending": 11,
+        "started": 0,
+        "done": 1
+      },
+      {
+        "label": "Sep 23",
+        "pending": 11,
+        "started": 0,
+        "done": 1
+      }
+    ]
+  },
+  "burndownMonthly": {
+    "title": "Monthly Burndown",
+    "netFixRate": "1.0/d",
+    "estimatedCompletion": "2026-11-11 (6w)",
+    "dataPoints": [
+      {
+        "label": "09",
+        "pending": 11,
+        "started": 0,
+        "done": 1
+      }
+    ]
+  },
+  "burndownWeekly": {
+    "title": "Weekly Burndown",
+    "netFixRate": "1.0/d",
+    "estimatedCompletion": "2026-11-11 (6w)",
+    "dataPoints": [
+      {
+        "label": "W36",
+        "pending": 11,
+        "started": 0,
+        "done": 1
+      },
+      {
+        "label": "W37",
+        "pending": 11,
+        "started": 0,
+        "done": 1
+      },
+      {
+        "label": "W38",
+        "pending": 11,
+        "started": 0,
+        "done": 1
+      }
+    ]
+  }
+}

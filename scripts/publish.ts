@@ -37,6 +37,7 @@ import {
 } from "../src/lib/markdown";
 import { fetchUrlPreviews, findUrlsInMarkdown } from "../src/lib/url-preview";
 import type { BookItem } from "../src/lib/notes";
+import { generateTaskAnalytics } from "./generate-task-analytics";
 
 // Database sync — only used for private notes (admin-only via API).
 // Public/members notes live in the static JSON; the DB mirror exists so the
@@ -587,6 +588,19 @@ async function exportJsonData(rendered: RenderedNote[]) {
     JSON.stringify(notesData, null, 2),
     "utf8"
   );
+
+  // Generate Taskwarrior analytics snapshot (admin dashboard)
+  try {
+    const analytics = await generateTaskAnalytics();
+    await writeFile(
+      join(dataDir, "task-analytics.json"),
+      JSON.stringify(analytics, null, 2),
+      "utf8"
+    );
+    console.log(`  exported task-analytics.json (${analytics.summary.length} projects, ${analytics.historyMonthly.length} monthly history rows)`);
+  } catch (e) {
+    console.log(`  (task analytics skipped: ${(e as Error).message})`);
+  }
 
   // Copy keep-the-rhythm data to src/data/ keep-the-rhythm.json so stats work on Vercel
   const rhythmPath = join(CONTENT_DIR, ".obsidian", "plugins", "keep-the-rhythm", "data.json");

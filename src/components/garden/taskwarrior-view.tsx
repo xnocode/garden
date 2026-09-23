@@ -925,11 +925,456 @@ export function TaskwarriorView({ data, writingStats }: { data: TaskSnapshot; wr
         )}
       </div>
 
+      {/* ── Admin-only Analytics ── */}
+      {isAdmin && <TaskwarriorAnalytics />}
+
       {/* Updated at */}
       <div className="mt-6 flex items-center justify-center gap-1.5 text-[11px] text-muted-foreground/35">
         <Clock className="h-3 w-3" />
         <span>Snapshot from {formattedDate}</span>
       </div>
+    </div>
+  );
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   Admin-only Taskwarrior Analytics Panel
+   ───────────────────────────────────────────────────────────────────────────── */
+
+interface AnalyticsData {
+  generatedAt: string;
+  summary: { project: string; remaining: number; avgAge: string; completePct: number }[];
+  ghistoryMonthly: { year: string; month: string; added: number; completed: number; deleted: number }[];
+  ghistoryAnnual: { year: string; month: string; added: number; completed: number; deleted: number }[];
+  historyMonthly: { year: string; month: string; added: number; completed: number; deleted: number; net: number; isAverage?: boolean }[];
+  historyAnnual: { year: string; month: string; added: number; completed: number; deleted: number; net: number; isAverage?: boolean }[];
+  burndownDaily: { title: string; netFixRate: string; estimatedCompletion: string; dataPoints: { label: string; pending: number; started: number; done: number }[] };
+  burndownMonthly: { title: string; netFixRate: string; estimatedCompletion: string; dataPoints: { label: string; pending: number; started: number; done: number }[] };
+  burndownWeekly: { title: string; netFixRate: string; estimatedCompletion: string; dataPoints: { label: string; pending: number; started: number; done: number }[] };
+}
+
+function TaskwarriorAnalytics() {
+  const [analytics, setAnalytics] = useState<AnalyticsData | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [open, setOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState<"overview" | "history" | "burndown">("overview");
+  const [historyMode, setHistoryMode] = useState<"monthly" | "annual">("monthly");
+  const [burndownMode, setBurndownMode] = useState<"daily" | "weekly" | "monthly">("daily");
+
+  useEffect(() => {
+    fetch("/api/tasks/analytics")
+      .then((r) => (r.ok ? r.json() : Promise.reject(r.statusText)))
+      .then((d) => { setAnalytics(d); setLoading(false); })
+      .catch((e) => { setError(String(e)); setLoading(false); });
+  }, []);
+
+  const burndownData =
+    burndownMode === "daily"
+      ? analytics?.burndownDaily
+      : burndownMode === "weekly"
+      ? analytics?.burndownWeekly
+      : analytics?.burndownMonthly;
+
+  const historyRows =
+    historyMode === "monthly" ? analytics?.historyMonthly : analytics?.historyAnnual;
+  const ghistoryRows =
+    historyMode === "monthly" ? analytics?.ghistoryMonthly : analytics?.ghistoryAnnual;
+
+  return (
+    <div className="mt-8 space-y-0">
+      {/* Section header — click to toggle open/close */}
+      <button
+        type="button"
+        onClick={() => setOpen((v) => !v)}
+        className="group w-full flex items-center justify-between rounded-xl border border-border bg-surface/20 px-4 py-3 transition-all hover:border-garden/30 hover:bg-surface/40"
+      >
+        <div className="flex items-center gap-2.5">
+          <span className="inline-flex items-center gap-1.5 rounded-md border border-amber-500/30 bg-amber-500/10 px-2 py-0.5 font-mono text-[10px] font-bold text-amber-400">
+            <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            ADMIN
+          </span>
+          <span className="font-serif text-base font-semibold text-heading">Analytics</span>
+          <span className="hidden sm:inline font-mono text-[11px] text-muted-foreground/50">
+            task summary · history · burndown
+          </span>
+        </div>
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="16" height="16"
+          viewBox="0 0 24 24" fill="none" stroke="currentColor"
+          strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+          className={`text-muted-foreground/50 transition-transform duration-200 ${open ? "rotate-180" : ""}`}
+        >
+          <polyline points="6 9 12 15 18 9" />
+        </svg>
+      </button>
+
+      {open && (
+        <div className="rounded-b-xl border border-t-0 border-border bg-[#0a0a0d] p-4 space-y-4">
+          {loading && (
+            <div className="flex items-center justify-center py-12">
+              <div className="h-5 w-5 animate-spin rounded-full border-2 border-border border-t-garden" />
+            </div>
+          )}
+
+          {error && (
+            <div className="rounded-lg border border-red-500/30 bg-red-500/10 px-4 py-3 font-mono text-xs text-red-400">
+              {error}
+            </div>
+          )}
+
+          {analytics && !loading && (
+            <>
+              {/* Tab Strip */}
+              <div className="flex items-center gap-1 border-b border-border pb-0">
+                {(["overview", "history", "burndown"] as const).map((tab) => (
+                  <button
+                    key={tab}
+                    type="button"
+                    onClick={() => setActiveTab(tab)}
+                    className={`px-3 py-2 font-mono text-[11px] font-semibold capitalize transition-all border-b-2 -mb-px ${
+                      activeTab === tab
+                        ? "border-garden text-garden"
+                        : "border-transparent text-muted-foreground hover:text-foreground"
+                    }`}
+                  >
+                    {tab}
+                  </button>
+                ))}
+                <div className="ml-auto font-mono text-[10px] text-muted-foreground/40 pb-2">
+                  {analytics.generatedAt
+                    ? `snapshot: ${new Date(analytics.generatedAt).toLocaleDateString("en-CA", { timeZone: "Asia/Dhaka" })}`
+                    : ""}
+                </div>
+              </div>
+
+              {/* ── TAB: Overview ── */}
+              {activeTab === "overview" && (
+                <div className="space-y-5">
+                  {/* Project Summary */}
+                  <div>
+                    <div className="mb-2 font-mono text-[10px] font-semibold uppercase tracking-wider text-muted-foreground/60">
+                      task summary
+                    </div>
+                    {analytics.summary.length === 0 ? (
+                      <p className="text-xs text-muted-foreground/50">No projects found.</p>
+                    ) : (
+                      <div className="space-y-2">
+                        {analytics.summary.map((proj) => (
+                          <div key={proj.project} className="rounded-lg border border-border bg-surface/20 px-4 py-3">
+                            <div className="flex items-center justify-between gap-3 mb-2">
+                              <span className="font-mono text-sm font-semibold text-garden">{proj.project}</span>
+                              <div className="flex items-center gap-3 font-mono text-xs text-muted-foreground">
+                                <span>
+                                  <span className="text-amber-400 font-bold">{proj.remaining}</span> remaining
+                                </span>
+                                <span>avg age: {proj.avgAge}</span>
+                                <span className="text-emerald-400 font-bold">{proj.completePct}%</span>
+                              </div>
+                            </div>
+                            {/* Completion progress bar — CSS only */}
+                            <div className="h-1.5 w-full overflow-hidden rounded-full bg-surface-2">
+                              <div
+                                className="h-full rounded-full bg-gradient-to-r from-garden to-emerald-400 transition-all duration-700"
+                                style={{ width: `${proj.completePct}%` }}
+                              />
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* History Table (monthly) */}
+                  <div>
+                    <div className="mb-2 flex items-center gap-3">
+                      <span className="font-mono text-[10px] font-semibold uppercase tracking-wider text-muted-foreground/60">
+                        task history
+                      </span>
+                      <div className="flex items-center gap-1">
+                        {(["monthly", "annual"] as const).map((m) => (
+                          <button
+                            key={m}
+                            type="button"
+                            onClick={() => setHistoryMode(m)}
+                            className={`rounded px-2 py-0.5 font-mono text-[10px] transition-all ${
+                              historyMode === m
+                                ? "bg-garden/20 text-garden border border-garden/30"
+                                : "text-muted-foreground/50 hover:text-foreground"
+                            }`}
+                          >
+                            {m}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                    <div className="overflow-x-auto rounded-lg border border-border bg-[#0c0c0f]">
+                      <table className="w-full border-collapse font-mono text-xs">
+                        <thead>
+                          <tr className="border-b border-border bg-surface/40 text-left">
+                            {historyMode === "monthly" && (
+                              <th className="whitespace-nowrap px-4 py-2.5 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Year</th>
+                            )}
+                            {historyMode === "monthly" && (
+                              <th className="whitespace-nowrap px-4 py-2.5 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Month</th>
+                            )}
+                            {historyMode === "annual" && (
+                              <th className="whitespace-nowrap px-4 py-2.5 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Year</th>
+                            )}
+                            <th className="whitespace-nowrap px-4 py-2.5 text-right text-[10px] font-semibold uppercase tracking-wider text-blue-400">Added</th>
+                            <th className="whitespace-nowrap px-4 py-2.5 text-right text-[10px] font-semibold uppercase tracking-wider text-emerald-400">Completed</th>
+                            <th className="whitespace-nowrap px-4 py-2.5 text-right text-[10px] font-semibold uppercase tracking-wider text-red-400">Deleted</th>
+                            <th className="whitespace-nowrap px-4 py-2.5 text-right text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Net</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {(historyRows || []).map((row, i) => (
+                            <tr
+                              key={i}
+                              className={`border-b border-border/50 transition-colors ${
+                                row.isAverage
+                                  ? "bg-surface/20 font-bold"
+                                  : i % 2 === 0 ? "bg-transparent hover:bg-surface/20" : "bg-surface/10 hover:bg-surface/20"
+                              }`}
+                            >
+                              {historyMode === "monthly" && (
+                                <td className="whitespace-nowrap px-4 py-2 text-muted-foreground/60">
+                                  {row.year}
+                                </td>
+                              )}
+                              {historyMode === "monthly" && (
+                                <td className={`whitespace-nowrap px-4 py-2 ${row.isAverage ? "text-muted-foreground italic" : "text-foreground"}`}>
+                                  {row.month}
+                                </td>
+                              )}
+                              {historyMode === "annual" && (
+                                <td className={`whitespace-nowrap px-4 py-2 ${row.isAverage ? "text-muted-foreground italic" : "text-foreground"}`}>
+                                  {row.isAverage ? "Average" : row.year}
+                                </td>
+                              )}
+                              <td className="whitespace-nowrap px-4 py-2 text-right text-blue-400">{row.added}</td>
+                              <td className="whitespace-nowrap px-4 py-2 text-right text-emerald-400">{row.completed}</td>
+                              <td className="whitespace-nowrap px-4 py-2 text-right text-red-400">{row.deleted}</td>
+                              <td className={`whitespace-nowrap px-4 py-2 text-right font-semibold ${row.net >= 0 ? "text-amber-400" : "text-red-400"}`}>
+                                {row.net > 0 ? `+${row.net}` : row.net}
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* ── TAB: History Charts (ghistory — CSS bars) ── */}
+              {activeTab === "history" && (
+                <div className="space-y-4">
+                  <div className="flex items-center gap-3">
+                    <span className="font-mono text-[10px] font-semibold uppercase tracking-wider text-muted-foreground/60">
+                      task ghistory
+                    </span>
+                    <div className="flex items-center gap-1">
+                      {(["monthly", "annual"] as const).map((m) => (
+                        <button
+                          key={m}
+                          type="button"
+                          onClick={() => setHistoryMode(m)}
+                          className={`rounded px-2 py-0.5 font-mono text-[10px] transition-all ${
+                            historyMode === m
+                              ? "bg-garden/20 text-garden border border-garden/30"
+                              : "text-muted-foreground/50 hover:text-foreground"
+                          }`}
+                        >
+                          {m}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Legend */}
+                  <div className="flex items-center gap-4 font-mono text-[10px] text-muted-foreground/60">
+                    <span className="flex items-center gap-1.5"><span className="inline-block h-2 w-4 rounded-sm bg-blue-500/70" /> Added</span>
+                    <span className="flex items-center gap-1.5"><span className="inline-block h-2 w-4 rounded-sm bg-emerald-500/70" /> Completed</span>
+                    <span className="flex items-center gap-1.5"><span className="inline-block h-2 w-4 rounded-sm bg-red-500/70" /> Deleted</span>
+                  </div>
+
+                  <GHistoryBars rows={ghistoryRows || []} />
+                </div>
+              )}
+
+              {/* ── TAB: Burndown ── */}
+              {activeTab === "burndown" && (
+                <div className="space-y-4">
+                  <div className="flex items-center gap-3">
+                    <span className="font-mono text-[10px] font-semibold uppercase tracking-wider text-muted-foreground/60">
+                      task burndown
+                    </span>
+                    <div className="flex items-center gap-1">
+                      {(["daily", "weekly", "monthly"] as const).map((m) => (
+                        <button
+                          key={m}
+                          type="button"
+                          onClick={() => setBurndownMode(m)}
+                          className={`rounded px-2 py-0.5 font-mono text-[10px] transition-all ${
+                            burndownMode === m
+                              ? "bg-garden/20 text-garden border border-garden/30"
+                              : "text-muted-foreground/50 hover:text-foreground"
+                          }`}
+                        >
+                          {m}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {burndownData && (
+                    <div className="space-y-3">
+                      {/* Meta info */}
+                      <div className="flex flex-wrap items-center gap-4 font-mono text-[11px]">
+                        <span className="text-muted-foreground/60">
+                          Fix rate: <span className="text-garden font-bold">{burndownData.netFixRate}</span>
+                        </span>
+                        <span className="text-muted-foreground/60">
+                          Est. completion: <span className="text-amber-400 font-bold">{burndownData.estimatedCompletion}</span>
+                        </span>
+                      </div>
+
+                      {/* Legend */}
+                      <div className="flex items-center gap-4 font-mono text-[10px] text-muted-foreground/60">
+                        <span className="flex items-center gap-1.5"><span className="inline-block h-2 w-4 rounded-sm bg-amber-500/70" /> Pending (X)</span>
+                        <span className="flex items-center gap-1.5"><span className="inline-block h-2 w-4 rounded-sm bg-emerald-500/70" /> Done (.)</span>
+                        <span className="flex items-center gap-1.5"><span className="inline-block h-2 w-4 rounded-sm bg-blue-500/70" /> Started (+)</span>
+                      </div>
+
+                      <BurndownBars dataPoints={burndownData.dataPoints} />
+                    </div>
+                  )}
+                </div>
+              )}
+            </>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* ── CSS-only ghistory bar chart (horizontal grouped bars per period) ── */
+function GHistoryBars({ rows }: { rows: { year: string; month: string; added: number; completed: number; deleted: number }[] }) {
+  const maxVal = Math.max(1, ...rows.map((r) => Math.max(r.added, r.completed, r.deleted)));
+
+  if (rows.length === 0) {
+    return <p className="text-xs text-muted-foreground/50">No data.</p>;
+  }
+
+  return (
+    <div className="space-y-3">
+      {rows.map((row, i) => {
+        const label = row.month ? `${row.year} ${row.month}` : row.year;
+        return (
+          <div key={i} className="rounded-lg border border-border bg-surface/10 px-4 py-3">
+            <div className="mb-2 font-mono text-[11px] font-semibold text-heading">{label}</div>
+            <div className="space-y-1.5">
+              <BarRow label="Added" value={row.added} max={maxVal} color="bg-blue-500/70" />
+              <BarRow label="Completed" value={row.completed} max={maxVal} color="bg-emerald-500/70" />
+              <BarRow label="Deleted" value={row.deleted} max={maxVal} color="bg-red-500/70" />
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+/* ── CSS-only burndown chart (vertical stacked bars) ── */
+function BurndownBars({ dataPoints }: { dataPoints: { label: string; pending: number; started: number; done: number }[] }) {
+  const maxVal = Math.max(1, ...dataPoints.map((d) => d.pending + d.started + d.done));
+
+  if (dataPoints.length === 0) {
+    return <p className="text-xs text-muted-foreground/50">No burndown data.</p>;
+  }
+
+  return (
+    <div className="overflow-x-auto rounded-lg border border-border bg-[#0c0c0f] p-4">
+      <div className="flex items-end gap-1" style={{ minWidth: `${dataPoints.length * 36}px`, height: "140px" }}>
+        {dataPoints.map((d, i) => {
+          const total = d.pending + d.started + d.done;
+          const pendingH = maxVal > 0 ? (d.pending / maxVal) * 100 : 0;
+          const startedH = maxVal > 0 ? (d.started / maxVal) * 100 : 0;
+          const doneH = maxVal > 0 ? (d.done / maxVal) * 100 : 0;
+          return (
+            <div key={i} className="flex flex-col items-center gap-0.5 flex-1" style={{ minWidth: "28px" }}>
+              {/* Stacked bar */}
+              <div
+                className="relative w-full overflow-hidden rounded-sm"
+                style={{ height: "110px" }}
+                title={`${d.label}: pending=${d.pending} done=${d.done} started=${d.started}`}
+              >
+                {/* Bars grow from bottom — use absolute positioning inside a flex-col-reverse container */}
+                <div className="absolute bottom-0 inset-x-0 flex flex-col-reverse">
+                  {d.pending > 0 && (
+                    <div
+                      className="w-full bg-amber-500/70 transition-all duration-500"
+                      style={{ height: `${pendingH}%` }}
+                    />
+                  )}
+                  {d.started > 0 && (
+                    <div
+                      className="w-full bg-blue-500/70 transition-all duration-500"
+                      style={{ height: `${startedH}%` }}
+                    />
+                  )}
+                  {d.done > 0 && (
+                    <div
+                      className="w-full bg-emerald-500/70 transition-all duration-500"
+                      style={{ height: `${doneH}%` }}
+                    />
+                  )}
+                </div>
+                {total === 0 && (
+                  <div className="absolute bottom-0 inset-x-0 h-1 bg-border/40 rounded-sm" />
+                )}
+              </div>
+              {/* Label */}
+              <span
+                className="font-mono text-[8px] text-muted-foreground/50 whitespace-nowrap"
+                style={{ transform: "rotate(-40deg)", transformOrigin: "top center", marginTop: "4px", display: "block" }}
+              >
+                {d.label}
+              </span>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+/* ── Single horizontal bar row used in ghistory ── */
+function BarRow({
+  label,
+  value,
+  max,
+  color,
+}: {
+  label: string;
+  value: number;
+  max: number;
+  color: string;
+}) {
+  const pct = max > 0 ? Math.round((value / max) * 100) : 0;
+  return (
+    <div className="flex items-center gap-2">
+      <span className="w-20 font-mono text-[10px] text-muted-foreground/60 shrink-0">{label}</span>
+      <div className="flex-1 h-3 overflow-hidden rounded-sm bg-surface-2/50">
+        <div
+          className={`h-full rounded-sm ${color} transition-all duration-700`}
+          style={{ width: `${pct}%` }}
+        />
+      </div>
+      <span className="w-8 font-mono text-[10px] text-right text-muted-foreground/80 shrink-0">{value}</span>
     </div>
   );
 }
