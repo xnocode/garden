@@ -11,15 +11,12 @@ import { PwaRegister } from "@/components/garden/pwa";
 const headingFont = Plus_Jakarta_Sans({
   variable: "--font-serif",
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
   display: "swap",
 });
 
 const bodyFont = Source_Sans_3({
   variable: "--font-sans",
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
-  style: ["normal", "italic"],
   display: "swap",
 });
 

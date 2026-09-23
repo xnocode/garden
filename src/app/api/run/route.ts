@@ -150,6 +150,3 @@ export async function POST(req: NextRequest) {
     );
   }
 }
-
-/** Export the language map for client-side use (language detection). */
-export { LANGUAGE_MAP };
