@@ -1,5 +1,17 @@
 [
   {
+    "version": "v1.5.0",
+    "date": "2026-09-24",
+    "title": "Taskwarrior Analytics Dashboard",
+    "badge": "ANALYTICS",
+    "category": "feature",
+    "changes": [
+      "Admin-only Task Analytics section with Project Summary, History Table, and Graphical History tabs — all generated from live Taskwarrior data",
+      "Authentic diverging horizontal bar chart for task ghistory: soft crimson for Added, sage-teal for Completed, warm gold for Deleted — styled to match the garden palette",
+      "Fixed Vercel build failure caused by illegal route export in the code runner API and simplified Google Fonts variable font configuration"
+    ]
+  },
+  {
     "version": "v1.4.0",
     "date": "2026-08-23",
     "title": "Dynamic XP Scaling — Early Bird & Late Penalty",

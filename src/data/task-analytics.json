@@ -1,10 +1,10 @@
 {
-  "generatedAt": "2026-09-23T18:35:47.697Z",
+  "generatedAt": "2026-09-24T16:09:08.861Z",
   "summary": [
     {
       "project": "cpp",
       "remaining": 49,
-      "avgAge": "9d",
+      "avgAge": "10d",
       "completePct": 10
     }
   ],
@@ -96,8 +96,8 @@
   ],
   "burndownDaily": {
     "title": "Daily Burndown",
-    "netFixRate": "1.0/d",
-    "estimatedCompletion": "2026-11-12 (7w)",
+    "netFixRate": "0.9/d",
+    "estimatedCompletion": "2026-11-16 (7w)",
     "dataPoints": [
       {
         "label": "Sep 10",
@@ -193,8 +193,8 @@
   },
   "burndownMonthly": {
     "title": "Monthly Burndown",
-    "netFixRate": "1.0/d",
-    "estimatedCompletion": "2026-11-12 (7w)",
+    "netFixRate": "0.9/d",
+    "estimatedCompletion": "2026-11-16 (7w)",
     "dataPoints": [
       {
         "label": "09",
@@ -206,8 +206,8 @@
   },
   "burndownWeekly": {
     "title": "Weekly Burndown",
-    "netFixRate": "1.0/d",
-    "estimatedCompletion": "2026-11-12 (7w)",
+    "netFixRate": "0.9/d",
+    "estimatedCompletion": "2026-11-16 (7w)",
     "dataPoints": [
       {
         "label": "W36",
@@ -230,13 +230,13 @@
     ]
   },
   "raw": {
-    "summary": "\nProject Remaining Avg age Complete 0%                        100%\n------- --------- ------- -------- ------------------------------\ncpp            49      9d      10% ===\n\n1 projects\n",
+    "summary": "\nProject Remaining Avg age Complete 0%                        100%\n------- --------- ------- -------- ------------------------------\ncpp            49     10d      10% ===\n\n1 projects\n",
     "ghistoryMonthly": "\nYear Month     Number Added/Completed/Deleted\n---- --------- ----------------------------------------------------------------\n2026 July             ++++++++++++++++++++++++++++++++++-----------------------\n     August                           ++++++++++++++++++-----------------------\n     September +++++++++++++++++++++++++++++++++++++++++XXX-----------\n\nLegend: + Added, X Completed, - Deleted\n",
     "ghistoryAnnual": "\nYear Number Added/Completed/Deleted\n---- --------------------------------------------------------------------------\n2026 +++++++++++++++++++++++++++++++++++++++++++++X----------------------------\n\nLegend: + Added, X Completed, - Deleted\n",
     "historyMonthly": "\nYear Month     Added Completed Deleted Net\n---- --------- ----- --------- ------- ---\n2026 July         54         0      37  17\n     August       28         0      36  -8\n     September    64         6      18  40\n\n     Average      48         2      30  16\n\n",
     "historyAnnual": "\nYear    Added Completed Deleted Net\n------- ----- --------- ------- ---\n2026      146         6      91  49\n\nAverage   146         6      91  49\n\n",
-    "burndownDaily": "                                 Daily Burndown\n60 |\n   |\n   |                    X  .  .  .  .  .  .  .  .  .  .  .  .  .  .\n   |                    X  X  X  X  X  X  X  X  X  X  X  X  X  X  X\n   |                    X  X  X  X  X  X  X  X  X  X  X  X  X  X  X\n   |                    X  X  X  X  X  X  X  X  X  X  X  X  X  X  X    . Done\n   |                    X  X  X  X  X  X  X  X  X  X  X  X  X  X  X    + Started\n30 |                    X  X  X  X  X  X  X  X  X  X  X  X  X  X  X    X Pending\n   |                    X  X  X  X  X  X  X  X  X  X  X  X  X  X  X\n   |                    X  X  X  X  X  X  X  X  X  X  X  X  X  X  X\n   |                    X  X  X  X  X  X  X  X  X  X  X  X  X  X  X\n   |                    X  X  X  X  X  X  X  X  X  X  X  X  X  X  X\n   |                    X  X  X  X  X  X  X  X  X  X  X  X  X  X  X\n   |                    X  X  X  X  X  X  X  X  X  X  X  X  X  X  X\n   |                    X  X  X  X  X  X  X  X  X  X  X  X  X  X  X\n 0 +----------------------------------------------------------------\n     04 05 06 07 08 09 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24\n     Sep\n\n    Net Fix Rate:         1.0/d\n    Estimated completion: 2026-11-12 (7w)\n",
-    "burndownMonthly": "                                Monthly Burndown\n60 |\n   |\n   |                                                              .\n   |                                                              X\n   |                                                              X\n   |                                                              X    . Done\n   |                                                              X    + Started\n30 |                                                              X    X Pending\n   |                                                              X\n   |                                                              X\n   |                                                              X\n   |                                                              X\n   |                                                              X\n   |                                                              X\n   |                                                              X\n 0 +----------------------------------------------------------------\n     01 02 03 04 05 06 07 08 09 10 11 12 01 02 03 04 05 06 07 08 09\n     2025                                2026\n\n   Net Fix Rate:         1.0/d\n   Estimated completion: 2026-11-12 (7w)\n",
-    "burndownWeekly": "                                Weekly Burndown\n60 |\n   |\n   |                                                        .  .  .\n   |                                                        X  X  X\n   |                                                        X  X  X\n   |                                                        X  X  X    . Done\n   |                                                        X  X  X    + Started\n30 |                                                        X  X  X    X Pending\n   |                                                        X  X  X\n   |                                                        X  X  X\n   |                                                        X  X  X\n   |                                                        X  X  X\n   |                                                        X  X  X\n   |                                                        X  X  X\n   |                                                        X  X  X\n 0 +----------------------------------------------------------------\n     18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38\n     2026\n\n    Net Fix Rate:         1.0/d\n    Estimated completion: 2026-11-12 (7w)\n"
+    "burndownDaily": "                                 Daily Burndown\n60 |\n   |\n   |                    X  .  .  .  .  .  .  .  .  .  .  .  .  .  .\n   |                    X  X  X  X  X  X  X  X  X  X  X  X  X  X  X\n   |                    X  X  X  X  X  X  X  X  X  X  X  X  X  X  X\n   |                    X  X  X  X  X  X  X  X  X  X  X  X  X  X  X    . Done\n   |                    X  X  X  X  X  X  X  X  X  X  X  X  X  X  X    + Started\n30 |                    X  X  X  X  X  X  X  X  X  X  X  X  X  X  X    X Pending\n   |                    X  X  X  X  X  X  X  X  X  X  X  X  X  X  X\n   |                    X  X  X  X  X  X  X  X  X  X  X  X  X  X  X\n   |                    X  X  X  X  X  X  X  X  X  X  X  X  X  X  X\n   |                    X  X  X  X  X  X  X  X  X  X  X  X  X  X  X\n   |                    X  X  X  X  X  X  X  X  X  X  X  X  X  X  X\n   |                    X  X  X  X  X  X  X  X  X  X  X  X  X  X  X\n   |                    X  X  X  X  X  X  X  X  X  X  X  X  X  X  X\n 0 +----------------------------------------------------------------\n     04 05 06 07 08 09 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24\n     Sep\n\n    Net Fix Rate:         0.9/d\n    Estimated completion: 2026-11-16 (7w)\n",
+    "burndownMonthly": "                                Monthly Burndown\n60 |\n   |\n   |                                                              .\n   |                                                              X\n   |                                                              X\n   |                                                              X    . Done\n   |                                                              X    + Started\n30 |                                                              X    X Pending\n   |                                                              X\n   |                                                              X\n   |                                                              X\n   |                                                              X\n   |                                                              X\n   |                                                              X\n   |                                                              X\n 0 +----------------------------------------------------------------\n     01 02 03 04 05 06 07 08 09 10 11 12 01 02 03 04 05 06 07 08 09\n     2025                                2026\n\n   Net Fix Rate:         0.9/d\n   Estimated completion: 2026-11-16 (7w)\n",
+    "burndownWeekly": "                                Weekly Burndown\n60 |\n   |\n   |                                                        .  .  .\n   |                                                        X  X  X\n   |                                                        X  X  X\n   |                                                        X  X  X    . Done\n   |                                                        X  X  X    + Started\n30 |                                                        X  X  X    X Pending\n   |                                                        X  X  X\n   |                                                        X  X  X\n   |                                                        X  X  X\n   |                                                        X  X  X\n   |                                                        X  X  X\n   |                                                        X  X  X\n   |                                                        X  X  X\n 0 +----------------------------------------------------------------\n     18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38\n     2026\n\n    Net Fix Rate:         0.9/d\n    Estimated completion: 2026-11-16 (7w)\n"
   }
 }
